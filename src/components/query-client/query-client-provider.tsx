@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { QueryClientProvider } from "@tanstack/react-query";
-import { getQueryClient } from "./query-client";
+import { QueryClientProvider } from "@tanstack/react-query"
+import { getQueryClient } from "./query-client"
 export function QueryClientReactProvider({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
-  const queryClient = getQueryClient();
+  const queryClient = getQueryClient()
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+  )
 }
