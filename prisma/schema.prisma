@@ -2,19 +2,56 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl"]
+}
+
+generator zod {
+  provider       = "zod-prisma-types"
+  output         = "../src/lib/zod"
+  // createRelationValuesTypes = true
+  addIncludeType = true
+  addSelectType  = true
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+  // Further reading:
+  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model ApiKey {
+  key         String    @id @unique @db.VarChar(255)
+  name        String    @db.VarChar(255)
+  userAddress String?   @map("user_address") @db.VarChar(255)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  expiredAt   DateTime? @map("expired_at")
 
-    @@index([name])
+  @@unique([name, userAddress])
+  @@map("t_api_key")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  address      String   @id @db.VarChar(255)
+  name         String?  @db.VarChar(255)
+  email        String?  @unique @db.VarChar(255)
+  referralCode String   @unique @map("referral_code")
+  role         UserRole @default(USER) @map("role")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+  invitedBy    String[] @default([]) @map("invited_by")
+
+  // agents Agent[]
+  // stars  AgentStar[]
+
+  @@map("t_user")
 }

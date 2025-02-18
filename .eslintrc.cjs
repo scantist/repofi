@@ -12,6 +12,7 @@ const config = {
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked"
   ],
+  "ignorePatterns": ["src/lib/zod/**"],
   "rules": {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
@@ -38,7 +39,8 @@ const config = {
       }
     ],
     "semi": ["error", "never"],
-    "quotes": ["error", "double"]
+    "quotes": ["error", "double"],
+    "comma-dangle": ["error", "never"]
   }
 }
 module.exports = config

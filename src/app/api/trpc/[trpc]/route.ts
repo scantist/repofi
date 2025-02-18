@@ -11,7 +11,7 @@ import { createTRPCContext } from "~/server/api/trpc"
  */
 const createContext = async (req: NextRequest) => {
   return createTRPCContext({
-    headers: req.headers,
+    headers: req.headers
   })
 }
 
@@ -28,7 +28,7 @@ const handler = (req: NextRequest) =>
               `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
             )
           }
-        : undefined,
+        : undefined
   })
 
 export { handler as GET, handler as POST }

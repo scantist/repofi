@@ -11,6 +11,7 @@ import superjson from "superjson"
 import { ZodError } from "zod"
 
 import { db } from "~/server/db"
+import { auth, getApiKey } from "~/server/auth"
 
 /**
  * 1. CONTEXT
@@ -25,9 +26,28 @@ import { db } from "~/server/db"
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+  const session = await auth()
+  console.log("session", session)
+  if (session) {
+    return {
+      db,
+      session,
+      agent: undefined,
+      ...opts
+    }
+  }
+  const entity = await getApiKey(opts.headers.get("x-api-key"))
   return {
     db,
-    ...opts,
+    session:
+      entity && "user" in entity
+        ? {
+          address: entity.user.address,
+          user: entity.user,
+          role: entity.user.role
+        }
+        : undefined,
+    ...opts
   }
 }
 
@@ -46,10 +66,10 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       data: {
         ...shape.data,
         zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
+          error.cause instanceof ZodError ? error.cause.flatten() : null
+      }
     }
-  },
+  }
 })
 
 /**
