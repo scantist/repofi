@@ -10,8 +10,7 @@ import {
   createSIWEConfig,
   formatMessage
 } from "@reown/appkit-siwe"
-import { auth, signIn, signOut } from "~/server/auth"
-import { getCsrfToken, getSession } from "next-auth/react"
+import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
 
 const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
 const defaultChain = isMainNet ? base : baseSepolia
@@ -74,6 +73,10 @@ const siweConfig = createSIWEConfig({
       return null
     }
 
+    // Validate address and chainId types
+    if (typeof session.address !== "string" || typeof session.chainId !== "number") {
+      return null
+    }
     return {
       address: session.address,
       chainId: session.chainId
