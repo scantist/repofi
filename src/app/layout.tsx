@@ -4,7 +4,7 @@ import { GeistSans } from "geist/font/sans"
 import { type Metadata } from "next"
 import { QueryClientReactProvider } from "~/components/query-client/query-client-provider"
 import { TRPCReactProvider } from "~/trpc/react"
-import { cookieToInitialState } from "wagmi";
+import { cookieToInitialState } from "wagmi"
 import { auth } from "~/server/auth"
 import { wagmiConfig } from "~/components/auth/config"
 import { headers } from "next/headers"
@@ -19,7 +19,6 @@ export const metadata: Metadata = {
 export default async function RootLayout({
   children
 }: Readonly<{ children: React.ReactNode }>) {
-
   const session = await auth()
   const wagmiState = cookieToInitialState(
     wagmiConfig,
@@ -29,9 +28,11 @@ export default async function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <QueryClientReactProvider>
-          <AuthProvider session={session} wagmiState={wagmiState}>
-            <TRPCReactProvider>{children}</TRPCReactProvider>
-          </AuthProvider>
+          <TRPCReactProvider>
+            <AuthProvider session={session} wagmiState={wagmiState}>
+              {children}
+            </AuthProvider>
+          </TRPCReactProvider>
         </QueryClientReactProvider>
       </body>
     </html>
