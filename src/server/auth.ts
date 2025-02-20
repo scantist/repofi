@@ -1,5 +1,4 @@
-import { type User } from "@prisma/client"
-import NextAuth, { type DefaultSession } from "next-auth"
+import NextAuth, { type DefaultSession, type User } from "next-auth"
 import { db } from "~/server/db"
 import Credentials from "next-auth/providers/credentials"
 import {
@@ -8,6 +7,8 @@ import {
   verifySignature
 } from "@reown/appkit-siwe"
 import { createUser } from "~/server/data/user"
+import GitHub from "next-auth/providers/github"
+import GitLab, { type GitLabProfile } from "next-auth/providers/gitlab"
 
 declare module "next-auth" {
   /**
@@ -17,6 +18,7 @@ declare module "next-auth" {
     address: string;
     chainId: number;
     role: "ADMIN" | "USER";
+    provider?: "GitHub" | "GitLab";
   }
 }
 
@@ -25,7 +27,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt"
   },
   callbacks: {
-    session: ({ session, token }) => {
+    session: (params) => {
+      const { session, token } = params
+      if (session.user) {
+        session.provider = session.user.image?.includes("github") ? "GitHub" : "GitLab"
+      }
       if (!token.sub) {
         return session
       }
@@ -40,7 +46,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session
     },
-    jwt: async ({ token }) => {
+    jwt: async ({ token}) => {
       if (token.sub) {
         const [, , address] = token.sub.split(":")
         if (address) {
@@ -60,6 +66,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }
   },
   providers: [
+    GitHub({
+      profile: (profile) => {
+        return {
+          id: profile.id.toString(),
+          name: profile.name ?? profile.login,
+          email: profile.email,
+          image: profile.avatar_url
+        }
+      }
+    }),
+    GitLab({
+      profile: (profile: GitLabProfile) => {
+        return {
+          id: profile.id.toString(),
+          name: profile.name,
+          email: profile.email,
+          image: profile.avatar_url
+        }
+      }
+    }),
     Credentials({
       name: "Ethereum",
       credentials: {
