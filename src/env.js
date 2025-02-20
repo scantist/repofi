@@ -12,7 +12,9 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     AUTH_GITHUB_SECRET: z.string(),
-    AUTH_GITHUB_ID: z.string()
+    AUTH_GITHUB_ID: z.string(),
+    AUTH_GITLAB_SECRET: z.string(),
+    AUTH_GITLAB_ID: z.string()
   },
 
   /**
@@ -36,7 +38,9 @@ export const env = createEnv({
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
     NEXT_PUBLIC_REOWN_PROJECT_ID: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID,
     AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
-    AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID
+    AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
+    AUTH_GITLAB_SECRET: process.env.AUTH_GITLAB_SECRET,
+    AUTH_GITLAB_ID: process.env.AUTH_GITLAB_ID
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
