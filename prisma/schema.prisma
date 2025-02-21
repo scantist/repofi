@@ -41,17 +41,146 @@ enum UserRole {
 }
 
 model User {
-  address      String   @id @db.VarChar(255)
-  name         String?  @db.VarChar(255)
-  email        String?  @unique @db.VarChar(255)
-  referralCode String   @unique @map("referral_code")
-  role         UserRole @default(USER) @map("role")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
-  invitedBy    String[] @default([]) @map("invited_by")
-
-  // agents Agent[]
-  // stars  AgentStar[]
+  address       String         @id @db.VarChar(255)
+  name          String?        @db.VarChar(255)
+  email         String?        @unique @db.VarChar(255)
+  referralCode  String         @unique @map("referral_code")
+  role          UserRole       @default(USER) @map("role")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+  invitedBy     String[]       @default([]) @map("invited_by")
+  stars         DaoStar[]
+  daos          Dao[]
+  contributions Contribution[]
 
   @@map("t_user")
+}
+
+enum DaoType {
+  CODE
+  MODEL
+  DATASET
+}
+
+enum DaoStatus {
+  INACTIVE
+  PRELAUNCH
+  LAUNCHED
+}
+
+model DaoStar {
+  daoId       String @map("dao_id") @db.VarChar(255)
+  userAddress String @map("user_address") @db.VarChar(255)
+
+  dao  Dao  @relation(fields: [daoId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userAddress], references: [address], onDelete: Cascade)
+
+  @@id([daoId, userAddress])
+  @@map("t_dao_star")
+}
+
+model Dao {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @map("id")
+  name          String    @unique @db.VarChar(255)
+  ticker        String    @unique @db.VarChar(255)
+  type          DaoType   @map("type")
+  description   String    @db.Text
+  avatar        String    @db.VarChar(255)
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+  createdBy     String    @map("created_by") @db.VarChar(255)
+  walletAddress String?   @unique @map("wallet_address") @db.VarChar(255)
+  tokenAddress  String    @unique @map("token_address") @db.VarChar(255)
+  links         Json      @default("[]")
+  status        DaoStatus @default(PRELAUNCH) @map("status")
+
+  marketCapUsd Decimal @default(0) @map("market_cap_usd") @db.Decimal(50, 18)
+  priceUsd     Decimal @default(0) @map("price_usd") @db.Decimal(50, 18)
+
+  creator       User           @relation(fields: [createdBy], references: [address])
+  info          DaoInfo        @relation(fields: [tokenAddress], references: [tokenAddress], onUpdate: Cascade, onDelete: Cascade)
+  messages      ForumMessage[]
+  stars         DaoStar[]
+  contributions Contribution[]
+
+  @@map("t_dao")
+}
+
+model DaoTokenHolder {
+  holderAddress String  @map("holder_address") @db.VarChar(255)
+  tokenAddress  String  @map("token_address") @db.VarChar(255)
+  tokenAmount   Decimal @map("token_amount") @db.Decimal(50, 18)
+
+  tokenInfo DaoInfo @relation(fields: [tokenAddress], references: [tokenAddress], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([holderAddress, tokenAddress])
+  @@index([tokenAddress])
+  @@index([holderAddress])
+  @@map("t_dao_token_holder")
+}
+
+model DaoInfo {
+  tokenAddress      String  @id @map("token_address") @db.VarChar(255)
+  name              String  @map("name") @db.VarChar(255)
+  ticker            String  @map("ticker") @db.VarChar(255)
+  creator           String  @map("creator") @db.VarChar(255)
+  createdAt         BigInt  @default(0) @map("created_at")
+  marketCap         Decimal @default(0) @map("market_cap") @db.Decimal(50, 18)
+  totalSupply       Decimal @default(0) @map("total_supply") @db.Decimal(50, 18)
+  holderCount       Int     @default(0) @map("holder_count")
+  assetTokenAddress String  @default("") @map("asset_token_address") @db.VarChar(255)
+  tradingOnUniswap  Boolean @default(false) @map("trading_on_uniswap")
+  uniswapV2Pair     String? @map("uniswap_v2_pair") @db.VarChar(255)
+
+  dao     Dao?
+  holders DaoTokenHolder[]
+
+  @@map("t_dao_info")
+}
+
+model ForumMessage {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @map("id")
+  daoId     String    @map("dao_id")
+  message   String    @db.Text
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy String    @map("created_by") @db.VarChar(255)
+  deletedAt DateTime? @map("deleted_at")
+
+  replyToMessage String? @map("reply_to_message") @db.VarChar(255)
+  replyToUser    String? @map("reply_to_user") @db.VarChar(255)
+  rootMessageId  String? @map("root_message_id") @db.VarChar(255)
+
+  dao Dao @relation(fields: [daoId], references: [id], onDelete: Cascade)
+
+  @@index([rootMessageId])
+  @@index([createdAt])
+  @@map("t_forum_message")
+}
+
+model Contribution {
+  id          String                @id @db.VarChar(255)
+  daoId       String                @map("dao_id")
+  userAddress String                @map("user_address")
+  isValid     Boolean               @default(false) @map("is_valid")
+  githubEmail String                @map("github_email") @db.VarChar(255)
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @default(now()) @updatedAt @map("updated_at")
+  dao         Dao                   @relation(fields: [daoId], references: [id], onDelete: Cascade)
+  user        User?                 @relation(fields: [userAddress], references: [address], onDelete: Cascade)
+  histories   ContributionHistory[]
+
+  @@map("t_contribution")
+}
+
+model ContributionHistory {
+  id             String       @id @db.VarChar(255)
+  tag            String       @db.VarChar(255)
+  value          Decimal      @default(0) @db.Decimal(50, 18)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
+  contribution   Contribution @relation(fields: [contributionId], references: [id])
+  contributionId String       @map("contribution_id") @db.VarChar(255)
+  isOnChain      Boolean      @default(false) @map("is_on_chain")
+
+  @@map("t_contribution_history")
 }
