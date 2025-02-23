@@ -2,7 +2,7 @@ import { HydrateClient } from "~/trpc/server"
 import WalletButton from "~/components/auth/wallet-button"
 import { auth, signIn, signOut } from "~/server/auth"
 import {Octokit} from "octokit"
-import {getAccessToken, getGitHubClient, getGitLabClient} from "~/server/redis";
+import {getAccessToken, getGitHubClient, getGitLabClient} from "~/server/redis"
 
 export default async function Home() {
   const session = await auth()
