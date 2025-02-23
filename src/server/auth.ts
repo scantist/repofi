@@ -9,6 +9,7 @@ import {
 import { createUser } from "~/server/data/user"
 import GitHub from "next-auth/providers/github"
 import GitLab, { type GitLabProfile } from "next-auth/providers/gitlab"
+import {getRedis} from "~/server/redis"
 
 declare module "next-auth" {
   /**
@@ -46,7 +47,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session
     },
-    jwt: async ({ token}) => {
+    jwt: async ({ token, account }) => {
+      if (account?.access_token && token?.email) {
+        const redis = getRedis()
+        if (account.expires_at && account.created_at) {
+          const expire = account.expires_at - (account.created_at as number)
+          await redis.set(`AC_${account.provider}_${token.email}`.toUpperCase(), account.access_token, "EX", expire)
+        } else {
+          await redis.set(`AC_${account.provider}_${token.email}`.toUpperCase(), account.access_token)
+        }
+      }
       if (token.sub) {
         const [, , address] = token.sub.split(":")
         if (address) {
