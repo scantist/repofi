@@ -156,7 +156,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 export async function getApiKey(
   apiKey: string | null,
-): Promise<{ user: User } /*| { agent: Agent }*/ | null> {
+) {
   if (!apiKey) {
     return null
   }
