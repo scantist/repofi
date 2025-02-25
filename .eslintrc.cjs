@@ -40,7 +40,8 @@ const config = {
     ],
     "semi": ["error", "never"],
     "quotes": ["error", "double"],
-    "comma-dangle": ["error", "never"]
+    "comma-dangle": ["error", "never"],
+    "object-curly-spacing": ["warn", "always"]
   }
 }
 module.exports = config

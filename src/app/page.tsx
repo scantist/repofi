@@ -1,11 +1,11 @@
 import BannerWrapper from "~/components/banner-wrapper"
-import {Loader2, Sparkles} from "lucide-react"
+import { Loader2, Sparkles } from "lucide-react"
 import { type HomeSearchParams, homeSearchParamsSchema } from "~/lib/schema"
 import ListFilter from "~/app/_components/ListFilter"
 import { Suspense } from "react"
-import {getQueryClient} from "~/components/query-client/query-client"
-import {getDaoListAction} from "~/app/actions"
-import {dehydrate, HydrationBoundary} from "@tanstack/react-query"
+import { getQueryClient } from "~/components/query-client/query-client"
+import { getDaoListAction } from "~/app/actions"
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
 import Content from "~/app/_components/Content"
 
 const DaoListLoader = (props: HomeSearchParams) => {
@@ -41,12 +41,10 @@ const RootPage = async ({
   const params = homeSearchParamsSchema.parse(await searchParams)
 
   return (
-    <div className={"min-h-full mt-10"}>
+    <div className={"mt-10 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col"}>
         <div
-          className={
-            "flex w-full flex-row items-center justify-between gap-8"
-          }
+          className={"flex w-full flex-row items-center justify-between gap-8"}
         >
           <div className={"flex flex-col"}>
             <div className={"text-5xl leading-32 font-bold tracking-tight"}>
