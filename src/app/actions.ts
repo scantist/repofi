@@ -9,5 +9,8 @@ export const getDaoListAction = async ({
   starred
 }: HomeSearchParams & { page?: number }) => {
   // TODO: Add list
-  return []
+  return {
+    data: [],
+    nextPage: 1
+  }
 }
