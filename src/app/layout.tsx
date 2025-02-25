@@ -9,6 +9,21 @@ import { auth } from "~/server/auth"
 import { wagmiConfig } from "~/components/auth/config"
 import { headers } from "next/headers"
 import AuthProvider from "~/components/auth/auth-provider"
+import Link from "next/link"
+import LogoRepoIcon from "~/components/icons/logo-repo-icon"
+import Nav from "~/components/nav"
+import WalletButton from "~/components/auth/wallet-button"
+import { Space_Grotesk, Space_Mono } from "next/font/google"
+
+const sans = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans"
+})
+const mono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono"
+})
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -25,12 +40,36 @@ export default async function RootLayout({
     (await headers()).get("cookie"),
   )
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
+    <html lang="en" className={`dark ${GeistSans.variable}`}>
+      <body className={`font-sans ${sans.variable} ${mono.variable} dark`}>
         <QueryClientReactProvider>
           <TRPCReactProvider>
             <AuthProvider session={session} wagmiState={wagmiState}>
-              {children}
+              <div className={"relative flex min-h-screen w-full flex-col"}>
+                <header className="fixed top-0 z-30 mx-auto flex h-16 w-full items-center justify-between px-4">
+                  <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-4 pr-0">
+                    <Link href="/">
+                      <LogoRepoIcon className="text-primary size-12" />
+                    </Link>
+                    <div className="">
+                      <Nav />
+                    </div>
+                    <div className="hidden items-center gap-4 md:flex">
+                      <WalletButton />
+                    </div>
+                  </div>
+                  <div
+                    className="from-background pointer-events-none absolute inset-0 -z-10 h-[200%] bg-black/80 bg-gradient-to-b to-transparent backdrop-blur"
+                    style={{
+                      maskImage:
+                        "linear-gradient(to bottom, black 0% 50%, transparent 50% 100%)"
+                    }}
+                  ></div>
+                </header>
+                <main className="relative flex grow flex-col overflow-clip">
+                  {children}
+                </main>
+              </div>
             </AuthProvider>
           </TRPCReactProvider>
         </QueryClientReactProvider>
