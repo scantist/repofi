@@ -84,7 +84,7 @@ export const UserScalarFieldEnumSchema = z.enum(['address','name','email','refer
 
 export const DaoStarScalarFieldEnumSchema = z.enum(['daoId','userAddress']);
 
-export const DaoScalarFieldEnumSchema = z.enum(['id','name','ticker','type','description','avatar','createdAt','updatedAt','createdBy','walletAddress','tokenAddress','links','status','marketCapUsd','priceUsd']);
+export const DaoScalarFieldEnumSchema = z.enum(['id','name','ticker','type','description','avatar','createdAt','updatedAt','createdBy','walletAddress','tokenAddress','links','status','platform','marketCapUsd','priceUsd']);
 
 export const DaoTokenHolderScalarFieldEnumSchema = z.enum(['holderAddress','tokenAddress','tokenAmount']);
 
@@ -92,7 +92,7 @@ export const DaoInfoScalarFieldEnumSchema = z.enum(['tokenAddress','name','ticke
 
 export const ForumMessageScalarFieldEnumSchema = z.enum(['id','daoId','message','createdAt','createdBy','deletedAt','replyToMessage','replyToUser','rootMessageId']);
 
-export const ContributionScalarFieldEnumSchema = z.enum(['id','daoId','userAddress','isValid','githubEmail','createdAt','updatedAt']);
+export const ContributionScalarFieldEnumSchema = z.enum(['id','daoId','userAddress','isValid','platformId','createdAt','updatedAt']);
 
 export const ContributionHistoryScalarFieldEnumSchema = z.enum(['id','tag','value','createdAt','updatedAt','contributionId','isOnChain']);
 
@@ -117,6 +117,10 @@ export type DaoTypeType = `${z.infer<typeof DaoTypeSchema>}`
 export const DaoStatusSchema = z.enum(['INACTIVE','PRELAUNCH','LAUNCHED']);
 
 export type DaoStatusType = `${z.infer<typeof DaoStatusSchema>}`
+
+export const DaoPlatformSchema = z.enum(['GITHUB','GITLAB']);
+
+export type DaoPlatformType = `${z.infer<typeof DaoPlatformSchema>}`
 
 /////////////////////////////////////////
 // MODELS
@@ -171,6 +175,7 @@ export type DaoStar = z.infer<typeof DaoStarSchema>
 export const DaoSchema = z.object({
   type: DaoTypeSchema,
   status: DaoStatusSchema,
+  platform: DaoPlatformSchema,
   id: z.string(),
   name: z.string(),
   ticker: z.string(),
@@ -245,9 +250,9 @@ export type ForumMessage = z.infer<typeof ForumMessageSchema>
 export const ContributionSchema = z.object({
   id: z.string(),
   daoId: z.string(),
-  userAddress: z.string(),
+  userAddress: z.string().nullable(),
   isValid: z.boolean(),
-  githubEmail: z.string(),
+  platformId: z.string().nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
@@ -386,6 +391,7 @@ export const DaoSelectSchema: z.ZodType<Prisma.DaoSelect> = z.object({
   tokenAddress: z.boolean().optional(),
   links: z.boolean().optional(),
   status: z.boolean().optional(),
+  platform: z.boolean().optional(),
   marketCapUsd: z.boolean().optional(),
   priceUsd: z.boolean().optional(),
   creator: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
@@ -507,7 +513,7 @@ export const ContributionSelectSchema: z.ZodType<Prisma.ContributionSelect> = z.
   daoId: z.boolean().optional(),
   userAddress: z.boolean().optional(),
   isValid: z.boolean().optional(),
-  githubEmail: z.boolean().optional(),
+  platformId: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
@@ -777,6 +783,7 @@ export const DaoWhereInputSchema: z.ZodType<Prisma.DaoWhereInput> = z.object({
   tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   links: z.lazy(() => JsonFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumDaoStatusFilterSchema),z.lazy(() => DaoStatusSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => EnumDaoPlatformFilterSchema),z.lazy(() => DaoPlatformSchema) ]).optional(),
   marketCapUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   priceUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   creator: z.union([ z.lazy(() => UserScalarRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
@@ -800,6 +807,7 @@ export const DaoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoOrderByWithR
   tokenAddress: z.lazy(() => SortOrderSchema).optional(),
   links: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
+  platform: z.lazy(() => SortOrderSchema).optional(),
   marketCapUsd: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional(),
   creator: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
@@ -970,6 +978,7 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   createdBy: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   links: z.lazy(() => JsonFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumDaoStatusFilterSchema),z.lazy(() => DaoStatusSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => EnumDaoPlatformFilterSchema),z.lazy(() => DaoPlatformSchema) ]).optional(),
   marketCapUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   priceUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   creator: z.union([ z.lazy(() => UserScalarRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional(),
@@ -993,6 +1002,7 @@ export const DaoOrderByWithAggregationInputSchema: z.ZodType<Prisma.DaoOrderByWi
   tokenAddress: z.lazy(() => SortOrderSchema).optional(),
   links: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
+  platform: z.lazy(() => SortOrderSchema).optional(),
   marketCapUsd: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => DaoCountOrderByAggregateInputSchema).optional(),
@@ -1019,6 +1029,7 @@ export const DaoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.DaoScalar
   tokenAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   links: z.lazy(() => JsonWithAggregatesFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumDaoStatusWithAggregatesFilterSchema),z.lazy(() => DaoStatusSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => EnumDaoPlatformWithAggregatesFilterSchema),z.lazy(() => DaoPlatformSchema) ]).optional(),
   marketCapUsd: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   priceUsd: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
 }).strict();
@@ -1251,9 +1262,9 @@ export const ContributionWhereInputSchema: z.ZodType<Prisma.ContributionWhereInp
   NOT: z.union([ z.lazy(() => ContributionWhereInputSchema),z.lazy(() => ContributionWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   daoId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  githubEmail: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  platformId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   dao: z.union([ z.lazy(() => DaoScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional(),
@@ -1264,9 +1275,9 @@ export const ContributionWhereInputSchema: z.ZodType<Prisma.ContributionWhereInp
 export const ContributionOrderByWithRelationInputSchema: z.ZodType<Prisma.ContributionOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
-  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
-  githubEmail: z.lazy(() => SortOrderSchema).optional(),
+  platformId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   dao: z.lazy(() => DaoOrderByWithRelationInputSchema).optional(),
@@ -1283,9 +1294,9 @@ export const ContributionWhereUniqueInputSchema: z.ZodType<Prisma.ContributionWh
   OR: z.lazy(() => ContributionWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => ContributionWhereInputSchema),z.lazy(() => ContributionWhereInputSchema).array() ]).optional(),
   daoId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  githubEmail: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  platformId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   dao: z.union([ z.lazy(() => DaoScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional(),
@@ -1296,9 +1307,9 @@ export const ContributionWhereUniqueInputSchema: z.ZodType<Prisma.ContributionWh
 export const ContributionOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContributionOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
-  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
-  githubEmail: z.lazy(() => SortOrderSchema).optional(),
+  platformId: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => ContributionCountOrderByAggregateInputSchema).optional(),
@@ -1312,9 +1323,9 @@ export const ContributionScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.
   NOT: z.union([ z.lazy(() => ContributionScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributionScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   daoId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  userAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
-  githubEmail: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  platformId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -1579,6 +1590,7 @@ export const DaoCreateInputSchema: z.ZodType<Prisma.DaoCreateInput> = z.object({
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
@@ -1602,6 +1614,7 @@ export const DaoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoUncheckedCreateI
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
@@ -1621,6 +1634,7 @@ export const DaoUpdateInputSchema: z.ZodType<Prisma.DaoUpdateInput> = z.object({
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
@@ -1644,6 +1658,7 @@ export const DaoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateI
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
@@ -1665,6 +1680,7 @@ export const DaoCreateManyInputSchema: z.ZodType<Prisma.DaoCreateManyInput> = z.
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
 }).strict();
@@ -1681,6 +1697,7 @@ export const DaoUpdateManyMutationInputSchema: z.ZodType<Prisma.DaoUpdateManyMut
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -1699,6 +1716,7 @@ export const DaoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoUncheckedUpd
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -1936,7 +1954,7 @@ export const ForumMessageUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ForumM
 export const ContributionCreateInputSchema: z.ZodType<Prisma.ContributionCreateInput> = z.object({
   id: z.string(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   dao: z.lazy(() => DaoCreateNestedOneWithoutContributionsInputSchema),
@@ -1947,9 +1965,9 @@ export const ContributionCreateInputSchema: z.ZodType<Prisma.ContributionCreateI
 export const ContributionUncheckedCreateInputSchema: z.ZodType<Prisma.ContributionUncheckedCreateInput> = z.object({
   id: z.string(),
   daoId: z.string(),
-  userAddress: z.string(),
+  userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   histories: z.lazy(() => ContributionHistoryUncheckedCreateNestedManyWithoutContributionInputSchema).optional()
@@ -1958,7 +1976,7 @@ export const ContributionUncheckedCreateInputSchema: z.ZodType<Prisma.Contributi
 export const ContributionUpdateInputSchema: z.ZodType<Prisma.ContributionUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   dao: z.lazy(() => DaoUpdateOneRequiredWithoutContributionsNestedInputSchema).optional(),
@@ -1969,9 +1987,9 @@ export const ContributionUpdateInputSchema: z.ZodType<Prisma.ContributionUpdateI
 export const ContributionUncheckedUpdateInputSchema: z.ZodType<Prisma.ContributionUncheckedUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   histories: z.lazy(() => ContributionHistoryUncheckedUpdateManyWithoutContributionNestedInputSchema).optional()
@@ -1980,9 +1998,9 @@ export const ContributionUncheckedUpdateInputSchema: z.ZodType<Prisma.Contributi
 export const ContributionCreateManyInputSchema: z.ZodType<Prisma.ContributionCreateManyInput> = z.object({
   id: z.string(),
   daoId: z.string(),
-  userAddress: z.string(),
+  userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -1990,7 +2008,7 @@ export const ContributionCreateManyInputSchema: z.ZodType<Prisma.ContributionCre
 export const ContributionUpdateManyMutationInputSchema: z.ZodType<Prisma.ContributionUpdateManyMutationInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -1998,9 +2016,9 @@ export const ContributionUpdateManyMutationInputSchema: z.ZodType<Prisma.Contrib
 export const ContributionUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContributionUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -2371,6 +2389,13 @@ export const EnumDaoStatusFilterSchema: z.ZodType<Prisma.EnumDaoStatusFilter> = 
   not: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => NestedEnumDaoStatusFilterSchema) ]).optional(),
 }).strict();
 
+export const EnumDaoPlatformFilterSchema: z.ZodType<Prisma.EnumDaoPlatformFilter> = z.object({
+  equals: z.lazy(() => DaoPlatformSchema).optional(),
+  in: z.lazy(() => DaoPlatformSchema).array().optional(),
+  notIn: z.lazy(() => DaoPlatformSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => NestedEnumDaoPlatformFilterSchema) ]).optional(),
+}).strict();
+
 export const DecimalFilterSchema: z.ZodType<Prisma.DecimalFilter> = z.object({
   equals: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   in: z.union([z.number().array(),z.string().array(),z.instanceof(Decimal).array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
@@ -2411,6 +2436,7 @@ export const DaoCountOrderByAggregateInputSchema: z.ZodType<Prisma.DaoCountOrder
   tokenAddress: z.lazy(() => SortOrderSchema).optional(),
   links: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
+  platform: z.lazy(() => SortOrderSchema).optional(),
   marketCapUsd: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2433,6 +2459,7 @@ export const DaoMaxOrderByAggregateInputSchema: z.ZodType<Prisma.DaoMaxOrderByAg
   walletAddress: z.lazy(() => SortOrderSchema).optional(),
   tokenAddress: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
+  platform: z.lazy(() => SortOrderSchema).optional(),
   marketCapUsd: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2450,6 +2477,7 @@ export const DaoMinOrderByAggregateInputSchema: z.ZodType<Prisma.DaoMinOrderByAg
   walletAddress: z.lazy(() => SortOrderSchema).optional(),
   tokenAddress: z.lazy(() => SortOrderSchema).optional(),
   status: z.lazy(() => SortOrderSchema).optional(),
+  platform: z.lazy(() => SortOrderSchema).optional(),
   marketCapUsd: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2497,6 +2525,16 @@ export const EnumDaoStatusWithAggregatesFilterSchema: z.ZodType<Prisma.EnumDaoSt
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumDaoStatusFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumDaoStatusFilterSchema).optional()
+}).strict();
+
+export const EnumDaoPlatformWithAggregatesFilterSchema: z.ZodType<Prisma.EnumDaoPlatformWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => DaoPlatformSchema).optional(),
+  in: z.lazy(() => DaoPlatformSchema).array().optional(),
+  notIn: z.lazy(() => DaoPlatformSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => NestedEnumDaoPlatformWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumDaoPlatformFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumDaoPlatformFilterSchema).optional()
 }).strict();
 
 export const DecimalWithAggregatesFilterSchema: z.ZodType<Prisma.DecimalWithAggregatesFilter> = z.object({
@@ -2740,7 +2778,7 @@ export const ContributionCountOrderByAggregateInputSchema: z.ZodType<Prisma.Cont
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.lazy(() => SortOrderSchema).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
-  githubEmail: z.lazy(() => SortOrderSchema).optional(),
+  platformId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2750,7 +2788,7 @@ export const ContributionMaxOrderByAggregateInputSchema: z.ZodType<Prisma.Contri
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.lazy(() => SortOrderSchema).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
-  githubEmail: z.lazy(() => SortOrderSchema).optional(),
+  platformId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -2760,7 +2798,7 @@ export const ContributionMinOrderByAggregateInputSchema: z.ZodType<Prisma.Contri
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.lazy(() => SortOrderSchema).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
-  githubEmail: z.lazy(() => SortOrderSchema).optional(),
+  platformId: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -3051,6 +3089,10 @@ export const EnumDaoTypeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumD
 
 export const EnumDaoStatusFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumDaoStatusFieldUpdateOperationsInput> = z.object({
   set: z.lazy(() => DaoStatusSchema).optional()
+}).strict();
+
+export const EnumDaoPlatformFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumDaoPlatformFieldUpdateOperationsInput> = z.object({
+  set: z.lazy(() => DaoPlatformSchema).optional()
 }).strict();
 
 export const DecimalFieldUpdateOperationsInputSchema: z.ZodType<Prisma.DecimalFieldUpdateOperationsInput> = z.object({
@@ -3534,6 +3576,13 @@ export const NestedEnumDaoStatusFilterSchema: z.ZodType<Prisma.NestedEnumDaoStat
   not: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => NestedEnumDaoStatusFilterSchema) ]).optional(),
 }).strict();
 
+export const NestedEnumDaoPlatformFilterSchema: z.ZodType<Prisma.NestedEnumDaoPlatformFilter> = z.object({
+  equals: z.lazy(() => DaoPlatformSchema).optional(),
+  in: z.lazy(() => DaoPlatformSchema).array().optional(),
+  notIn: z.lazy(() => DaoPlatformSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => NestedEnumDaoPlatformFilterSchema) ]).optional(),
+}).strict();
+
 export const NestedDecimalFilterSchema: z.ZodType<Prisma.NestedDecimalFilter> = z.object({
   equals: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   in: z.union([z.number().array(),z.string().array(),z.instanceof(Decimal).array(),z.instanceof(Prisma.Decimal).array(),DecimalJsLikeSchema.array(),]).refine((v) => Array.isArray(v) && (v as any[]).every((v) => isValidDecimalInput(v)), { message: 'Must be a Decimal' }).optional(),
@@ -3580,6 +3629,16 @@ export const NestedEnumDaoStatusWithAggregatesFilterSchema: z.ZodType<Prisma.Nes
   _count: z.lazy(() => NestedIntFilterSchema).optional(),
   _min: z.lazy(() => NestedEnumDaoStatusFilterSchema).optional(),
   _max: z.lazy(() => NestedEnumDaoStatusFilterSchema).optional()
+}).strict();
+
+export const NestedEnumDaoPlatformWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumDaoPlatformWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => DaoPlatformSchema).optional(),
+  in: z.lazy(() => DaoPlatformSchema).array().optional(),
+  notIn: z.lazy(() => DaoPlatformSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => NestedEnumDaoPlatformWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumDaoPlatformFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumDaoPlatformFilterSchema).optional()
 }).strict();
 
 export const NestedDecimalWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDecimalWithAggregatesFilter> = z.object({
@@ -3695,6 +3754,7 @@ export const DaoCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoCreateWitho
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
@@ -3716,6 +3776,7 @@ export const DaoUncheckedCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
@@ -3736,7 +3797,7 @@ export const DaoCreateManyCreatorInputEnvelopeSchema: z.ZodType<Prisma.DaoCreate
 export const ContributionCreateWithoutUserInputSchema: z.ZodType<Prisma.ContributionCreateWithoutUserInput> = z.object({
   id: z.string(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   dao: z.lazy(() => DaoCreateNestedOneWithoutContributionsInputSchema),
@@ -3747,7 +3808,7 @@ export const ContributionUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma
   id: z.string(),
   daoId: z.string(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   histories: z.lazy(() => ContributionHistoryUncheckedCreateNestedManyWithoutContributionInputSchema).optional()
@@ -3820,6 +3881,7 @@ export const DaoScalarWhereInputSchema: z.ZodType<Prisma.DaoScalarWhereInput> = 
   tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   links: z.lazy(() => JsonFilterSchema).optional(),
   status: z.union([ z.lazy(() => EnumDaoStatusFilterSchema),z.lazy(() => DaoStatusSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => EnumDaoPlatformFilterSchema),z.lazy(() => DaoPlatformSchema) ]).optional(),
   marketCapUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   priceUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
 }).strict();
@@ -3846,9 +3908,9 @@ export const ContributionScalarWhereInputSchema: z.ZodType<Prisma.ContributionSc
   NOT: z.union([ z.lazy(() => ContributionScalarWhereInputSchema),z.lazy(() => ContributionScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   daoId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  githubEmail: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  platformId: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
@@ -3865,6 +3927,7 @@ export const DaoCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateWithout
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
@@ -3887,6 +3950,7 @@ export const DaoUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUnch
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
@@ -3952,6 +4016,7 @@ export const DaoUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUpdateWithout
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
@@ -3974,6 +4039,7 @@ export const DaoUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUnch
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
@@ -4136,7 +4202,7 @@ export const DaoStarCreateManyDaoInputEnvelopeSchema: z.ZodType<Prisma.DaoStarCr
 export const ContributionCreateWithoutDaoInputSchema: z.ZodType<Prisma.ContributionCreateWithoutDaoInput> = z.object({
   id: z.string(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutContributionsInputSchema).optional(),
@@ -4145,9 +4211,9 @@ export const ContributionCreateWithoutDaoInputSchema: z.ZodType<Prisma.Contribut
 
 export const ContributionUncheckedCreateWithoutDaoInputSchema: z.ZodType<Prisma.ContributionUncheckedCreateWithoutDaoInput> = z.object({
   id: z.string(),
-  userAddress: z.string(),
+  userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   histories: z.lazy(() => ContributionHistoryUncheckedCreateNestedManyWithoutContributionInputSchema).optional()
@@ -4392,6 +4458,7 @@ export const DaoCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoCreateWithoutI
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
@@ -4413,6 +4480,7 @@ export const DaoUncheckedCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUnche
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
@@ -4468,6 +4536,7 @@ export const DaoUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUpdateWithoutI
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
@@ -4489,6 +4558,7 @@ export const DaoUncheckedUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUnche
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
@@ -4533,6 +4603,7 @@ export const DaoCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateWith
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
@@ -4555,6 +4626,7 @@ export const DaoUncheckedCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
@@ -4589,6 +4661,7 @@ export const DaoUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUpdateWith
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
@@ -4611,6 +4684,7 @@ export const DaoUncheckedUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
@@ -4629,6 +4703,7 @@ export const DaoCreateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoCreat
   walletAddress: z.string().optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
@@ -4651,6 +4726,7 @@ export const DaoUncheckedCreateWithoutContributionsInputSchema: z.ZodType<Prisma
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
@@ -4744,6 +4820,7 @@ export const DaoUpdateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoUpdat
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
@@ -4766,6 +4843,7 @@ export const DaoUncheckedUpdateWithoutContributionsInputSchema: z.ZodType<Prisma
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
@@ -4841,7 +4919,7 @@ export const ContributionHistoryScalarWhereInputSchema: z.ZodType<Prisma.Contrib
 export const ContributionCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributionCreateWithoutHistoriesInput> = z.object({
   id: z.string(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   dao: z.lazy(() => DaoCreateNestedOneWithoutContributionsInputSchema),
@@ -4851,9 +4929,9 @@ export const ContributionCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.Con
 export const ContributionUncheckedCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributionUncheckedCreateWithoutHistoriesInput> = z.object({
   id: z.string(),
   daoId: z.string(),
-  userAddress: z.string(),
+  userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -4877,7 +4955,7 @@ export const ContributionUpdateToOneWithWhereWithoutHistoriesInputSchema: z.ZodT
 export const ContributionUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributionUpdateWithoutHistoriesInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   dao: z.lazy(() => DaoUpdateOneRequiredWithoutContributionsNestedInputSchema).optional(),
@@ -4887,9 +4965,9 @@ export const ContributionUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.Con
 export const ContributionUncheckedUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributionUncheckedUpdateWithoutHistoriesInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4911,6 +4989,7 @@ export const DaoCreateManyCreatorInputSchema: z.ZodType<Prisma.DaoCreateManyCrea
   tokenAddress: z.string(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
 }).strict();
@@ -4919,7 +4998,7 @@ export const ContributionCreateManyUserInputSchema: z.ZodType<Prisma.Contributio
   id: z.string(),
   daoId: z.string(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -4948,6 +5027,7 @@ export const DaoUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUpdateWitho
   walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
@@ -4969,6 +5049,7 @@ export const DaoUncheckedUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
@@ -4989,6 +5070,7 @@ export const DaoUncheckedUpdateManyWithoutCreatorInputSchema: z.ZodType<Prisma.D
   tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
   status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -4996,7 +5078,7 @@ export const DaoUncheckedUpdateManyWithoutCreatorInputSchema: z.ZodType<Prisma.D
 export const ContributionUpdateWithoutUserInputSchema: z.ZodType<Prisma.ContributionUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   dao: z.lazy(() => DaoUpdateOneRequiredWithoutContributionsNestedInputSchema).optional(),
@@ -5007,7 +5089,7 @@ export const ContributionUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   histories: z.lazy(() => ContributionHistoryUncheckedUpdateManyWithoutContributionNestedInputSchema).optional()
@@ -5017,7 +5099,7 @@ export const ContributionUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Pr
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
@@ -5039,9 +5121,9 @@ export const DaoStarCreateManyDaoInputSchema: z.ZodType<Prisma.DaoStarCreateMany
 
 export const ContributionCreateManyDaoInputSchema: z.ZodType<Prisma.ContributionCreateManyDaoInput> = z.object({
   id: z.string(),
-  userAddress: z.string(),
+  userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
-  githubEmail: z.string(),
+  platformId: z.string().optional().nullable(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
@@ -5094,7 +5176,7 @@ export const DaoStarUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.D
 export const ContributionUpdateWithoutDaoInputSchema: z.ZodType<Prisma.ContributionUpdateWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   user: z.lazy(() => UserUpdateOneWithoutContributionsNestedInputSchema).optional(),
@@ -5103,9 +5185,9 @@ export const ContributionUpdateWithoutDaoInputSchema: z.ZodType<Prisma.Contribut
 
 export const ContributionUncheckedUpdateWithoutDaoInputSchema: z.ZodType<Prisma.ContributionUncheckedUpdateWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   histories: z.lazy(() => ContributionHistoryUncheckedUpdateManyWithoutContributionNestedInputSchema).optional()
@@ -5113,9 +5195,9 @@ export const ContributionUncheckedUpdateWithoutDaoInputSchema: z.ZodType<Prisma.
 
 export const ContributionUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.ContributionUncheckedUpdateManyWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  githubEmail: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  platformId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
