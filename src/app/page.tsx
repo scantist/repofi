@@ -1,7 +1,31 @@
 import BannerWrapper from "~/components/banner-wrapper"
-import { Sparkles } from "lucide-react"
-import {homeSearchParamsSchema} from "~/lib/schema"
+import {Loader2, Sparkles} from "lucide-react"
+import { type HomeSearchParams, homeSearchParamsSchema } from "~/lib/schema"
 import ListFilter from "~/app/_components/ListFilter"
+import { Suspense } from "react"
+import {getQueryClient} from "~/components/query-client/query-client"
+import {getDaoListAction} from "~/app/actions"
+import {dehydrate, HydrationBoundary} from "@tanstack/react-query"
+import Content from "~/app/_components/Content"
+
+const DaoListLoader = (props: HomeSearchParams) => {
+  const queryClient = getQueryClient()
+  void queryClient.prefetchInfiniteQuery({
+    queryKey: ["dao-list", props],
+    queryFn: ({ pageParam }) =>
+      getDaoListAction({
+        page: pageParam ?? 0,
+        ...props
+      }),
+    initialPageParam: 0
+  })
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Content {...props} />
+    </HydrationBoundary>
+  )
+}
 
 const RootPage = async ({
   searchParams
@@ -45,6 +69,15 @@ const RootPage = async ({
           </div>
         </div>
         <ListFilter {...params} />
+        <Suspense
+          fallback={
+            <div className="flex min-h-96 items-center justify-center">
+              <Loader2 className="size-10 animate-spin" />
+            </div>
+          }
+        >
+          <DaoListLoader {...params} />
+        </Suspense>
       </BannerWrapper>
     </div>
   )
