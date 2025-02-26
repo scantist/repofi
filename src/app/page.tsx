@@ -44,13 +44,13 @@ const RootPage = async ({
     <div className={"mt-10 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col"}>
         <div
-          className={"flex w-full flex-row items-center justify-between gap-8"}
+          className={"flex w-full flex-col md:flex-row items-center justify-between gap-8"}
         >
           <div className={"flex flex-col"}>
-            <div className={"text-5xl leading-32 font-bold tracking-tight"}>
+            <div className={"text-5xl leading-32 font-bold tracking-tight text-center md:text-left"}>
               REPO Protocol
             </div>
-            <div className={"max-w-2/3"}>
+            <div className={"w-full md:max-w-2/3"}>
               Welcome to the REPO Protocol Launchpad. Vote on the best biotech
               DAOs to join the ecosystem, and participate in bioDAO token
               auctions. Discover what&#39;s happening in the REPO Protocol

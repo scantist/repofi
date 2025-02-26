@@ -1,17 +1,18 @@
-import React, {type FC} from "react"
-import {cn} from "~/lib/utils"
+import React, { type FC } from "react"
+import { cn } from "~/lib/utils"
 
 type Props = {
   children: React.ReactNode,
   className?: string,
 }
 
-const BannerWrapper: FC<Props> = ({children, className}) => {
+const BannerWrapper: FC<Props> = ({ children, className }) => {
   return (
     <div
       style={{
         background: "url('http://downloads.echocow.cn/banner.png')",
-        backgroundSize: "cover"
+        backgroundSize: "cover",
+        backgroundPosition: "center"
       }}
     >
       <div
