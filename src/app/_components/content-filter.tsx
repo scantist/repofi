@@ -11,9 +11,9 @@ import SearchInput from "~/components/ui/search-input"
 import { type HomeSearchParams } from "~/lib/schema"
 import { useAuth } from "~/components/auth/auth-context"
 import Switcher from "~/components/ui/switcher"
-import Sorter from "~/app/_components/ListFilterSort"
+import Sorter from "~/app/_components/content-filter-sort"
 
-const ListFilter: FC<HomeSearchParams> = ({
+const ContentFilter: FC<HomeSearchParams> = ({
   onlyLaunched,
   owned,
   starred,
@@ -103,4 +103,4 @@ const ListFilter: FC<HomeSearchParams> = ({
     </div>
   )
 }
-export default ListFilter
+export default ContentFilter

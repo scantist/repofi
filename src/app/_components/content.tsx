@@ -6,6 +6,7 @@ import { getDaoListAction } from "~/app/actions"
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query"
 import { Fragment, useEffect, useMemo } from "react"
 import { useInView } from "react-intersection-observer"
+import DaoCard from "~/app/_components/dao-card"
 
 const Content: FC<HomeSearchParams> = (props) => {
   const { ref, inView } = useInView()
@@ -45,10 +46,7 @@ const Content: FC<HomeSearchParams> = (props) => {
         {data.pages.map((data, pageIndex) => {
           return (
             <Fragment key={pageIndex}>
-              data
-              {/*{data.data.map((agent) => (*/}
-              {/*  <div>test</div>*/}
-              {/*))}*/}
+              <DaoCard />
             </Fragment>
           )
         })}

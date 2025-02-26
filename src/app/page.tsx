@@ -1,12 +1,12 @@
 import BannerWrapper from "~/components/banner-wrapper"
 import { Loader2, Sparkles } from "lucide-react"
 import { type HomeSearchParams, homeSearchParamsSchema } from "~/lib/schema"
-import ListFilter from "~/app/_components/ListFilter"
+import ContentFilter from "~/app/_components/content-filter"
 import { Suspense } from "react"
 import { getQueryClient } from "~/components/query-client/query-client"
 import { getDaoListAction } from "~/app/actions"
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import Content from "~/app/_components/Content"
+import Content from "~/app/_components/content"
 
 const DaoListLoader = (props: HomeSearchParams) => {
   const queryClient = getQueryClient()
@@ -66,7 +66,7 @@ const RootPage = async ({
             <div>Create Your Dao</div>
           </div>
         </div>
-        <ListFilter {...params} />
+        <ContentFilter {...params} />
       </BannerWrapper>
       <div className={"mx-auto flex min-h-full w-full max-w-7xl gap-10 px-4 pt-10 pb-10"}>
         <Suspense
