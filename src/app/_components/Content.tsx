@@ -40,7 +40,7 @@ const Content: FC<HomeSearchParams> = (props) => {
   }, [data])
 
   return (
-    <div className="flex flex-col gap-10 pb-20">
+    <div className="flex flex-col gap-10 pb-20 w-full ">
       <div className="relative grid grid-cols-1 gap-4 md:grid-cols-2 md:px-2 xl:grid-cols-3">
         {data.pages.map((data, pageIndex) => {
           return (
@@ -58,7 +58,7 @@ const Content: FC<HomeSearchParams> = (props) => {
         className="flex items-center justify-center gap-2 text-muted-foreground"
       >
         {!hasData ? (
-          <p>It looks like there is no agent yet.</p>
+          <p>It looks like there is no dao yet.</p>
         ) : isFetchingNextPage ? (
           <p>Loading more...</p>
         ) : !hasNextPage && data.pages.length === 1 ? (

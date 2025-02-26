@@ -28,6 +28,7 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@radix-ui/react-switch": "^1.1.3",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@reown/appkit": "^1.6.8",
     "@reown/appkit-adapter-wagmi": "^1.6.8",
     "@reown/appkit-siwe": "^1.6.8",

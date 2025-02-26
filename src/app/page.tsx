@@ -67,6 +67,8 @@ const RootPage = async ({
           </div>
         </div>
         <ListFilter {...params} />
+      </BannerWrapper>
+      <div className={"mx-auto flex min-h-full w-full max-w-7xl gap-10 px-4 pt-10 pb-10"}>
         <Suspense
           fallback={
             <div className="flex min-h-96 items-center justify-center">
@@ -76,7 +78,7 @@ const RootPage = async ({
         >
           <DaoListLoader {...params} />
         </Suspense>
-      </BannerWrapper>
+      </div>
     </div>
   )
 }
