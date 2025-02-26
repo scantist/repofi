@@ -84,7 +84,7 @@ export const UserScalarFieldEnumSchema = z.enum(['address','name','email','refer
 
 export const DaoStarScalarFieldEnumSchema = z.enum(['daoId','userAddress']);
 
-export const DaoScalarFieldEnumSchema = z.enum(['id','name','ticker','type','description','avatar','createdAt','updatedAt','createdBy','walletAddress','tokenAddress','links','status','platform','marketCapUsd','priceUsd']);
+export const DaoScalarFieldEnumSchema = z.enum(['id','name','url','ticker','type','description','avatar','createdAt','updatedAt','createdBy','walletAddress','tokenAddress','links','status','platform','marketCapUsd','priceUsd']);
 
 export const DaoTokenHolderScalarFieldEnumSchema = z.enum(['holderAddress','tokenAddress','tokenAmount']);
 
@@ -114,7 +114,7 @@ export const DaoTypeSchema = z.enum(['CODE','MODEL','DATASET']);
 
 export type DaoTypeType = `${z.infer<typeof DaoTypeSchema>}`
 
-export const DaoStatusSchema = z.enum(['INACTIVE','PRELAUNCH','LAUNCHED']);
+export const DaoStatusSchema = z.enum(['INACTIVE','LAUNCHING','LAUNCHED']);
 
 export type DaoStatusType = `${z.infer<typeof DaoStatusSchema>}`
 
@@ -178,6 +178,7 @@ export const DaoSchema = z.object({
   platform: DaoPlatformSchema,
   id: z.string(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   description: z.string(),
   avatar: z.string(),
@@ -380,6 +381,7 @@ export const DaoCountOutputTypeSelectSchema: z.ZodType<Prisma.DaoCountOutputType
 export const DaoSelectSchema: z.ZodType<Prisma.DaoSelect> = z.object({
   id: z.boolean().optional(),
   name: z.boolean().optional(),
+  url: z.boolean().optional(),
   ticker: z.boolean().optional(),
   type: z.boolean().optional(),
   description: z.boolean().optional(),
@@ -772,6 +774,7 @@ export const DaoWhereInputSchema: z.ZodType<Prisma.DaoWhereInput> = z.object({
   NOT: z.union([ z.lazy(() => DaoWhereInputSchema),z.lazy(() => DaoWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   ticker: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   type: z.union([ z.lazy(() => EnumDaoTypeFilterSchema),z.lazy(() => DaoTypeSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
@@ -796,6 +799,7 @@ export const DaoWhereInputSchema: z.ZodType<Prisma.DaoWhereInput> = z.object({
 export const DaoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  url: z.lazy(() => SortOrderSchema).optional(),
   ticker: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
@@ -821,6 +825,7 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   z.object({
     id: z.string(),
     name: z.string(),
+    url: z.string(),
     ticker: z.string(),
     walletAddress: z.string(),
     tokenAddress: z.string()
@@ -828,6 +833,57 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   z.object({
     id: z.string(),
     name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    url: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
     ticker: z.string(),
     walletAddress: z.string(),
   }),
@@ -864,6 +920,50 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   }),
   z.object({
     id: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    id: z.string(),
+    url: z.string(),
+  }),
+  z.object({
+    id: z.string(),
     ticker: z.string(),
     walletAddress: z.string(),
     tokenAddress: z.string(),
@@ -900,6 +1000,50 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   }),
   z.object({
     name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    ticker: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    name: z.string(),
+    url: z.string(),
+  }),
+  z.object({
+    name: z.string(),
     ticker: z.string(),
     walletAddress: z.string(),
     tokenAddress: z.string(),
@@ -933,6 +1077,42 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   }),
   z.object({
     name: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    ticker: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    ticker: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    ticker: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    walletAddress: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    walletAddress: z.string(),
+  }),
+  z.object({
+    url: z.string(),
+    tokenAddress: z.string(),
+  }),
+  z.object({
+    url: z.string(),
   }),
   z.object({
     ticker: z.string(),
@@ -964,6 +1144,7 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
 .and(z.object({
   id: z.string().optional(),
   name: z.string().optional(),
+  url: z.string().optional(),
   ticker: z.string().optional(),
   walletAddress: z.string().optional(),
   tokenAddress: z.string().optional(),
@@ -991,6 +1172,7 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
 export const DaoOrderByWithAggregationInputSchema: z.ZodType<Prisma.DaoOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  url: z.lazy(() => SortOrderSchema).optional(),
   ticker: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
@@ -1018,6 +1200,7 @@ export const DaoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.DaoScalar
   NOT: z.union([ z.lazy(() => DaoScalarWhereWithAggregatesInputSchema),z.lazy(() => DaoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  url: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   ticker: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   type: z.union([ z.lazy(() => EnumDaoTypeWithAggregatesFilterSchema),z.lazy(() => DaoTypeSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
@@ -1581,6 +1764,7 @@ export const DaoStarUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoStarUnch
 export const DaoCreateInputSchema: z.ZodType<Prisma.DaoCreateInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -1603,6 +1787,7 @@ export const DaoCreateInputSchema: z.ZodType<Prisma.DaoCreateInput> = z.object({
 export const DaoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoUncheckedCreateInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -1625,6 +1810,7 @@ export const DaoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoUncheckedCreateI
 export const DaoUpdateInputSchema: z.ZodType<Prisma.DaoUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1647,6 +1833,7 @@ export const DaoUpdateInputSchema: z.ZodType<Prisma.DaoUpdateInput> = z.object({
 export const DaoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1669,6 +1856,7 @@ export const DaoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateI
 export const DaoCreateManyInputSchema: z.ZodType<Prisma.DaoCreateManyInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -1688,6 +1876,7 @@ export const DaoCreateManyInputSchema: z.ZodType<Prisma.DaoCreateManyInput> = z.
 export const DaoUpdateManyMutationInputSchema: z.ZodType<Prisma.DaoUpdateManyMutationInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -1705,6 +1894,7 @@ export const DaoUpdateManyMutationInputSchema: z.ZodType<Prisma.DaoUpdateManyMut
 export const DaoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2425,6 +2615,7 @@ export const ForumMessageOrderByRelationAggregateInputSchema: z.ZodType<Prisma.F
 export const DaoCountOrderByAggregateInputSchema: z.ZodType<Prisma.DaoCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  url: z.lazy(() => SortOrderSchema).optional(),
   ticker: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
@@ -2449,6 +2640,7 @@ export const DaoAvgOrderByAggregateInputSchema: z.ZodType<Prisma.DaoAvgOrderByAg
 export const DaoMaxOrderByAggregateInputSchema: z.ZodType<Prisma.DaoMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  url: z.lazy(() => SortOrderSchema).optional(),
   ticker: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
@@ -2467,6 +2659,7 @@ export const DaoMaxOrderByAggregateInputSchema: z.ZodType<Prisma.DaoMaxOrderByAg
 export const DaoMinOrderByAggregateInputSchema: z.ZodType<Prisma.DaoMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
+  url: z.lazy(() => SortOrderSchema).optional(),
   ticker: z.lazy(() => SortOrderSchema).optional(),
   type: z.lazy(() => SortOrderSchema).optional(),
   description: z.lazy(() => SortOrderSchema).optional(),
@@ -3745,6 +3938,7 @@ export const DaoStarCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.DaoStarC
 export const DaoCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoCreateWithoutCreatorInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -3766,6 +3960,7 @@ export const DaoCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoCreateWitho
 export const DaoUncheckedCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutCreatorInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -3870,6 +4065,7 @@ export const DaoScalarWhereInputSchema: z.ZodType<Prisma.DaoScalarWhereInput> = 
   NOT: z.union([ z.lazy(() => DaoScalarWhereInputSchema),z.lazy(() => DaoScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  url: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   ticker: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   type: z.union([ z.lazy(() => EnumDaoTypeFilterSchema),z.lazy(() => DaoTypeSchema) ]).optional(),
   description: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
@@ -3918,6 +4114,7 @@ export const ContributionScalarWhereInputSchema: z.ZodType<Prisma.ContributionSc
 export const DaoCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateWithoutStarsInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -3939,6 +4136,7 @@ export const DaoCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateWithout
 export const DaoUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutStarsInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4007,6 +4205,7 @@ export const DaoUpdateToOneWithWhereWithoutStarsInputSchema: z.ZodType<Prisma.Da
 export const DaoUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutStarsInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4028,6 +4227,7 @@ export const DaoUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUpdateWithout
 export const DaoUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutStarsInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4449,6 +4649,7 @@ export const DaoInfoUncheckedUpdateWithoutHoldersInputSchema: z.ZodType<Prisma.D
 export const DaoCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoCreateWithoutInfoInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4470,6 +4671,7 @@ export const DaoCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoCreateWithoutI
 export const DaoUncheckedCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutInfoInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4527,6 +4729,7 @@ export const DaoUpdateToOneWithWhereWithoutInfoInputSchema: z.ZodType<Prisma.Dao
 export const DaoUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUpdateWithoutInfoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4548,6 +4751,7 @@ export const DaoUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUpdateWithoutI
 export const DaoUncheckedUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutInfoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4594,6 +4798,7 @@ export const DaoTokenHolderScalarWhereInputSchema: z.ZodType<Prisma.DaoTokenHold
 export const DaoCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateWithoutMessagesInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4615,6 +4820,7 @@ export const DaoCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateWith
 export const DaoUncheckedCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutMessagesInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4652,6 +4858,7 @@ export const DaoUpdateToOneWithWhereWithoutMessagesInputSchema: z.ZodType<Prisma
 export const DaoUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUpdateWithoutMessagesInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4673,6 +4880,7 @@ export const DaoUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUpdateWith
 export const DaoUncheckedUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutMessagesInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4694,6 +4902,7 @@ export const DaoUncheckedUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
 export const DaoCreateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoCreateWithoutContributionsInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4715,6 +4924,7 @@ export const DaoCreateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoCreat
 export const DaoUncheckedCreateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutContributionsInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -4811,6 +5021,7 @@ export const DaoUpdateToOneWithWhereWithoutContributionsInputSchema: z.ZodType<P
 export const DaoUpdateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutContributionsInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4832,6 +5043,7 @@ export const DaoUpdateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoUpdat
 export const DaoUncheckedUpdateWithoutContributionsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutContributionsInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -4979,6 +5191,7 @@ export const DaoStarCreateManyUserInputSchema: z.ZodType<Prisma.DaoStarCreateMan
 export const DaoCreateManyCreatorInputSchema: z.ZodType<Prisma.DaoCreateManyCreatorInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
+  url: z.string(),
   ticker: z.string(),
   type: z.lazy(() => DaoTypeSchema),
   description: z.string(),
@@ -5018,6 +5231,7 @@ export const DaoStarUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.
 export const DaoUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUpdateWithoutCreatorInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5039,6 +5253,7 @@ export const DaoUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUpdateWitho
 export const DaoUncheckedUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutCreatorInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5060,6 +5275,7 @@ export const DaoUncheckedUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
 export const DaoUncheckedUpdateManyWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateManyWithoutCreatorInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
   description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),

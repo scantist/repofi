@@ -1,5 +1,10 @@
 import { z } from "zod"
 
+export const pageableSchema = z.object({
+  page: z.number().optional().default(1),
+  size: z.number().optional().default(12)
+})
+
 export const homeSearchParamsSchema = z.object({
   search: z.string().optional(),
   orderBy: z
@@ -22,3 +27,4 @@ export const homeSearchParamsSchema = z.object({
 })
 
 export type HomeSearchParams = z.infer<typeof homeSearchParamsSchema>;
+export type Pageable = z.infer<typeof pageableSchema>;

@@ -64,7 +64,7 @@ enum DaoType {
 
 enum DaoStatus {
   INACTIVE
-  PRELAUNCH
+  LAUNCHING
   LAUNCHED
 }
 
@@ -87,6 +87,7 @@ model DaoStar {
 model Dao {
   id            String      @id @default(dbgenerated("gen_random_uuid()")) @map("id")
   name          String      @unique @db.VarChar(255)
+  url           String      @unique @db.VarChar(255)
   ticker        String      @unique @db.VarChar(255)
   type          DaoType     @map("type")
   description   String      @db.Text
@@ -97,7 +98,7 @@ model Dao {
   walletAddress String?     @unique @map("wallet_address") @db.VarChar(255)
   tokenAddress  String      @unique @map("token_address") @db.VarChar(255)
   links         Json        @default("[]")
-  status        DaoStatus   @default(PRELAUNCH) @map("status")
+  status        DaoStatus   @default(LAUNCHING) @map("status")
   platform      DaoPlatform @default(GITHUB) @map("platform")
   marketCapUsd  Decimal     @default(0) @map("market_cap_usd") @db.Decimal(50, 18)
   priceUsd      Decimal     @default(0) @map("price_usd") @db.Decimal(50, 18)
