@@ -14,7 +14,7 @@ const Content: FC<HomeSearchParams> = (props) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     useSuspenseInfiniteQuery({
       initialPageParam: 0,
-      queryKey: ["agents-list", props],
+      queryKey: ["dao-list", props],
       queryFn: ({ pageParam }) =>
         getDaoListAction({
           page: pageParam ?? 0,
