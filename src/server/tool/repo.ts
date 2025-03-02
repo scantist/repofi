@@ -1,4 +1,5 @@
 import { Octokit } from "octokit"
+import { Gitlab } from "@gitbeaker/rest"
 import { env } from "~/env"
 import { CommonError, ErrorCode } from "~/lib/error"
 import { z } from "zod"
@@ -10,15 +11,11 @@ const repoInfoSchema = z.object({
   fork: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
-  pushed_at: z.string(),
   homepage: z.string().nullable(),
   stargazers_count: z.number(),
   watchers_count: z.number(),
   open_issues_count: z.number(),
   forks_count: z.number(),
-  watchers: z.number(),
-  network_count: z.number(),
-  subscribers_count: z.number(),
   owner: z.object({
     login: z.string(),
     id: z.number(),
@@ -62,7 +59,7 @@ const octokitPool = new OctokitPool(env.TOOL_REPO_GITHUB_ACCESS_TOKENS)
 export async function fetchRepoInfo(platform:string,owner: string, repo: string ) {
   return cache(
     async () => {
-      if(platform === "github") {
+      if (platform === "github") {
         const client = octokitPool.getClient()
         const response = await client.rest.repos.get({ owner, repo })
         const safeParse = repoInfoSchema.safeParse(response.data)
@@ -73,6 +70,49 @@ export async function fetchRepoInfo(platform:string,owner: string, repo: string 
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github info server")
         }
         return safeParse.data
+      } else if (platform === "gitlab") {
+        const client = new Gitlab({})
+        if (!client) {
+          throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to initialize GitLab client")
+        }
+        const response = await client.Projects.show(`${owner}/${repo}`)
+        const safeParse = repoInfoSchema.safeParse({
+          name: response.name,
+          full_name: response.path_with_namespace,
+          description: response.description,
+          fork: response.forked_from_project !== null,
+          created_at: response.created_at,
+          updated_at: response.last_activity_at,
+          homepage: response.web_url,
+          stargazers_count: response.star_count,
+          watchers_count: response.star_count, // GitLab uses star_count for both
+          open_issues_count: response.open_issues_count,
+          forks_count: response.forks_count,
+          owner: {
+            login: response.namespace.path,
+            id: response.namespace.id,
+            type: response.namespace.kind,
+            avatar_url: response.namespace.avatar_url
+          },
+          organization: {
+            login: response.namespace.path,
+            id: response.namespace.id,
+            avatar_url: response.namespace.avatar_url,
+            type: response.namespace.kind
+          },
+          license: {
+            spdx_id: response.license?.key || "unknown"
+          }
+        })
+        if (!safeParse.success) {
+          console.error(
+            `[Tool/GitLab] Invalid response format from server: ${safeParse.error.toString()}`,
+          )
+          throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from gitlab info server")
+        }
+        return safeParse.data
+      } else {
+        throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
       }
     },
     [`tool-repo-github-info-${platform}-${owner}-${repo}`],
@@ -101,3 +141,4 @@ export function parseRepoUrl(url: string): RepoMeta {
 
   return RepoMetaSchema.parse(result)
 }
+
