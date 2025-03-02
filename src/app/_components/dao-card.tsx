@@ -1,36 +1,20 @@
 import { type FC } from "react"
 import Link from "next/link"
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
+import CardWrapper from "~/components/card-wrapper"
 
 type Props = {};
 
 const DaoCard: FC<Props> = () => {
   return (
-    <div
-      className="relative rounded-lg border-3 border-solid border-transparent bg-black"
-      style={{
-        // borderImage: "linear-gradient(45deg, #F8D353, #6E6DF0) 1",
-        // clipPath: "inset(0 round 5px)"
-        // borderImageSlice: 1
-        backgroundClip: "padding-box"
-      }}
-    >
-      <div
-        className={
-          "absolute -top-[1px] -right-[1px] -bottom-[1px] -left-[1px] -z-10 rounded-sm"
-        }
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(248, 211, 83, 0.5), rgba(110, 109, 240, 0.5))"
-        }}
-      />
+    <CardWrapper borderClassName={"border-1"}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
         alt={"bg"}
         src={"http://downloads.echocow.cn/85936f2e95327e9e778b198c9b10fd6f.png"}
       />
-      <div className={"flex flex-col p-5 gap-1"}>
+      <div className={"flex flex-col p-5 gap-1 bg-black mb-1 rounded-b-lg"}>
         <div className={"truncate text-3xl leading-10 tracking-tighter"}>
           VUE DAO
         </div>
@@ -72,7 +56,7 @@ const DaoCard: FC<Props> = () => {
           </div>
         </div>
       </div>
-    </div>
+    </CardWrapper>
   )
 }
 

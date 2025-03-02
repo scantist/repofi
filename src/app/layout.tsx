@@ -66,7 +66,7 @@ export default async function RootLayout({
         <QueryClientReactProvider>
           <TRPCReactProvider>
             <AuthProvider session={session} wagmiState={wagmiState}>
-              <div className={"relative flex min-h-screen w-full flex-col"}>
+              <div className={"relative flex min-h-screen w-full flex-col bg"}>
                 <header className="fixed top-0 z-30 mx-auto flex h-16 w-full items-center justify-between px-4">
                   <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-4 pr-0">
                     <Link href="/">
