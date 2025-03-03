@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { daoService } from "~/server/service/dao"
-import {DaoTypeSchema} from "~/lib/zod";
+import { DaoPlatformSchema, DaoTypeSchema } from "~/lib/zod"
 
 export const daoLinksSchema = z.array(
   z.object({
@@ -37,22 +37,22 @@ export const homeSearchParamsSchema = z.object({
 })
 
 
-export const createDaoParamsSchema=z.object({
+export const createDaoParamsSchema = z.object({
   avatar: z
     .string({ message: "Avatar is required." })
     .refine((value) => value.trim() !== "", {
       message: "Avatar can not be empty."
     }),
-  url:z.string({ message:"repo url is required." })
+  url: z.string({ message: "repo url is required." })
     .regex(/^https:\/\/(github\.com|gitlab\.com)\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/,
       { message: "Only URLs from github.com or gitlab.com with the format https://github.com/xx/xxx are allowed." })
-    .refine(async (value)=>{
+    .refine(async (value) => {
       const repoInfo = await daoService.repoInfo(value)
       if (!repoInfo) {
         return true
       }
     }),
-  type:DaoTypeSchema,
+  type: DaoTypeSchema,
   name: z
     .string({ message: "Name is required." })
     .min(1, { message: "Name can not be empty." })
@@ -83,7 +83,54 @@ export const createDaoParamsSchema=z.object({
   website: z.string().url().optional().or(z.literal(""))
 })
 
+export const repoInfoSchema = z.object({
+  name: z.string(),
+  full_name: z.string(),
+  description: z.string(),
+  fork: z.boolean(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  homepage: z.string().nullable(),
+  stargazers_count: z.number(),
+  watchers_count: z.number(),
+  open_issues_count: z.number(),
+  forks_count: z.number(),
+  owner: z.object({
+    login: z.string(),
+    id: z.number(),
+    type: z.string(),
+    avatar_url: z.string()
+  }),
+  organization: z.object({
+    login: z.string(),
+    id: z.number(),
+    avatar_url: z.string(),
+    type: z.string()
+  }),
+  license: z.object({
+    spdx_id: z.string()
+  })
+})
+
+export const repoMetaSchema = z.object({
+  platform: DaoPlatformSchema,
+  owner: z.string(),
+  repo: z.string()
+})
+
+export const repoContributor = z.object({
+  id: z.string(),
+  contributions: z.number(),
+  name: z.string(),
+  avatar: z.string()
+})
+export const repoContributors = z.array(repoContributor)
+
+export type RepoInfo = z.infer<typeof repoInfoSchema>
+export type RepoMeta = z.infer<typeof repoMetaSchema>
+export type RepoContributors = z.infer<typeof repoContributors>
+export type RepoContributor = z.infer<typeof repoContributor>
 export type HomeSearchParams = z.infer<typeof homeSearchParamsSchema>;
 export type Pageable = z.infer<typeof pageableSchema>;
-export type DaoLinks=z.infer<typeof daoLinksSchema>
-export type CreateDaoParams=z.infer<typeof createDaoParamsSchema>
+export type DaoLinks = z.infer<typeof daoLinksSchema>
+export type CreateDaoParams = z.infer<typeof createDaoParamsSchema>

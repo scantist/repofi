@@ -269,3 +269,4 @@ node_modules
 
 # System files
 
+.vscode

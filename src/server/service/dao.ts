@@ -1,25 +1,24 @@
 import { type CreateDaoParams, type DaoLinks, type HomeSearchParams, type Pageable } from "~/lib/schema"
 import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
-import { fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
-import { CommonError, ErrorCode } from "~/lib/error"
-class DaoService{
-  async homeSearch(params: HomeSearchParams,pageable:Pageable,userAddress:string|undefined) {
+import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
+class DaoService {
+  async homeSearch(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
     if (params.onlyLaunched) {
       whereOptions.status = { equals: DaoStatus.LAUNCHED }
     }
-    if (params.starred&&userAddress) {
-      whereOptions.stars={ some: { userAddress } }
+    if (params.starred && userAddress) {
+      whereOptions.stars = { some: { userAddress } }
     }
-    if(params.search){
-      whereOptions.name={
+    if (params.search) {
+      whereOptions.name = {
         contains: params.search,
         mode: "insensitive"
       }
     }
-    if(params.owned&&userAddress){
-      whereOptions.info={
+    if (params.owned && userAddress) {
+      whereOptions.info = {
         holders: {
           some: {
             holderAddress: {
@@ -73,9 +72,9 @@ class DaoService{
             }
           }
           : false
-        },
+      },
       where: whereOptions,
-      orderBy:params.orderBy === "latest"
+      orderBy: params.orderBy === "latest"
         ? { createdAt: "desc" }
         : { marketCapUsd: "desc" }
     })
@@ -88,7 +87,7 @@ class DaoService{
         marketCapUsd: dao.marketCapUsd.toString(),
         priceUsd: dao.priceUsd.toString(),
         isStarred: dao.stars?.length > 0,
-        repoStar:repoInfo.stargazers_count,
+        repoStar: repoInfo.stargazers_count,
         repoWatch: repoInfo.watchers_count,
         repoIssues: repoInfo.open_issues_count,
         repoForks: repoInfo.forks_count,
@@ -109,14 +108,14 @@ class DaoService{
   }
 
 
-  async checkNameExists(name:string){
+  async checkNameExists(name: string) {
     return await db.dao.count({
       where: {
         name
       }
     }) > 0
   }
-  async checkTickerExists(ticker:string){
+  async checkTickerExists(ticker: string) {
     return await db.dao.count({
       where: {
         ticker
@@ -124,8 +123,8 @@ class DaoService{
     }) > 0
   }
 
-  async createDao(params:CreateDaoParams,userAddress:string,tokenAddress:string){
-    const links: DaoLinks= []
+  async createDao(params: CreateDaoParams, userAddress: string, tokenAddress: string) {
+    const links: DaoLinks = []
     if (params.x) {
       links.push({ type: "x", value: params.x })
     }
@@ -136,7 +135,7 @@ class DaoService{
       links.push({ type: "website", value: params.website })
     }
     const repoMeta = parseRepoUrl(params.url)
-    //TODO chain operator
+    //TODO chain operator, and waiting info create success
     await db.dao.create({
       data: {
         name: params.name,
@@ -154,9 +153,13 @@ class DaoService{
       }
     })
   }
-  async repoInfo(url:string){
+  async repoInfo(url: string) {
     const repoMeta = parseRepoUrl(url)
     return await fetchRepoInfo(repoMeta.platform, repoMeta.owner, repoMeta.repo)
+  }
+  async repoContributors(url: string) {
+    const repoMeta = parseRepoUrl(url)
+    return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
 }
 export const daoService = new DaoService()

@@ -2,46 +2,10 @@ import { Octokit } from "octokit"
 import { Gitlab } from "@gitbeaker/rest"
 import { env } from "~/env"
 import { CommonError, ErrorCode } from "~/lib/error"
-import { z } from "zod"
 import { unstable_cache as cache } from "next/cache"
-import { DaoPlatformSchema } from "~/lib/zod"
-import {   DaoPlatform } from "@prisma/client"
-const repoInfoSchema = z.object({
-  name: z.string(),
-  full_name: z.string(),
-  description: z.string(),
-  fork: z.boolean(),
-  created_at: z.string(),
-  updated_at: z.string(),
-  homepage: z.string().nullable(),
-  stargazers_count: z.number(),
-  watchers_count: z.number(),
-  open_issues_count: z.number(),
-  forks_count: z.number(),
-  owner: z.object({
-    login: z.string(),
-    id: z.number(),
-    type: z.string(),
-    avatar_url: z.string()
-  }),
-  organization: z.object({
-    login: z.string(),
-    id: z.number(),
-    avatar_url: z.string(),
-    type: z.string()
-  }),
-  license:z.object({
-    spdx_id:z.string()
-  })
-})
-
-const RepoMetaSchema=z.object({
-  platform: DaoPlatformSchema,
-  owner: z.string(),
-  repo: z.string()
-})
-export type RepoMeta = z.infer<typeof RepoMetaSchema>
-
+import { DaoPlatform } from "@prisma/client"
+import { repoContributors, repoMetaSchema, repoInfoSchema } from "~/lib/schema"
+import { type RepoMeta } from "~/lib/schema"
 class OctokitPool {
   private readonly pool: Octokit[]
 
@@ -58,10 +22,10 @@ class OctokitPool {
 }
 const octokitPool = new OctokitPool(env.TOOL_REPO_GITHUB_ACCESS_TOKENS)
 
-export async function fetchRepoInfo(platform:DaoPlatform,owner: string, repo: string ) {
+export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: string) {
   return cache(
     async () => {
-      if (platform ===DaoPlatform.GITHUB) {
+      if (platform === DaoPlatform.GITHUB) {
         const client = octokitPool.getClient()
         const response = await client.rest.repos.get({ owner, repo })
         const safeParse = repoInfoSchema.safeParse(response.data)
@@ -117,10 +81,52 @@ export async function fetchRepoInfo(platform:DaoPlatform,owner: string, repo: st
         throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
       }
     },
-    [`tool-repo-github-info-${platform}-${owner}-${repo}`],
+    [`tool-repo-info-${platform}-${owner}-${repo}`],
     {
       revalidate: 60 * 60 * 24, // 24 hours
-      tags: ["tool-repo-github-info"]
+      tags: ["tool-repo-info"]
+    }
+  )()
+}
+
+export async function fetchRepoContributors(platform: DaoPlatform, owner: string, repo: string) {
+  return cache(
+    async () => {
+      if (platform === DaoPlatform.GITHUB) {
+        const client = octokitPool.getClient()
+        const contributors = await client.paginate(client.rest.repos.listContributors, {
+          owner,
+          repo
+        })
+        const safeParse = repoContributors.safeParse(
+          contributors.map(c => ({
+            id: c.id!.toString(),
+            contributions: c.contributions,
+            name: c.login,
+            avatar: c.avatar_url
+          }))
+        )
+        if (!safeParse.success) {
+          console.error(
+            `[Tool/Github] Invalid response format from server: ${safeParse.error.toString()}`,
+          )
+          throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github contributors server")
+        }
+        return safeParse.data
+      } else if (platform === DaoPlatform.GITLAB) {
+        const client = new Gitlab({})
+        if (!client) {
+          throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to initialize GitLab client")
+        }
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from gitlab info server")
+      } else {
+        throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
+      }
+    },
+    [`tool-repo-contributors-${platform}-${owner}-${repo}`],
+    {
+      revalidate: 60 * 60 * 24, // 24 hours
+      tags: ["tool-repo-contributors"]
     }
   )()
 }
@@ -140,6 +146,6 @@ export function parseRepoUrl(url: string): RepoMeta {
     platform: platform!.toUpperCase() as DaoPlatform
   }
 
-  return RepoMetaSchema.parse(result)
+  return repoMetaSchema.parse(result)
 }
 
