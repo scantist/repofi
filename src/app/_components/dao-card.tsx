@@ -1,9 +1,11 @@
-import { type FC } from "react"
+import React, { type FC } from "react"
 import Link from "next/link"
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import CardWrapper from "~/components/card-wrapper"
 
-type Props = {};
+type Props = {
+  children?: React.ReactNode,
+};
 
 const DaoCard: FC<Props> = () => {
   return (
