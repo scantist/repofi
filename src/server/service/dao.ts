@@ -1,7 +1,8 @@
-import { type HomeSearchParams,type Pageable } from "~/lib/schema"
+import { type CreateDaoParams, type DaoLinks, type HomeSearchParams, type Pageable } from "~/lib/schema"
 import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
 import { fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
+import { CommonError, ErrorCode } from "~/lib/error"
 class DaoService{
   async homeSearch(params: HomeSearchParams,pageable:Pageable,userAddress:string|undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
@@ -91,8 +92,6 @@ class DaoService{
         repoWatch: repoInfo.watchers_count,
         repoIssues: repoInfo.open_issues_count,
         repoForks: repoInfo.forks_count,
-        repoNetwork: repoInfo.network_count,
-        repoSubscribers: repoInfo.subscribers_count,
         license: repoInfo.license?.spdx_id,
         info: {
           ...dao.info,
@@ -107,6 +106,57 @@ class DaoService{
       data: daoList,
       nextPage: (pageable.page + 1) * pageable.size < total ? pageable.page + 1 : null
     }
+  }
+
+
+  async checkNameExists(name:string){
+    return await db.dao.count({
+      where: {
+        name
+      }
+    }) > 0
+  }
+  async checkTickerExists(ticker:string){
+    return await db.dao.count({
+      where: {
+        ticker
+      }
+    }) > 0
+  }
+
+  async createDao(params:CreateDaoParams,userAddress:string,tokenAddress:string){
+    const links: DaoLinks= []
+    if (params.x) {
+      links.push({ type: "x", value: params.x })
+    }
+    if (params.telegram) {
+      links.push({ type: "telegram", value: params.telegram })
+    }
+    if (params.website) {
+      links.push({ type: "website", value: params.website })
+    }
+    const repoMeta = parseRepoUrl(params.url)
+    //TODO chain operator
+    await db.dao.create({
+      data: {
+        name: params.name,
+        ticker: params.ticker,
+        description: params.description,
+        url: params.url,
+        type: params.type,
+        avatar: params.avatar,
+        createdBy: userAddress,
+        walletAddress: tokenAddress,
+        tokenAddress,
+        links,
+        status: DaoStatus.LAUNCHING,
+        platform: repoMeta.platform
+      }
+    })
+  }
+  async repoInfo(url:string){
+    const repoMeta = parseRepoUrl(url)
+    return await fetchRepoInfo(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
 }
 export const daoService = new DaoService()

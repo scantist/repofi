@@ -4,6 +4,8 @@ import { env } from "~/env"
 import { CommonError, ErrorCode } from "~/lib/error"
 import { z } from "zod"
 import { unstable_cache as cache } from "next/cache"
+import { DaoPlatformSchema } from "~/lib/zod"
+import {   DaoPlatform } from "@prisma/client"
 const repoInfoSchema = z.object({
   name: z.string(),
   full_name: z.string(),
@@ -34,7 +36,7 @@ const repoInfoSchema = z.object({
 })
 
 const RepoMetaSchema=z.object({
-  platform: z.enum(["github", "gitlab"]),
+  platform: DaoPlatformSchema,
   owner: z.string(),
   repo: z.string()
 })
@@ -56,10 +58,10 @@ class OctokitPool {
 }
 const octokitPool = new OctokitPool(env.TOOL_REPO_GITHUB_ACCESS_TOKENS)
 
-export async function fetchRepoInfo(platform:string,owner: string, repo: string ) {
+export async function fetchRepoInfo(platform:DaoPlatform,owner: string, repo: string ) {
   return cache(
     async () => {
-      if (platform === "github") {
+      if (platform ===DaoPlatform.GITHUB) {
         const client = octokitPool.getClient()
         const response = await client.rest.repos.get({ owner, repo })
         const safeParse = repoInfoSchema.safeParse(response.data)
@@ -70,7 +72,7 @@ export async function fetchRepoInfo(platform:string,owner: string, repo: string 
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github info server")
         }
         return safeParse.data
-      } else if (platform === "gitlab") {
+      } else if (platform === DaoPlatform.GITLAB) {
         const client = new Gitlab({})
         if (!client) {
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to initialize GitLab client")
@@ -132,11 +134,10 @@ export function parseRepoUrl(url: string): RepoMeta {
   }
 
   const [, platform, owner, repo] = match
-
   const result = {
     owner,
     repo,
-    platform: platform as "github" | "gitlab"
+    platform: platform!.toUpperCase() as DaoPlatform
   }
 
   return RepoMetaSchema.parse(result)
