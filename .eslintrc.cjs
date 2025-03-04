@@ -12,7 +12,7 @@ const config = {
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked"
   ],
-  "ignorePatterns": ["src/lib/zod/**"],
+  "ignorePatterns": ["src/lib/zod/**", "next.config.js"],
   "rules": {
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",

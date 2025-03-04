@@ -43,7 +43,7 @@ const Content: FC<HomeSearchParams> = (props) => {
   return (
     <div className="flex flex-col gap-10 pb-20 w-full ">
       <div className="relative grid grid-cols-1 gap-4 md:grid-cols-2 md:px-2 xl:grid-cols-3">
-        {data.pages.map((data, pageIndex) => {
+        {data.pages?.map((data, pageIndex) => {
           return (
             <Fragment key={pageIndex}>
               <DaoCard />
