@@ -1,5 +1,4 @@
 "use client"
-
 import { getAddress } from "viem"
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi"
 import { env } from "~/env"

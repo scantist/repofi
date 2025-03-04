@@ -6,7 +6,7 @@ import {
   getChainIdFromMessage,
   verifySignature
 } from "@reown/appkit-siwe"
-import { createUser } from "~/server/data/user"
+import { userService } from "~/server/service/user"
 import GitHub from "next-auth/providers/github"
 import GitLab, { type GitLabProfile } from "next-auth/providers/gitlab"
 import {getRedis} from "~/server/redis"
@@ -111,6 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
       authorize: async (credentials) => {
+        console.log("credentials", credentials)
         try {
           if (!credentials?.message) {
             throw new Error("SiweMessage is undefined")
@@ -129,14 +130,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
 
           if (isValid) {
-            const currentUser = await db.user.findUnique({
-              where: {
-                address: address
-              }
-            })
-
+            let currentUser=await userService.getUserByAddress(address)
             if (!currentUser) {
-              await createUser(address)
+              currentUser=await userService.createUser(address,undefined)
             }
 
             return {
