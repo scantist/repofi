@@ -4,11 +4,13 @@ import { cn } from "~/lib/utils"
 type Props = {
   children: React.ReactNode,
   className?: string,
+  wrapperClassName?: string,
 }
 
-const BannerWrapper: FC<Props> = ({ children, className }) => {
+const BannerWrapper: FC<Props> = ({ children, className, wrapperClassName }) => {
   return (
     <div
+      className={wrapperClassName}
       style={{
         background: "url('http://downloads.echocow.cn/banner.png')",
         backgroundSize: "cover",
