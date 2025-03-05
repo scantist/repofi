@@ -2,12 +2,18 @@ import { Redis } from "ioredis"
 import { env } from "~/env"
 import { Octokit } from "octokit"
 import { Gitlab } from "@gitbeaker/rest"
+export const connection = {
+  host: env.REDIS_HOST,
+  port: parseInt(env.REDIS_PORT),
+  db: parseInt(env.REDIS_DB),
+  password: env.REDIS_PASSWORD
+}
 
 let redis: Redis
 
 export const getRedis = () => {
   if (!redis) {
-    redis = new Redis(env.REDIS_URL)
+    redis = new Redis(connection)
   }
   return redis
 }

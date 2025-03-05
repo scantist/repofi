@@ -126,6 +126,23 @@ export const repoContributor = z.object({
 })
 export const repoContributors = z.array(repoContributor)
 
+
+export const dexPriceSchema = z.object({
+  pairs: z.array(
+    z.object({
+      chainId: z.string(),
+      priceNative: z.string().transform(Number),
+      priceUsd: z.string().transform(Number),
+      priceChange: z.object({
+        h1: z.number().optional(),
+        h6: z.number().optional(),
+        h24: z.number().optional()
+      }),
+      marketCap: z.number()
+    }),
+  )
+})
+export type DexPrice=z.infer<typeof dexPriceSchema>
 export type RepoInfo = z.infer<typeof repoInfoSchema>
 export type RepoMeta = z.infer<typeof repoMetaSchema>
 export type RepoContributors = z.infer<typeof repoContributors>
