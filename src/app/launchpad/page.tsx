@@ -41,18 +41,7 @@ const LaunchpadPage = () => {
       <div className={"grid grid-cols-3"}>
         <DaoCard />
       </div>
-    </div>
-    <div className={"mx-auto flex min-h-full w-full max-w-7xl gap-8 px-4 pt-10 pb-10 flex-col"}>
-      <div className={"text-4xl font-bold"}>Upcoming Launches</div>
-      <CardWrapper>
-        <div className={"p-4 text-sm font-thin"}>
-          Join DeSci by participating in the early stage funding of new BioDAOs.  Your participation fuels cutting-edge research, open collaboration, and  new models of scientific funding.
-        </div>
-      </CardWrapper>
-      <div className={"grid grid-cols-3"}>
-        <DaoCard />
-      </div>
-    </div>
+    </div>x
     <LiveDao />
   </div>
 }

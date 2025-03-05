@@ -19,8 +19,11 @@ export const env = createEnv({
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITLAB_SECRET: z.string(),
     AUTH_GITLAB_ID: z.string(),
-    TOOL_REPO_GITHUB_ACCESS_TOKENS: z.string().transform(str =>
-        str.split(";").map(s => s.trim()).filter(Boolean)
+    TOOL_REPO_GITHUB_ACCESS_TOKENS: z.string().transform((str) =>
+      (str ?? "")
+        .split(";")
+        .map((s) => s.trim())
+        .filter(Boolean),
     )
   },
 

@@ -67,10 +67,11 @@ export default async function RootLayout({
           <TRPCReactProvider>
             <AuthProvider session={session} wagmiState={wagmiState}>
               <div className={"relative flex min-h-screen w-full flex-col bg"}>
-                <header className="fixed top-0 z-30 mx-auto flex h-16 w-full items-center justify-between px-4">
+                <header className="fixed top-0 z-30 mx-auto flex h-20 w-full items-center justify-between px-4">
                   <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-4 pr-0">
-                    <Link href="/">
+                    <Link className={"flex flex-row gap-2 items-center"} href="/">
                       <LogoRepoIcon className="text-primary size-12" />
+                      <div className={"text-3xl font-bold tracking-tighter"}>REPO Protocol</div>
                     </Link>
                     <div className="">
                       <Nav />
@@ -93,8 +94,9 @@ export default async function RootLayout({
                 <footer className="h-24 backdrop-blur bg-black">
                   <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-0 px-8 md:px-4">
                     <div className="flex items-center gap-6">
-                      <ToTop className="group">
-                        <LogoRepoIcon className="h-8 text-primary transition-all group-hover:-rotate-45 group-hover:text-foreground" />
+                      <ToTop className="group flex flex-row gap-2 items-center">
+                        <LogoRepoIcon className="size-12 text-primary transition-all group-hover:-rotate-45 group-hover:text-foreground" />
+                        <div className={"text-3xl font-bold tracking-tighter"}>REPO Protocol</div>
                       </ToTop>
 
                       <Badge

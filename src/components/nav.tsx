@@ -7,18 +7,13 @@ import { useSession } from "next-auth/react"
 import { MobileMenu } from "./mobile-menu"
 export const navItems = [
   {
-    name: "Home",
-    href: "/",
+    name: "Launchpad",
+    href: "/launchpad",
     requiresLogin: false
   },
   {
     name: "Portfolio",
     href: "/portfolio",
-    requiresLogin: true
-  },
-  {
-    name: "How to Launch",
-    href: "/howto",
     requiresLogin: false
   }
 ]
