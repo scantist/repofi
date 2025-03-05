@@ -161,5 +161,32 @@ class DaoService {
     const repoMeta = parseRepoUrl(url)
     return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
+  async star(daoId:string,userAddress:string){
+    const daoStar = await db.daoStar.findFirst({
+      where: {
+        daoId,
+        userAddress
+      }
+    })
+    if(daoStar){
+      await db.daoStar.delete({
+        where: {
+          daoId_userAddress: {
+            daoId,
+            userAddress
+          }
+        }
+      })
+      return false
+    }else{
+      await db.daoStar.create({
+        data:{
+          daoId,
+          userAddress
+        }
+      })
+      return true
+    }
+  }
 }
 export const daoService = new DaoService()
