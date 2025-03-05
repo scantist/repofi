@@ -1,3 +1,9 @@
 services:
   repofi:
+    image: swr.ap-southeast-3.myhuaweicloud.com/scantist-images/repofi:dev
+    container_name: repofi
+    ports:
+      - "4000:3000"
+    volumes:
+      - .env:/app/.env
 
