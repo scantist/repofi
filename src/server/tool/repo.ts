@@ -20,7 +20,7 @@ class OctokitPool {
     return this.pool[Math.floor(Math.random() * this.pool.length)]!
   }
 }
-const octokitPool = new OctokitPool(env.TOOL_REPO_GITHUB_ACCESS_TOKENS)
+const octokitPool = new OctokitPool((env.TOOL_REPO_GITHUB_ACCESS_TOKENS ?? "").split(";"))
 
 export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: string) {
   return cache(
