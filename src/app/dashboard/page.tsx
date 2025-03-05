@@ -1,7 +1,7 @@
 import BannerWrapper from "~/components/banner-wrapper"
 import OverviewCard from "~/app/dashboard/_components/overview-card"
 import LineCard from "~/app/dashboard/_components/line-card"
-import TableCard from "~/app/dashboard/_components/table-card"
+import ContributorCard from "~/app/dashboard/_components/contributor-card"
 import DaoCard from "~/app/dashboard/_components/dao-card"
 
 const DashboardPage = () => {
@@ -22,7 +22,7 @@ const DashboardPage = () => {
             <LineCard />
           </div>
           <div className={"md:col-span-2"}>
-            <TableCard />
+            <ContributorCard />
           </div>
         </div>
       </BannerWrapper>

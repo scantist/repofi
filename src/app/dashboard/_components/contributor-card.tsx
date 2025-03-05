@@ -1,8 +1,8 @@
 import CardWrapper from "~/components/card-wrapper"
 
-const TableCard = () => {
+const ContributorCard = () => {
   return (
-    <CardWrapper borderClassName={"-top-1"}>
+    <CardWrapper>
       <div className={"mb-1 rounded-lg bg-black/60 p-4"}>
         <div className={"text-2xl font-medium"}>Contributor List</div>
         <div className={"flex flex-col gap-2 mt-3"}>
@@ -21,4 +21,4 @@ const TableCard = () => {
   )
 }
 
-export default TableCard
+export default ContributorCard
