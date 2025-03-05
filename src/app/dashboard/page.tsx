@@ -11,7 +11,7 @@ const DashboardPage = () => {
         <div
           className={"flex w-full flex-col items-left justify-between text-4xl mt-10 font-bold tracking-tight md:text-left"}
         >
-          Bio Protocol Dashboard
+          Repofi Protocol Dashboard
         </div>
         <div className={"w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8"}>
           <OverviewCard />

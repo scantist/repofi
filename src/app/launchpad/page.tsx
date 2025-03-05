@@ -41,7 +41,7 @@ const LaunchpadPage = () => {
       <div className={"grid grid-cols-3"}>
         <DaoCard />
       </div>
-    </div>x
+    </div>
     <LiveDao />
   </div>
 }

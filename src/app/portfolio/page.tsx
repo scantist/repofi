@@ -16,8 +16,8 @@ const PortfolioPage = () => {
       </div>
     </div>
     <BannerWrapper wrapperClassName={"mt-10 rounded-lg"} className={"flex flex-col gap-4"}>
-      <div className={"text-4xl tracking-tight"}>vBIO Rewards Are Here!</div>
-      <div className={"max-w-2xl font-thin text-white/70"}>If you participated in Auction Round 1, you may be eligible for  additional vBIO rewards. Click here to check your eligibility and claim!</div>
+      <div className={"text-4xl tracking-tight"}>Repofi Rewards Are Here!</div>
+      <div className={"max-w-2xl font-thin text-white/70"}>If you participated in Auction Round 1, you may be eligible for  additional Repofi rewards. Click here to check your eligibility and claim!</div>
       <div className={"border border-white rounded-lg py-1 cursor-pointer px-5 max-w-max"}>Airdrop</div>
     </BannerWrapper>
     <div className={"w-full my-10"}>
