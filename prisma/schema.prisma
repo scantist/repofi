@@ -73,6 +73,10 @@ enum DaoPlatform {
   GITLAB
 }
 
+enum DaoContentType {
+  LIST_ROW
+}
+
 model DaoStar {
   daoId       String @map("dao_id") @db.VarChar(255)
   userAddress String @map("user_address") @db.VarChar(255)
@@ -108,8 +112,22 @@ model Dao {
   messages ForumMessage[]
   stars    DaoStar[]
   pocs     POC[]
+  contents DaoContent[]
 
   @@map("t_dao")
+}
+
+model DaoContent {
+  id        String         @id @default(dbgenerated("gen_random_uuid()")) @map("id")
+  sort      Int
+  title     String         @db.VarChar(255)
+  type      DaoContentType @default(LIST_ROW) @map("type")
+  data      Json           @db.JsonB
+  dao       Dao            @relation(fields: [id], references: [id], onDelete: Cascade)
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@map("t_dao_content")
 }
 
 model DaoTokenHolder {

@@ -86,6 +86,8 @@ export const DaoStarScalarFieldEnumSchema = z.enum(['daoId','userAddress']);
 
 export const DaoScalarFieldEnumSchema = z.enum(['id','name','url','ticker','type','description','avatar','createdAt','updatedAt','createdBy','walletAddress','tokenAddress','links','status','platform','marketCapUsd','priceUsd']);
 
+export const DaoContentScalarFieldEnumSchema = z.enum(['id','sort','title','type','data','createdAt','updatedAt']);
+
 export const DaoTokenHolderScalarFieldEnumSchema = z.enum(['holderAddress','tokenAddress','tokenAmount']);
 
 export const DaoInfoScalarFieldEnumSchema = z.enum(['tokenAddress','name','ticker','creator','createdAt','marketCap','totalSupply','holderCount','assetTokenAddress','tradingOnUniswap','uniswapV2Pair']);
@@ -123,6 +125,10 @@ export type DaoStatusType = `${z.infer<typeof DaoStatusSchema>}`
 export const DaoPlatformSchema = z.enum(['GITHUB','GITLAB']);
 
 export type DaoPlatformType = `${z.infer<typeof DaoPlatformSchema>}`
+
+export const DaoContentTypeSchema = z.enum(['LIST_ROW']);
+
+export type DaoContentTypeType = `${z.infer<typeof DaoContentTypeSchema>}`
 
 /////////////////////////////////////////
 // MODELS
@@ -195,6 +201,22 @@ export const DaoSchema = z.object({
 })
 
 export type Dao = z.infer<typeof DaoSchema>
+
+/////////////////////////////////////////
+// DAO CONTENT SCHEMA
+/////////////////////////////////////////
+
+export const DaoContentSchema = z.object({
+  type: DaoContentTypeSchema,
+  id: z.string(),
+  sort: z.number().int(),
+  title: z.string(),
+  data: JsonValueSchema,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+})
+
+export type DaoContent = z.infer<typeof DaoContentSchema>
 
 /////////////////////////////////////////
 // DAO TOKEN HOLDER SCHEMA
@@ -382,6 +404,7 @@ export const DaoIncludeSchema: z.ZodType<Prisma.DaoInclude> = z.object({
   messages: z.union([z.boolean(),z.lazy(() => ForumMessageFindManyArgsSchema)]).optional(),
   stars: z.union([z.boolean(),z.lazy(() => DaoStarFindManyArgsSchema)]).optional(),
   pocs: z.union([z.boolean(),z.lazy(() => POCFindManyArgsSchema)]).optional(),
+  contents: z.union([z.boolean(),z.lazy(() => DaoContentFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => DaoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -398,6 +421,7 @@ export const DaoCountOutputTypeSelectSchema: z.ZodType<Prisma.DaoCountOutputType
   messages: z.boolean().optional(),
   stars: z.boolean().optional(),
   pocs: z.boolean().optional(),
+  contents: z.boolean().optional(),
 }).strict();
 
 export const DaoSelectSchema: z.ZodType<Prisma.DaoSelect> = z.object({
@@ -423,7 +447,31 @@ export const DaoSelectSchema: z.ZodType<Prisma.DaoSelect> = z.object({
   messages: z.union([z.boolean(),z.lazy(() => ForumMessageFindManyArgsSchema)]).optional(),
   stars: z.union([z.boolean(),z.lazy(() => DaoStarFindManyArgsSchema)]).optional(),
   pocs: z.union([z.boolean(),z.lazy(() => POCFindManyArgsSchema)]).optional(),
+  contents: z.union([z.boolean(),z.lazy(() => DaoContentFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => DaoCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+// DAO CONTENT
+//------------------------------------------------------
+
+export const DaoContentIncludeSchema: z.ZodType<Prisma.DaoContentInclude> = z.object({
+  dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
+}).strict()
+
+export const DaoContentArgsSchema: z.ZodType<Prisma.DaoContentDefaultArgs> = z.object({
+  select: z.lazy(() => DaoContentSelectSchema).optional(),
+  include: z.lazy(() => DaoContentIncludeSchema).optional(),
+}).strict();
+
+export const DaoContentSelectSchema: z.ZodType<Prisma.DaoContentSelect> = z.object({
+  id: z.boolean().optional(),
+  sort: z.boolean().optional(),
+  title: z.boolean().optional(),
+  type: z.boolean().optional(),
+  data: z.boolean().optional(),
+  createdAt: z.boolean().optional(),
+  updatedAt: z.boolean().optional(),
+  dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
 }).strict()
 
 // DAO TOKEN HOLDER
@@ -832,7 +880,8 @@ export const DaoWhereInputSchema: z.ZodType<Prisma.DaoWhereInput> = z.object({
   info: z.union([ z.lazy(() => DaoInfoScalarRelationFilterSchema),z.lazy(() => DaoInfoWhereInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageListRelationFilterSchema).optional(),
   stars: z.lazy(() => DaoStarListRelationFilterSchema).optional(),
-  pocs: z.lazy(() => POCListRelationFilterSchema).optional()
+  pocs: z.lazy(() => POCListRelationFilterSchema).optional(),
+  contents: z.lazy(() => DaoContentListRelationFilterSchema).optional()
 }).strict();
 
 export const DaoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoOrderByWithRelationInput> = z.object({
@@ -857,7 +906,8 @@ export const DaoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoOrderByWithR
   info: z.lazy(() => DaoInfoOrderByWithRelationInputSchema).optional(),
   messages: z.lazy(() => ForumMessageOrderByRelationAggregateInputSchema).optional(),
   stars: z.lazy(() => DaoStarOrderByRelationAggregateInputSchema).optional(),
-  pocs: z.lazy(() => POCOrderByRelationAggregateInputSchema).optional()
+  pocs: z.lazy(() => POCOrderByRelationAggregateInputSchema).optional(),
+  contents: z.lazy(() => DaoContentOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = z.union([
@@ -1205,7 +1255,8 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   info: z.union([ z.lazy(() => DaoInfoScalarRelationFilterSchema),z.lazy(() => DaoInfoWhereInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageListRelationFilterSchema).optional(),
   stars: z.lazy(() => DaoStarListRelationFilterSchema).optional(),
-  pocs: z.lazy(() => POCListRelationFilterSchema).optional()
+  pocs: z.lazy(() => POCListRelationFilterSchema).optional(),
+  contents: z.lazy(() => DaoContentListRelationFilterSchema).optional()
 }).strict());
 
 export const DaoOrderByWithAggregationInputSchema: z.ZodType<Prisma.DaoOrderByWithAggregationInput> = z.object({
@@ -1254,6 +1305,76 @@ export const DaoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.DaoScalar
   platform: z.union([ z.lazy(() => EnumDaoPlatformWithAggregatesFilterSchema),z.lazy(() => DaoPlatformSchema) ]).optional(),
   marketCapUsd: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   priceUsd: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const DaoContentWhereInputSchema: z.ZodType<Prisma.DaoContentWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => DaoContentWhereInputSchema),z.lazy(() => DaoContentWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DaoContentWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DaoContentWhereInputSchema),z.lazy(() => DaoContentWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  sort: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  type: z.union([ z.lazy(() => EnumDaoContentTypeFilterSchema),z.lazy(() => DaoContentTypeSchema) ]).optional(),
+  data: z.lazy(() => JsonFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  dao: z.union([ z.lazy(() => DaoScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoContentOrderByWithRelationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  sort: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  type: z.lazy(() => SortOrderSchema).optional(),
+  data: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  dao: z.lazy(() => DaoOrderByWithRelationInputSchema).optional()
+}).strict();
+
+export const DaoContentWhereUniqueInputSchema: z.ZodType<Prisma.DaoContentWhereUniqueInput> = z.object({
+  id: z.string()
+})
+.and(z.object({
+  id: z.string().optional(),
+  AND: z.union([ z.lazy(() => DaoContentWhereInputSchema),z.lazy(() => DaoContentWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DaoContentWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DaoContentWhereInputSchema),z.lazy(() => DaoContentWhereInputSchema).array() ]).optional(),
+  sort: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  type: z.union([ z.lazy(() => EnumDaoContentTypeFilterSchema),z.lazy(() => DaoContentTypeSchema) ]).optional(),
+  data: z.lazy(() => JsonFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  dao: z.union([ z.lazy(() => DaoScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional(),
+}).strict());
+
+export const DaoContentOrderByWithAggregationInputSchema: z.ZodType<Prisma.DaoContentOrderByWithAggregationInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  sort: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  type: z.lazy(() => SortOrderSchema).optional(),
+  data: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => DaoContentCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => DaoContentAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => DaoContentMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => DaoContentMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => DaoContentSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const DaoContentScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.DaoContentScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => DaoContentScalarWhereWithAggregatesInputSchema),z.lazy(() => DaoContentScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DaoContentScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DaoContentScalarWhereWithAggregatesInputSchema),z.lazy(() => DaoContentScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  sort: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  title: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  type: z.union([ z.lazy(() => EnumDaoContentTypeWithAggregatesFilterSchema),z.lazy(() => DaoContentTypeSchema) ]).optional(),
+  data: z.lazy(() => JsonWithAggregatesFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
 }).strict();
 
 export const DaoTokenHolderWhereInputSchema: z.ZodType<Prisma.DaoTokenHolderWhereInput> = z.object({
@@ -1910,7 +2031,8 @@ export const DaoCreateInputSchema: z.ZodType<Prisma.DaoCreateInput> = z.object({
   info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoUncheckedCreateInput> = z.object({
@@ -1933,7 +2055,8 @@ export const DaoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoUncheckedCreateI
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUpdateInputSchema: z.ZodType<Prisma.DaoUpdateInput> = z.object({
@@ -1956,7 +2079,8 @@ export const DaoUpdateInputSchema: z.ZodType<Prisma.DaoUpdateInput> = z.object({
   info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateInput> = z.object({
@@ -1979,7 +2103,8 @@ export const DaoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateI
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoCreateManyInputSchema: z.ZodType<Prisma.DaoCreateManyInput> = z.object({
@@ -2038,6 +2163,75 @@ export const DaoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoUncheckedUpd
   platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentCreateInputSchema: z.ZodType<Prisma.DaoContentCreateInput> = z.object({
+  sort: z.number().int(),
+  title: z.string(),
+  type: z.lazy(() => DaoContentTypeSchema).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  dao: z.lazy(() => DaoCreateNestedOneWithoutContentsInputSchema).optional()
+}).strict();
+
+export const DaoContentUncheckedCreateInputSchema: z.ZodType<Prisma.DaoContentUncheckedCreateInput> = z.object({
+  id: z.string().optional(),
+  sort: z.number().int(),
+  title: z.string(),
+  type: z.lazy(() => DaoContentTypeSchema).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DaoContentUpdateInputSchema: z.ZodType<Prisma.DaoContentUpdateInput> = z.object({
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  dao: z.lazy(() => DaoUpdateOneRequiredWithoutContentsNestedInputSchema).optional()
+}).strict();
+
+export const DaoContentUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoContentUncheckedUpdateInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentCreateManyInputSchema: z.ZodType<Prisma.DaoContentCreateManyInput> = z.object({
+  id: z.string().optional(),
+  sort: z.number().int(),
+  title: z.string(),
+  type: z.lazy(() => DaoContentTypeSchema).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DaoContentUpdateManyMutationInputSchema: z.ZodType<Prisma.DaoContentUpdateManyMutationInput> = z.object({
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoContentUncheckedUpdateManyInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const DaoTokenHolderCreateInputSchema: z.ZodType<Prisma.DaoTokenHolderCreateInput> = z.object({
@@ -2835,7 +3029,17 @@ export const ForumMessageListRelationFilterSchema: z.ZodType<Prisma.ForumMessage
   none: z.lazy(() => ForumMessageWhereInputSchema).optional()
 }).strict();
 
+export const DaoContentListRelationFilterSchema: z.ZodType<Prisma.DaoContentListRelationFilter> = z.object({
+  every: z.lazy(() => DaoContentWhereInputSchema).optional(),
+  some: z.lazy(() => DaoContentWhereInputSchema).optional(),
+  none: z.lazy(() => DaoContentWhereInputSchema).optional()
+}).strict();
+
 export const ForumMessageOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ForumMessageOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DaoContentOrderByRelationAggregateInputSchema: z.ZodType<Prisma.DaoContentOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -2973,6 +3177,86 @@ export const DecimalWithAggregatesFilterSchema: z.ZodType<Prisma.DecimalWithAggr
   _max: z.lazy(() => NestedDecimalFilterSchema).optional()
 }).strict();
 
+export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
+}).strict();
+
+export const EnumDaoContentTypeFilterSchema: z.ZodType<Prisma.EnumDaoContentTypeFilter> = z.object({
+  equals: z.lazy(() => DaoContentTypeSchema).optional(),
+  in: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  notIn: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => NestedEnumDaoContentTypeFilterSchema) ]).optional(),
+}).strict();
+
+export const DaoContentCountOrderByAggregateInputSchema: z.ZodType<Prisma.DaoContentCountOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  sort: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  type: z.lazy(() => SortOrderSchema).optional(),
+  data: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DaoContentAvgOrderByAggregateInputSchema: z.ZodType<Prisma.DaoContentAvgOrderByAggregateInput> = z.object({
+  sort: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DaoContentMaxOrderByAggregateInputSchema: z.ZodType<Prisma.DaoContentMaxOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  sort: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  type: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DaoContentMinOrderByAggregateInputSchema: z.ZodType<Prisma.DaoContentMinOrderByAggregateInput> = z.object({
+  id: z.lazy(() => SortOrderSchema).optional(),
+  sort: z.lazy(() => SortOrderSchema).optional(),
+  title: z.lazy(() => SortOrderSchema).optional(),
+  type: z.lazy(() => SortOrderSchema).optional(),
+  createdAt: z.lazy(() => SortOrderSchema).optional(),
+  updatedAt: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const DaoContentSumOrderByAggregateInputSchema: z.ZodType<Prisma.DaoContentSumOrderByAggregateInput> = z.object({
+  sort: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
+export const EnumDaoContentTypeWithAggregatesFilterSchema: z.ZodType<Prisma.EnumDaoContentTypeWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => DaoContentTypeSchema).optional(),
+  in: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  notIn: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => NestedEnumDaoContentTypeWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumDaoContentTypeFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumDaoContentTypeFilterSchema).optional()
+}).strict();
+
 export const DaoTokenHolderHolderAddressTokenAddressCompoundUniqueInputSchema: z.ZodType<Prisma.DaoTokenHolderHolderAddressTokenAddressCompoundUniqueInput> = z.object({
   holderAddress: z.string(),
   tokenAddress: z.string()
@@ -3013,17 +3297,6 @@ export const BigIntFilterSchema: z.ZodType<Prisma.BigIntFilter> = z.object({
   gt: z.bigint().optional(),
   gte: z.bigint().optional(),
   not: z.union([ z.bigint(),z.lazy(() => NestedBigIntFilterSchema) ]).optional(),
-}).strict();
-
-export const IntFilterSchema: z.ZodType<Prisma.IntFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntFilterSchema) ]).optional(),
 }).strict();
 
 export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
@@ -3116,22 +3389,6 @@ export const BigIntWithAggregatesFilterSchema: z.ZodType<Prisma.BigIntWithAggreg
   _sum: z.lazy(() => NestedBigIntFilterSchema).optional(),
   _min: z.lazy(() => NestedBigIntFilterSchema).optional(),
   _max: z.lazy(() => NestedBigIntFilterSchema).optional()
-}).strict();
-
-export const IntWithAggregatesFilterSchema: z.ZodType<Prisma.IntWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntFilterSchema).optional()
 }).strict();
 
 export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregatesFilter> = z.object({
@@ -3549,6 +3806,13 @@ export const POCCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.POCCreat
   connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const DaoContentCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentCreateNestedManyWithoutDaoInput> = z.object({
+  create: z.union([ z.lazy(() => DaoContentCreateWithoutDaoInputSchema),z.lazy(() => DaoContentCreateWithoutDaoInputSchema).array(),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema),z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoContentCreateManyDaoInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
 export const ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.ForumMessageUncheckedCreateNestedManyWithoutDaoInput> = z.object({
   create: z.union([ z.lazy(() => ForumMessageCreateWithoutDaoInputSchema),z.lazy(() => ForumMessageCreateWithoutDaoInputSchema).array(),z.lazy(() => ForumMessageUncheckedCreateWithoutDaoInputSchema),z.lazy(() => ForumMessageUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ForumMessageCreateOrConnectWithoutDaoInputSchema),z.lazy(() => ForumMessageCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
@@ -3568,6 +3832,13 @@ export const POCUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma
   connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema),z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
   createMany: z.lazy(() => POCCreateManyDaoInputEnvelopeSchema).optional(),
   connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUncheckedCreateNestedManyWithoutDaoInput> = z.object({
+  create: z.union([ z.lazy(() => DaoContentCreateWithoutDaoInputSchema),z.lazy(() => DaoContentCreateWithoutDaoInputSchema).array(),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema),z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoContentCreateManyDaoInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const EnumDaoTypeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumDaoTypeFieldUpdateOperationsInput> = z.object({
@@ -3648,6 +3919,20 @@ export const POCUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.POCUpdat
   deleteMany: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const DaoContentUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.DaoContentUpdateManyWithoutDaoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DaoContentCreateWithoutDaoInputSchema),z.lazy(() => DaoContentCreateWithoutDaoInputSchema).array(),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema),z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => DaoContentUpsertWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => DaoContentUpsertWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoContentCreateManyDaoInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => DaoContentUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => DaoContentUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => DaoContentUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => DaoContentUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => DaoContentScalarWhereInputSchema),z.lazy(() => DaoContentScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
 export const ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.ForumMessageUncheckedUpdateManyWithoutDaoNestedInput> = z.object({
   create: z.union([ z.lazy(() => ForumMessageCreateWithoutDaoInputSchema),z.lazy(() => ForumMessageCreateWithoutDaoInputSchema).array(),z.lazy(() => ForumMessageUncheckedCreateWithoutDaoInputSchema),z.lazy(() => ForumMessageUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
   connectOrCreate: z.union([ z.lazy(() => ForumMessageCreateOrConnectWithoutDaoInputSchema),z.lazy(() => ForumMessageCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
@@ -3688,6 +3973,46 @@ export const POCUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma
   update: z.union([ z.lazy(() => POCUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => POCUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => POCUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => POCUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.DaoContentUncheckedUpdateManyWithoutDaoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DaoContentCreateWithoutDaoInputSchema),z.lazy(() => DaoContentCreateWithoutDaoInputSchema).array(),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema),z.lazy(() => DaoContentCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => DaoContentUpsertWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => DaoContentUpsertWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoContentCreateManyDaoInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => DaoContentWhereUniqueInputSchema),z.lazy(() => DaoContentWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => DaoContentUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => DaoContentUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => DaoContentUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => DaoContentUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => DaoContentScalarWhereInputSchema),z.lazy(() => DaoContentScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoCreateNestedOneWithoutContentsInputSchema: z.ZodType<Prisma.DaoCreateNestedOneWithoutContentsInput> = z.object({
+  create: z.union([ z.lazy(() => DaoCreateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContentsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutContentsInputSchema).optional(),
+  connect: z.lazy(() => DaoWhereUniqueInputSchema).optional()
+}).strict();
+
+export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
+  set: z.number().optional(),
+  increment: z.number().optional(),
+  decrement: z.number().optional(),
+  multiply: z.number().optional(),
+  divide: z.number().optional()
+}).strict();
+
+export const EnumDaoContentTypeFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumDaoContentTypeFieldUpdateOperationsInput> = z.object({
+  set: z.lazy(() => DaoContentTypeSchema).optional()
+}).strict();
+
+export const DaoUpdateOneRequiredWithoutContentsNestedInputSchema: z.ZodType<Prisma.DaoUpdateOneRequiredWithoutContentsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DaoCreateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContentsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutContentsInputSchema).optional(),
+  upsert: z.lazy(() => DaoUpsertWithoutContentsInputSchema).optional(),
+  connect: z.lazy(() => DaoWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => DaoUpdateToOneWithWhereWithoutContentsInputSchema),z.lazy(() => DaoUpdateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutContentsInputSchema) ]).optional(),
 }).strict();
 
 export const DaoInfoCreateNestedOneWithoutHoldersInputSchema: z.ZodType<Prisma.DaoInfoCreateNestedOneWithoutHoldersInput> = z.object({
@@ -3736,14 +4061,6 @@ export const BigIntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BigIntFiel
   decrement: z.bigint().optional(),
   multiply: z.bigint().optional(),
   divide: z.bigint().optional()
-}).strict();
-
-export const IntFieldUpdateOperationsInputSchema: z.ZodType<Prisma.IntFieldUpdateOperationsInput> = z.object({
-  set: z.number().optional(),
-  increment: z.number().optional(),
-  decrement: z.number().optional(),
-  multiply: z.number().optional(),
-  divide: z.number().optional()
 }).strict();
 
 export const BoolFieldUpdateOperationsInputSchema: z.ZodType<Prisma.BoolFieldUpdateOperationsInput> = z.object({
@@ -4144,6 +4461,50 @@ export const NestedDecimalWithAggregatesFilterSchema: z.ZodType<Prisma.NestedDec
   _max: z.lazy(() => NestedDecimalFilterSchema).optional()
 }).strict();
 
+export const NestedEnumDaoContentTypeFilterSchema: z.ZodType<Prisma.NestedEnumDaoContentTypeFilter> = z.object({
+  equals: z.lazy(() => DaoContentTypeSchema).optional(),
+  in: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  notIn: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => NestedEnumDaoContentTypeFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
+  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedIntFilterSchema).optional(),
+  _max: z.lazy(() => NestedIntFilterSchema).optional()
+}).strict();
+
+export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.object({
+  equals: z.number().optional(),
+  in: z.number().array().optional(),
+  notIn: z.number().array().optional(),
+  lt: z.number().optional(),
+  lte: z.number().optional(),
+  gt: z.number().optional(),
+  gte: z.number().optional(),
+  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
+}).strict();
+
+export const NestedEnumDaoContentTypeWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumDaoContentTypeWithAggregatesFilter> = z.object({
+  equals: z.lazy(() => DaoContentTypeSchema).optional(),
+  in: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  notIn: z.lazy(() => DaoContentTypeSchema).array().optional(),
+  not: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => NestedEnumDaoContentTypeWithAggregatesFilterSchema) ]).optional(),
+  _count: z.lazy(() => NestedIntFilterSchema).optional(),
+  _min: z.lazy(() => NestedEnumDaoContentTypeFilterSchema).optional(),
+  _max: z.lazy(() => NestedEnumDaoContentTypeFilterSchema).optional()
+}).strict();
+
 export const NestedBigIntFilterSchema: z.ZodType<Prisma.NestedBigIntFilter> = z.object({
   equals: z.bigint().optional(),
   in: z.bigint().array().optional(),
@@ -4174,33 +4535,6 @@ export const NestedBigIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBigI
   _sum: z.lazy(() => NestedBigIntFilterSchema).optional(),
   _min: z.lazy(() => NestedBigIntFilterSchema).optional(),
   _max: z.lazy(() => NestedBigIntFilterSchema).optional()
-}).strict();
-
-export const NestedFloatFilterSchema: z.ZodType<Prisma.NestedFloatFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedFloatFilterSchema) ]).optional(),
-}).strict();
-
-export const NestedIntWithAggregatesFilterSchema: z.ZodType<Prisma.NestedIntWithAggregatesFilter> = z.object({
-  equals: z.number().optional(),
-  in: z.number().array().optional(),
-  notIn: z.number().array().optional(),
-  lt: z.number().optional(),
-  lte: z.number().optional(),
-  gt: z.number().optional(),
-  gte: z.number().optional(),
-  not: z.union([ z.number(),z.lazy(() => NestedIntWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _avg: z.lazy(() => NestedFloatFilterSchema).optional(),
-  _sum: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedIntFilterSchema).optional(),
-  _max: z.lazy(() => NestedIntFilterSchema).optional()
 }).strict();
 
 export const NestedBoolWithAggregatesFilterSchema: z.ZodType<Prisma.NestedBoolWithAggregatesFilter> = z.object({
@@ -4248,7 +4582,8 @@ export const DaoCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoCreateWitho
   info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutCreatorInput> = z.object({
@@ -4270,7 +4605,8 @@ export const DaoUncheckedCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoCreateOrConnectWithoutCreatorInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutCreatorInput> = z.object({
@@ -4436,7 +4772,8 @@ export const DaoCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateWithout
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutStarsInput> = z.object({
@@ -4458,7 +4795,8 @@ export const DaoUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUnch
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoCreateOrConnectWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutStarsInput> = z.object({
@@ -4527,7 +4865,8 @@ export const DaoUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUpdateWithout
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutStarsInput> = z.object({
@@ -4549,7 +4888,8 @@ export const DaoUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUnch
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const UserUpsertWithoutStarsInputSchema: z.ZodType<Prisma.UserUpsertWithoutStarsInput> = z.object({
@@ -4743,6 +5083,34 @@ export const POCCreateManyDaoInputEnvelopeSchema: z.ZodType<Prisma.POCCreateMany
   skipDuplicates: z.boolean().optional()
 }).strict();
 
+export const DaoContentCreateWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentCreateWithoutDaoInput> = z.object({
+  sort: z.number().int(),
+  title: z.string(),
+  type: z.lazy(() => DaoContentTypeSchema).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DaoContentUncheckedCreateWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUncheckedCreateWithoutDaoInput> = z.object({
+  sort: z.number().int(),
+  title: z.string(),
+  type: z.lazy(() => DaoContentTypeSchema).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
+export const DaoContentCreateOrConnectWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentCreateOrConnectWithoutDaoInput> = z.object({
+  where: z.lazy(() => DaoContentWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => DaoContentCreateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema) ]),
+}).strict();
+
+export const DaoContentCreateManyDaoInputEnvelopeSchema: z.ZodType<Prisma.DaoContentCreateManyDaoInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => DaoContentCreateManyDaoInputSchema),z.lazy(() => DaoContentCreateManyDaoInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
 export const UserUpsertWithoutDaosInputSchema: z.ZodType<Prisma.UserUpsertWithoutDaosInput> = z.object({
   update: z.union([ z.lazy(() => UserUpdateWithoutDaosInputSchema),z.lazy(() => UserUncheckedUpdateWithoutDaosInputSchema) ]),
   create: z.union([ z.lazy(() => UserCreateWithoutDaosInputSchema),z.lazy(() => UserUncheckedCreateWithoutDaosInputSchema) ]),
@@ -4884,6 +5252,143 @@ export const POCUpdateManyWithWhereWithoutDaoInputSchema: z.ZodType<Prisma.POCUp
   data: z.union([ z.lazy(() => POCUpdateManyMutationInputSchema),z.lazy(() => POCUncheckedUpdateManyWithoutDaoInputSchema) ]),
 }).strict();
 
+export const DaoContentUpsertWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUpsertWithWhereUniqueWithoutDaoInput> = z.object({
+  where: z.lazy(() => DaoContentWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => DaoContentUpdateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedUpdateWithoutDaoInputSchema) ]),
+  create: z.union([ z.lazy(() => DaoContentCreateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedCreateWithoutDaoInputSchema) ]),
+}).strict();
+
+export const DaoContentUpdateWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUpdateWithWhereUniqueWithoutDaoInput> = z.object({
+  where: z.lazy(() => DaoContentWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => DaoContentUpdateWithoutDaoInputSchema),z.lazy(() => DaoContentUncheckedUpdateWithoutDaoInputSchema) ]),
+}).strict();
+
+export const DaoContentUpdateManyWithWhereWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUpdateManyWithWhereWithoutDaoInput> = z.object({
+  where: z.lazy(() => DaoContentScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => DaoContentUpdateManyMutationInputSchema),z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoInputSchema) ]),
+}).strict();
+
+export const DaoContentScalarWhereInputSchema: z.ZodType<Prisma.DaoContentScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => DaoContentScalarWhereInputSchema),z.lazy(() => DaoContentScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DaoContentScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DaoContentScalarWhereInputSchema),z.lazy(() => DaoContentScalarWhereInputSchema).array() ]).optional(),
+  id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  sort: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  title: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  type: z.union([ z.lazy(() => EnumDaoContentTypeFilterSchema),z.lazy(() => DaoContentTypeSchema) ]).optional(),
+  data: z.lazy(() => JsonFilterSchema).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+}).strict();
+
+export const DaoCreateWithoutContentsInputSchema: z.ZodType<Prisma.DaoCreateWithoutContentsInput> = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  url: z.string(),
+  ticker: z.string(),
+  type: z.lazy(() => DaoTypeSchema),
+  description: z.string(),
+  avatar: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  walletAddress: z.string().optional().nullable(),
+  links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
+  marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
+  info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
+  messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
+  stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
+  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+}).strict();
+
+export const DaoUncheckedCreateWithoutContentsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutContentsInput> = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  url: z.string(),
+  ticker: z.string(),
+  type: z.lazy(() => DaoTypeSchema),
+  description: z.string(),
+  avatar: z.string(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  createdBy: z.string(),
+  walletAddress: z.string().optional().nullable(),
+  tokenAddress: z.string(),
+  links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  status: z.lazy(() => DaoStatusSchema).optional(),
+  platform: z.lazy(() => DaoPlatformSchema).optional(),
+  marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+}).strict();
+
+export const DaoCreateOrConnectWithoutContentsInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutContentsInput> = z.object({
+  where: z.lazy(() => DaoWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => DaoCreateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContentsInputSchema) ]),
+}).strict();
+
+export const DaoUpsertWithoutContentsInputSchema: z.ZodType<Prisma.DaoUpsertWithoutContentsInput> = z.object({
+  update: z.union([ z.lazy(() => DaoUpdateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutContentsInputSchema) ]),
+  create: z.union([ z.lazy(() => DaoCreateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContentsInputSchema) ]),
+  where: z.lazy(() => DaoWhereInputSchema).optional()
+}).strict();
+
+export const DaoUpdateToOneWithWhereWithoutContentsInputSchema: z.ZodType<Prisma.DaoUpdateToOneWithWhereWithoutContentsInput> = z.object({
+  where: z.lazy(() => DaoWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => DaoUpdateWithoutContentsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutContentsInputSchema) ]),
+}).strict();
+
+export const DaoUpdateWithoutContentsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutContentsInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  avatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
+  marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
+  info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
+  messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
+  stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
+  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+}).strict();
+
+export const DaoUncheckedUpdateWithoutContentsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutContentsInput> = z.object({
+  id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoTypeSchema),z.lazy(() => EnumDaoTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  avatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  createdBy: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  walletAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  links: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  status: z.union([ z.lazy(() => DaoStatusSchema),z.lazy(() => EnumDaoStatusFieldUpdateOperationsInputSchema) ]).optional(),
+  platform: z.union([ z.lazy(() => DaoPlatformSchema),z.lazy(() => EnumDaoPlatformFieldUpdateOperationsInputSchema) ]).optional(),
+  marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+}).strict();
+
 export const DaoInfoCreateWithoutHoldersInputSchema: z.ZodType<Prisma.DaoInfoCreateWithoutHoldersInput> = z.object({
   tokenAddress: z.string(),
   name: z.string(),
@@ -4979,7 +5484,8 @@ export const DaoCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoCreateWithoutI
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutInfoInput> = z.object({
@@ -5001,7 +5507,8 @@ export const DaoUncheckedCreateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUnche
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoCreateOrConnectWithoutInfoInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutInfoInput> = z.object({
@@ -5059,7 +5566,8 @@ export const DaoUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUpdateWithoutI
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutInfoInput> = z.object({
@@ -5081,7 +5589,8 @@ export const DaoUncheckedUpdateWithoutInfoInputSchema: z.ZodType<Prisma.DaoUnche
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoTokenHolderUpsertWithWhereUniqueWithoutTokenInfoInputSchema: z.ZodType<Prisma.DaoTokenHolderUpsertWithWhereUniqueWithoutTokenInfoInput> = z.object({
@@ -5128,7 +5637,8 @@ export const DaoCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateWith
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutMessagesInput> = z.object({
@@ -5150,7 +5660,8 @@ export const DaoUncheckedCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoCreateOrConnectWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutMessagesInput> = z.object({
@@ -5188,7 +5699,8 @@ export const DaoUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUpdateWith
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutMessagesInput> = z.object({
@@ -5210,7 +5722,8 @@ export const DaoUncheckedUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateWithoutPocsInput> = z.object({
@@ -5232,7 +5745,8 @@ export const DaoCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateWithoutP
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   info: z.lazy(() => DaoInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
-  stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional()
+  stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutPocsInput> = z.object({
@@ -5254,7 +5768,8 @@ export const DaoUncheckedCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUnche
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoCreateOrConnectWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutPocsInput> = z.object({
@@ -5349,7 +5864,8 @@ export const DaoUpdateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutP
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
-  stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional()
+  stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutPocsInput> = z.object({
@@ -5371,7 +5887,8 @@ export const DaoUncheckedUpdateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUnche
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const UserUpsertWithoutContributionsInputSchema: z.ZodType<Prisma.UserUpsertWithoutContributionsInput> = z.object({
@@ -5578,7 +6095,8 @@ export const DaoUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUpdateWitho
   info: z.lazy(() => DaoInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutCreatorInput> = z.object({
@@ -5600,7 +6118,8 @@ export const DaoUncheckedUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateManyWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateManyWithoutCreatorInput> = z.object({
@@ -5691,6 +6210,15 @@ export const POCCreateManyDaoInputSchema: z.ZodType<Prisma.POCCreateManyDaoInput
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
 }).strict();
 
+export const DaoContentCreateManyDaoInputSchema: z.ZodType<Prisma.DaoContentCreateManyDaoInput> = z.object({
+  sort: z.number().int(),
+  title: z.string(),
+  type: z.lazy(() => DaoContentTypeSchema).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional()
+}).strict();
+
 export const ForumMessageUpdateWithoutDaoInputSchema: z.ZodType<Prisma.ForumMessageUpdateWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   message: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5775,6 +6303,33 @@ export const POCUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.POCUn
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentUpdateWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUpdateWithoutDaoInput> = z.object({
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentUncheckedUpdateWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUncheckedUpdateWithoutDaoInput> = z.object({
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoContentUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUncheckedUpdateManyWithoutDaoInput> = z.object({
+  sort: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  title: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  type: z.union([ z.lazy(() => DaoContentTypeSchema),z.lazy(() => EnumDaoContentTypeFieldUpdateOperationsInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const DaoTokenHolderCreateManyTokenInfoInputSchema: z.ZodType<Prisma.DaoTokenHolderCreateManyTokenInfoInput> = z.object({
@@ -6074,6 +6629,68 @@ export const DaoFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.DaoFindUniqueOrThr
   select: DaoSelectSchema.optional(),
   include: DaoIncludeSchema.optional(),
   where: DaoWhereUniqueInputSchema,
+}).strict() ;
+
+export const DaoContentFindFirstArgsSchema: z.ZodType<Prisma.DaoContentFindFirstArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereInputSchema.optional(),
+  orderBy: z.union([ DaoContentOrderByWithRelationInputSchema.array(),DaoContentOrderByWithRelationInputSchema ]).optional(),
+  cursor: DaoContentWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ DaoContentScalarFieldEnumSchema,DaoContentScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const DaoContentFindFirstOrThrowArgsSchema: z.ZodType<Prisma.DaoContentFindFirstOrThrowArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereInputSchema.optional(),
+  orderBy: z.union([ DaoContentOrderByWithRelationInputSchema.array(),DaoContentOrderByWithRelationInputSchema ]).optional(),
+  cursor: DaoContentWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ DaoContentScalarFieldEnumSchema,DaoContentScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const DaoContentFindManyArgsSchema: z.ZodType<Prisma.DaoContentFindManyArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereInputSchema.optional(),
+  orderBy: z.union([ DaoContentOrderByWithRelationInputSchema.array(),DaoContentOrderByWithRelationInputSchema ]).optional(),
+  cursor: DaoContentWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ DaoContentScalarFieldEnumSchema,DaoContentScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const DaoContentAggregateArgsSchema: z.ZodType<Prisma.DaoContentAggregateArgs> = z.object({
+  where: DaoContentWhereInputSchema.optional(),
+  orderBy: z.union([ DaoContentOrderByWithRelationInputSchema.array(),DaoContentOrderByWithRelationInputSchema ]).optional(),
+  cursor: DaoContentWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const DaoContentGroupByArgsSchema: z.ZodType<Prisma.DaoContentGroupByArgs> = z.object({
+  where: DaoContentWhereInputSchema.optional(),
+  orderBy: z.union([ DaoContentOrderByWithAggregationInputSchema.array(),DaoContentOrderByWithAggregationInputSchema ]).optional(),
+  by: DaoContentScalarFieldEnumSchema.array(),
+  having: DaoContentScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const DaoContentFindUniqueArgsSchema: z.ZodType<Prisma.DaoContentFindUniqueArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereUniqueInputSchema,
+}).strict() ;
+
+export const DaoContentFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.DaoContentFindUniqueOrThrowArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereUniqueInputSchema,
 }).strict() ;
 
 export const DaoTokenHolderFindFirstArgsSchema: z.ZodType<Prisma.DaoTokenHolderFindFirstArgs> = z.object({
@@ -6652,6 +7269,60 @@ export const DaoUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.DaoUpdateManyAnd
 
 export const DaoDeleteManyArgsSchema: z.ZodType<Prisma.DaoDeleteManyArgs> = z.object({
   where: DaoWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const DaoContentCreateArgsSchema: z.ZodType<Prisma.DaoContentCreateArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  data: z.union([ DaoContentCreateInputSchema,DaoContentUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const DaoContentUpsertArgsSchema: z.ZodType<Prisma.DaoContentUpsertArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereUniqueInputSchema,
+  create: z.union([ DaoContentCreateInputSchema,DaoContentUncheckedCreateInputSchema ]),
+  update: z.union([ DaoContentUpdateInputSchema,DaoContentUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const DaoContentCreateManyArgsSchema: z.ZodType<Prisma.DaoContentCreateManyArgs> = z.object({
+  data: z.union([ DaoContentCreateManyInputSchema,DaoContentCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const DaoContentCreateManyAndReturnArgsSchema: z.ZodType<Prisma.DaoContentCreateManyAndReturnArgs> = z.object({
+  data: z.union([ DaoContentCreateManyInputSchema,DaoContentCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const DaoContentDeleteArgsSchema: z.ZodType<Prisma.DaoContentDeleteArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  where: DaoContentWhereUniqueInputSchema,
+}).strict() ;
+
+export const DaoContentUpdateArgsSchema: z.ZodType<Prisma.DaoContentUpdateArgs> = z.object({
+  select: DaoContentSelectSchema.optional(),
+  include: DaoContentIncludeSchema.optional(),
+  data: z.union([ DaoContentUpdateInputSchema,DaoContentUncheckedUpdateInputSchema ]),
+  where: DaoContentWhereUniqueInputSchema,
+}).strict() ;
+
+export const DaoContentUpdateManyArgsSchema: z.ZodType<Prisma.DaoContentUpdateManyArgs> = z.object({
+  data: z.union([ DaoContentUpdateManyMutationInputSchema,DaoContentUncheckedUpdateManyInputSchema ]),
+  where: DaoContentWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const DaoContentUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.DaoContentUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ DaoContentUpdateManyMutationInputSchema,DaoContentUncheckedUpdateManyInputSchema ]),
+  where: DaoContentWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const DaoContentDeleteManyArgsSchema: z.ZodType<Prisma.DaoContentDeleteManyArgs> = z.object({
+  where: DaoContentWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
