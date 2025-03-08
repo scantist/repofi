@@ -120,7 +120,6 @@ const BindRepository = () => {
             <motion.div
               layoutId={`card-${repo.name}-${id}`}
               key={`card-${repo.name}-${id}`}
-              onClick={() => setCurrent(repo)}
               className={cn(
                 "mx-10 my-2 flex flex-col gap-4 border-b border-b-neutral-400 px-4 py-2 pb-4 transition"
               )}
@@ -210,6 +209,7 @@ const BindRepository = () => {
                       animate={{ width: "auto", opacity: 1 }}
                       exit={{ width: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: "easeInOut" }}
+                      onClick={() => setCurrent(repo)}
                       className={cn(
                         "font-bold cursor-pointer overflow-hidden whitespace-nowrap",
                         current === repo && "text-primary"
