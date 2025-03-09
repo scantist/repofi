@@ -1,12 +1,37 @@
 import {  DaoPlatform } from "@prisma/client"
 import { CommonError, ErrorCode } from "~/lib/error"
 import { Octokit } from "octokit"
-import { type Repository } from "~/types/data"
+import { type PageableData, type Repository } from "~/types/data"
 import { type Pageable } from "~/lib/schema"
+import { fetchRepoContributors, parseRepoUrl } from "~/server/tool/repo"
 
 class RepoService{
-  async fetchRepoContributors(url:string,platform: DaoPlatform) {
-    // implementation
+  async fetchPlatformInfo(accessToken: string, platform: DaoPlatform) {
+    if (platform === DaoPlatform.GITHUB) {
+      const client = new Octokit({ auth: accessToken })
+      if (!client) {
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitHub client not available")
+      }
+
+      try {
+        const { data: user } = await client.rest.users.getAuthenticated()
+        console.log(user)
+        return {
+          email: user.email,
+          avatar: user.avatar_url,
+          name: user.name ?? user.login,
+          username: user.login
+        }
+      } catch (error) {
+        console.error("Error fetching GitHub user info:", error)
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to fetch GitHub user information")
+      }
+    } else if (platform === DaoPlatform.GITLAB) {
+      // 实现 GitLab 用户信息获取
+      throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitLab user info fetching not implemented yet")
+    } else {
+      throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform")
+    }
   }
 
   async fetchPublicRepos(accessToken: string, platform: DaoPlatform, pageable: Pageable) {
@@ -32,7 +57,7 @@ class RepoService{
           sort: "updated",
           affiliation: "owner,collaborator",
           per_page: pageable.size,
-          page: pageable.page
+          page: pageable.page+1
         })
 
         const linkHeader = headers.link
@@ -44,20 +69,20 @@ class RepoService{
             totalPages = parseInt(lastPageUrl.searchParams.get("page") ?? "1", 10)
           }
         }
-
+        const repositories = repos.map(repo => ({
+          id: repo.id,
+          name: repo.name,
+          description: repo.description,
+          url: repo.html_url,
+          star: repo.stargazers_count,
+          fork: repo.forks_count,
+          watch: repo.watchers_count,
+          license: repo.license?.spdx_id
+        } as Repository))
         return {
-          repositories: repos.map(repo => ({
-            id: repo.id,
-            name: repo.name,
-            description: repo.description,
-            url: repo.html_url,
-            star: repo.stargazers_count,
-            fork: repo.forks_count,
-            watch: repo.watchers_count,
-            license: repo.license?.spdx_id
-          } as Repository)),
-          totalPages
-        }
+          list: repositories,
+          pages:totalPages
+        } as PageableData<typeof repositories[number]>
       } catch (error) {
         console.error("Error fetching GitHub repos:", error)
         throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to fetch GitHub repositories")
@@ -68,6 +93,11 @@ class RepoService{
     } else {
       throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform")
     }
+  }
+
+  async fetchRepoContributors(url:string){
+    const repoMeta = parseRepoUrl(url)
+    return await fetchRepoContributors(repoMeta.platform,repoMeta.owner, repoMeta.repo)
   }
 
 }

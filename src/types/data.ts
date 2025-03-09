@@ -18,6 +18,7 @@ export interface Repository {
 
 export interface PageableData<T> {
   list: T[]
+  pages:number
   total: number
 }
 

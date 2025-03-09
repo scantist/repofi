@@ -42,11 +42,15 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       </CardWrapper>
     )
   }
-  const { data:response, isLoading } = api.repo.fetchPublicRepo.useQuery(
-    { accessToken: githubToken,platform: DaoPlatform.GITHUB,pageable:{ page:1,size:10 } },
+  const { data:repoResponse, isLoading } = api.repo.fetchPublicRepos.useQuery(
+    { accessToken: githubToken,platform: DaoPlatform.GITHUB,pageable:{ page:0,size:10 } },
     { enabled: !!githubToken }
   )
-  console.log(response?.totalPages)
+  const { data:info } = api.repo.fetchPlatformInfo.useQuery(
+    { accessToken: githubToken,platform: DaoPlatform.GITHUB },
+    { enabled: !!githubToken }
+  )
+  console.log(repoResponse?.pages)
   return (
     <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
       <div
@@ -60,7 +64,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
           <div className={"flex flex-row gap-x-3"}>
             <SiGithub />
             <div>
-              {session?.user?.name} - {session?.user?.email}
+              {info?.username} - {info?.email}
             </div>
           </div>
           <LogOut className={"cursor-pointer"} onClick={() => signOut()} />
@@ -72,7 +76,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
           onClose={() => setActive(null)}
         />
         <div className={"flex flex-col gap-4"}>
-          {response?.repositories.map((repo, index) => (
+          {repoResponse?.list.map((repo, index) => (
             <motion.div
               layoutId={`card-${repo.name}-${id}`}
               key={`card-${repo.name}-${id}`}

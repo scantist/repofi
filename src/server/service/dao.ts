@@ -2,6 +2,7 @@ import { type CreateDaoParams, type DaoLinks, type HomeSearchParams, type Pageab
 import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
 import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
+import { type PageableData } from "~/types/data"
 class DaoService {
   async homeSearch(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
@@ -78,7 +79,6 @@ class DaoService {
         ? { createdAt: "desc" }
         : { marketCapUsd: "desc" }
     })
-    console.log("data - total", data, total)
     const daoList = []
     for (const dao of data) {
       const { platform, owner, repo } = parseRepoUrl(dao.url)
@@ -103,9 +103,10 @@ class DaoService {
     }
 
     return {
-      data: daoList,
-      nextPage: (pageable.page + 1) * pageable.size < total ? pageable.page + 1 : null
-    }
+      list: daoList,
+      pages: Math.ceil(total / pageable.size),
+      total: total
+    } as PageableData<typeof daoList[number]>
   }
 
 
@@ -191,3 +192,4 @@ class DaoService {
   }
 }
 export const daoService = new DaoService()
+
