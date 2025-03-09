@@ -12,6 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import AvatarGroupMax from "~/components/ui/avatar-group-max"
 import { cn } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
+import BindRepositoryEmpty from "./bind-repository-empty"
+import { signOut, useSession } from "next-auth/react"
 
 const repositoryList: Repository[] = [
   {
@@ -89,9 +91,17 @@ const BindRepository = () => {
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
 
+  const { data: session } = useSession()
+
   useOutsideClick(ref as React.RefObject<HTMLDivElement>, () =>
     setActive(null),
   )
+
+  if (!session) {
+    return  <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
+      <BindRepositoryEmpty />
+    </CardWrapper>
+  }
 
   return (
     <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
@@ -105,9 +115,9 @@ const BindRepository = () => {
         >
           <div className={"flex flex-row gap-x-3"}>
             <SiGithub />
-            <div>lizhongyue248@163.com</div>
+            <div>{session.user?.name} - {session.user?.email}</div>
           </div>
-          <LogOut />
+          <LogOut className={"cursor-pointer"} onClick={() => signOut()}/>
         </div>
         <RepositoryInformation
           id={id}

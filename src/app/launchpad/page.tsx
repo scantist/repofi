@@ -1,7 +1,6 @@
 import BannerWrapper from "~/components/banner-wrapper"
-import CardWrapper from "~/components/card-wrapper"
-import DaoCard from "~/app/_components/dao-card"
 import LiveDao from "~/app/launchpad/_components/live-dao"
+import LaunchingDao from "~/app/launchpad/_components/launching-dao"
 
 const LaunchpadPage = () => {
   return <div className={"mt-10 min-h-full"}>
@@ -31,17 +30,7 @@ const LaunchpadPage = () => {
         </div>
       </div>
     </BannerWrapper>
-    <div className={"mx-auto flex min-h-full w-full max-w-7xl gap-8 px-4 pt-10 pb-10 flex-col"}>
-      <div className={"text-4xl font-bold"}>Currently Fundraising</div>
-      <CardWrapper>
-        <div className={"p-4 text-sm font-thin"}>
-          Join DeSci by participating in the early stage funding of new BioDAOs.  Your participation fuels cutting-edge research, open collaboration, and  new models of scientific funding.
-        </div>
-      </CardWrapper>
-      <div className={"grid grid-cols-3"}>
-        <DaoCard />
-      </div>
-    </div>
+    <LaunchingDao />
     <LiveDao />
   </div>
 }

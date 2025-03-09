@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { daoService } from "~/server/service/dao"
-import {DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema} from "~/lib/zod"
+import { DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema } from "~/lib/zod"
 
 export const daoLinksSchema = z.array(
   z.object({
@@ -11,7 +11,7 @@ export const daoLinksSchema = z.array(
 
 
 export const pageableSchema = z.object({
-  page: z.number().optional().default(1),
+  page: z.number().optional().default(0),
   size: z.number().optional().default(12)
 })
 

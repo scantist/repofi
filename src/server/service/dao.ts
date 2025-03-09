@@ -78,11 +78,12 @@ class DaoService {
         ? { createdAt: "desc" }
         : { marketCapUsd: "desc" }
     })
-
-    const daoList = data.map(async (dao) => {
+    console.log("data - total", data, total)
+    const daoList = []
+    for (const dao of data) {
       const { platform, owner, repo } = parseRepoUrl(dao.url)
       const repoInfo = await fetchRepoInfo(platform, owner, repo)
-      return {
+      daoList.push({
         ...dao,
         marketCapUsd: dao.marketCapUsd.toString(),
         priceUsd: dao.priceUsd.toString(),
@@ -98,8 +99,8 @@ class DaoService {
           totalSupply: dao.info.totalSupply.toString(),
           holderCount: dao.info.holderCount.toString()
         }
-      }
-    })
+      })
+    }
 
     return {
       data: daoList,

@@ -1,7 +1,13 @@
+"use client"
+
 import { Waypoints } from "lucide-react"
 import { SiGithub, SiGitlab } from "@icons-pack/react-simple-icons"
+import { signIn } from "next-auth/react"
 
 const BindRepositoryEmpty = () => {
+  const authGithub = async () => {
+    await signIn("github")
+  }
   return (
     <div
       className={
@@ -11,7 +17,7 @@ const BindRepositoryEmpty = () => {
       <Waypoints className={"size-32"} />
       <div className={"align-middle text-xl font-bold text-gray-400"}>
         Connect to your{" "}
-        <span className={"cursor-pointer text-white"}>
+        <span className={"cursor-pointer text-white"} onClick={authGithub}>
           <SiGithub className={"mr-2 inline"} />
           GitHub
         </span>{" "}

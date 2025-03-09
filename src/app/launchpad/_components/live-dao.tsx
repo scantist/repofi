@@ -48,7 +48,7 @@ const LiveDao = () => {
       </div>
       {type === "DISCOVER" ? (
         <div className={"grid grid-cols-3"}>
-          <DaoCard />
+          {/*<DaoCard />*/}
         </div>
       ) : (
         <LiveTable />
