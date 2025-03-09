@@ -1,7 +1,7 @@
 import { postRouter } from "~/server/api/routers/post"
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc"
 import { daoRouter } from "~/server/api/routers/dao"
-import { oauthRouter } from "~/server/api/routers/oauth"
+import { repoRouter } from "~/server/api/routers/repo"
 
 /**
  * This is the primary router for your server.
@@ -11,7 +11,7 @@ import { oauthRouter } from "~/server/api/routers/oauth"
 export const appRouter = createTRPCRouter({
   post: postRouter,
   dao: daoRouter,
-  oauth: oauthRouter
+  repo: repoRouter
 })
 
 // export type definition of API

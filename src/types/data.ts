@@ -6,12 +6,14 @@ import {
 } from "@prisma/client"
 
 export interface Repository {
+  id:number,
+  url: string,
   name: string;
   description: string;
-  link: string;
   star: number;
   fork: number;
   watch: number;
+  license: string;
 }
 
 export interface PageableData<T> {

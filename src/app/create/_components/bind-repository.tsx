@@ -14,76 +14,9 @@ import { cn } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
 import BindRepositoryEmpty from "./bind-repository-empty"
 import { signOut, useSession } from "next-auth/react"
-
-const repositoryList: Repository[] = [
-  {
-    name: "vue",
-    description:
-      "Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web.",
-    link: "https://github.com/vuejs/vue",
-    star: 200231,
-    fork: 33245,
-    watch: 6521
-  },
-  {
-    name: "react",
-    description:
-      "A declarative, efficient, and flexible JavaScript library for building user interfaces.",
-    link: "https://github.com/facebook/react",
-    star: 186542,
-    fork: 38901,
-    watch: 6789
-  },
-  {
-    name: "typescript",
-    description:
-      "TypeScript is a superset of JavaScript that compiles to clean JavaScript output.",
-    link: "https://github.com/microsoft/typescript",
-    star: 82345,
-    fork: 11234,
-    watch: 2156
-  },
-  {
-    name: "vite",
-    description: "Next generation frontend tooling. It's fast!",
-    link: "https://github.com/vitejs/vite",
-    star: 45678,
-    fork: 4567,
-    watch: 890
-  },
-  {
-    name: "angular",
-    description: "One framework. Mobile & desktop.",
-    link: "https://github.com/angular/angular",
-    star: 78901,
-    fork: 20789,
-    watch: 3421
-  },
-  {
-    name: "svelte",
-    description: "Cybernetically enhanced web apps",
-    link: "https://github.com/sveltejs/svelte",
-    star: 64532,
-    fork: 3245,
-    watch: 1234
-  },
-  {
-    name: "next.js",
-    description: "The React Framework for Production",
-    link: "https://github.com/vercel/next.js",
-    star: 89234,
-    fork: 18765,
-    watch: 2345
-  },
-  {
-    name: "nuxt",
-    description: "The Intuitive Vue Framework",
-    link: "https://github.com/nuxt/nuxt",
-    star: 42156,
-    fork: 3678,
-    watch: 890
-  }
-]
+import { repoService } from "~/server/service/repo"
+import { DaoPlatform } from "@prisma/client"
+import { api } from "~/trpc/react"
 
 type Props = {
   githubToken?: string;
@@ -101,6 +34,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     setActive(null),
   )
 
+
   if (!session || !githubToken) {
     return (
       <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
@@ -108,7 +42,11 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       </CardWrapper>
     )
   }
-
+  const { data:response, isLoading } = api.repo.fetchPublicRepo.useQuery(
+    { accessToken: githubToken,platform: DaoPlatform.GITHUB,pageable:{ page:1,size:10 } },
+    { enabled: !!githubToken }
+  )
+  console.log(response?.totalPages)
   return (
     <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
       <div
@@ -134,7 +72,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
           onClose={() => setActive(null)}
         />
         <div className={"flex flex-col gap-4"}>
-          {repositoryList.map((repo, index) => (
+          {response?.repositories.map((repo, index) => (
             <motion.div
               layoutId={`card-${repo.name}-${id}`}
               key={`card-${repo.name}-${id}`}
