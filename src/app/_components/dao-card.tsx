@@ -27,7 +27,9 @@ const DaoCard: FC<Props> = ({ data }) => {
         SiTelegram
       }[IconName]
     }
-    return Icon ? <Icon className="size-3" /> : null
+    return Icon ? <Link href={href} className={"cursor-pointer"} target={"_blank"}>
+      <Icon className="size-3" />
+    </Link> : null
   }
   return (
     <CardWrapper borderClassName={"border-1"}>
@@ -91,9 +93,6 @@ const DaoCard: FC<Props> = ({ data }) => {
                 <IconComponent key={index} type={link.type} href={link.value}/>
               ))
             }
-            <SiX className={"size-3"} />
-            <SiDiscord className={"size-3"} />
-            <SiTelegram className={"size-3"} />
           </div>
         </div>
       </div>

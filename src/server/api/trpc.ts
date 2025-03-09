@@ -27,7 +27,6 @@ import { auth, getApiKey } from "~/server/auth"
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth()
-  console.log("session", session)
   if (session) {
     return {
       db,

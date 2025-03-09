@@ -13,7 +13,6 @@ const LaunchingDao = () => {
   })
   const [param, setParam] = useState<HomeSearchParams>({
     orderBy: "latest",
-    status: ["LAUNCHING"],
     owned: false,
     starred: false
   })
@@ -21,7 +20,6 @@ const LaunchingDao = () => {
     ...pageable,
     ...param
   })
-  console.log(response)
   return (
     <div
       className={
