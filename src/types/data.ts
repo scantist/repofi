@@ -14,6 +14,11 @@ export interface Repository {
   watch: number;
 }
 
+export interface PageableData<T> {
+  list: T[]
+  total: number
+}
+
 export interface DaoPage {
   id: string;
   name: string;

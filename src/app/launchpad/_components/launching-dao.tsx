@@ -1,25 +1,9 @@
 "use client"
 
 import CardWrapper from "~/components/card-wrapper"
-import DaoCard from "~/app/_components/dao-card"
-import { api } from "~/trpc/react"
-import { useState } from "react"
-import { type HomeSearchParams, type Pageable } from "~/lib/schema"
+import DaoGrid from "~/app/launchpad/_components/dao-grid"
 
 const LaunchingDao = () => {
-  const [pageable, setPageable] = useState<Pageable>({
-    page: 0,
-    size: 9
-  })
-  const [param, setParam] = useState<HomeSearchParams>({
-    orderBy: "latest",
-    owned: false,
-    starred: false
-  })
-  const { data: response } = api.dao.homeSearch.useQuery({
-    ...pageable,
-    ...param
-  })
   return (
     <div
       className={
@@ -34,15 +18,12 @@ const LaunchingDao = () => {
           collaboration, and new models of scientific funding.
         </div>
       </CardWrapper>
-      <div className={"grid grid-cols-3"}>
-        {response && response?.data.length > 0 ? (
-          response?.data.map((item) => (
-            <DaoCard data={item} key={`launching-dao-${item.id}`}/>
-          ))
-        ) : (
-          <div>No Data</div>
-        )}
-      </div>
+      <DaoGrid initParam={{
+        status: ["LAUNCHING"],
+        orderBy: "latest",
+        owned: false,
+        starred: false
+      }}/>
     </div>
   )
 }
