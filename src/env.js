@@ -19,7 +19,10 @@ export const env = createEnv({
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITLAB_SECRET: z.string(),
     AUTH_GITLAB_ID: z.string(),
-    TOOL_REPO_GITHUB_ACCESS_TOKENS: z.string()
+    TOOL_REPO_GITHUB_ACCESS_TOKENS: z.string(),
+    CONTRACT_POC_ADDRESS: z.string(),
+    CONTRACT_LAUNCHPAD_ADDRESS: z.string(),
+    CONTRACT_TOKENLOCKER_ADDRESS: z.string()
   },
 
   /**
@@ -50,7 +53,10 @@ export const env = createEnv({
     AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
     AUTH_GITLAB_SECRET: process.env.AUTH_GITLAB_SECRET,
     AUTH_GITLAB_ID: process.env.AUTH_GITLAB_ID,
-    TOOL_REPO_GITHUB_ACCESS_TOKENS: process.env.TOOL_REPO_GITHUB_ACCESS_TOKENS
+    TOOL_REPO_GITHUB_ACCESS_TOKENS: process.env.TOOL_REPO_GITHUB_ACCESS_TOKENS,
+    CONTRACT_POC_ADDRESS: process.env.CONTRACT_POC_ADDRESS,
+    CONTRACT_LAUNCHPAD_ADDRESS: process.env.CONTRACT_LAUNCHPAD_ADDRESS,
+    CONTRACT_TOKENLOCKER_ADDRESS: process.env.CONTRACT_TOKENLOCKER_ADDRESS
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
