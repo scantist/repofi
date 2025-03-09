@@ -3,7 +3,7 @@
 import React, { type FC, useEffect, useId, useRef, useState } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import { SiGithub } from "@icons-pack/react-simple-icons"
-import { Eye, GitFork, LogOut, Star } from "lucide-react"
+import { Eye, GitFork, LogOut, Star, Users } from "lucide-react"
 import { useOutsideClick } from "~/hooks/use-outside-click"
 import { AnimatePresence, motion } from "motion/react"
 import { type Repository } from "~/types/data"
@@ -184,48 +184,14 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                 </motion.p>
               </div>
               <div className={"flex flex-row items-center justify-between"}>
-                <motion.p
-                  className={"cursor-pointer font-thin"}
+                <motion.div
+                  className={"cursor-pointer font-thin flex flex-row gap-x-2 items-center"}
                   onClick={() => setActive(repo)}
                 >
-                  Detail
-                </motion.p>
+                  <Users className={"size-4"} />
+                  Contributors
+                </motion.div>
                 <div className={"flex flex-row gap-4"}>
-                  <AvatarGroupMax
-                    className="flex items-center"
-                    max={5}
-                    avatarClassName={"h-6 w-6 text-xs"}
-                  >
-                    <Avatar className="first:ml- -ml-2 cursor-pointer">
-                      <AvatarImage
-                        src="https://github.com/shadcn.png"
-                        alt="@shadcn"
-                      />
-                      <AvatarFallback className="bg-indigo-500 text-white">
-                        CN
-                      </AvatarFallback>
-                    </Avatar>
-                    <Avatar className="-ml-2 cursor-pointer first:ml-0">
-                      <AvatarFallback className="bg-green-600 text-white">
-                        CN
-                      </AvatarFallback>
-                    </Avatar>
-                    <Avatar className="-ml-2 cursor-pointer first:ml-0">
-                      <AvatarFallback className="bg-red-500 text-white">
-                        AB
-                      </AvatarFallback>
-                    </Avatar>
-                    <Avatar className="-ml-2 cursor-pointer first:ml-0">
-                      <AvatarFallback className="bg-indigo-500 text-white">
-                        VK
-                      </AvatarFallback>
-                    </Avatar>
-                    <Avatar className="-ml-2 cursor-pointer first:ml-0">
-                      <AvatarFallback className="bg-orange-500 text-white">
-                        RS
-                      </AvatarFallback>
-                    </Avatar>
-                  </AvatarGroupMax>
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={current === repo ? "unbind" : "bind"}

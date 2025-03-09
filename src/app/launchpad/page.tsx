@@ -16,7 +16,7 @@ const LaunchpadPage = () => {
         </div>
         <div className={"max-w-3xl flex flex-row justify-between mt-6 py-7 px-8 rounded-lg bg-secondary"}>
           <div className={"flex flex-col gap-2"}>
-            <div className={"font-extrabold text-3xl"}>10 BioDAOs</div>
+            <div className={"font-extrabold text-3xl"}>10 DAOs</div>
             <div className={"text-sm font-thin text-white/70"}>Launched & Funded</div>
           </div>
           <div className={"flex flex-col gap-2 pl-4 border-l-1 border-white"}>

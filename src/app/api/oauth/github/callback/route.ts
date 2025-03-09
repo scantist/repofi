@@ -3,8 +3,6 @@
 import type { OAuth2Tokens } from "arctic"
 import { github } from "~/server/oauth"
 import { cookies } from "next/headers"
-import { getRedis } from "~/server/redis"
-import { Octokit } from "octokit"
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url)
