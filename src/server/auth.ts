@@ -29,11 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     session: (params) => {
-      console.log("callback session")
       const { session, token } = params
-      if (session.user) {
-        session.provider = session.user.image?.includes("github") ? "GitHub" : "GitLab"
-      }
       if (!token.sub) {
         return session
       }
@@ -50,7 +46,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     jwt: async (param) => {
       const { token, account } = param
-      console.log("session store", JSON.stringify(param))
       if (account?.access_token && token?.email) {
         const redis = getRedis()
         if (account.expires_at && account.created_at) {
@@ -114,7 +109,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
       authorize: async (credentials) => {
-        console.log("credentials", credentials)
         try {
           if (!credentials?.message) {
             throw new Error("SiweMessage is undefined")

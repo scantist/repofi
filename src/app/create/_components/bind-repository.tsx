@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useId, useRef, useState } from "react"
+import React, { type FC, useEffect, useId, useRef, useState } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import { SiGithub } from "@icons-pack/react-simple-icons"
 import { Eye, GitFork, LogOut, Star } from "lucide-react"
@@ -85,7 +85,11 @@ const repositoryList: Repository[] = [
   }
 ]
 
-const BindRepository = () => {
+type Props = {
+  githubToken?: string;
+};
+
+const BindRepository: FC<Props> = ({ githubToken }) => {
   const [active, setActive] = useState<Repository | boolean | null>(null)
   const [current, setCurrent] = useState<Repository | boolean | null>(null)
   const ref = useRef<HTMLDivElement>(null)
@@ -97,10 +101,12 @@ const BindRepository = () => {
     setActive(null),
   )
 
-  if (true) {
-    return  <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
-      <BindRepositoryEmpty />
-    </CardWrapper>
+  if (!session || !githubToken) {
+    return (
+      <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
+        <BindRepositoryEmpty githubToken={githubToken} />
+      </CardWrapper>
+    )
   }
 
   return (
@@ -115,9 +121,11 @@ const BindRepository = () => {
         >
           <div className={"flex flex-row gap-x-3"}>
             <SiGithub />
-            <div>{session?.user?.name} - {session?.user?.email}</div>
+            <div>
+              {session?.user?.name} - {session?.user?.email}
+            </div>
           </div>
-          <LogOut className={"cursor-pointer"} onClick={() => signOut()}/>
+          <LogOut className={"cursor-pointer"} onClick={() => signOut()} />
         </div>
         <RepositoryInformation
           id={id}
@@ -131,7 +139,7 @@ const BindRepository = () => {
               layoutId={`card-${repo.name}-${id}`}
               key={`card-${repo.name}-${id}`}
               className={cn(
-                "mx-10 my-2 flex flex-col gap-4 border-b border-b-neutral-400 px-4 py-2 pb-4 transition"
+                "mx-10 my-2 flex flex-col gap-4 border-b border-b-neutral-400 px-4 py-2 pb-4 transition",
               )}
             >
               <div className={"flex flex-row items-center justify-between"}>
@@ -175,13 +183,20 @@ const BindRepository = () => {
                   {repo.description}
                 </motion.p>
               </div>
-              <div className={"flex flex-row justify-between items-center"}>
-                <motion.p className={"font-thin cursor-pointer"} onClick={() => setActive(repo)}>
+              <div className={"flex flex-row items-center justify-between"}>
+                <motion.p
+                  className={"cursor-pointer font-thin"}
+                  onClick={() => setActive(repo)}
+                >
                   Detail
                 </motion.p>
                 <div className={"flex flex-row gap-4"}>
-                  <AvatarGroupMax className="flex items-center " max={5} avatarClassName={"h-6 w-6 text-xs"}>
-                    <Avatar className="-ml-2 cursor-pointer first:ml-">
+                  <AvatarGroupMax
+                    className="flex items-center"
+                    max={5}
+                    avatarClassName={"h-6 w-6 text-xs"}
+                  >
+                    <Avatar className="first:ml- -ml-2 cursor-pointer">
                       <AvatarImage
                         src="https://github.com/shadcn.png"
                         alt="@shadcn"
@@ -221,8 +236,8 @@ const BindRepository = () => {
                       transition={{ duration: 0.3, ease: "easeInOut" }}
                       onClick={() => setCurrent(repo)}
                       className={cn(
-                        "font-bold cursor-pointer overflow-hidden whitespace-nowrap",
-                        current === repo && "text-primary"
+                        "cursor-pointer overflow-hidden font-bold whitespace-nowrap",
+                        current === repo && "text-primary",
                       )}
                       style={{ display: "inline-block" }}
                     >

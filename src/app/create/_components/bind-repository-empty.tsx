@@ -1,12 +1,37 @@
 "use client"
 
 import { Waypoints } from "lucide-react"
-import { SiGithub, SiGitlab } from "@icons-pack/react-simple-icons"
-import { signIn } from "next-auth/react"
+import { SiGithub } from "@icons-pack/react-simple-icons"
+import Link from "next/link"
+import { useSession } from "next-auth/react"
+import WalletButton from "~/components/auth/wallet-button"
+import { usePathname } from "next/navigation"
+import { type FC } from "react"
 
-const BindRepositoryEmpty = () => {
-  const authGithub = async () => {
-    await signIn("github", {}, { address: "sadfas" })
+type Props = {
+  githubToken?: string
+}
+
+const BindRepositoryEmpty: FC<Props> = ({ githubToken }) => {
+  const { data: session } = useSession()
+  const pathname = usePathname()
+  let content = <></>
+  if (!session) {
+    content = <div className={"align-middle text-xl font-bold text-gray-400"}>
+      Click <WalletButton /> to your Web3 Wallet !
+    </div>
+  } else if (!githubToken) {
+    content = <div className={"align-middle text-xl font-bold text-gray-400"}>
+      Connect to your{" "}
+      <Link
+        className={"cursor-pointer text-white"}
+        href={`/api/oauth/github?rollbackUrl=${pathname}`}
+      >
+        <SiGithub className={"mr-2 inline"} />
+        GitHub
+      </Link>{" "}
+      account!
+    </div>
   }
   return (
     <div
@@ -15,19 +40,7 @@ const BindRepositoryEmpty = () => {
       }
     >
       <Waypoints className={"size-32"} />
-      <div className={"align-middle text-xl font-bold text-gray-400"}>
-        Connect to your{" "}
-        <span className={"cursor-pointer text-white"} onClick={authGithub}>
-          <SiGithub className={"mr-2 inline"} />
-          GitHub
-        </span>{" "}
-        or{" "}
-        <span className={"cursor-pointer text-white"}>
-          <SiGitlab className={"mr-2 inline"} />
-          GitLab
-        </span>{" "}
-        account!
-      </div>
+      {content}
     </div>
   )
 }

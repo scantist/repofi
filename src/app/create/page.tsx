@@ -2,8 +2,11 @@ import { Rocket, Sparkle } from "lucide-react"
 import BannerWrapper from "~/components/banner-wrapper"
 import CardWrapper from "~/components/card-wrapper"
 import BindRepository from "~/app/create/_components/bind-repository"
+import { getCookie } from "cookies-next"
+import { cookies } from "next/headers"
 
-const CreatePage = () => {
+const CreatePage = async () => {
+  const githubToken = await getCookie("github_token", { cookies })
   return (
     <div className={"mt-10 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col pb-20"}>
@@ -104,7 +107,7 @@ const CreatePage = () => {
             </div>
           </CardWrapper>
         </div>
-        <BindRepository />
+        <BindRepository githubToken={githubToken}/>
       </div>
     </div>
   )

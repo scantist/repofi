@@ -1,8 +1,6 @@
 import { z } from "zod"
-import { type Prisma } from "@prisma/client"
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc"
-import { DaoStatus } from "@prisma/client"
-import { homeSearchParamsSchema, pageableSchema, type HomeSearchParams, type Pageable } from "~/lib/schema"
+import { homeSearchParamsSchema, pageableSchema } from "~/lib/schema"
 import { daoService } from "~/server/service/dao"
 
 export const daoRouter = createTRPCRouter({
