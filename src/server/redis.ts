@@ -27,6 +27,7 @@ export const getAccessToken = async (
 }
 
 export const getGitHubClient = async (email: string) => {
+
   const accessToken = await getAccessToken("GitHub", email)
   return new Octokit({ auth: accessToken })
 }

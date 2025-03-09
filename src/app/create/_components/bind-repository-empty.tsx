@@ -6,7 +6,7 @@ import { signIn } from "next-auth/react"
 
 const BindRepositoryEmpty = () => {
   const authGithub = async () => {
-    await signIn("github")
+    await signIn("github", {}, { address: "sadfas" })
   }
   return (
     <div

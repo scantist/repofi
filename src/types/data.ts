@@ -15,7 +15,6 @@ export interface Repository {
 }
 
 export interface DaoPage {
-
   id: string;
   name: string;
   url: string;

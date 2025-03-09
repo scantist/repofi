@@ -9,7 +9,7 @@ import {
 import { userService } from "~/server/service/user"
 import GitHub from "next-auth/providers/github"
 import GitLab, { type GitLabProfile } from "next-auth/providers/gitlab"
-import {getRedis} from "~/server/redis"
+import { getRedis } from "~/server/redis"
 
 declare module "next-auth" {
   /**
@@ -29,6 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     session: (params) => {
+      console.log("callback session")
       const { session, token } = params
       if (session.user) {
         session.provider = session.user.image?.includes("github") ? "GitHub" : "GitLab"
@@ -47,7 +48,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session
     },
-    jwt: async ({ token, account }) => {
+    jwt: async (param) => {
+      const { token, account } = param
+      console.log("session store", JSON.stringify(param))
       if (account?.access_token && token?.email) {
         const redis = getRedis()
         if (account.expires_at && account.created_at) {

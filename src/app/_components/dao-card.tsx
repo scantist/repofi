@@ -5,6 +5,8 @@ import Link from "next/link"
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import CardWrapper from "~/components/card-wrapper"
 import { type DaoPage } from "~/types/data"
+import { type DaoLinks } from "~/lib/schema"
+import { House } from "lucide-react"
 
 type Props = {
   children?: React.ReactNode,
@@ -12,7 +14,21 @@ type Props = {
 };
 
 const DaoCard: FC<Props> = ({ data }) => {
-  console.log("dao card", data)
+
+  const IconComponent = ({ type, href }: { type: string, href: string }) => {
+    let Icon
+    if (type.toLowerCase() === "website") {
+      Icon = House
+    } else {
+      const IconName = `Si${type.charAt(0).toUpperCase() + type.slice(1)}`
+      Icon = {
+        SiX,
+        SiDiscord,
+        SiTelegram
+      }[IconName]
+    }
+    return Icon ? <Icon className="size-3" /> : null
+  }
   return (
     <CardWrapper borderClassName={"border-1"}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -29,22 +45,15 @@ const DaoCard: FC<Props> = ({ data }) => {
           Repository:&nbsp;
           <Link href={data.url}>{data.url}</Link>
         </div>
-        <div className={"flex flex-row justify-between text-xs"}>
-          <div>
-            <span className={"mr-1"}>License:</span>
-            <span className={"text-white/80"}>{data.license}</span>
-          </div>
-          <div>|</div>
+        <div className={"flex flex-row gap-x-6 mt-2 text-xs"}>
           <div>
             <span className={"mr-1"}>Stars:</span>
             <span className={"text-white/80"}>{data.repoStar}</span>
           </div>
-          <div>|</div>
           <div>
             <span className={"mr-1"}>Watch:</span>
             <span className={"text-white/80"}>{data.repoWatch}</span>
           </div>
-          <div>|</div>
           <div>
             <span className={"mr-1"}>Forks:</span>
             <span className={"text-white/80"}>{data.repoForks}</span>
@@ -75,8 +84,13 @@ const DaoCard: FC<Props> = ({ data }) => {
           </div>
         </div>
         <div className={"flex flex-row items-center justify-between"}>
-          <div className={"text-xs"}>More Info</div>
+          <div className={"text-xs"}>{data.license}</div>
           <div className={"flex flex-row gap-2"}>
+            {
+              (data.links as DaoLinks).map((link, index) => (
+                <IconComponent key={index} type={link.type} href={link.value}/>
+              ))
+            }
             <SiX className={"size-3"} />
             <SiDiscord className={"size-3"} />
             <SiTelegram className={"size-3"} />

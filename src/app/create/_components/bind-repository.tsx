@@ -97,7 +97,7 @@ const BindRepository = () => {
     setActive(null),
   )
 
-  if (!session) {
+  if (true) {
     return  <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
       <BindRepositoryEmpty />
     </CardWrapper>
@@ -115,7 +115,7 @@ const BindRepository = () => {
         >
           <div className={"flex flex-row gap-x-3"}>
             <SiGithub />
-            <div>{session.user?.name} - {session.user?.email}</div>
+            <div>{session?.user?.name} - {session?.user?.email}</div>
           </div>
           <LogOut className={"cursor-pointer"} onClick={() => signOut()}/>
         </div>
