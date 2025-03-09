@@ -5,8 +5,8 @@ import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/too
 class DaoService {
   async homeSearch(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
-    if (params.onlyLaunched) {
-      whereOptions.status = { equals: DaoStatus.LAUNCHED }
+    if (params.status) {
+      whereOptions.status = { in: params.status }
     }
     if (params.starred && userAddress) {
       whereOptions.stars = { some: { userAddress } }

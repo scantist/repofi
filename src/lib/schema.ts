@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { daoService } from "~/server/service/dao"
-import { DaoPlatformSchema, DaoTypeSchema } from "~/lib/zod"
+import {DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema} from "~/lib/zod"
 
 export const daoLinksSchema = z.array(
   z.object({
@@ -22,10 +22,7 @@ export const homeSearchParamsSchema = z.object({
     .optional()
     .default("marketCap")
     .catch("marketCap"),
-  onlyLaunched: z.preprocess(
-    (val) => val !== undefined && val !== "false",
-    z.boolean().optional().default(false),
-  ),
+  status:z.array(DaoStatusSchema).optional(),
   owned: z.preprocess(
     (val) => val !== undefined && val !== "false",
     z.boolean().optional().default(false),
@@ -35,7 +32,15 @@ export const homeSearchParamsSchema = z.object({
     z.boolean().optional().default(false),
   )
 })
-
+export const DaoContentParamsSchema=z.object({
+  title:z.string({ message:"Title is required." })
+    .refine((value) => value.trim() !== "", {
+      message: "Title can not be empty."
+    }),
+  sort:z.number().int().optional().default(0),
+  type:DaoContentTypeSchema,
+  data: z.object({})
+})
 
 export const createDaoParamsSchema = z.object({
   avatar: z
@@ -142,6 +147,7 @@ export const dexPriceSchema = z.object({
     }),
   )
 })
+export type DaoContentParams =z.infer<typeof DaoContentParamsSchema>
 export type DexPrice=z.infer<typeof dexPriceSchema>
 export type RepoInfo = z.infer<typeof repoInfoSchema>
 export type RepoMeta = z.infer<typeof repoMetaSchema>
