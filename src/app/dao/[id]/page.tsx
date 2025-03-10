@@ -19,7 +19,7 @@ const DaoPage = () => {
               width={335}
               alt={"banner"}
               src={
-                "http://downloads.echocow.cn/85936f2e95327e9e778b198c9b10fd6f.png"
+                "https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"
               }
             />
           </CardWrapper>

@@ -17,6 +17,7 @@ import { Space_Grotesk, Space_Mono } from "next/font/google"
 import ToTop from "~/components/common/to-top"
 import { Badge } from "~/components/ui/badge"
 import React from "react"
+import { Toaster } from "sonner"
 
 const sans = Space_Grotesk({
   subsets: ["latin"],
@@ -66,6 +67,7 @@ export default async function RootLayout({
         <QueryClientReactProvider>
           <TRPCReactProvider>
             <AuthProvider session={session} wagmiState={wagmiState}>
+              <Toaster />
               <div className={"relative flex min-h-screen w-full flex-col bg"}>
                 <header className="fixed top-0 z-30 mx-auto flex h-20 w-full items-center justify-between px-4">
                   <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-4 pr-0">

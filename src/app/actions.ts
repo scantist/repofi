@@ -9,9 +9,9 @@ const GoogleStorageBucket = "repofi"
 const storage = new Storage()
 
 export const uploadFile = async ({
-                                   file,
-                                   fileName
-                                 }: {
+  file,
+  fileName
+}: {
   file: string; // base64
   fileName: string;
 }) => {
@@ -50,10 +50,16 @@ export const uploadFile = async ({
     }
   }
 }
-export const getDaoListAction = async (params: HomeSearchParams & { page?: number }) => {
+
+export const getDaoListAction = async (
+  params: HomeSearchParams & { page?: number },
+) => {
   const session = await auth()
-  const homeSearch = await daoService.homeSearch({ ...params },
-    { page: params.page?? 0, size: 10  }, session?.address)
+  const homeSearch = await daoService.homeSearch(
+    { ...params },
+    { page: params.page ?? 0, size: 10 },
+    session?.address,
+  )
   console.log(homeSearch)
   return homeSearch
 }

@@ -37,7 +37,7 @@ const DaoCard: FC<Props> = ({ data }) => {
       <img
         className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
         alt={"bg"}
-        src={"http://downloads.echocow.cn/85936f2e95327e9e778b198c9b10fd6f.png"}
+        src={"https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"}
       />
       <div className={"mb-1 flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
         <div className={"truncate text-3xl leading-10 tracking-tighter"}>

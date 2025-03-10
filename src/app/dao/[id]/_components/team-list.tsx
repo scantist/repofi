@@ -9,7 +9,7 @@ const TeamList = () => {
         <CardWrapper key={`ccc-${item}`}>
           <div className={"flex flex-col p-6 gap-4"}>
             <div className={"flex flex-row gap-6"}>
-              <img src={"http://downloads.echocow.cn/85936f2e95327e9e778b198c9b10fd6f.png"}
+              <img src={"https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"}
                    className={"rounded-full size-16"}/>
               <div className={"flex flex-col gap-4"}>
                 <div className={"flex flex-row gap-5 items-center"}>

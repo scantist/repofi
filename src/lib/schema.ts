@@ -1,3 +1,4 @@
+"use client"
 import { z } from "zod"
 import { daoService } from "~/server/service/dao"
 import { DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema } from "~/lib/zod"
@@ -51,35 +52,38 @@ export const createDaoParamsSchema = z.object({
   url: z.string({ message: "repo url is required." })
     .regex(/^https:\/\/(github\.com|gitlab\.com)\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/,
       { message: "Only URLs from github.com or gitlab.com with the format https://github.com/xx/xxx are allowed." })
-    .refine(async (value) => {
-      const repoInfo = await daoService.repoInfo(value)
-      if (!repoInfo) {
-        return true
-      }
-    }),
+    // .refine(async (value) => {
+    //   const repoInfo = await daoService.repoInfo(value)
+    //   if (!repoInfo) {
+    //     return true
+    //   }
+    // })
+  ,
   type: DaoTypeSchema,
   name: z
     .string({ message: "Name is required." })
     .min(1, { message: "Name can not be empty." })
-    .refine(
-      async (value) => {
-        const nameExists = await daoService.checkNameExists(value)
-        return !nameExists
-      },
-      { message: "Name already exists." },
-    ),
+    // .refine(
+    //   async (value) => {
+    //     const nameExists = await daoService.checkNameExists(value)
+    //     return !nameExists
+    //   },
+    //   { message: "Name already exists." },
+    // )
+  ,
   ticker: z
     .string({ message: "Ticker is required." })
     .min(1, { message: "Ticker can not be empty." })
     .regex(/^[A-Za-z]+$/, { message: "Only letters are allowed." })
     .transform((v) => v.toUpperCase())
-    .refine(
-      async (value) => {
-        const tickerExists = await daoService.checkTickerExists(value)
-        return !tickerExists
-      },
-      { message: "Ticker already exists." },
-    ),
+    // .refine(
+    //   async (value) => {
+    //     const tickerExists = await daoService.checkTickerExists(value)
+    //     return !tickerExists
+    //   },
+    //   { message: "Ticker already exists." },
+    // )
+  ,
   description: z
     .string({ message: "Description is required." })
     .min(1, { message: "Description can not be empty." }),

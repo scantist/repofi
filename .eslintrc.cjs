@@ -38,6 +38,7 @@ const config = {
         }
       }
     ],
+    "react/no-children-prop": "off",
     "semi": ["error", "never"],
     "quotes": ["error", "double"],
     "comma-dangle": ["error", "never"],

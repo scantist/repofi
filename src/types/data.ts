@@ -54,3 +54,8 @@ export interface DaoPage {
     assetTokenAddress: string;
   };
 }
+
+export type FileUploader = (data: {
+  file: string;
+  fileName: string;
+}) => Promise<{ success: boolean; url?: string; message?: string }>;

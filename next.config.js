@@ -10,7 +10,7 @@ const config = {
   swcMinify: true,
   output: "standalone",
   images: {
-    domains: ["downloads.echocow.cn"],
+    domains: ["storage.googleapis.com"],
   },
   webpack: (config) => {
     config.externals.push("pino-pretty");

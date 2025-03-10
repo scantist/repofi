@@ -20,6 +20,9 @@ import { Button } from "~/components/ui/button"
 import ListPagination from "~/components/list-pagination"
 import { type Pageable } from "~/lib/schema"
 import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
+import createDaoStore, { stepAtom, stepPath } from "~/store/create-dao-store"
+import { useStore } from "jotai"
+import { useRouter } from "next/navigation"
 
 type Props = {
   githubToken?: string;
@@ -35,6 +38,9 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   const [current, setCurrent] = useState<Repository | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
+  const router = useRouter()
+
+  const store = useStore()
 
   const { data: session } = useSession()
 
@@ -77,6 +83,11 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
 
   const handleSearch = () => {
     setCondition((prev) => ({ ...prev, name: searchTerm, page: 0 }))
+  }
+
+  const next = () => {
+    store.set(stepAtom, "INFORMATION")
+    router.push(stepPath.INFORMATION)
   }
 
   return (
@@ -230,7 +241,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
               />
             )}
           </div>
-          <Button className={"px-8 text-white"}>
+          <Button className={"px-8 text-white"} disabled={current === null} onClick={next}>
             Start <RightArrow />
           </Button>
         </div>
