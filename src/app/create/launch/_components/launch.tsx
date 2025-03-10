@@ -19,6 +19,8 @@ import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
 import { api } from "~/trpc/react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import { Button } from "~/components/ui/button"
+import { Loader2, Rocket, Wallet } from "lucide-react"
 
 const Launch = () => {
   const store = useStore()
@@ -28,8 +30,9 @@ const Launch = () => {
     reValidateMode: "onBlur"
   })
   const router = useRouter()
-  const { data: assetTokenOptions, isPending } = api.assetToken.getAssetTokens.useQuery()
-  console.log("assetTokenOptions", assetTokenOptions)
+  // TODO
+  // const { data: assetTokenOptions, isPending } = api.assetToken.getAssetTokens.useQuery()
+  // console.log("assetTokenOptions", assetTokenOptions)
   const {
     handleSubmit,
     control,
@@ -48,7 +51,9 @@ const Launch = () => {
     return undefined
   }, [reservedRatio, salesRatio])
 
-  const submit = (data: LaunchParams) => {}
+  const submit = (data: LaunchParams) => {
+    // TODO
+  }
   return (
     <CardWrapper className={"bg-card col-span-1 w-full md:col-span-2"}>
       <Form {...form}>
@@ -265,51 +270,65 @@ const Launch = () => {
               </div>
             </div>
           </div>
-          <div className={"col-span-3"}>
-            <div className={"col-span-3"}>
-              <Controller
-                control={control}
-                name="assetToken"
-                render={({ field }) => (
-                  <div className="col-span-3 space-y-2">
-                    <Label htmlFor="assetToken">
-                      Asset Token
-                    </Label>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isPending}
-                    >
-                      <SelectTrigger className={cn(
-                        "h-12 bg-transparent text-lg",
-                        errors.assetToken ? "border-destructive" : "border-input",
-                        "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
-                      )}>
-                        <SelectValue placeholder="Select asset token" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {isPending ? (
-                          <div className="flex items-center justify-center p-2">
-                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
-                          </div>
-                        ) : assetTokenOptions && assetTokenOptions.length > 0 ? (
-                          assetTokenOptions.map((token) => (
-                            <SelectItem key={`at-${token.name}-${token.symbol}`} value={`${token.symbol}-${token.address}`} className="h-12 text-lg">
-                              {token.address}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <SelectItem value="" disabled>No asset tokens available</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-destructive mt-2 text-sm">
-                      {errors.assetToken?.message}
-                    </p>
-                  </div>
-                )}
-              />
-            </div>
+          {/*<div className={"col-span-3"}>*/}
+          {/*  <div className={"col-span-3"}>*/}
+          {/*    <Controller*/}
+          {/*      control={control}*/}
+          {/*      name="assetToken"*/}
+          {/*      render={({ field }) => (*/}
+          {/*        <div className="col-span-3 space-y-2">*/}
+          {/*          <Label htmlFor="assetToken">*/}
+          {/*            Asset Token*/}
+          {/*          </Label>*/}
+          {/*          <Select*/}
+          {/*            onValueChange={field.onChange}*/}
+          {/*            defaultValue={field.value}*/}
+          {/*            disabled={isPending}*/}
+          {/*          >*/}
+          {/*            <SelectTrigger className={cn(*/}
+          {/*              "h-12 bg-transparent text-lg",*/}
+          {/*              errors.assetToken ? "border-destructive" : "border-input",*/}
+          {/*              "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",*/}
+          {/*            )}>*/}
+          {/*              <SelectValue placeholder="Select asset token" />*/}
+          {/*            </SelectTrigger>*/}
+          {/*            <SelectContent>*/}
+          {/*              {isPending ? (*/}
+          {/*                <div className="flex items-center justify-center p-2">*/}
+          {/*                  <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>*/}
+          {/*                </div>*/}
+          {/*              ) : assetTokenOptions && assetTokenOptions.length > 0 ? (*/}
+          {/*                assetTokenOptions.map((token) => (*/}
+          {/*                  <SelectItem key={`at-${token.name}-${token.symbol}`} value={`${token.symbol}-${token.address}`} className="h-12 text-lg">*/}
+          {/*                    {token.address}*/}
+          {/*                  </SelectItem>*/}
+          {/*                ))*/}
+          {/*              ) : (*/}
+          {/*                <SelectItem value="" disabled>No asset tokens available</SelectItem>*/}
+          {/*              )}*/}
+          {/*            </SelectContent>*/}
+          {/*          </Select>*/}
+          {/*          <p className="text-destructive mt-2 text-sm">*/}
+          {/*            {errors.assetToken?.message}*/}
+          {/*          </p>*/}
+          {/*        </div>*/}
+          {/*      )}*/}
+          {/*    />*/}
+          {/*  </div>*/}
+          {/*</div>*/}
+          <div className="flex items-center justify-center col-span-3">
+            <Button
+              className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
+              type="submit"
+              disabled={isVerifying}
+            >
+              {isVerifying ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Rocket className="" />
+              )}
+              Launch
+            </Button>
           </div>
         </form>
       </Form>
