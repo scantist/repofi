@@ -3,16 +3,13 @@ import { z } from "zod"
 import { DaoPlatformSchema } from "~/lib/zod"
 import { repoService } from "~/server/service/repo"
 import { pageableSchema } from "~/lib/schema"
-
 export const repoRouter = createTRPCRouter({
   fetchPublicRepos: publicProcedure
-    .input(
-      z.object({
-        accessToken: z.string().optional(),
-        platform: DaoPlatformSchema,
-        pageable: pageableSchema
-      }),
-    )
+    .input(z.object({
+      accessToken: z.string(),
+      platform:DaoPlatformSchema,
+      pageable:pageableSchema,
+      search:z.string().optional() }))
     .query(({ input }) => {
       if (!input.accessToken) {
         return null
