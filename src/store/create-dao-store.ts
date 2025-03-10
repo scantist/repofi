@@ -1,13 +1,13 @@
 "use client"
 
 import { atom, createStore } from "jotai"
-import { type CreateDaoParams } from "~/lib/schema"
+import { type CreateDaoParams, type LaunchParams } from "~/lib/schema"
 import { DaoTypeSchema } from "~/lib/zod"
 import { DaoType } from "@prisma/client"
 
 const createDaoStore = createStore()
 
-export type CreateDaoStep = "BIND" | "INFORMATION" | "WALLET" | "FINISH"
+export type CreateDaoStep = "BIND" | "INFORMATION" | "LAUNCH" | "FINISH"
 
 export const stepAtom = atom<CreateDaoStep>("BIND")
 export const createDaoAtom = atom<CreateDaoParams>({
@@ -22,6 +22,8 @@ export const createDaoAtom = atom<CreateDaoParams>({
   website: ""
 })
 
+export const launchAtom = atom<LaunchParams>()
+
 createDaoStore.set(stepAtom, "BIND")
 createDaoStore.set(createDaoAtom, {
   avatar: "",
@@ -34,11 +36,12 @@ createDaoStore.set(createDaoAtom, {
   telegram: "",
   website: ""
 })
+createDaoStore.set(launchAtom, undefined)
 
 export const stepPath = {
   BIND: "/create/bind",
   INFORMATION: "/create/information",
-  WALLET: "/create/wallet",
+  LAUNCH: "/create/launch",
   FINISH: "/create/finish"
 }
 

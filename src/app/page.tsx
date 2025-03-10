@@ -76,7 +76,7 @@ const RootPage = async ({
             </div>
           }
         >
-          <DaoListLoader {...params} />
+          {/*<DaoListLoader {...params} />*/}
         </Suspense>
       </div>
     </div>

@@ -92,6 +92,14 @@ export const createDaoParamsSchema = z.object({
   website: z.string().url().optional().or(z.literal(""))
 })
 
+export const launchSchema = z.object({
+  totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "" }),
+  raisedAssetAmount: z.bigint({ message: "Raised asset amount is required." }).min(1n, { message: "" }),
+  salesRatio: z.number({ message: "Sales ratio is required." }).max(99, { message: "Max value is 99." }),
+  reservedRatio: z.number({ message: "Reserved ratio is required." }).max(99, { message: "Max value is 99." }),
+  assetToken: z.string({ message: "Asset token is Required." })
+})
+
 export const repoInfoSchema = z.object({
   name: z.string(),
   full_name: z.string(),
@@ -161,3 +169,4 @@ export type HomeSearchParams = z.infer<typeof homeSearchParamsSchema>;
 export type Pageable = z.infer<typeof pageableSchema>;
 export type DaoLinks = z.infer<typeof daoLinksSchema>
 export type CreateDaoParams = z.infer<typeof createDaoParamsSchema>
+export type LaunchParams = z.infer<typeof launchSchema>

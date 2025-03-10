@@ -22,16 +22,18 @@ import {
   SelectValue
 } from "~/components/ui/select"
 import { DaoType } from "@prisma/client"
+import { useRouter } from "next/navigation"
 
 const InformationForm = () => {
   const store = useStore()
   const createDao = store.get(createDaoAtom)
-
   const form = useForm<CreateDaoParams>({
     resolver: zodResolver(createDaoParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: { ...createDao }
   })
+  const router = useRouter()
+
   const {
     handleSubmit,
     control,
@@ -40,7 +42,10 @@ const InformationForm = () => {
   } = form
   const [isVerifying, startVerify] = useTransition()
 
-  const submit = (data: CreateDaoParams) => {}
+  const submit = (data: CreateDaoParams) => {
+    store.set(createDaoAtom, { ...data })
+    router.push("/create/launch")
+  }
   return (
     <CardWrapper className={"bg-card col-span-1 w-full md:col-span-2"}>
       <Form {...form}>
@@ -181,7 +186,7 @@ const InformationForm = () => {
                     onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className={cn(
                       "h-12 bg-transparent text-lg",
-                      errors.x ? "border-destructive" : "border-input",
+                      errors.type ? "border-destructive" : "border-input",
                       "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
                     )}>
                       <SelectValue placeholder="Select a verified email to display" />
@@ -193,7 +198,7 @@ const InformationForm = () => {
                     </SelectContent>
                   </Select>
                   <p className="text-destructive mt-2 text-sm">
-                    {errors.x?.message}
+                    {errors.type?.message}
                   </p>
                 </div>
               )}

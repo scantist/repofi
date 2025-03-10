@@ -19,8 +19,8 @@ const stepList = [
   },
   {
     level: 2,
-    title: "Connection wallet",
-    url: stepPath.WALLET
+    title: "Launch your token",
+    url: stepPath.LAUNCH
   },
   {
     level: 3,
@@ -32,7 +32,7 @@ const stepList = [
 const stepLevel = {
   BIND: 0,
   INFORMATION: 1,
-  WALLET: 2,
+  LAUNCH: 2,
   FINISH: 3
 }
 
