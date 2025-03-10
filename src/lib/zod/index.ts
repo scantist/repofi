@@ -92,7 +92,7 @@ export const DaoTokenHolderScalarFieldEnumSchema = z.enum(['holderAddress','toke
 
 export const DaoInfoScalarFieldEnumSchema = z.enum(['tokenAddress','name','ticker','creator','createdAt','marketCap','totalSupply','holderCount','assetTokenAddress','tradingOnUniswap','uniswapV3Pair']);
 
-export const AssetTokenScalarFieldEnumSchema = z.enum(['chainId','address','name','symbol','decimals','logoUrl','dexPairAddress','priceUsd']);
+export const AssetTokenScalarFieldEnumSchema = z.enum(['chainId','address','name','symbol','decimals','logoUrl','priceUsd','isNative']);
 
 export const ForumMessageScalarFieldEnumSchema = z.enum(['id','daoId','message','createdAt','createdBy','deletedAt','replyToMessage','replyToUser','rootMessageId']);
 
@@ -262,8 +262,8 @@ export const AssetTokenSchema = z.object({
   symbol: z.string(),
   decimals: z.number().int(),
   logoUrl: z.string(),
-  dexPairAddress: z.string().nullable(),
   priceUsd: z.instanceof(Prisma.Decimal, { message: "Field 'priceUsd' must be a Decimal. Location: ['Models', 'AssetToken']"}),
+  isNative: z.boolean(),
 })
 
 export type AssetToken = z.infer<typeof AssetTokenSchema>
@@ -544,8 +544,8 @@ export const AssetTokenSelectSchema: z.ZodType<Prisma.AssetTokenSelect> = z.obje
   symbol: z.boolean().optional(),
   decimals: z.boolean().optional(),
   logoUrl: z.boolean().optional(),
-  dexPairAddress: z.boolean().optional(),
   priceUsd: z.boolean().optional(),
+  isNative: z.boolean().optional(),
 }).strict()
 
 // FORUM MESSAGE
@@ -1548,8 +1548,8 @@ export const AssetTokenWhereInputSchema: z.ZodType<Prisma.AssetTokenWhereInput> 
   symbol: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   decimals: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   logoUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  dexPairAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   priceUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  isNative: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const AssetTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.AssetTokenOrderByWithRelationInput> = z.object({
@@ -1559,8 +1559,8 @@ export const AssetTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.AssetTok
   symbol: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   logoUrl: z.lazy(() => SortOrderSchema).optional(),
-  dexPairAddress: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  priceUsd: z.lazy(() => SortOrderSchema).optional()
+  priceUsd: z.lazy(() => SortOrderSchema).optional(),
+  isNative: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AssetTokenWhereUniqueInputSchema: z.ZodType<Prisma.AssetTokenWhereUniqueInput> = z.object({
@@ -1577,8 +1577,8 @@ export const AssetTokenWhereUniqueInputSchema: z.ZodType<Prisma.AssetTokenWhereU
   symbol: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   decimals: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
   logoUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  dexPairAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   priceUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  isNative: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
 }).strict());
 
 export const AssetTokenOrderByWithAggregationInputSchema: z.ZodType<Prisma.AssetTokenOrderByWithAggregationInput> = z.object({
@@ -1588,8 +1588,8 @@ export const AssetTokenOrderByWithAggregationInputSchema: z.ZodType<Prisma.Asset
   symbol: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   logoUrl: z.lazy(() => SortOrderSchema).optional(),
-  dexPairAddress: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional(),
+  isNative: z.lazy(() => SortOrderSchema).optional(),
   _count: z.lazy(() => AssetTokenCountOrderByAggregateInputSchema).optional(),
   _avg: z.lazy(() => AssetTokenAvgOrderByAggregateInputSchema).optional(),
   _max: z.lazy(() => AssetTokenMaxOrderByAggregateInputSchema).optional(),
@@ -1607,8 +1607,8 @@ export const AssetTokenScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.As
   symbol: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   decimals: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   logoUrl: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  dexPairAddress: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   priceUsd: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  isNative: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
 }).strict();
 
 export const ForumMessageWhereInputSchema: z.ZodType<Prisma.ForumMessageWhereInput> = z.object({
@@ -2412,8 +2412,8 @@ export const AssetTokenCreateInputSchema: z.ZodType<Prisma.AssetTokenCreateInput
   symbol: z.string(),
   decimals: z.number().int(),
   logoUrl: z.string(),
-  dexPairAddress: z.string().optional().nullable(),
-  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  isNative: z.boolean().optional()
 }).strict();
 
 export const AssetTokenUncheckedCreateInputSchema: z.ZodType<Prisma.AssetTokenUncheckedCreateInput> = z.object({
@@ -2423,8 +2423,8 @@ export const AssetTokenUncheckedCreateInputSchema: z.ZodType<Prisma.AssetTokenUn
   symbol: z.string(),
   decimals: z.number().int(),
   logoUrl: z.string(),
-  dexPairAddress: z.string().optional().nullable(),
-  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  isNative: z.boolean().optional()
 }).strict();
 
 export const AssetTokenUpdateInputSchema: z.ZodType<Prisma.AssetTokenUpdateInput> = z.object({
@@ -2434,8 +2434,8 @@ export const AssetTokenUpdateInputSchema: z.ZodType<Prisma.AssetTokenUpdateInput
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   logoUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  dexPairAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const AssetTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.AssetTokenUncheckedUpdateInput> = z.object({
@@ -2445,8 +2445,8 @@ export const AssetTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.AssetTokenUn
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   logoUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  dexPairAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const AssetTokenCreateManyInputSchema: z.ZodType<Prisma.AssetTokenCreateManyInput> = z.object({
@@ -2456,8 +2456,8 @@ export const AssetTokenCreateManyInputSchema: z.ZodType<Prisma.AssetTokenCreateM
   symbol: z.string(),
   decimals: z.number().int(),
   logoUrl: z.string(),
-  dexPairAddress: z.string().optional().nullable(),
-  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  isNative: z.boolean().optional()
 }).strict();
 
 export const AssetTokenUpdateManyMutationInputSchema: z.ZodType<Prisma.AssetTokenUpdateManyMutationInput> = z.object({
@@ -2467,8 +2467,8 @@ export const AssetTokenUpdateManyMutationInputSchema: z.ZodType<Prisma.AssetToke
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   logoUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  dexPairAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const AssetTokenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.AssetTokenUncheckedUpdateManyInput> = z.object({
@@ -2478,8 +2478,8 @@ export const AssetTokenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.AssetTok
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   logoUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  dexPairAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const ForumMessageCreateInputSchema: z.ZodType<Prisma.ForumMessageCreateInput> = z.object({
@@ -3443,8 +3443,8 @@ export const AssetTokenCountOrderByAggregateInputSchema: z.ZodType<Prisma.AssetT
   symbol: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   logoUrl: z.lazy(() => SortOrderSchema).optional(),
-  dexPairAddress: z.lazy(() => SortOrderSchema).optional(),
-  priceUsd: z.lazy(() => SortOrderSchema).optional()
+  priceUsd: z.lazy(() => SortOrderSchema).optional(),
+  isNative: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AssetTokenAvgOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenAvgOrderByAggregateInput> = z.object({
@@ -3460,8 +3460,8 @@ export const AssetTokenMaxOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTok
   symbol: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   logoUrl: z.lazy(() => SortOrderSchema).optional(),
-  dexPairAddress: z.lazy(() => SortOrderSchema).optional(),
-  priceUsd: z.lazy(() => SortOrderSchema).optional()
+  priceUsd: z.lazy(() => SortOrderSchema).optional(),
+  isNative: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AssetTokenMinOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenMinOrderByAggregateInput> = z.object({
@@ -3471,8 +3471,8 @@ export const AssetTokenMinOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTok
   symbol: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   logoUrl: z.lazy(() => SortOrderSchema).optional(),
-  dexPairAddress: z.lazy(() => SortOrderSchema).optional(),
-  priceUsd: z.lazy(() => SortOrderSchema).optional()
+  priceUsd: z.lazy(() => SortOrderSchema).optional(),
+  isNative: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AssetTokenSumOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenSumOrderByAggregateInput> = z.object({

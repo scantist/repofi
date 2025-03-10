@@ -2,7 +2,7 @@
 import { getAddress } from "viem"
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi"
 import { env } from "~/env"
-import { type AppKitNetwork, base, baseSepolia } from "@reown/appkit/networks"
+import { type AppKitNetwork, base, sepolia } from "@reown/appkit/networks"
 import { createAppKit } from "@reown/appkit/react"
 import {
   type SIWECreateMessageArgs,
@@ -14,7 +14,7 @@ import {
 import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
 
 const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
-const defaultChain = isMainNet ? base : baseSepolia
+const defaultChain = isMainNet ? base : sepolia
 const projectId = env.NEXT_PUBLIC_REOWN_PROJECT_ID
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [defaultChain]
 
