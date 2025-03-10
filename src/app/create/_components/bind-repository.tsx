@@ -10,21 +10,13 @@ import { type Repository } from "~/types/data"
 import RepositoryInformation from "~/app/create/_components/repository-information"
 import { cn } from "~/lib/utils"
 import BindRepositoryEmpty from "./bind-repository-empty"
-import { signOut, useSession } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { DaoPlatform } from "@prisma/client"
 import { api } from "~/trpc/react"
-import { deleteCookie, getCookie } from "cookies-next"
+import { deleteCookie } from "cookies-next"
 import LoadingSpinner from "~/app/components/loading-spinner"
 import { Input } from "~/components/ui/input"
 import { Button } from "~/components/ui/button"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from "~/components/ui/pagination"
 import ListPagination from "~/components/list-pagination"
 import { type Pageable } from "~/lib/schema"
 
@@ -38,8 +30,8 @@ type Condition = {
 };
 
 const BindRepository: FC<Props> = ({ githubToken }) => {
-  const [active, setActive] = useState<Repository | boolean | null>(null)
-  const [current, setCurrent] = useState<Repository | boolean | null>(null)
+  const [active, setActive] = useState<Repository | null>(null)
+  const [current, setCurrent] = useState<Repository | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
 
@@ -57,13 +49,6 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     setActive(null),
   )
 
-  if (!session || !githubToken) {
-    return (
-      <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
-        <BindRepositoryEmpty githubToken={githubToken} />
-      </CardWrapper>
-    )
-  }
   const { data: repoResponse, isPending } = api.repo.fetchPublicRepos.useQuery(
     {
       accessToken: githubToken,
@@ -81,6 +66,14 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       refetchOnMount: false
     },
   )
+  if (!session || !githubToken) {
+    return (
+      <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
+        <BindRepositoryEmpty githubToken={githubToken} />
+      </CardWrapper>
+    )
+  }
+
   const handleSearch = () => {
     setCondition((prev) => ({ ...prev, name: searchTerm, page: 0 }))
   }
@@ -109,13 +102,13 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
             }}
           />
         </div>
-        <div className="flex w-full gap-2 px-10">
+        <div className="flex w-full gap-2 px-10 text-gray-400">
           <Input
             type="text"
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-grow"
+            className="flex-grow border-primary"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSearch()
