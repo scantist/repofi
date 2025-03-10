@@ -12,7 +12,9 @@ class AssetTokenService{
 
     const data = await db.assetToken.findMany({
       where: {
-        chainId
+        chainId,
+        isValid:true,
+        isAllowed:true
       }
     })
 
