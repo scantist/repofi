@@ -6,7 +6,7 @@ import { pageableSchema } from "~/lib/schema"
 export const repoRouter = createTRPCRouter({
   fetchPublicRepos: publicProcedure
     .input(z.object({
-      accessToken: z.string(),
+      accessToken: z.string().optional(),
       platform:DaoPlatformSchema,
       pageable:pageableSchema,
       search:z.string().optional() }))

@@ -1,13 +1,13 @@
 "use client"
 
-import React, { type FC, useEffect, useId, useRef, useState } from "react"
+import React, { type FC, useId, useRef, useState } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import { SiGithub } from "@icons-pack/react-simple-icons"
 import { Eye, GitFork, LogOut, Search, Star, Users } from "lucide-react"
 import { useOutsideClick } from "~/hooks/use-outside-click"
 import { AnimatePresence, motion } from "motion/react"
 import { type Repository } from "~/types/data"
-import RepositoryInformation from "~/app/create/_components/repository-information"
+import RepositoryInformation from "~/app/create/bind/_components/repository-information"
 import { cn } from "~/lib/utils"
 import BindRepositoryEmpty from "./bind-repository-empty"
 import { useSession } from "next-auth/react"
@@ -19,6 +19,7 @@ import { Input } from "~/components/ui/input"
 import { Button } from "~/components/ui/button"
 import ListPagination from "~/components/list-pagination"
 import { type Pageable } from "~/lib/schema"
+import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
 
 type Props = {
   githubToken?: string;
@@ -108,7 +109,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-grow border-primary"
+            className="border-primary flex-grow"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSearch()
@@ -217,15 +218,22 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
             ))}
           </div>
         )}
-        {repoResponse && (
-          <ListPagination
-            pageable={condition.pageable}
-            totalPages={repoResponse?.pages ?? 0}
-            setPageable={(pageable) => {
-              setCondition({ ...condition, pageable })
-            }}
-          />
-        )}
+        <div className={"flex w-full flex-row justify-between px-10"}>
+          <div>
+            {repoResponse && (
+              <ListPagination
+                pageable={condition.pageable}
+                totalPages={repoResponse?.pages ?? 0}
+                setPageable={(pageable) => {
+                  setCondition({ ...condition, pageable })
+                }}
+              />
+            )}
+          </div>
+          <Button className={"px-8 text-white"}>
+            Start <RightArrow />
+          </Button>
+        </div>
       </div>
     </CardWrapper>
   )
