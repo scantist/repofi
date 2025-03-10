@@ -9,7 +9,7 @@ const generateReferralCode = (): string => {
 }
 
 class UserService {
-  async createUser(address: string,referralCode:string|undefined) {
+  async createUser(address: string,referralCode?:string) {
     let referrer: User | null = null
     if (referralCode) {
        referrer = await db.user.findUnique({

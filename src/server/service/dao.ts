@@ -19,7 +19,7 @@ class DaoService {
       }
     }
     if (params.owned && userAddress) {
-      whereOptions.info = {
+      whereOptions.tokenInfo = {
         holders: {
           some: {
             holderAddress: {
@@ -47,14 +47,13 @@ class DaoService {
         createdAt: true,
         updatedAt: true,
         createdBy: true,
-        walletAddress: true,
-        tokenAddress: true,
+        tokenId:true,
         links: true,
         status: true,
         marketCapUsd: true,
         priceUsd: true,
         platform: true,
-        info: {
+        tokenInfo: {
           select: {
             tokenAddress: true,
             marketCap: true,
@@ -93,11 +92,11 @@ class DaoService {
         repoIssues: repoInfo.open_issues_count,
         repoForks: repoInfo.forks_count,
         license: repoInfo.license?.spdx_id,
-        info: {
-          ...dao.info,
-          marketCap: dao.info.marketCap.toString(),
-          totalSupply: dao.info.totalSupply.toString(),
-          holderCount: dao.info.holderCount.toString()
+        tokenInfo: {
+          ...dao.tokenInfo,
+          marketCap: dao.tokenInfo.marketCap.toString(),
+          totalSupply: dao.tokenInfo.totalSupply.toString(),
+          holderCount: dao.tokenInfo.holderCount.toString()
         }
       })
     }
@@ -125,7 +124,7 @@ class DaoService {
     }) > 0
   }
 
-  async createDao(params: CreateDaoParams, userAddress: string, tokenAddress: string) {
+  async createDao(params: CreateDaoParams, userAddress: string, tokenId: bigint) {
     const links: DaoLinks = []
     if (params.x) {
       links.push({ type: "x", value: params.x })
@@ -147,8 +146,7 @@ class DaoService {
         type: params.type,
         avatar: params.avatar,
         createdBy: userAddress,
-        walletAddress: tokenAddress,
-        tokenAddress,
+        tokenId:tokenId,
         links,
         status: DaoStatus.LAUNCHING,
         platform: repoMeta.platform
