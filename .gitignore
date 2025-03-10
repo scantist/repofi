@@ -270,3 +270,4 @@ node_modules
 # System files
 
 .vscode
+key.json
