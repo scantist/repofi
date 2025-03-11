@@ -1,4 +1,3 @@
-"use client"
 import { z } from "zod"
 import { daoService } from "~/server/service/dao"
 import { DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema } from "~/lib/zod"
