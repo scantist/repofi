@@ -84,4 +84,18 @@ pipeline {
             }
         }
     }
+    post {
+        failure {
+            // Use the credentials stored in Jenkins (secret text in this example)
+            withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
+                // Send a webhook message using curl
+                sh '''
+                curl -X POST \
+                    -H "Content-Type: application/json" \
+                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: ${env.JOB_NAME} on branch: ${env.BRANCH_NAME} failed' \
+                    $WEBHOOK_URL
+                    '''
+            }
+        }
+    }
 }
