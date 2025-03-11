@@ -75,7 +75,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   )
   if (!session || !githubToken) {
     return (
-      <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
+      <CardWrapper className={"col-span-1 w-full md:col-span-2"} contentClassName={"bg-card "}>
         <BindRepositoryEmpty githubToken={githubToken} />
       </CardWrapper>
     )
@@ -86,7 +86,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   }
 
   return (
-    <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
+    <CardWrapper className={"col-span-1 w-full md:col-span-2"} contentClassName={"bg-card "}>
       <div
         className={
           "bg-card flex flex-col items-center justify-center gap-4 py-8"

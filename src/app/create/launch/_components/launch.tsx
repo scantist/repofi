@@ -1,19 +1,20 @@
 "use client"
-import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
+import {
+  decodeEventLog,
+  erc20Abi,
+  formatUnits,
+  getAddress,
+  parseEther
+} from "viem"
 import CardWrapper from "~/components/card-wrapper"
 import { Form } from "~/components/ui/form"
 import { useStore } from "jotai/index"
-import { createDaoAtom, launchAtom } from "~/store/create-dao-store"
+import { launchAtom } from "~/store/create-dao-store"
 import { Controller, useForm } from "react-hook-form"
-import {
-  CreateDaoParams,
-  createDaoParamsSchema,
-  type LaunchParams,
-  launchSchema
-} from "~/lib/schema"
+import { type LaunchParams, launchSchema } from "~/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { useMemo, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
 import { Label } from "~/components/ui/label"
 import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
@@ -26,19 +27,21 @@ import {
   SelectValue
 } from "~/components/ui/select"
 import { Button } from "~/components/ui/button"
-import { Loader2, Rocket, Wallet } from "lucide-react"
-import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core"
+import { Loader2, Rocket } from "lucide-react"
+import { LaunchNativeSteps, LaunchNoNativeSteps } from "~/lib/const"
+import { MultiStepLoader } from "~/components/ui/multi-step-loader"
+
 import {
-  useAccount,
-  useConfig,
-  useReadContract,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract
-} from "wagmi"
+  readContract,
+  simulateContract,
+  waitForTransactionReceipt,
+  writeContract
+} from "@wagmi/core"
+import { useAccount, useConfig } from "wagmi"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
+
 const Launch = () => {
   const store = useStore()
   const launchState = store.get(launchAtom)
@@ -74,13 +77,22 @@ const Launch = () => {
       (option) => `${option.chainId}-${option.address}` === assetToken,
     )
   }, [assetToken])
+  const stepState = useMemo(() => {
+    if (!currentAssetToken) {
+      return []
+    }
+    return currentAssetToken.isNative ? LaunchNativeSteps : LaunchNoNativeSteps
+  }, [currentAssetToken])
+  const [showSteps, setShowSteps] = useState(false)
+  const [currentStep, setCurrentStep] = useState({
+    now: 0,
+    error: -1
+  })
   const { address } = useAccount()
   const config = useConfig()
   const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
   const approveAssetToken = async () => {
-
     if (address && currentAssetToken) {
-
       const allowance = await readContract(config, {
         abi: erc20Abi,
         address: currentAssetToken.address as `0x${string}`,
@@ -89,7 +101,10 @@ const Launch = () => {
         args: [address, env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS]
       })
       console.log(allowance)
-      if (allowance >= currentAssetToken.launchFee || currentAssetToken.launchFee === 0n) {
+      if (
+        allowance >= currentAssetToken.launchFee ||
+        currentAssetToken.launchFee === 0n
+      ) {
         //TODO: 代币足够
         return
       }
@@ -105,7 +120,6 @@ const Launch = () => {
         return
       }
       try {
-
         const hash = await writeContract(config, request)
 
         await waitForTransactionReceipt(config, { hash })
@@ -119,11 +133,13 @@ const Launch = () => {
     }
   }
 
-  const launchDaoToken=async () => {
-    if (address &&currentAssetToken) {
-      let amount=0n
-      if(currentAssetToken.isNative) {
-         amount = parseEther(formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals))
+  const launchDaoToken = async () => {
+    if (address && currentAssetToken) {
+      let amount = 0n
+      if (currentAssetToken.isNative) {
+        amount = parseEther(
+          formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals),
+        )
       }
       //TODO test12t T8等等的参数
       const { request } = await simulateContract(config, {
@@ -143,19 +159,19 @@ const Launch = () => {
         value: amount
       })
       const hash = await writeContract(config, request)
-      console.log("hash",hash)
+      console.log("hash", hash)
 
       const receipt = await waitForTransactionReceipt(config, {
         hash
       })
-      console.log("hash",hash)
+      console.log("hash", hash)
 
       console.log("receipt", receipt)
-      console.log("receipt",receipt.logs)
+      console.log("receipt", receipt.logs)
 
       const logs = receipt.logs
       const item = logs.find(
-          (log) => getAddress(log.address) === contractAddress,
+        (log) => getAddress(log.address) === contractAddress,
       )
 
       if (!item) {
@@ -170,31 +186,41 @@ const Launch = () => {
       const {
         asset: asset,
         tokenId: tokenId,
-        initialPrice:initialPrice
-      }=args as unknown as {
+        initialPrice: initialPrice
+      } = args as unknown as {
         asset: `0x${string}`;
         tokenId: bigint;
         initialPrice: bigint;
       }
 
-      if (
-          !asset ||
-          !tokenId ||
-          !initialPrice
-      ) {
+      if (!asset || !tokenId || !initialPrice) {
         throw new Error("Failed to parse launch event")
       }
       //TODO 保存tokenId 进行持久化下一步调用
     }
-
   }
 
   const submit = async (data: LaunchParams) => {
     await approveAssetToken()
-
   }
   return (
-    <CardWrapper className={"bg-card col-span-1 w-full md:col-span-2"}>
+    <CardWrapper
+      className={"col-span-1 w-full md:col-span-2"}
+      contentClassName={"bg-card "}
+    >
+      <MultiStepLoader
+        loadingStates={stepState}
+        errorState={currentStep.error}
+        loading={showSteps}
+        currentState={currentStep.now}
+        onClose={() => {
+          setShowSteps(false)
+          setCurrentStep({
+            now: 0,
+            error: -1
+          })
+        }}
+      />
       <Form {...form}>
         <form
           className={"grid w-full grid-cols-3 gap-10 overflow-hidden p-9"}
@@ -309,7 +335,7 @@ const Launch = () => {
                       max={99.99}
                       min={0}
                       className={cn(
-                        "h-12 bg-transparent text-lg pr-8",
+                        "h-12 bg-transparent pr-8 text-lg",
                         errors.salesRatio
                           ? "border-destructive"
                           : "border-input",
@@ -330,7 +356,9 @@ const Launch = () => {
                         }
                       }}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                      %
+                    </span>
                   </div>
                   <p className="text-destructive mt-2 text-sm">
                     {errors.salesRatio?.message &&

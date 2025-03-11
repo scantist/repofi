@@ -71,7 +71,7 @@ const InformationForm = () => {
     router.push("/create/launch")
   }
   return (
-    <CardWrapper className={"bg-card col-span-1 w-full md:col-span-2"}>
+    <CardWrapper className={"col-span-1 w-full md:col-span-2"} contentClassName={"bg-card "}>
       <Form {...form}>
         <form
           className={"grid w-full grid-cols-4 gap-10 overflow-hidden p-9"}
