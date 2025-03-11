@@ -92,7 +92,7 @@ pipeline {
                 sh '''
                 curl -X POST \
                     -H "Content-Type: application/json" \
-                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: ${env.JOB_NAME} on branch: ${env.BRANCH_NAME} FAILED!' \
+                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: ${env.JOB_NAME} on branch: ${env.BRANCH_NAME} FAILED!"}}' \
                     $WEBHOOK_URL
                     '''
             }
