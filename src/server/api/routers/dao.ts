@@ -26,14 +26,9 @@ export const daoRouter = createTRPCRouter({
     .mutation(async () => {
       return null
     }),
-  checkNameExists:publicProcedure
-    .input(z.object({ name:z.string() }))
+  checkNameAndTickerExists:publicProcedure
+    .input(z.object({ name:z.string(),ticker:z.string() }))
     .mutation(async ({ input })=>{
-      return await daoService.checkNameExists(input.name)
-    }),
-  checkTickerExists:publicProcedure
-    .input(z.object({ ticker:z.string() }))
-    .mutation(async ({ input })=>{
-      return await daoService.checkTickerExists(input.ticker)
+      return [await daoService.checkNameExists(input.name), await daoService.checkTickerExists(input.ticker)]
     })
 })

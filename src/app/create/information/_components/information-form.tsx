@@ -23,12 +23,36 @@ import {
 } from "~/components/ui/select"
 import { DaoType } from "@prisma/client"
 import { useRouter } from "next/navigation"
-
+import { api } from "~/trpc/react"
+import { z } from "zod"
 const InformationForm = () => {
   const store = useStore()
   const createDao = store.get(createDaoAtom)
+  const checkNameAndTicker = api.dao.checkNameAndTickerExists.useMutation()
+
   const form = useForm<CreateDaoParams>({
-    resolver: zodResolver(createDaoParamsSchema, { async: true }),
+    resolver: zodResolver(createDaoParamsSchema.superRefine(async (data, ctx) => {
+      const result = await checkNameAndTicker.mutateAsync({
+        name: data.name,
+        ticker: data.ticker
+      })
+
+      if (result[0]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "This name already exists",
+          path: ["name"]
+        })
+      }
+
+      if (result[1]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "This ticker already exists",
+          path: ["ticker"]
+        })
+      }
+    })),
     reValidateMode: "onBlur",
     defaultValues: { ...createDao }
   })
