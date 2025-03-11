@@ -1,0 +1,72 @@
+library 'jenkins-shared-lib@main'
+
+pipeline {
+    agent none
+    options {
+        disableConcurrentBuilds abortPrevious: true
+    }
+    stages {
+        stage('Cancel previous builds') {
+            agent {
+                label 'master'
+            }
+            steps {
+                cancelPreviousBuilds()
+            }
+        }
+
+        stage('Clean workspace before building Docker image') {
+            agent {
+                label 'slave'
+            }
+            steps {
+                sh 'sudo rm -rf ./*'
+            }
+        }
+
+        stage('Build and Push git branch to SWR'){
+            agent {
+                label 'slave'
+            }
+            when {
+                anyOf {
+                    branch 'fftest-*';
+                    branch 'PROD-*'
+                }
+            }
+            steps{
+                sh 'echo "$BRANCH_NAME" > version'
+                sh 'cat version'
+                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', "${env.BRANCH_NAME}")
+                pushHangoutsNotify("Build image for repofi on branch ${env.BRANCH_NAME}")
+            }
+        }
+
+        stage('Build and Push git tag to SWR'){
+            agent {
+                label 'slave'
+            }
+            when {
+                tag 'v*'
+            }
+            steps{
+                sh 'echo "$BRANCH_NAME" > version'
+                sh 'cat version'
+                // build for stable tag
+                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '--no-cache', '.', 'stable')
+                // build for version tag
+                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', 'saas-prod')
+                pushHangoutsNotify("Pushed to SWR: Tag ${env.TAG_NAME}")
+            }
+        }
+
+        stage('Clean workspace after building Docker image') {
+            agent {
+                label 'slave'
+            }
+            steps {
+                sh 'sudo rm -rf ./*'
+            }
+        }
+    }
+}
