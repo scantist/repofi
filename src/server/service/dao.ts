@@ -22,7 +22,7 @@ class DaoService {
       whereOptions.tokenInfo = {
         holders: {
           some: {
-            holderAddress: {
+            userAddress: {
               contains: userAddress,
               mode: "insensitive"
             }
