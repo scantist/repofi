@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { daoService } from "~/server/service/dao"
-import { DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema } from "~/lib/zod"
+import { AssetTokenSchema, DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema } from "~/lib/zod"
 
 export const daoLinksSchema = z.array(
   z.object({
@@ -92,11 +92,11 @@ export const createDaoParamsSchema = z.object({
 })
 
 export const launchSchema = z.object({
-  totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "" }),
-  raisedAssetAmount: z.bigint({ message: "Raised asset amount is required." }).min(1n, { message: "" }),
+  totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "Total Supply is required." }),
+  raisedAssetAmount: z.bigint({ message: "Raised asset amount is required." }).min(1n, { message: "Raised asset amount is required." }),
   salesRatio: z.number({ message: "Sales ratio is required." }).max(99, { message: "Max value is 99." }),
   reservedRatio: z.number({ message: "Reserved ratio is required." }).max(99, { message: "Max value is 99." }),
-  assetToken: z.string({ message: "Asset token is Required." })
+  assetToken: z.string({ message: "Asset token must select!" })
 })
 
 export const repoInfoSchema = z.object({

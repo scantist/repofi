@@ -18,7 +18,13 @@ import { Label } from "~/components/ui/label"
 import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
 import { api } from "~/trpc/react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "~/components/ui/select"
 import { Button } from "~/components/ui/button"
 import { Loader2, Rocket, Wallet } from "lucide-react"
 
@@ -30,9 +36,9 @@ const Launch = () => {
     reValidateMode: "onBlur"
   })
   const router = useRouter()
-  // TODO
-  // const { data: assetTokenOptions, isPending } = api.assetToken.getAssetTokens.useQuery()
-  // console.log("assetTokenOptions", assetTokenOptions)
+  const { data: assetTokenOptions, isPending } =
+    api.assetToken.getAssetTokens.useQuery()
+
   const {
     handleSubmit,
     control,
@@ -50,9 +56,15 @@ const Launch = () => {
     }
     return undefined
   }, [reservedRatio, salesRatio])
+  const assetToken = watch("assetToken")
+
+  const currentAssetToken = useMemo(() => {
+    return assetTokenOptions?.find(
+      (option) => `${option.chainId}-${option.address}` === assetToken,
+    )
+  }, [assetToken])
 
   const submit = (data: LaunchParams) => {
-    // TODO
   }
   return (
     <CardWrapper className={"bg-card col-span-1 w-full md:col-span-2"}>
@@ -170,7 +182,7 @@ const Launch = () => {
                       max={99.99}
                       min={0}
                       className={cn(
-                        "h-12 bg-transparent text-lg pr-8",
+                        "h-12 bg-transparent pr-8 text-lg",
                         errors.salesRatio
                           ? "border-destructive"
                           : "border-input",
@@ -191,7 +203,9 @@ const Launch = () => {
                         }
                       }}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                      %
+                    </span>
                   </div>
                   <p className="text-destructive mt-2 text-sm">
                     {errors.salesRatio?.message &&
@@ -219,7 +233,7 @@ const Launch = () => {
                       max={99.99}
                       min={0}
                       className={cn(
-                        "h-12 bg-transparent text-lg pr-8",
+                        "h-12 bg-transparent pr-8 text-lg",
                         errors.reservedRatio
                           ? "border-destructive"
                           : "border-input",
@@ -240,7 +254,9 @@ const Launch = () => {
                         }
                       }}
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                      %
+                    </span>
                   </div>
                   <p className="text-destructive mt-2 text-sm">
                     {errors.reservedRatio?.message &&
@@ -258,65 +274,80 @@ const Launch = () => {
               <div className="relative">
                 <Input
                   className={cn(
-                    "h-12 bg-transparent text-lg pr-8 border-input",
+                    "border-input h-12 bg-transparent pr-8 text-lg",
                     "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
                   )}
-                  value={liquidityPoolRatio !== undefined ? liquidityPoolRatio.toFixed(2) : ""}
+                  value={
+                    liquidityPoolRatio !== undefined
+                      ? liquidityPoolRatio.toFixed(2)
+                      : ""
+                  }
                   id="liquidityPoolRatio"
                   type="text"
                   disabled={true}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
+                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
+                  %
+                </span>
               </div>
             </div>
           </div>
-          {/*<div className={"col-span-3"}>*/}
-          {/*  <div className={"col-span-3"}>*/}
-          {/*    <Controller*/}
-          {/*      control={control}*/}
-          {/*      name="assetToken"*/}
-          {/*      render={({ field }) => (*/}
-          {/*        <div className="col-span-3 space-y-2">*/}
-          {/*          <Label htmlFor="assetToken">*/}
-          {/*            Asset Token*/}
-          {/*          </Label>*/}
-          {/*          <Select*/}
-          {/*            onValueChange={field.onChange}*/}
-          {/*            defaultValue={field.value}*/}
-          {/*            disabled={isPending}*/}
-          {/*          >*/}
-          {/*            <SelectTrigger className={cn(*/}
-          {/*              "h-12 bg-transparent text-lg",*/}
-          {/*              errors.assetToken ? "border-destructive" : "border-input",*/}
-          {/*              "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",*/}
-          {/*            )}>*/}
-          {/*              <SelectValue placeholder="Select asset token" />*/}
-          {/*            </SelectTrigger>*/}
-          {/*            <SelectContent>*/}
-          {/*              {isPending ? (*/}
-          {/*                <div className="flex items-center justify-center p-2">*/}
-          {/*                  <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>*/}
-          {/*                </div>*/}
-          {/*              ) : assetTokenOptions && assetTokenOptions.length > 0 ? (*/}
-          {/*                assetTokenOptions.map((token) => (*/}
-          {/*                  <SelectItem key={`at-${token.name}-${token.symbol}`} value={`${token.symbol}-${token.address}`} className="h-12 text-lg">*/}
-          {/*                    {token.address}*/}
-          {/*                  </SelectItem>*/}
-          {/*                ))*/}
-          {/*              ) : (*/}
-          {/*                <SelectItem value="" disabled>No asset tokens available</SelectItem>*/}
-          {/*              )}*/}
-          {/*            </SelectContent>*/}
-          {/*          </Select>*/}
-          {/*          <p className="text-destructive mt-2 text-sm">*/}
-          {/*            {errors.assetToken?.message}*/}
-          {/*          </p>*/}
-          {/*        </div>*/}
-          {/*      )}*/}
-          {/*    />*/}
-          {/*  </div>*/}
-          {/*</div>*/}
-          <div className="flex items-center justify-center col-span-3">
+          <div className={"col-span-3"}>
+            <div className={"col-span-3"}>
+              <Controller
+                control={control}
+                name="assetToken"
+                render={({ field }) => (
+                  <div className="col-span-3 space-y-2">
+                    <Label htmlFor="assetToken">Asset Token</Label>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isPending}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "h-12 bg-transparent text-lg",
+                          errors.assetToken
+                            ? "border-destructive"
+                            : "border-input",
+                          "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
+                        )}
+                      >
+                        <SelectValue placeholder="Select asset token" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {isPending ? (
+                          <div className="flex items-center justify-center p-2">
+                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
+                          </div>
+                        ) : assetTokenOptions &&
+                          assetTokenOptions.length > 0 ? (
+                          assetTokenOptions.map((token) => (
+                            <SelectItem
+                              key={`at-${token.name}-${token.symbol}`}
+                              value={`${token.chainId}-${token.address}`}
+                              className="h-12 text-lg"
+                            >
+                              {token.symbol}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="" disabled>
+                            No asset tokens available
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-destructive mt-2 text-sm">
+                      {errors.assetToken?.message}
+                    </p>
+                  </div>
+                )}
+              />
+            </div>
+          </div>
+          <div className="col-span-3 flex items-center justify-center">
             <Button
               className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
               type="submit"

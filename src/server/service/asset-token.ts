@@ -1,5 +1,6 @@
 import { env } from "~/env"
 import { db } from "~/server/db"
+import { type AssetToken } from "@prisma/client"
 
 class AssetTokenService{
   async getAssetTokens() {

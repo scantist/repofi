@@ -28,11 +28,11 @@ import { z } from "zod"
 const InformationForm = () => {
   const store = useStore()
   const createDao = store.get(createDaoAtom)
-  const checkNameAndTicker = api.dao.checkNameAndTickerExists.useMutation()
+  const { mutateAsync, isPending } = api.dao.checkNameAndTickerExists.useMutation()
 
   const form = useForm<CreateDaoParams>({
     resolver: zodResolver(createDaoParamsSchema.superRefine(async (data, ctx) => {
-      const result = await checkNameAndTicker.mutateAsync({
+      const result = await mutateAsync({
         name: data.name,
         ticker: data.ticker
       })
@@ -355,7 +355,7 @@ const InformationForm = () => {
               disabled={isVerifying}
             >
               Next! Connect your wallet
-              {isVerifying ? (
+              {(isVerifying || isPending) ? (
                 <Loader2 className="animate-spin" />
               ) : (
                 <Wallet className="" />

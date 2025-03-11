@@ -85,11 +85,6 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     setCondition((prev) => ({ ...prev, name: searchTerm, page: 0 }))
   }
 
-  const next = () => {
-    store.set(stepAtom, "INFORMATION")
-    router.push(stepPath.INFORMATION)
-  }
-
   return (
     <CardWrapper className={"col-span-1 flex w-full flex-col md:col-span-2"}>
       <div
@@ -205,24 +200,19 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                     Contributors
                   </motion.div>
                   <div className={"flex flex-row gap-4"}>
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={current === repo ? "unbind" : "bind"}
-                        layout
-                        initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: "auto", opacity: 1 }}
-                        exit={{ width: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        onClick={() => setCurrent(repo)}
-                        className={cn(
-                          "cursor-pointer overflow-hidden font-bold whitespace-nowrap",
-                          current === repo && "text-primary",
-                        )}
-                        style={{ display: "inline-block" }}
-                      >
-                        {current === repo ? "Unbind" : "Bind"}
-                      </motion.span>
-                    </AnimatePresence>
+                    <div
+                      className={cn(
+                        "cursor-pointer overflow-hidden font-bold whitespace-nowrap",
+                        current === repo && "text-primary",
+                      )}
+                      onClick={() => {
+                        setCurrent(repo)
+                        store.set(stepAtom, "INFORMATION")
+                        router.push(stepPath.INFORMATION)
+                      }}
+                    >
+                      Bind
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -230,20 +220,15 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
           </div>
         )}
         <div className={"flex w-full flex-row justify-between px-10"}>
-          <div>
-            {repoResponse && (
-              <ListPagination
-                pageable={condition.pageable}
-                totalPages={repoResponse?.pages ?? 0}
-                setPageable={(pageable) => {
-                  setCondition({ ...condition, pageable })
-                }}
-              />
-            )}
-          </div>
-          <Button className={"px-8 text-white"} disabled={current === null} onClick={next}>
-            Start <RightArrow />
-          </Button>
+          {repoResponse && (
+            <ListPagination
+              pageable={condition.pageable}
+              totalPages={repoResponse?.pages ?? 0}
+              setPageable={(pageable) => {
+                setCondition({ ...condition, pageable })
+              }}
+            />
+          )}
         </div>
       </div>
     </CardWrapper>
