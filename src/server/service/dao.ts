@@ -3,6 +3,7 @@ import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
 import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
 import { type PageableData } from "~/types/data"
+import { type DaoTokenInfo } from "~/lib/zod"
 class DaoService {
   async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
@@ -124,7 +125,7 @@ class DaoService {
     }) > 0
   }
 
-  async createDao(params: CreateDaoParams, userAddress: string, tokenId: bigint) {
+  async create(params: CreateDaoParams, userAddress: string) {
     const links: DaoLinks = []
     if (params.x) {
       links.push({ type: "x", value: params.x })
@@ -137,7 +138,19 @@ class DaoService {
     }
     const repoMeta = parseRepoUrl(params.url)
     //TODO chain operator, and waiting info create success
-    await db.dao.create({
+    const tokenInfo = await db.daoTokenInfo.upsert({
+      where: {
+        tokenId: params.tokenId
+      },
+      update: {},
+      create: {
+        tokenId: params.tokenId,
+        name: params.name,
+        ticker: params.ticker,
+        creator: userAddress
+      }
+    })
+    return await db.dao.create({
       data: {
         name: params.name,
         ticker: params.ticker,
@@ -146,12 +159,14 @@ class DaoService {
         type: params.type,
         avatar: params.avatar,
         createdBy: userAddress,
-        tokenId:tokenId,
+        tokenId:tokenInfo.tokenId,
         links,
         status: DaoStatus.LAUNCHING,
         platform: repoMeta.platform
       }
     })
+    //TODO 发送poc更新的消息
+    //TODO 刷新缓存
   }
   async repoInfo(url: string) {
     const repoMeta = parseRepoUrl(url)

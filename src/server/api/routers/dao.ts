@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc"
-import { homeSearchParamsSchema, pageableSchema } from "~/lib/schema"
+import { createDaoParamsSchema, homeSearchParamsSchema, pageableSchema } from "~/lib/schema"
 import { daoService } from "~/server/service/dao"
 
 export const daoRouter = createTRPCRouter({
@@ -13,18 +13,10 @@ export const daoRouter = createTRPCRouter({
       const { page, size, ...homeSearchParams } = input
       return daoService.search(homeSearchParams, { page,size }, userAddress)
     }),
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`
-      }
-    }),
-
   create: publicProcedure
-    .input(z.object({ name: z.string().min(1) }))
-    .mutation(async () => {
-      return null
+    .input(createDaoParamsSchema)
+    .mutation(async ({ ctx,input }) => {
+      return await daoService.create(input,ctx.session!.address)
     }),
   checkNameAndTickerExists:publicProcedure
     .input(z.object({ name:z.string(),ticker:z.string() }))
