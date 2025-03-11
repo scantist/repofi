@@ -1,7 +1,7 @@
 library 'jenkins-shared-lib@main'
 
 pipeline {
-    agent none
+    agent any
     options {
         disableConcurrentBuilds abortPrevious: true
     }
@@ -40,12 +40,12 @@ pipeline {
                 sh 'cat version'
                 dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', "${env.BRANCH_NAME}")
                 pushHangoutsNotify("Build image for repofi on branch ${env.BRANCH_NAME}")
-                sh '''
+                sh """
                 curl -X POST \
                     -H "Content-Type: application/json" \
                     -d '{"msg_type": "text","content": {"text": "JenkinsJob: push ${env.BRANCH_NAME} to SWR"}}' \
                     $WEBHOOK_URL
-                    '''
+                    """
               }
             }
         }
@@ -64,12 +64,12 @@ pipeline {
                 // build for version tag
                 dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', 'saas-prod')
                 pushHangoutsNotify("Pushed to SWR: Tag ${env.TAG_NAME}")
-                sh '''
+                sh """
                 curl -X POST \
                     -H "Content-Type: application/json" \
                     -d '{"msg_type": "text","content": {"text": "JenkinsJob: push ${env.TAG_NAME} to SWR"}}' \
                     $WEBHOOK_URL
-                    '''
+                    """
               }
                 
             }
@@ -89,13 +89,13 @@ pipeline {
             // Use the credentials stored in Jenkins (secret text in this example)
             withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
                 // Send a webhook message using curl
-                sh '''
+                sh """
                 curl -X POST \
                     -H "Content-Type: application/json" \
-                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: ${env.JOB_NAME} on branch: ${env.BRANCH_NAME} failed' \
+                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: ${env.JOB_NAME} on branch: ${env.BRANCH_NAME} FAILED!"}}' \
                     $WEBHOOK_URL
-                    '''
+                    """
             }
+          }
         }
-    }
 }
