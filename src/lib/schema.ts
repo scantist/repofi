@@ -48,10 +48,7 @@ export const createDaoParamsSchema = z.object({
     .refine((value) => value.trim() !== "", {
       message: "Avatar can not be empty."
     }),
-  url: z.string({ message: "repo url is required." })
-    .regex(/^https:\/\/(github\.com|gitlab\.com)\/[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/,
-      { message: "Only URLs from github.com or gitlab.com with the format https://github.com/xx/xxx are allowed." })
-  ,
+  url: z.string({ message: "repo url is required." }),
   type: DaoTypeSchema,
   name: z
     .string({ message: "Name is required." })
@@ -68,7 +65,7 @@ export const createDaoParamsSchema = z.object({
   x: z.string().url().optional().or(z.literal("")),
   telegram: z.string().url().optional().or(z.literal("")),
   website: z.string().url().optional().or(z.literal("")),
-  tokenId:z.bigint()
+  tokenId: z.bigint().optional()
 })
 
 export const launchSchema = z.object({

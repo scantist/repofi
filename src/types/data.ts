@@ -58,3 +58,4 @@ export type FileUploader = (data: {
   file: string;
   fileName: string;
 }) => Promise<{ success: boolean; url?: string; message?: string }>;
+export type CreateDaoStep = "BIND" | "INFORMATION" | "LAUNCH" | "FINISH"

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { type FC, useId, useRef, useState } from "react"
+import React, { type FC, useEffect, useId, useRef, useState } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import { SiGithub } from "@icons-pack/react-simple-icons"
 import { Eye, GitFork, LogOut, Search, Star, Users } from "lucide-react"
@@ -20,8 +20,8 @@ import { Button } from "~/components/ui/button"
 import ListPagination from "~/components/list-pagination"
 import { type Pageable } from "~/lib/schema"
 import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
-import createDaoStore, { stepAtom, stepPath } from "~/store/create-dao-store"
-import { useStore } from "jotai"
+import createDaoStore, { createDaoAtom, stepAtom, stepPath } from "~/store/create-dao-store"
+import { useAtom, useStore } from "jotai"
 import { useRouter } from "next/navigation"
 
 type Props = {
@@ -39,11 +39,12 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
   const router = useRouter()
-
-  const store = useStore()
-
+  const [daoParams, setDaoParams] = useAtom(createDaoAtom)
+  const [step, setStep] = useAtom(stepAtom)
   const { data: session } = useSession()
-
+  useEffect(() => {
+    setStep("BIND")
+  }, [])
   const [condition, setCondition] = useState<Condition>({
     name: "",
     pageable: {
@@ -207,7 +208,11 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                       )}
                       onClick={() => {
                         setCurrent(repo)
-                        store.set(stepAtom, "INFORMATION")
+                        setStep("INFORMATION")
+                        setDaoParams({
+                          ...daoParams,
+                          url: repo.url
+                        })
                         router.push(stepPath.INFORMATION)
                       }}
                     >

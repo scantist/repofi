@@ -9,12 +9,12 @@ import {
 import CardWrapper from "~/components/card-wrapper"
 import { Form } from "~/components/ui/form"
 import { useStore } from "jotai/index"
-import { launchAtom } from "~/store/create-dao-store"
+import { createDaoAtom, launchAtom, stepAtom } from "~/store/create-dao-store"
 import { Controller, useForm } from "react-hook-form"
 import { type LaunchParams, launchSchema } from "~/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRouter } from "next/navigation"
-import { useMemo, useState, useTransition } from "react"
+import { useEffect, useMemo, useState, useTransition } from "react"
 import { Label } from "~/components/ui/label"
 import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
@@ -41,10 +41,14 @@ import { useAccount, useConfig } from "wagmi"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
+import { useAtom } from "jotai"
 
 const Launch = () => {
-  const store = useStore()
-  const launchState = store.get(launchAtom)
+  const [createDaoParams, setCreateDaoParams] = useAtom(createDaoAtom)
+  const [launchStep, setLaunchStep] = useAtom(stepAtom)
+  useEffect(() => {
+    setLaunchStep("LAUNCH")
+  }, [])
   const form = useForm<LaunchParams>({
     resolver: zodResolver(launchSchema, { async: true }),
     reValidateMode: "onBlur"
@@ -91,7 +95,9 @@ const Launch = () => {
   const { address } = useAccount()
   const config = useConfig()
   const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
-  const approveAssetToken = async () => {
+  const [tokenId, setTokenId] = useState(0n)
+
+  const approveAssetToken = async (root = true) => {
     if (address && currentAssetToken) {
       const allowance = await readContract(config, {
         abi: erc20Abi,
@@ -105,7 +111,8 @@ const Launch = () => {
         allowance >= currentAssetToken.launchFee ||
         currentAssetToken.launchFee === 0n
       ) {
-        //TODO: 代币足够
+        // 代币足够，直接下一步
+        setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
         return
       }
       const { request, result } = await simulateContract(config, {
@@ -116,24 +123,32 @@ const Launch = () => {
         account: address
       })
       if (!result) {
-        //TODO error 处理
+        //第一步 error 处理
+        setCurrentStep({ ...currentStep, error: currentStep.now })
         return
       }
       try {
         const hash = await writeContract(config, request)
 
         await waitForTransactionReceipt(config, { hash })
+        // 递归 直到approve完毕
+        await approveAssetToken(false)
+        if (root) {
+          // 第一个已经完成
+          setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
+        }
 
-        //TODO 递归 直到approve完毕
       } catch (error) {
         console.error(error)
-        //TODO error
+        setCurrentStep({ ...currentStep, error: currentStep.now })
         return
       }
     }
   }
 
-  const launchDaoToken = async () => {
+  const launchDaoToken = async (data: LaunchParams) => {
+    const salesRatio = BigInt(data.salesRatio * 100)
+    const reservedRatio = BigInt(data.reservedRatio * 100)
     if (address && currentAssetToken) {
       let amount = 0n
       if (currentAssetToken.isNative) {
@@ -141,20 +156,22 @@ const Launch = () => {
           formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals),
         )
       }
-      //TODO test12t T8等等的参数
+      const argsData = [
+        createDaoParams.name,
+        createDaoParams.ticker,
+        data.totalSupply,
+        data.raisedAssetAmount,
+        salesRatio,
+        reservedRatio,
+        currentAssetToken.address as `0x${string}`
+      ]
+      console.log("argsData", argsData)
+      console.log("amount", amount)
       const { request } = await simulateContract(config, {
         abi: launchPadAbi,
         address: contractAddress,
         functionName: "launch",
-        args: [
-          "tes12t",
-          "T3",
-          1000000000000000000000000,
-          1000000000,
-          5000,
-          1000,
-          currentAssetToken.address as `0x${string}`
-        ],
+        args: argsData,
         account: address,
         value: amount
       })
@@ -175,6 +192,7 @@ const Launch = () => {
       )
 
       if (!item) {
+        setCurrentStep({ ...currentStep, error: currentStep.now })
         throw new Error("Failed to find launch event")
       }
 
@@ -182,7 +200,6 @@ const Launch = () => {
         ...item,
         abi: launchPadAbi
       })
-      console.log("args", args)
       const {
         asset: asset,
         tokenId: tokenId,
@@ -194,14 +211,26 @@ const Launch = () => {
       }
 
       if (!asset || !tokenId || !initialPrice) {
+        setCurrentStep({ ...currentStep, error: currentStep.now })
         throw new Error("Failed to parse launch event")
       }
-      //TODO 保存tokenId 进行持久化下一步调用
+      setTokenId(tokenId)
+      setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
     }
   }
 
   const submit = async (data: LaunchParams) => {
-    await approveAssetToken()
+    if (address && currentAssetToken) {
+      setShowSteps(true)
+      startVerify(async () => {
+        setCurrentStep({ now: 0, error: -1 })
+        if (!currentAssetToken.isNative) {
+          await approveAssetToken(true)
+        }
+        await launchDaoToken(data)
+        alert("Success!")
+      })
+    }
   }
   return (
     <CardWrapper
@@ -334,6 +363,7 @@ const Launch = () => {
                       type="number"
                       max={99.99}
                       min={0}
+                      step={0.01}
                       className={cn(
                         "h-12 bg-transparent pr-8 text-lg",
                         errors.salesRatio
@@ -348,7 +378,7 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(value)
+                            const numberValue = Number(parseFloat(value).toFixed(2))
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -385,6 +415,7 @@ const Launch = () => {
                       type="number"
                       max={99.99}
                       min={0}
+                      step={0.01}
                       className={cn(
                         "h-12 bg-transparent pr-8 text-lg",
                         errors.reservedRatio
@@ -399,7 +430,7 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(value)
+                            const numberValue = Number(parseFloat(value).toFixed(2))
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -492,6 +523,11 @@ const Launch = () => {
                         )}
                       </SelectContent>
                     </Select>
+                    {
+                      currentAssetToken && <p className={"text-muted-foreground text-sm"}>
+                        Launch Fee {currentAssetToken?.launchFee}
+                      </p>
+                    }
                     <p className="text-destructive mt-2 text-sm">
                       {errors.assetToken?.message}
                     </p>

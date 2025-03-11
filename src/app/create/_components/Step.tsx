@@ -1,31 +1,42 @@
 "use client"
 
 import CardWrapper from "~/components/card-wrapper"
-import React, { useState } from "react"
-import { useStore } from "jotai/index"
+import React, { useEffect, useState } from "react"
 import { stepAtom, stepPath } from "~/store/create-dao-store"
 import { cn } from "~/lib/utils"
+import { useAtom } from "jotai"
+import { type CreateDaoStep } from "~/types/data"
+import { useRouter } from "next/navigation"
 
-const stepList = [
+const stepList: {
+  level: number
+  title: string
+  url: string
+  target: CreateDaoStep
+}[] = [
   {
     level: 0,
     title: "Bind your open source repository",
-    url: stepPath.BIND
+    url: stepPath.BIND,
+    target: "BIND"
   },
   {
     level: 1,
     title: "Configuration base Information",
-    url: stepPath.INFORMATION
+    url: stepPath.INFORMATION,
+    target: "INFORMATION"
   },
   {
     level: 2,
     title: "Launch your token",
-    url: stepPath.LAUNCH
+    url: stepPath.LAUNCH,
+    target: "LAUNCH"
   },
   {
     level: 3,
     title: "Done!",
-    url: stepPath.FINISH
+    url: stepPath.FINISH,
+    target: "FINISH"
   }
 ]
 
@@ -37,18 +48,28 @@ const stepLevel = {
 }
 
 const Step = () => {
-  const store = useStore()
   const [current, setCurrent] = useState(0)
-  store.sub(stepAtom, () => {
-    const currentStep = store.get(stepAtom)
+  const router = useRouter()
+  const [currentStep, setCurrentStep] = useAtom(stepAtom)
+  useEffect(() => {
+    console.log("currentStep", currentStep)
     setCurrent(stepLevel[currentStep])
-  })
+  }, [currentStep])
   return (
     <CardWrapper contentClassName={"bg-card"}>
       <div className={"relative mx-6 flex flex-col gap-y-8 py-8"}>
         {stepList.map((item) => (
           <div
-            className={"flex flex-row items-center gap-4"}
+            className={cn(
+              "flex flex-row items-center gap-4",
+              item.level < current && "cursor-pointer",
+            )}
+            onClick={() => {
+              if (item.level < current) {
+                setCurrentStep(item.target)
+                router.push(item.url)
+              }
+            }}
             key={`step-${item.title}-${item.level}`}
           >
             <div

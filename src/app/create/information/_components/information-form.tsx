@@ -1,7 +1,7 @@
 "use client"
 import CardWrapper from "~/components/card-wrapper"
-import { useStore } from "jotai"
-import { createDaoAtom } from "~/store/create-dao-store"
+import { useAtom, useSetAtom, useStore } from "jotai"
+import { createDaoAtom, stepAtom } from "~/store/create-dao-store"
 import { Controller, useForm } from "react-hook-form"
 import { type CreateDaoParams, createDaoParamsSchema } from "~/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -26,8 +26,8 @@ import { useRouter } from "next/navigation"
 import { api } from "~/trpc/react"
 import { z } from "zod"
 const InformationForm = () => {
-  const store = useStore()
-  const createDao = store.get(createDaoAtom)
+  const [createDao, setCreateDao] = useAtom(createDaoAtom)
+  const setStep = useSetAtom(stepAtom)
   const { mutateAsync, isPending } = api.dao.checkNameAndTickerExists.useMutation()
 
   const form = useForm<CreateDaoParams>({
@@ -66,8 +66,10 @@ const InformationForm = () => {
   } = form
   const [isVerifying, startVerify] = useTransition()
 
+  console.log(errors)
   const submit = (data: CreateDaoParams) => {
-    store.set(createDaoAtom, { ...data })
+    setCreateDao({ ...data })
+    setStep("LAUNCH")
     router.push("/create/launch")
   }
   return (
