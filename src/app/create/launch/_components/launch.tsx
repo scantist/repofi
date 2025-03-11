@@ -57,6 +57,8 @@ const Launch = () => {
   const { data: assetTokenOptions, isPending } =
     api.assetToken.getAssetTokens.useQuery()
 
+  const { mutateAsync: createMutate } = api.dao.create.useMutation()
+
   const {
     handleSubmit,
     control,
@@ -228,7 +230,25 @@ const Launch = () => {
           await approveAssetToken(true)
         }
         await launchDaoToken(data)
-        alert("Success!")
+        try {
+          await createMutate({
+            ...createDaoParams,
+            tokenId
+          })
+          setCurrentStep({
+            ...currentStep,
+            now: currentStep.now + 1
+          })
+          setTimeout(() => {
+            setShowSteps(false)
+          }, 1000)
+        } catch (e) {
+          console.error(e)
+          setCurrentStep({
+            ...currentStep,
+            error: currentStep.now
+          })
+        }
       })
     }
   }

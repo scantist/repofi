@@ -126,6 +126,9 @@ class DaoService {
   }
 
   async create(params: CreateDaoParams, userAddress: string) {
+    if (!params.tokenId) {
+      throw new Error("Token id is required")
+    }
     const links: DaoLinks = []
     if (params.x) {
       links.push({ type: "x", value: params.x })
