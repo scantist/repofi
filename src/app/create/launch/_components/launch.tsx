@@ -1,5 +1,5 @@
 "use client"
-
+import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
 import CardWrapper from "~/components/card-wrapper"
 import { Form } from "~/components/ui/form"
 import { useStore } from "jotai/index"
@@ -27,7 +27,18 @@ import {
 } from "~/components/ui/select"
 import { Button } from "~/components/ui/button"
 import { Loader2, Rocket, Wallet } from "lucide-react"
-
+import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core"
+import {
+  useAccount,
+  useConfig,
+  useReadContract,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract
+} from "wagmi"
+import { defaultChain } from "~/components/auth/config"
+import { env } from "~/env"
+import launchPadAbi from "~/lib/abi/LaunchPad.json"
 const Launch = () => {
   const store = useStore()
   const launchState = store.get(launchAtom)
@@ -63,8 +74,124 @@ const Launch = () => {
       (option) => `${option.chainId}-${option.address}` === assetToken,
     )
   }, [assetToken])
+  const { address } = useAccount()
+  const config = useConfig()
+  const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
+  const approveAssetToken = async () => {
 
-  const submit = (data: LaunchParams) => {
+    if (address && currentAssetToken) {
+
+      const allowance = await readContract(config, {
+        abi: erc20Abi,
+        address: currentAssetToken.address as `0x${string}`,
+        chainId: defaultChain.id,
+        functionName: "allowance",
+        args: [address, env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS]
+      })
+      console.log(allowance)
+      if (allowance >= currentAssetToken.launchFee || currentAssetToken.launchFee === 0n) {
+        //TODO: 代币足够
+        return
+      }
+      const { request, result } = await simulateContract(config, {
+        abi: erc20Abi,
+        address: currentAssetToken.address as `0x${string}`,
+        functionName: "approve",
+        args: [contractAddress, currentAssetToken.launchFee],
+        account: address
+      })
+      if (!result) {
+        //TODO error 处理
+        return
+      }
+      try {
+
+        const hash = await writeContract(config, request)
+
+        await waitForTransactionReceipt(config, { hash })
+
+        //TODO 递归 直到approve完毕
+      } catch (error) {
+        console.error(error)
+        //TODO error
+        return
+      }
+    }
+  }
+
+  const launchDaoToken=async () => {
+    if (address &&currentAssetToken) {
+      let amount=0n
+      if(currentAssetToken.isNative) {
+         amount = parseEther(formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals))
+      }
+      //TODO test12t T8等等的参数
+      const { request } = await simulateContract(config, {
+        abi: launchPadAbi,
+        address: contractAddress,
+        functionName: "launch",
+        args: [
+          "tes12t",
+          "T3",
+          1000000000000000000000000,
+          1000000000,
+          5000,
+          1000,
+          currentAssetToken.address as `0x${string}`
+        ],
+        account: address,
+        value: amount
+      })
+      const hash = await writeContract(config, request)
+      console.log("hash",hash)
+
+      const receipt = await waitForTransactionReceipt(config, {
+        hash
+      })
+      console.log("hash",hash)
+
+      console.log("receipt", receipt)
+      console.log("receipt",receipt.logs)
+
+      const logs = receipt.logs
+      const item = logs.find(
+          (log) => getAddress(log.address) === contractAddress,
+      )
+
+      if (!item) {
+        throw new Error("Failed to find launch event")
+      }
+
+      const { args } = decodeEventLog({
+        ...item,
+        abi: launchPadAbi
+      })
+      console.log("args", args)
+      const {
+        asset: asset,
+        tokenId: tokenId,
+        initialPrice:initialPrice
+      }=args as unknown as {
+        asset: `0x${string}`;
+        tokenId: bigint;
+        initialPrice: bigint;
+      }
+
+      if (
+          !asset ||
+          !tokenId ||
+          !initialPrice
+      ) {
+        throw new Error("Failed to parse launch event")
+      }
+      //TODO 保存tokenId 进行持久化下一步调用
+    }
+
+  }
+
+  const submit = async (data: LaunchParams) => {
+    await approveAssetToken()
+
   }
   return (
     <CardWrapper className={"bg-card col-span-1 w-full md:col-span-2"}>
@@ -182,7 +309,7 @@ const Launch = () => {
                       max={99.99}
                       min={0}
                       className={cn(
-                        "h-12 bg-transparent pr-8 text-lg",
+                        "h-12 bg-transparent text-lg pr-8",
                         errors.salesRatio
                           ? "border-destructive"
                           : "border-input",
@@ -203,9 +330,7 @@ const Launch = () => {
                         }
                       }}
                     />
-                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                      %
-                    </span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
                   </div>
                   <p className="text-destructive mt-2 text-sm">
                     {errors.salesRatio?.message &&

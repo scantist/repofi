@@ -172,7 +172,7 @@ model AssetToken {
   decimals  Int     @map("decimals")
   logoUrl   String  @map("logo_url") @db.VarChar(255)
   priceUsd  Decimal @default(0) @map("price_usd") @db.Decimal(50, 18)
-  launchFee Decimal @default(0) @map("launch_fee") @db.Decimal(50, 18)
+  launchFee BigInt  @default(0) @map("launch_fee")
   isAllowed Boolean @default(false) @map("is_allowed")
   isNative  Boolean @default(false) @map("is_native")
   isValid   Boolean @default(false) @map("is_valid")
