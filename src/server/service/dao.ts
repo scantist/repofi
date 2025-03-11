@@ -4,7 +4,7 @@ import { db } from "~/server/db"
 import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
 import { type PageableData } from "~/types/data"
 class DaoService {
-  async homeSearch(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
+  async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
     if (params.status) {
       whereOptions.status = { in: params.status }
