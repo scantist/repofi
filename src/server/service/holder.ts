@@ -6,12 +6,12 @@ class HolderService {
       return await db.daoTokenHolder.findMany({
       where: {
         tokenId,
-        tokenAmount: {
+        balance: {
           gt: 0
         }
       },
       orderBy: {
-        tokenAmount: "desc"
+        balance: "desc"
       },
       take: 10
     })
@@ -20,7 +20,7 @@ class HolderService {
     const totalItems = await db.daoTokenHolder.count({
       where: {
         tokenId,
-        tokenAmount: {
+        balance: {
           gt: 0
         }
       }
@@ -33,14 +33,14 @@ class HolderService {
     const holders = await db.daoTokenHolder.findMany({
       where: {
         tokenId,
-        tokenAmount: {
+        balance: {
           gt: 0
         }
       },
       skip: actualPage * pageable.size,
       take: pageable.size,
       orderBy: {
-        tokenAmount: "desc"
+        balance: "desc"
       }
     })
 
