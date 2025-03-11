@@ -55,7 +55,7 @@ export const getDaoListAction = async (
   params: HomeSearchParams & { page?: number },
 ) => {
   const session = await auth()
-  const homeSearch = await daoService.homeSearch(
+  const homeSearch = await daoService.search(
     { ...params },
     { page: params.page ?? 0, size: 10 },
     session?.address,

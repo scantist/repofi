@@ -31,7 +31,7 @@ const LiveTable = () => {
       pageIndex: 0
     }
   })
-  const { data: response, isPending } = api.dao.homeSearch.useQuery({
+  const { data: response, isPending } = api.dao.search.useQuery({
     ...condition,
     ...condition.pagination
   })
