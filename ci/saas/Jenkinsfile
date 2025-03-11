@@ -35,10 +35,18 @@ pipeline {
                 }
             }
             steps{
+              withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
                 sh 'echo "$BRANCH_NAME" > version'
                 sh 'cat version'
                 dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', "${env.BRANCH_NAME}")
                 pushHangoutsNotify("Build image for repofi on branch ${env.BRANCH_NAME}")
+                sh '''
+                curl -X POST \
+                    -H "Content-Type: application/json" \
+                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: push ${env.BRANCH_NAME} to SWR"}}' \
+                    $WEBHOOK_URL
+                    '''
+              }
             }
         }
 
@@ -50,13 +58,20 @@ pipeline {
                 tag 'v*'
             }
             steps{
-                sh 'echo "$BRANCH_NAME" > version'
-                sh 'cat version'
+              withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
                 // build for stable tag
                 dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '--no-cache', '.', 'stable')
                 // build for version tag
                 dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', 'saas-prod')
                 pushHangoutsNotify("Pushed to SWR: Tag ${env.TAG_NAME}")
+                sh '''
+                curl -X POST \
+                    -H "Content-Type: application/json" \
+                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: push ${env.TAG_NAME} to SWR"}}' \
+                    $WEBHOOK_URL
+                    '''
+              }
+                
             }
         }
 
