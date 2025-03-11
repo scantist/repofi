@@ -69,13 +69,13 @@ const DaoCard: FC<Props> = ({ data }) => {
           <div className={"mr-2 border-r-1 border-r-gray-400"}>
             <div className={"text-muted-foreground text-sm"}>Market cap</div>
             <div className={"text-primary-foreground mt-2 text-lg font-bold"}>
-              {data.info.marketCap}
+              {data.tokenInfo.marketCap}
             </div>
           </div>
           <div className={"pl-3"}>
             <div className={"text-muted-foreground text-sm"}># Holders</div>
             <div className={"text-primary-foreground mt-2 text-lg font-bold"}>
-              {data.info.holderCount}
+              {data.tokenInfo.holderCount}
             </div>
           </div>
           <div className={"border-l-1 border-l-gray-400 pl-5"}>
