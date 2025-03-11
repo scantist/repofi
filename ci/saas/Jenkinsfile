@@ -86,6 +86,7 @@ pipeline {
     }
     post {
         failure {
+          node {
             // Use the credentials stored in Jenkins (secret text in this example)
             withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
                 // Send a webhook message using curl
@@ -96,6 +97,7 @@ pipeline {
                     $WEBHOOK_URL
                     '''
             }
+          }
         }
     }
 }
