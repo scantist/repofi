@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM --platform=linux/amd64 node:22-alpine AS deps
+FROM node:22-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl
 WORKDIR /app
 
@@ -21,16 +21,18 @@ RUN \
 
 ##### BUILDER
 
-FROM --platform=linux/amd64 node:20-alpine AS builder
+FROM node:20-alpine AS builder
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_CLIENTVAR
 ARG NEXT_PUBLIC_CHAIN_ID
+ARG NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_PUBLIC_REOWN_PROJECT_ID=aaaa
 ENV NEXT_PUBLIC_CHAIN_ID="84532"
+ENV NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0xA245e692404268a12971a1FB111E111111111b1f
 RUN \
     if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
     elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 npm run build; \
@@ -40,10 +42,10 @@ RUN \
 
 ##### RUNNER
 
-FROM --platform=linux/amd64 gcr.io/distroless/nodejs20-debian12 AS runner
+FROM gcr.io/distroless/nodejs20-debian12 AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 # ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -55,7 +57,7 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["server.js"]

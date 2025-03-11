@@ -14,7 +14,6 @@ import Switcher from "~/components/ui/switcher"
 import Sorter from "~/app/_components/content-filter-sort"
 
 const ContentFilter: FC<HomeSearchParams> = ({
-  onlyLaunched,
   owned,
   starred,
   search,
@@ -25,7 +24,6 @@ const ContentFilter: FC<HomeSearchParams> = ({
 
   const [searchValue, setSearchValue] = useOptimistic(search)
   const [orderByValue, setOrderByValue] = useOptimistic(orderBy)
-  const [onlyLaunchedValue, setOnlyLaunchedValue] = useOptimistic(onlyLaunched)
   const [ownedValue, setOwnedValue] = useOptimistic(owned)
   const [starredValue, setStarredValue] = useOptimistic(starred)
 
@@ -67,13 +65,6 @@ const ContentFilter: FC<HomeSearchParams> = ({
         />
       </div>
       <div className="ml-4 flex flex-wrap items-center gap-5 md:flex-nowrap lg:col-span-3">
-        <Switcher
-          value={onlyLaunchedValue}
-          label="Only Launched"
-          handleChange={(value) => {
-            updateValue(value, "onlyLaunched", setOnlyLaunchedValue)
-          }}
-        />
         {isAuthenticated && (
           <>
             <Switcher

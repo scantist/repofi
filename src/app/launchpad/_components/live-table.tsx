@@ -50,19 +50,19 @@ const LiveTable = () => {
         <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
       )
     }),
-    columnHelper.accessor("info.marketCap", {
+    columnHelper.accessor("tokenInfo.marketCap", {
       header: () => "Market Cap",
       cell: (info) => (
         <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
       )
     }),
-    columnHelper.accessor("info.totalSupply", {
+    columnHelper.accessor("tokenInfo.totalSupply", {
       header: () => "Total Supply",
       cell: (info) => (
         <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
       )
     }),
-    columnHelper.accessor("info.holderCount", {
+    columnHelper.accessor("tokenInfo.holderCount", {
       header: () => "Holder Count",
       cell: (info) => (
         <div className={"text-sm text-gray-400"}>{info.getValue()}</div>

@@ -1,31 +1,9 @@
 import BannerWrapper from "~/components/banner-wrapper"
 import { Loader2, Sparkles } from "lucide-react"
-import { type HomeSearchParams, homeSearchParamsSchema } from "~/lib/schema"
+import { homeSearchParamsSchema } from "~/lib/schema"
 import ContentFilter from "~/app/_components/content-filter"
 import { Suspense } from "react"
-import { getQueryClient } from "~/components/query-client/query-client"
-import { getDaoListAction } from "~/app/actions"
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query"
-import Content from "~/app/_components/content"
 
-const DaoListLoader = (props: HomeSearchParams) => {
-  const queryClient = getQueryClient()
-  void queryClient.prefetchInfiniteQuery({
-    queryKey: ["dao-list", props],
-    queryFn: ({ pageParam }) =>
-      getDaoListAction({
-        page: pageParam ?? 0,
-        ...props
-      }),
-    initialPageParam: 0
-  })
-
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Content {...props} />
-    </HydrationBoundary>
-  )
-}
 
 const RootPage = async ({
   searchParams
