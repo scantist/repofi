@@ -13,7 +13,7 @@ const DaoPage = () => {
     <div className={"mt-20 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col"}>
         <div className={"my-10 flex w-full flex-col gap-8 md:flex-row"}>
-          <CardWrapper>
+          <CardWrapper contentClassName={"bg-card"}>
             <Image
               height={220}
               width={335}

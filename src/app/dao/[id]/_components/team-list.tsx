@@ -6,7 +6,7 @@ const TeamList = () => {
     <div className={"text-4xl font-bold tracking-tight"}>Team & Community</div>
     <div className={"grid grid-cols-2 gap-8 mt-8"}>
       {Array.from({ length: 4 }, (_, i) => i).map((item, index) => (
-        <CardWrapper key={`ccc-${item}`}>
+        <CardWrapper key={`ccc-${item}`} contentClassName={"bg-card"}>
           <div className={"flex flex-col p-6 gap-4"}>
             <div className={"flex flex-row gap-6"}>
               <img src={"https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"}
@@ -31,7 +31,7 @@ const TeamList = () => {
           </div>
         </CardWrapper>
       ))}
-      <CardWrapper>
+      <CardWrapper contentClassName={"bg-card"}>
         <div className={"flex flex-col p-6 gap-4 bg-secondary"}>
           <div className={"text-xl font-bold mx-auto"}>@endrarediseases on x</div>
           <div className={"text-xs px-4 py-2 border border-white rounded-xl flex flex-row gap-1 items-center max-w-max mx-auto"}>
@@ -40,7 +40,7 @@ const TeamList = () => {
           </div>
         </div>
       </CardWrapper>
-      <CardWrapper>
+      <CardWrapper contentClassName={"bg-card"}>
         <div className={"flex flex-col p-6 gap-4 bg-secondary"}>
           <div className={"text-xl font-bold mx-auto"}>Telegram community</div>
           <div className={"text-xs px-4 py-2 border border-white rounded-xl flex flex-row gap-1 items-center max-w-max mx-auto"}>
