@@ -145,18 +145,26 @@ model DaoTokenHolder {
 }
 
 model DaoTokenInfo {
-  tokenId           BigInt  @id @map("token_id") @db.BigInt
-  tokenAddress      String? @map("token_address") @db.VarChar(255)
-  name              String  @map("name") @db.VarChar(255)
-  ticker            String  @map("ticker") @db.VarChar(255)
-  creator           String  @map("creator") @db.VarChar(255)
-  createdAt         BigInt  @default(0) @map("created_at")
-  marketCap         Decimal @default(0) @map("market_cap") @db.Decimal(50, 18)
-  totalSupply       Decimal @default(0) @map("total_supply") @db.Decimal(50, 18)
-  holderCount       Int     @default(0) @map("holder_count")
-  assetTokenAddress String  @default("") @map("asset_token_address") @db.VarChar(255)
-  tradingonuniswap  Boolean @default(false) @map("trading_on_uniswap")
-  uniswapV3Pair     String? @map("uniswap_v3_pair") @db.VarChar(255)
+  tokenId           BigInt    @id @map("token_id") @db.BigInt
+  tokenAddress      String?   @map("token_address") @db.VarChar(255)
+  name              String    @map("name") @db.VarChar(255)
+  ticker            String    @map("ticker") @db.VarChar(255)
+  creator           String    @map("creator") @db.VarChar(255)
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @default(now()) @updatedAt @map("updated_at")
+  liquidity         Decimal   @default(0) @map("liquidity") @db.Decimal(50, 18)
+  price             Decimal   @default(0) @map("price") @db.Decimal(50, 18)
+  marketCap         Decimal   @default(0) @map("market_cap") @db.Decimal(50, 18)
+  totalSupply       BigInt    @default(0) @map("total_supply")
+  raisedAssetAmount BigInt    @default(0) @map("raised_asset_amount")
+  salesRatio        Decimal   @default(0) @db.Decimal(5, 2)
+  reservedRatio     Decimal   @default(0) @db.Decimal(5, 2)
+  unlockRatio       Decimal   @default(0) @db.Decimal(5, 2)
+  holderCount       Int       @default(0) @map("holder_count")
+  assetTokenAddress String    @default("") @map("asset_token_address") @db.VarChar(255)
+  isGraduated       Boolean   @default(false) @map("is_graduated")
+  graduatedAt       DateTime? @map("graduated_at")
+  uniswapV3Pair     String?   @map("uniswap_v3_pair") @db.VarChar(255)
 
   dao     Dao?
   holders DaoTokenHolder[]
