@@ -6,7 +6,7 @@ import { Eye, GitFork, Star, X } from "lucide-react"
 import { cn } from "~/lib/utils"
 import { GlowingEffect } from "~/components/ui/glowing-effect"
 import { api } from "~/trpc/react"
-import LoadingSpinner from "~/app/components/loading-spinner"
+import LoadingSpinner from "~/app/_components/loading-spinner"
 import {
   Tooltip,
   TooltipContent, TooltipProvider,
