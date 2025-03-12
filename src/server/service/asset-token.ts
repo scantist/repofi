@@ -1,31 +1,22 @@
-import { env } from "~/env"
 import { db } from "~/server/db"
 import { type AssetToken } from "@prisma/client"
 
-class AssetTokenService{
-  async getAssetTokens() {
-    const chainId = env.NEXT_PUBLIC_CHAIN_ID
-
-    console.log(
-      "[Service/AssetToken] loading asset token list from DB for chainId",
-      chainId,
-    )
-
+class AssetTokenService {
+  async getAssetTokens(): Promise<
+    Array<Omit<AssetToken, "priceUsd"> & { priceUsd: string }>
+  > {
     const data = await db.assetToken.findMany({
       where: {
-        chainId,
-        isValid:true,
-        isAllowed:true
+        isValid: true,
+        isAllowed: true
       }
     })
 
-    return data.map((item) => {
-      return {
-        ...item,
-        priceUsd: item.priceUsd.toString()
-      }
-    })
-  };
+    return data.map((item) => ({
+      ...item,
+      priceUsd: item.priceUsd.toString()
+    }))
+  }
 }
 
-export const assetTokenService=new AssetTokenService()
+export const assetTokenService = new AssetTokenService()

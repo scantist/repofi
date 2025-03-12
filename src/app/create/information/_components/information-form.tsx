@@ -1,9 +1,9 @@
 "use client"
 import CardWrapper from "~/components/card-wrapper"
 import { useAtom, useSetAtom, useStore } from "jotai"
-import { createDaoAtom, stepAtom } from "~/store/create-dao-store"
+import { daoInformationAtom, stepAtom } from "~/store/create-dao-store"
 import { Controller, useForm } from "react-hook-form"
-import { type CreateDaoParams, createDaoParamsSchema } from "~/lib/schema"
+import { type DaoInformationParams, daoInformationParamsSchema } from "~/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTransition } from "react"
 import { Form } from "~/components/ui/form"
@@ -26,12 +26,12 @@ import { useRouter } from "next/navigation"
 import { api } from "~/trpc/react"
 import { z } from "zod"
 const InformationForm = () => {
-  const [createDao, setCreateDao] = useAtom(createDaoAtom)
+    const [daoInformation, setDaoInformation] = useAtom(daoInformationAtom) as [DaoInformationParams, (value: DaoInformationParams) => void]
   const setStep = useSetAtom(stepAtom)
   const { mutateAsync, isPending } = api.dao.checkNameAndTickerExists.useMutation()
 
-  const form = useForm<CreateDaoParams>({
-    resolver: zodResolver(createDaoParamsSchema.superRefine(async (data, ctx) => {
+  const form = useForm<DaoInformationParams>({
+    resolver: zodResolver(daoInformationParamsSchema.superRefine(async (data, ctx) => {
       const result = await mutateAsync({
         name: data.name,
         ticker: data.ticker
@@ -54,7 +54,7 @@ const InformationForm = () => {
       }
     })),
     reValidateMode: "onBlur",
-    defaultValues: { ...createDao }
+    defaultValues: { ...daoInformation }
   })
   const router = useRouter()
 
@@ -67,8 +67,8 @@ const InformationForm = () => {
   const [isVerifying, startVerify] = useTransition()
 
   console.log(errors)
-  const submit = (data: CreateDaoParams) => {
-    setCreateDao({ ...data })
+  const submit = (data: DaoInformationParams) => {
+    setDaoInformation({ ...data })
     setStep("LAUNCH")
     router.push("/create/launch")
   }

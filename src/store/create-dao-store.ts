@@ -2,7 +2,7 @@
 
 import { atom, createStore } from "jotai"
 import { atomWithStorage } from "jotai/utils"
-import { type CreateDaoParams, type LaunchParams } from "~/lib/schema"
+import { type DaoInformationParams, type LaunchParams } from "~/lib/schema"
 import { DaoType } from "@prisma/client"
 import { type CreateDaoStep } from "~/types/data"
 
@@ -10,7 +10,7 @@ const createDaoStore = createStore()
 
 
 export const stepAtom = atomWithStorage<CreateDaoStep>("sgp-create-dao-step", "BIND")
-export const createDaoAtom = atomWithStorage<CreateDaoParams>("sgp-create-dao-params", {
+export const daoInformationAtom = atomWithStorage<DaoInformationParams>("sgp-create-dao-params", {
   avatar: "",
   url: "",
   type: DaoType.CODE,

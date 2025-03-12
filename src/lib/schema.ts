@@ -42,7 +42,7 @@ export const DaoContentParamsSchema=z.object({
   data: z.object({})
 })
 
-export const createDaoParamsSchema = z.object({
+export const daoInformationParamsSchema = z.object({
   avatar: z
     .string({ message: "Avatar is required." })
     .refine((value) => value.trim() !== "", {
@@ -64,9 +64,10 @@ export const createDaoParamsSchema = z.object({
     .min(1, { message: "Description can not be empty." }),
   x: z.string().url().optional().or(z.literal("")),
   telegram: z.string().url().optional().or(z.literal("")),
-  website: z.string().url().optional().or(z.literal("")),
-  tokenId: z.bigint().optional()
+  website: z.string().url().optional().or(z.literal(""))
 })
+
+export const createDaoParamsSchema = daoInformationParamsSchema.merge(z.object({ tokenId:z.bigint().min(1n, { message: "Token ID is required." }) }))
 
 export const launchSchema = z.object({
   totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "Total Supply is required." }),
@@ -144,5 +145,6 @@ export type RepoContributor = z.infer<typeof repoContributor>
 export type HomeSearchParams = z.infer<typeof homeSearchParamsSchema>;
 export type Pageable = z.infer<typeof pageableSchema>;
 export type DaoLinks = z.infer<typeof daoLinksSchema>
+export type DaoInformationParams = z.infer<typeof daoInformationParamsSchema>
 export type CreateDaoParams = z.infer<typeof createDaoParamsSchema>
 export type LaunchParams = z.infer<typeof launchSchema>

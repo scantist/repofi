@@ -9,7 +9,11 @@ import {
 import CardWrapper from "~/components/card-wrapper"
 import { Form } from "~/components/ui/form"
 import { useStore } from "jotai/index"
-import { createDaoAtom, launchAtom, stepAtom } from "~/store/create-dao-store"
+import {
+  daoInformationAtom,
+  launchAtom,
+  stepAtom
+} from "~/store/create-dao-store"
 import { Controller, useForm } from "react-hook-form"
 import { type LaunchParams, launchSchema } from "~/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -44,7 +48,7 @@ import launchPadAbi from "~/lib/abi/LaunchPad.json"
 import { useAtom } from "jotai"
 
 const Launch = () => {
-  const [createDaoParams, setCreateDaoParams] = useAtom(createDaoAtom)
+  const [daoInformation, setDaoInformation] = useAtom(daoInformationAtom)
   const [launchStep, setLaunchStep] = useAtom(stepAtom)
   useEffect(() => {
     setLaunchStep("LAUNCH")
@@ -79,9 +83,7 @@ const Launch = () => {
   const assetToken = watch("assetToken")
 
   const currentAssetToken = useMemo(() => {
-    return assetTokenOptions?.find(
-      (option) => `${option.chainId}-${option.address}` === assetToken,
-    )
+    return assetTokenOptions?.find((option) => option.address === assetToken)
   }, [assetToken])
   const stepState = useMemo(() => {
     if (!currentAssetToken) {
@@ -97,7 +99,6 @@ const Launch = () => {
   const { address } = useAccount()
   const config = useConfig()
   const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
-  const [tokenId, setTokenId] = useState(0n)
 
   const approveAssetToken = async (root = true) => {
     if (address && currentAssetToken) {
@@ -139,7 +140,6 @@ const Launch = () => {
           // 第一个已经完成
           setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
         }
-
       } catch (error) {
         console.error(error)
         setCurrentStep({ ...currentStep, error: currentStep.now })
@@ -158,22 +158,19 @@ const Launch = () => {
           formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals),
         )
       }
-      const argsData = [
-        createDaoParams.name,
-        createDaoParams.ticker,
-        data.totalSupply,
-        data.raisedAssetAmount,
-        salesRatio,
-        reservedRatio,
-        currentAssetToken.address as `0x${string}`
-      ]
-      console.log("argsData", argsData)
-      console.log("amount", amount)
       const { request } = await simulateContract(config, {
         abi: launchPadAbi,
         address: contractAddress,
         functionName: "launch",
-        args: argsData,
+        args: [
+          daoInformation.name,
+          daoInformation.ticker,
+          data.totalSupply,
+          data.raisedAssetAmount,
+          salesRatio,
+          reservedRatio,
+          currentAssetToken.address as `0x${string}`
+        ],
         account: address,
         value: amount
       })
@@ -216,9 +213,10 @@ const Launch = () => {
         setCurrentStep({ ...currentStep, error: currentStep.now })
         throw new Error("Failed to parse launch event")
       }
-      setTokenId(tokenId)
       setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
+      return tokenId
     }
+    throw new Error("Failed to launch DAO")
   }
 
   const submit = async (data: LaunchParams) => {
@@ -229,10 +227,10 @@ const Launch = () => {
         if (!currentAssetToken.isNative) {
           await approveAssetToken(true)
         }
-        await launchDaoToken(data)
+        const tokenId = await launchDaoToken(data)
         try {
           await createMutate({
-            ...createDaoParams,
+            ...daoInformation,
             tokenId
           })
           setCurrentStep({
@@ -398,7 +396,9 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(parseFloat(value).toFixed(2))
+                            const numberValue = Number(
+                              parseFloat(value).toFixed(2),
+                            )
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -450,7 +450,9 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(parseFloat(value).toFixed(2))
+                            const numberValue = Number(
+                              parseFloat(value).toFixed(2),
+                            )
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -530,7 +532,7 @@ const Launch = () => {
                           assetTokenOptions.map((token) => (
                             <SelectItem
                               key={`at-${token.name}-${token.symbol}`}
-                              value={`${token.chainId}-${token.address}`}
+                              value={`${token.address}`}
                               className="h-12 text-lg"
                             >
                               {token.symbol}
@@ -543,11 +545,11 @@ const Launch = () => {
                         )}
                       </SelectContent>
                     </Select>
-                    {
-                      currentAssetToken && <p className={"text-muted-foreground text-sm"}>
+                    {currentAssetToken && (
+                      <p className={"text-muted-foreground text-sm"}>
                         Launch Fee {currentAssetToken?.launchFee}
                       </p>
-                    }
+                    )}
                     <p className="text-destructive mt-2 text-sm">
                       {errors.assetToken?.message}
                     </p>

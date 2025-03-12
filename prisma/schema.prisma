@@ -41,17 +41,17 @@ enum UserRole {
 }
 
 model User {
-  address       String    @id @db.VarChar(255)
-  name          String?   @db.VarChar(255)
-  email         String?   @unique @db.VarChar(255)
-  referralCode  String    @unique @map("referral_code")
-  role          UserRole  @default(USER) @map("role")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
-  invitedBy     String[]  @default([]) @map("invited_by")
+  address       String        @id @db.VarChar(255)
+  name          String?       @db.VarChar(255)
+  email         String?       @unique @db.VarChar(255)
+  referralCode  String        @unique @map("referral_code")
+  role          UserRole      @default(USER) @map("role")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
+  invitedBy     String[]      @default([]) @map("invited_by")
   stars         DaoStar[]
   daos          Dao[]
-  contributions POC[]
+  contributions Contributor[]
 
   @@map("t_user")
 }
@@ -106,12 +106,12 @@ model Dao {
   marketCapUsd Decimal     @default(0) @map("market_cap_usd") @db.Decimal(50, 18)
   priceUsd     Decimal     @default(0) @map("price_usd") @db.Decimal(50, 18)
 
-  creator   User           @relation(fields: [createdBy], references: [address])
-  tokenInfo DaoTokenInfo   @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
-  messages  ForumMessage[]
-  stars     DaoStar[]
-  pocs      POC[]
-  contents  DaoContent[]
+  creator      User           @relation(fields: [createdBy], references: [address])
+  tokenInfo    DaoTokenInfo   @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
+  messages     ForumMessage[]
+  stars        DaoStar[]
+  contributors Contributor[]
+  contents     DaoContent[]
 
   @@map("t_dao")
 }
@@ -165,8 +165,7 @@ model DaoTokenInfo {
 }
 
 model AssetToken {
-  chainId   Int     @map("chain_id")
-  address   String  @map("address") @db.VarChar(255)
+  address   String  @id @map("address") @db.VarChar(255)
   name      String  @map("name") @db.VarChar(255)
   symbol    String  @map("symbol") @db.VarChar(255)
   decimals  Int     @map("decimals")
@@ -176,9 +175,7 @@ model AssetToken {
   isAllowed Boolean @default(false) @map("is_allowed")
   isNative  Boolean @default(false) @map("is_native")
   isValid   Boolean @default(false) @map("is_valid")
-
-  @@id([chainId, address])
-  @@index([address])
+  
   @@map("t_asset_token")
 }
 
@@ -201,33 +198,32 @@ model ForumMessage {
   @@map("t_forum_message")
 }
 
-model POC {
-  id                 String       @id @db.VarChar(255)
-  daoId              String       @map("dao_id")
-  userAddress        String?      @map("user_address")
-  isValid            Boolean      @default(false) @map("is_valid")
-  userPlatformId     String       @map("user_platform_id") @db.VarChar(255)
-  userPlatformName   String       @map("user_platform_name") @db.VarChar(255)
-  userPlatformUrl    String       @map("user_platform_url") @db.VarChar(255)
-  userPlatformAvatar String       @map("user_platform_avatar") @db.VarChar(255)
-  createdAt          DateTime     @default(now()) @map("created_at")
-  updatedAt          DateTime     @default(now()) @updatedAt @map("updated_at")
-  dao                Dao          @relation(fields: [daoId], references: [id], onDelete: Cascade)
-  user               User?        @relation(fields: [userAddress], references: [address], onDelete: Cascade)
-  histories          POCHistory[]
-  snapshotValue      Decimal      @default(0) @db.Decimal(50, 18)
+model Contributor {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.VarChar(255)
+  daoId              String               @map("dao_id")
+  userAddress        String?              @map("user_address")
+  isValid            Boolean              @default(false) @map("is_valid")
+  userPlatformId     String               @map("user_platform_id") @db.VarChar(255)
+  userPlatformName   String               @map("user_platform_name") @db.VarChar(255)
+  userPlatformAvatar String               @map("user_platform_avatar") @db.VarChar(255)
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @default(now()) @updatedAt @map("updated_at")
+  dao                Dao                  @relation(fields: [daoId], references: [id], onDelete: Cascade)
+  user               User?                @relation(fields: [userAddress], references: [address], onDelete: Cascade)
+  histories          ContributorHistory[]
+  snapshotValue      Decimal              @default(0) @db.Decimal(50, 18)
 
-  @@map("t_poc")
+  @@map("t_contributor")
 }
 
-model POCHistory {
-  id        String   @id @db.VarChar(255)
-  tag       String   @db.VarChar(255)
-  value     Decimal  @default(0) @db.Decimal(50, 18)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
-  poc       POC      @relation(fields: [pocId], references: [id])
-  pocId     String   @map("poc_id") @db.VarChar(255)
+model ContributorHistory {
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.VarChar(255)
+  tag           String      @db.VarChar(255)
+  value         Decimal     @default(0) @db.Decimal(50, 18)
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @default(now()) @updatedAt @map("updated_at")
+  contributor   Contributor @relation(fields: [contributorId], references: [id])
+  contributorId String      @map("contributor_id") @db.VarChar(255)
 
-  @@map("t_poc_history")
+  @@map("t_contributor_history")
 }

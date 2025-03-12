@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc"
-import { createDaoParamsSchema, homeSearchParamsSchema, pageableSchema } from "~/lib/schema"
+import {createDaoParamsSchema, daoInformationParamsSchema, homeSearchParamsSchema, pageableSchema} from "~/lib/schema"
 import { daoService } from "~/server/service/dao"
 
 export const daoRouter = createTRPCRouter({

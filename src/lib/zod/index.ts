@@ -92,13 +92,13 @@ export const DaoTokenHolderScalarFieldEnumSchema = z.enum(['userAddress','tokenI
 
 export const DaoTokenInfoScalarFieldEnumSchema = z.enum(['tokenId','tokenAddress','name','ticker','creator','createdAt','marketCap','totalSupply','holderCount','assetTokenAddress','tradingonuniswap','uniswapV3Pair']);
 
-export const AssetTokenScalarFieldEnumSchema = z.enum(['chainId','address','name','symbol','decimals','logoUrl','priceUsd','launchFee','isAllowed','isNative','isValid']);
+export const AssetTokenScalarFieldEnumSchema = z.enum(['address','name','symbol','decimals','logoUrl','priceUsd','launchFee','isAllowed','isNative','isValid']);
 
 export const ForumMessageScalarFieldEnumSchema = z.enum(['id','daoId','message','createdAt','createdBy','deletedAt','replyToMessage','replyToUser','rootMessageId']);
 
-export const POCScalarFieldEnumSchema = z.enum(['id','daoId','userAddress','isValid','userPlatformId','userPlatformName','userPlatformUrl','userPlatformAvatar','createdAt','updatedAt','snapshotValue']);
+export const ContributorScalarFieldEnumSchema = z.enum(['id','daoId','userAddress','isValid','userPlatformId','userPlatformName','userPlatformAvatar','createdAt','updatedAt','snapshotValue']);
 
-export const POCHistoryScalarFieldEnumSchema = z.enum(['id','tag','value','createdAt','updatedAt','pocId']);
+export const ContributorHistoryScalarFieldEnumSchema = z.enum(['id','tag','value','createdAt','updatedAt','contributorId']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -256,7 +256,6 @@ export type DaoTokenInfo = z.infer<typeof DaoTokenInfoSchema>
 /////////////////////////////////////////
 
 export const AssetTokenSchema = z.object({
-  chainId: z.number().int(),
   address: z.string(),
   name: z.string(),
   symbol: z.string(),
@@ -290,39 +289,38 @@ export const ForumMessageSchema = z.object({
 export type ForumMessage = z.infer<typeof ForumMessageSchema>
 
 /////////////////////////////////////////
-// POC SCHEMA
+// CONTRIBUTOR SCHEMA
 /////////////////////////////////////////
 
-export const POCSchema = z.object({
+export const ContributorSchema = z.object({
   id: z.string(),
   daoId: z.string(),
   userAddress: z.string().nullable(),
   isValid: z.boolean(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  snapshotValue: z.instanceof(Prisma.Decimal, { message: "Field 'snapshotValue' must be a Decimal. Location: ['Models', 'POC']"}),
+  snapshotValue: z.instanceof(Prisma.Decimal, { message: "Field 'snapshotValue' must be a Decimal. Location: ['Models', 'Contributor']"}),
 })
 
-export type POC = z.infer<typeof POCSchema>
+export type Contributor = z.infer<typeof ContributorSchema>
 
 /////////////////////////////////////////
-// POC HISTORY SCHEMA
+// CONTRIBUTOR HISTORY SCHEMA
 /////////////////////////////////////////
 
-export const POCHistorySchema = z.object({
+export const ContributorHistorySchema = z.object({
   id: z.string(),
   tag: z.string(),
-  value: z.instanceof(Prisma.Decimal, { message: "Field 'value' must be a Decimal. Location: ['Models', 'POCHistory']"}),
+  value: z.instanceof(Prisma.Decimal, { message: "Field 'value' must be a Decimal. Location: ['Models', 'ContributorHistory']"}),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-  pocId: z.string(),
+  contributorId: z.string(),
 })
 
-export type POCHistory = z.infer<typeof POCHistorySchema>
+export type ContributorHistory = z.infer<typeof ContributorHistorySchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -345,7 +343,7 @@ export const ApiKeySelectSchema: z.ZodType<Prisma.ApiKeySelect> = z.object({
 export const UserIncludeSchema: z.ZodType<Prisma.UserInclude> = z.object({
   stars: z.union([z.boolean(),z.lazy(() => DaoStarFindManyArgsSchema)]).optional(),
   daos: z.union([z.boolean(),z.lazy(() => DaoFindManyArgsSchema)]).optional(),
-  contributions: z.union([z.boolean(),z.lazy(() => POCFindManyArgsSchema)]).optional(),
+  contributions: z.union([z.boolean(),z.lazy(() => ContributorFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -375,7 +373,7 @@ export const UserSelectSchema: z.ZodType<Prisma.UserSelect> = z.object({
   invitedBy: z.boolean().optional(),
   stars: z.union([z.boolean(),z.lazy(() => DaoStarFindManyArgsSchema)]).optional(),
   daos: z.union([z.boolean(),z.lazy(() => DaoFindManyArgsSchema)]).optional(),
-  contributions: z.union([z.boolean(),z.lazy(() => POCFindManyArgsSchema)]).optional(),
+  contributions: z.union([z.boolean(),z.lazy(() => ContributorFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => UserCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -407,7 +405,7 @@ export const DaoIncludeSchema: z.ZodType<Prisma.DaoInclude> = z.object({
   tokenInfo: z.union([z.boolean(),z.lazy(() => DaoTokenInfoArgsSchema)]).optional(),
   messages: z.union([z.boolean(),z.lazy(() => ForumMessageFindManyArgsSchema)]).optional(),
   stars: z.union([z.boolean(),z.lazy(() => DaoStarFindManyArgsSchema)]).optional(),
-  pocs: z.union([z.boolean(),z.lazy(() => POCFindManyArgsSchema)]).optional(),
+  contributors: z.union([z.boolean(),z.lazy(() => ContributorFindManyArgsSchema)]).optional(),
   contents: z.union([z.boolean(),z.lazy(() => DaoContentFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => DaoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -424,7 +422,7 @@ export const DaoCountOutputTypeArgsSchema: z.ZodType<Prisma.DaoCountOutputTypeDe
 export const DaoCountOutputTypeSelectSchema: z.ZodType<Prisma.DaoCountOutputTypeSelect> = z.object({
   messages: z.boolean().optional(),
   stars: z.boolean().optional(),
-  pocs: z.boolean().optional(),
+  contributors: z.boolean().optional(),
   contents: z.boolean().optional(),
 }).strict();
 
@@ -449,7 +447,7 @@ export const DaoSelectSchema: z.ZodType<Prisma.DaoSelect> = z.object({
   tokenInfo: z.union([z.boolean(),z.lazy(() => DaoTokenInfoArgsSchema)]).optional(),
   messages: z.union([z.boolean(),z.lazy(() => ForumMessageFindManyArgsSchema)]).optional(),
   stars: z.union([z.boolean(),z.lazy(() => DaoStarFindManyArgsSchema)]).optional(),
-  pocs: z.union([z.boolean(),z.lazy(() => POCFindManyArgsSchema)]).optional(),
+  contributors: z.union([z.boolean(),z.lazy(() => ContributorFindManyArgsSchema)]).optional(),
   contents: z.union([z.boolean(),z.lazy(() => DaoContentFindManyArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => DaoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
@@ -541,7 +539,6 @@ export const DaoTokenInfoSelectSchema: z.ZodType<Prisma.DaoTokenInfoSelect> = z.
 //------------------------------------------------------
 
 export const AssetTokenSelectSchema: z.ZodType<Prisma.AssetTokenSelect> = z.object({
-  chainId: z.boolean().optional(),
   address: z.boolean().optional(),
   name: z.boolean().optional(),
   symbol: z.boolean().optional(),
@@ -579,67 +576,66 @@ export const ForumMessageSelectSchema: z.ZodType<Prisma.ForumMessageSelect> = z.
   dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
 }).strict()
 
-// POC
+// CONTRIBUTOR
 //------------------------------------------------------
 
-export const POCIncludeSchema: z.ZodType<Prisma.POCInclude> = z.object({
+export const ContributorIncludeSchema: z.ZodType<Prisma.ContributorInclude> = z.object({
   dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
-  histories: z.union([z.boolean(),z.lazy(() => POCHistoryFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => POCCountOutputTypeArgsSchema)]).optional(),
+  histories: z.union([z.boolean(),z.lazy(() => ContributorHistoryFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => ContributorCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-export const POCArgsSchema: z.ZodType<Prisma.POCDefaultArgs> = z.object({
-  select: z.lazy(() => POCSelectSchema).optional(),
-  include: z.lazy(() => POCIncludeSchema).optional(),
+export const ContributorArgsSchema: z.ZodType<Prisma.ContributorDefaultArgs> = z.object({
+  select: z.lazy(() => ContributorSelectSchema).optional(),
+  include: z.lazy(() => ContributorIncludeSchema).optional(),
 }).strict();
 
-export const POCCountOutputTypeArgsSchema: z.ZodType<Prisma.POCCountOutputTypeDefaultArgs> = z.object({
-  select: z.lazy(() => POCCountOutputTypeSelectSchema).nullish(),
+export const ContributorCountOutputTypeArgsSchema: z.ZodType<Prisma.ContributorCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => ContributorCountOutputTypeSelectSchema).nullish(),
 }).strict();
 
-export const POCCountOutputTypeSelectSchema: z.ZodType<Prisma.POCCountOutputTypeSelect> = z.object({
+export const ContributorCountOutputTypeSelectSchema: z.ZodType<Prisma.ContributorCountOutputTypeSelect> = z.object({
   histories: z.boolean().optional(),
 }).strict();
 
-export const POCSelectSchema: z.ZodType<Prisma.POCSelect> = z.object({
+export const ContributorSelectSchema: z.ZodType<Prisma.ContributorSelect> = z.object({
   id: z.boolean().optional(),
   daoId: z.boolean().optional(),
   userAddress: z.boolean().optional(),
   isValid: z.boolean().optional(),
   userPlatformId: z.boolean().optional(),
   userPlatformName: z.boolean().optional(),
-  userPlatformUrl: z.boolean().optional(),
   userPlatformAvatar: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
   snapshotValue: z.boolean().optional(),
   dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
   user: z.union([z.boolean(),z.lazy(() => UserArgsSchema)]).optional(),
-  histories: z.union([z.boolean(),z.lazy(() => POCHistoryFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => POCCountOutputTypeArgsSchema)]).optional(),
+  histories: z.union([z.boolean(),z.lazy(() => ContributorHistoryFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => ContributorCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-// POC HISTORY
+// CONTRIBUTOR HISTORY
 //------------------------------------------------------
 
-export const POCHistoryIncludeSchema: z.ZodType<Prisma.POCHistoryInclude> = z.object({
-  poc: z.union([z.boolean(),z.lazy(() => POCArgsSchema)]).optional(),
+export const ContributorHistoryIncludeSchema: z.ZodType<Prisma.ContributorHistoryInclude> = z.object({
+  contributor: z.union([z.boolean(),z.lazy(() => ContributorArgsSchema)]).optional(),
 }).strict()
 
-export const POCHistoryArgsSchema: z.ZodType<Prisma.POCHistoryDefaultArgs> = z.object({
-  select: z.lazy(() => POCHistorySelectSchema).optional(),
-  include: z.lazy(() => POCHistoryIncludeSchema).optional(),
+export const ContributorHistoryArgsSchema: z.ZodType<Prisma.ContributorHistoryDefaultArgs> = z.object({
+  select: z.lazy(() => ContributorHistorySelectSchema).optional(),
+  include: z.lazy(() => ContributorHistoryIncludeSchema).optional(),
 }).strict();
 
-export const POCHistorySelectSchema: z.ZodType<Prisma.POCHistorySelect> = z.object({
+export const ContributorHistorySelectSchema: z.ZodType<Prisma.ContributorHistorySelect> = z.object({
   id: z.boolean().optional(),
   tag: z.boolean().optional(),
   value: z.boolean().optional(),
   createdAt: z.boolean().optional(),
   updatedAt: z.boolean().optional(),
-  pocId: z.boolean().optional(),
-  poc: z.union([z.boolean(),z.lazy(() => POCArgsSchema)]).optional(),
+  contributorId: z.boolean().optional(),
+  contributor: z.union([z.boolean(),z.lazy(() => ContributorArgsSchema)]).optional(),
 }).strict()
 
 
@@ -726,7 +722,7 @@ export const UserWhereInputSchema: z.ZodType<Prisma.UserWhereInput> = z.object({
   invitedBy: z.lazy(() => StringNullableListFilterSchema).optional(),
   stars: z.lazy(() => DaoStarListRelationFilterSchema).optional(),
   daos: z.lazy(() => DaoListRelationFilterSchema).optional(),
-  contributions: z.lazy(() => POCListRelationFilterSchema).optional()
+  contributions: z.lazy(() => ContributorListRelationFilterSchema).optional()
 }).strict();
 
 export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWithRelationInput> = z.object({
@@ -740,7 +736,7 @@ export const UserOrderByWithRelationInputSchema: z.ZodType<Prisma.UserOrderByWit
   invitedBy: z.lazy(() => SortOrderSchema).optional(),
   stars: z.lazy(() => DaoStarOrderByRelationAggregateInputSchema).optional(),
   daos: z.lazy(() => DaoOrderByRelationAggregateInputSchema).optional(),
-  contributions: z.lazy(() => POCOrderByRelationAggregateInputSchema).optional()
+  contributions: z.lazy(() => ContributorOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> = z.union([
@@ -785,7 +781,7 @@ export const UserWhereUniqueInputSchema: z.ZodType<Prisma.UserWhereUniqueInput> 
   invitedBy: z.lazy(() => StringNullableListFilterSchema).optional(),
   stars: z.lazy(() => DaoStarListRelationFilterSchema).optional(),
   daos: z.lazy(() => DaoListRelationFilterSchema).optional(),
-  contributions: z.lazy(() => POCListRelationFilterSchema).optional()
+  contributions: z.lazy(() => ContributorListRelationFilterSchema).optional()
 }).strict());
 
 export const UserOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserOrderByWithAggregationInput> = z.object({
@@ -887,7 +883,7 @@ export const DaoWhereInputSchema: z.ZodType<Prisma.DaoWhereInput> = z.object({
   tokenInfo: z.union([ z.lazy(() => DaoTokenInfoScalarRelationFilterSchema),z.lazy(() => DaoTokenInfoWhereInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageListRelationFilterSchema).optional(),
   stars: z.lazy(() => DaoStarListRelationFilterSchema).optional(),
-  pocs: z.lazy(() => POCListRelationFilterSchema).optional(),
+  contributors: z.lazy(() => ContributorListRelationFilterSchema).optional(),
   contents: z.lazy(() => DaoContentListRelationFilterSchema).optional()
 }).strict();
 
@@ -912,7 +908,7 @@ export const DaoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoOrderByWithR
   tokenInfo: z.lazy(() => DaoTokenInfoOrderByWithRelationInputSchema).optional(),
   messages: z.lazy(() => ForumMessageOrderByRelationAggregateInputSchema).optional(),
   stars: z.lazy(() => DaoStarOrderByRelationAggregateInputSchema).optional(),
-  pocs: z.lazy(() => POCOrderByRelationAggregateInputSchema).optional(),
+  contributors: z.lazy(() => ContributorOrderByRelationAggregateInputSchema).optional(),
   contents: z.lazy(() => DaoContentOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
@@ -1084,7 +1080,7 @@ export const DaoWhereUniqueInputSchema: z.ZodType<Prisma.DaoWhereUniqueInput> = 
   tokenInfo: z.union([ z.lazy(() => DaoTokenInfoScalarRelationFilterSchema),z.lazy(() => DaoTokenInfoWhereInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageListRelationFilterSchema).optional(),
   stars: z.lazy(() => DaoStarListRelationFilterSchema).optional(),
-  pocs: z.lazy(() => POCListRelationFilterSchema).optional(),
+  contributors: z.lazy(() => ContributorListRelationFilterSchema).optional(),
   contents: z.lazy(() => DaoContentListRelationFilterSchema).optional()
 }).strict());
 
@@ -1372,7 +1368,6 @@ export const AssetTokenWhereInputSchema: z.ZodType<Prisma.AssetTokenWhereInput> 
   AND: z.union([ z.lazy(() => AssetTokenWhereInputSchema),z.lazy(() => AssetTokenWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => AssetTokenWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => AssetTokenWhereInputSchema),z.lazy(() => AssetTokenWhereInputSchema).array() ]).optional(),
-  chainId: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
   address: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   symbol: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
@@ -1386,7 +1381,6 @@ export const AssetTokenWhereInputSchema: z.ZodType<Prisma.AssetTokenWhereInput> 
 }).strict();
 
 export const AssetTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.AssetTokenOrderByWithRelationInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   symbol: z.lazy(() => SortOrderSchema).optional(),
@@ -1400,15 +1394,13 @@ export const AssetTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.AssetTok
 }).strict();
 
 export const AssetTokenWhereUniqueInputSchema: z.ZodType<Prisma.AssetTokenWhereUniqueInput> = z.object({
-  chainId_address: z.lazy(() => AssetTokenChainIdAddressCompoundUniqueInputSchema)
+  address: z.string()
 })
 .and(z.object({
-  chainId_address: z.lazy(() => AssetTokenChainIdAddressCompoundUniqueInputSchema).optional(),
+  address: z.string().optional(),
   AND: z.union([ z.lazy(() => AssetTokenWhereInputSchema),z.lazy(() => AssetTokenWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => AssetTokenWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => AssetTokenWhereInputSchema),z.lazy(() => AssetTokenWhereInputSchema).array() ]).optional(),
-  chainId: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
-  address: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   symbol: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   decimals: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
@@ -1421,7 +1413,6 @@ export const AssetTokenWhereUniqueInputSchema: z.ZodType<Prisma.AssetTokenWhereU
 }).strict());
 
 export const AssetTokenOrderByWithAggregationInputSchema: z.ZodType<Prisma.AssetTokenOrderByWithAggregationInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   symbol: z.lazy(() => SortOrderSchema).optional(),
@@ -1443,7 +1434,6 @@ export const AssetTokenScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.As
   AND: z.union([ z.lazy(() => AssetTokenScalarWhereWithAggregatesInputSchema),z.lazy(() => AssetTokenScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   OR: z.lazy(() => AssetTokenScalarWhereWithAggregatesInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => AssetTokenScalarWhereWithAggregatesInputSchema),z.lazy(() => AssetTokenScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  chainId: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
   address: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   name: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   symbol: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
@@ -1534,165 +1524,160 @@ export const ForumMessageScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.
   rootMessageId: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
-export const POCWhereInputSchema: z.ZodType<Prisma.POCWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => POCWhereInputSchema),z.lazy(() => POCWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCWhereInputSchema),z.lazy(() => POCWhereInputSchema).array() ]).optional(),
+export const ContributorWhereInputSchema: z.ZodType<Prisma.ContributorWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributorWhereInputSchema),z.lazy(() => ContributorWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorWhereInputSchema),z.lazy(() => ContributorWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   daoId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   userPlatformId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userPlatformName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userPlatformUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userPlatformAvatar: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   snapshotValue: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   dao: z.union([ z.lazy(() => DaoScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional(),
   user: z.union([ z.lazy(() => UserNullableScalarRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional().nullable(),
-  histories: z.lazy(() => POCHistoryListRelationFilterSchema).optional()
+  histories: z.lazy(() => ContributorHistoryListRelationFilterSchema).optional()
 }).strict();
 
-export const POCOrderByWithRelationInputSchema: z.ZodType<Prisma.POCOrderByWithRelationInput> = z.object({
+export const ContributorOrderByWithRelationInputSchema: z.ZodType<Prisma.ContributorOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
   userPlatformId: z.lazy(() => SortOrderSchema).optional(),
   userPlatformName: z.lazy(() => SortOrderSchema).optional(),
-  userPlatformUrl: z.lazy(() => SortOrderSchema).optional(),
   userPlatformAvatar: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   snapshotValue: z.lazy(() => SortOrderSchema).optional(),
   dao: z.lazy(() => DaoOrderByWithRelationInputSchema).optional(),
   user: z.lazy(() => UserOrderByWithRelationInputSchema).optional(),
-  histories: z.lazy(() => POCHistoryOrderByRelationAggregateInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
-export const POCWhereUniqueInputSchema: z.ZodType<Prisma.POCWhereUniqueInput> = z.object({
+export const ContributorWhereUniqueInputSchema: z.ZodType<Prisma.ContributorWhereUniqueInput> = z.object({
   id: z.string()
 })
 .and(z.object({
   id: z.string().optional(),
-  AND: z.union([ z.lazy(() => POCWhereInputSchema),z.lazy(() => POCWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCWhereInputSchema),z.lazy(() => POCWhereInputSchema).array() ]).optional(),
+  AND: z.union([ z.lazy(() => ContributorWhereInputSchema),z.lazy(() => ContributorWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorWhereInputSchema),z.lazy(() => ContributorWhereInputSchema).array() ]).optional(),
   daoId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   userPlatformId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userPlatformName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userPlatformUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userPlatformAvatar: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   snapshotValue: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   dao: z.union([ z.lazy(() => DaoScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional(),
   user: z.union([ z.lazy(() => UserNullableScalarRelationFilterSchema),z.lazy(() => UserWhereInputSchema) ]).optional().nullable(),
-  histories: z.lazy(() => POCHistoryListRelationFilterSchema).optional()
+  histories: z.lazy(() => ContributorHistoryListRelationFilterSchema).optional()
 }).strict());
 
-export const POCOrderByWithAggregationInputSchema: z.ZodType<Prisma.POCOrderByWithAggregationInput> = z.object({
+export const ContributorOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContributorOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
   userPlatformId: z.lazy(() => SortOrderSchema).optional(),
   userPlatformName: z.lazy(() => SortOrderSchema).optional(),
-  userPlatformUrl: z.lazy(() => SortOrderSchema).optional(),
   userPlatformAvatar: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   snapshotValue: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => POCCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => POCAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => POCMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => POCMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => POCSumOrderByAggregateInputSchema).optional()
+  _count: z.lazy(() => ContributorCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => ContributorAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => ContributorMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => ContributorMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => ContributorSumOrderByAggregateInputSchema).optional()
 }).strict();
 
-export const POCScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.POCScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => POCScalarWhereWithAggregatesInputSchema),z.lazy(() => POCScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCScalarWhereWithAggregatesInputSchema),z.lazy(() => POCScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+export const ContributorScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ContributorScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributorScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributorScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributorScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   daoId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   userAddress: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
   userPlatformId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   userPlatformName: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
-  userPlatformUrl: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   userPlatformAvatar: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   snapshotValue: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
 }).strict();
 
-export const POCHistoryWhereInputSchema: z.ZodType<Prisma.POCHistoryWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => POCHistoryWhereInputSchema),z.lazy(() => POCHistoryWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCHistoryWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCHistoryWhereInputSchema),z.lazy(() => POCHistoryWhereInputSchema).array() ]).optional(),
+export const ContributorHistoryWhereInputSchema: z.ZodType<Prisma.ContributorHistoryWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributorHistoryWhereInputSchema),z.lazy(() => ContributorHistoryWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorHistoryWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorHistoryWhereInputSchema),z.lazy(() => ContributorHistoryWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   tag: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   value: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  pocId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  poc: z.union([ z.lazy(() => POCScalarRelationFilterSchema),z.lazy(() => POCWhereInputSchema) ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributor: z.union([ z.lazy(() => ContributorScalarRelationFilterSchema),z.lazy(() => ContributorWhereInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryOrderByWithRelationInputSchema: z.ZodType<Prisma.POCHistoryOrderByWithRelationInput> = z.object({
+export const ContributorHistoryOrderByWithRelationInputSchema: z.ZodType<Prisma.ContributorHistoryOrderByWithRelationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   tag: z.lazy(() => SortOrderSchema).optional(),
   value: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  pocId: z.lazy(() => SortOrderSchema).optional(),
-  poc: z.lazy(() => POCOrderByWithRelationInputSchema).optional()
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => ContributorOrderByWithRelationInputSchema).optional()
 }).strict();
 
-export const POCHistoryWhereUniqueInputSchema: z.ZodType<Prisma.POCHistoryWhereUniqueInput> = z.object({
+export const ContributorHistoryWhereUniqueInputSchema: z.ZodType<Prisma.ContributorHistoryWhereUniqueInput> = z.object({
   id: z.string()
 })
 .and(z.object({
   id: z.string().optional(),
-  AND: z.union([ z.lazy(() => POCHistoryWhereInputSchema),z.lazy(() => POCHistoryWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCHistoryWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCHistoryWhereInputSchema),z.lazy(() => POCHistoryWhereInputSchema).array() ]).optional(),
+  AND: z.union([ z.lazy(() => ContributorHistoryWhereInputSchema),z.lazy(() => ContributorHistoryWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorHistoryWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorHistoryWhereInputSchema),z.lazy(() => ContributorHistoryWhereInputSchema).array() ]).optional(),
   tag: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   value: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  pocId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  poc: z.union([ z.lazy(() => POCScalarRelationFilterSchema),z.lazy(() => POCWhereInputSchema) ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributor: z.union([ z.lazy(() => ContributorScalarRelationFilterSchema),z.lazy(() => ContributorWhereInputSchema) ]).optional(),
 }).strict());
 
-export const POCHistoryOrderByWithAggregationInputSchema: z.ZodType<Prisma.POCHistoryOrderByWithAggregationInput> = z.object({
+export const ContributorHistoryOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContributorHistoryOrderByWithAggregationInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   tag: z.lazy(() => SortOrderSchema).optional(),
   value: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  pocId: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => POCHistoryCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => POCHistoryAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => POCHistoryMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => POCHistoryMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => POCHistorySumOrderByAggregateInputSchema).optional()
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => ContributorHistoryCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => ContributorHistoryAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => ContributorHistoryMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => ContributorHistoryMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => ContributorHistorySumOrderByAggregateInputSchema).optional()
 }).strict();
 
-export const POCHistoryScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.POCHistoryScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => POCHistoryScalarWhereWithAggregatesInputSchema),z.lazy(() => POCHistoryScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCHistoryScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCHistoryScalarWhereWithAggregatesInputSchema),z.lazy(() => POCHistoryScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+export const ContributorHistoryScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ContributorHistoryScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributorHistoryScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributorHistoryScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorHistoryScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorHistoryScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributorHistoryScalarWhereWithAggregatesInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   tag: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
   value: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
-  pocId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
 }).strict();
 
 export const ApiKeyCreateInputSchema: z.ZodType<Prisma.ApiKeyCreateInput> = z.object({
@@ -1762,7 +1747,7 @@ export const UserCreateInputSchema: z.ZodType<Prisma.UserCreateInput> = z.object
   invitedBy: z.union([ z.lazy(() => UserCreateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutUserInputSchema).optional(),
   daos: z.lazy(() => DaoCreateNestedManyWithoutCreatorInputSchema).optional(),
-  contributions: z.lazy(() => POCCreateNestedManyWithoutUserInputSchema).optional()
+  contributions: z.lazy(() => ContributorCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreateInput> = z.object({
@@ -1776,7 +1761,7 @@ export const UserUncheckedCreateInputSchema: z.ZodType<Prisma.UserUncheckedCreat
   invitedBy: z.union([ z.lazy(() => UserCreateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
   daos: z.lazy(() => DaoUncheckedCreateNestedManyWithoutCreatorInputSchema).optional(),
-  contributions: z.lazy(() => POCUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  contributions: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object({
@@ -1790,7 +1775,7 @@ export const UserUpdateInputSchema: z.ZodType<Prisma.UserUpdateInput> = z.object
   invitedBy: z.union([ z.lazy(() => UserUpdateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutUserNestedInputSchema).optional(),
   daos: z.lazy(() => DaoUpdateManyWithoutCreatorNestedInputSchema).optional(),
-  contributions: z.lazy(() => POCUpdateManyWithoutUserNestedInputSchema).optional()
+  contributions: z.lazy(() => ContributorUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdateInput> = z.object({
@@ -1804,7 +1789,7 @@ export const UserUncheckedUpdateInputSchema: z.ZodType<Prisma.UserUncheckedUpdat
   invitedBy: z.union([ z.lazy(() => UserUpdateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
   daos: z.lazy(() => DaoUncheckedUpdateManyWithoutCreatorNestedInputSchema).optional(),
-  contributions: z.lazy(() => POCUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  contributions: z.lazy(() => ContributorUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateManyInputSchema: z.ZodType<Prisma.UserCreateManyInput> = z.object({
@@ -1892,7 +1877,7 @@ export const DaoCreateInputSchema: z.ZodType<Prisma.DaoCreateInput> = z.object({
   tokenInfo: z.lazy(() => DaoTokenInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -1915,7 +1900,7 @@ export const DaoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoUncheckedCreateI
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -1938,7 +1923,7 @@ export const DaoUpdateInputSchema: z.ZodType<Prisma.DaoUpdateInput> = z.object({
   tokenInfo: z.lazy(() => DaoTokenInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -1961,7 +1946,7 @@ export const DaoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateI
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -2251,7 +2236,6 @@ export const DaoTokenInfoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoTok
 }).strict();
 
 export const AssetTokenCreateInputSchema: z.ZodType<Prisma.AssetTokenCreateInput> = z.object({
-  chainId: z.number().int(),
   address: z.string(),
   name: z.string(),
   symbol: z.string(),
@@ -2265,7 +2249,6 @@ export const AssetTokenCreateInputSchema: z.ZodType<Prisma.AssetTokenCreateInput
 }).strict();
 
 export const AssetTokenUncheckedCreateInputSchema: z.ZodType<Prisma.AssetTokenUncheckedCreateInput> = z.object({
-  chainId: z.number().int(),
   address: z.string(),
   name: z.string(),
   symbol: z.string(),
@@ -2279,7 +2262,6 @@ export const AssetTokenUncheckedCreateInputSchema: z.ZodType<Prisma.AssetTokenUn
 }).strict();
 
 export const AssetTokenUpdateInputSchema: z.ZodType<Prisma.AssetTokenUpdateInput> = z.object({
-  chainId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2293,7 +2275,6 @@ export const AssetTokenUpdateInputSchema: z.ZodType<Prisma.AssetTokenUpdateInput
 }).strict();
 
 export const AssetTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.AssetTokenUncheckedUpdateInput> = z.object({
-  chainId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2307,7 +2288,6 @@ export const AssetTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.AssetTokenUn
 }).strict();
 
 export const AssetTokenCreateManyInputSchema: z.ZodType<Prisma.AssetTokenCreateManyInput> = z.object({
-  chainId: z.number().int(),
   address: z.string(),
   name: z.string(),
   symbol: z.string(),
@@ -2321,7 +2301,6 @@ export const AssetTokenCreateManyInputSchema: z.ZodType<Prisma.AssetTokenCreateM
 }).strict();
 
 export const AssetTokenUpdateManyMutationInputSchema: z.ZodType<Prisma.AssetTokenUpdateManyMutationInput> = z.object({
-  chainId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2335,7 +2314,6 @@ export const AssetTokenUpdateManyMutationInputSchema: z.ZodType<Prisma.AssetToke
 }).strict();
 
 export const AssetTokenUncheckedUpdateManyInputSchema: z.ZodType<Prisma.AssetTokenUncheckedUpdateManyInput> = z.object({
-  chainId: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
   address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2431,152 +2409,145 @@ export const ForumMessageUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ForumM
   rootMessageId: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
-export const POCCreateInputSchema: z.ZodType<Prisma.POCCreateInput> = z.object({
-  id: z.string(),
+export const ContributorCreateInputSchema: z.ZodType<Prisma.ContributorCreateInput> = z.object({
+  id: z.string().optional(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  dao: z.lazy(() => DaoCreateNestedOneWithoutPocsInputSchema),
+  dao: z.lazy(() => DaoCreateNestedOneWithoutContributorsInputSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutContributionsInputSchema).optional(),
-  histories: z.lazy(() => POCHistoryCreateNestedManyWithoutPocInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryCreateNestedManyWithoutContributorInputSchema).optional()
 }).strict();
 
-export const POCUncheckedCreateInputSchema: z.ZodType<Prisma.POCUncheckedCreateInput> = z.object({
-  id: z.string(),
+export const ContributorUncheckedCreateInputSchema: z.ZodType<Prisma.ContributorUncheckedCreateInput> = z.object({
+  id: z.string().optional(),
   daoId: z.string(),
   userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  histories: z.lazy(() => POCHistoryUncheckedCreateNestedManyWithoutPocInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUncheckedCreateNestedManyWithoutContributorInputSchema).optional()
 }).strict();
 
-export const POCUpdateInputSchema: z.ZodType<Prisma.POCUpdateInput> = z.object({
+export const ContributorUpdateInputSchema: z.ZodType<Prisma.ContributorUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  dao: z.lazy(() => DaoUpdateOneRequiredWithoutPocsNestedInputSchema).optional(),
+  dao: z.lazy(() => DaoUpdateOneRequiredWithoutContributorsNestedInputSchema).optional(),
   user: z.lazy(() => UserUpdateOneWithoutContributionsNestedInputSchema).optional(),
-  histories: z.lazy(() => POCHistoryUpdateManyWithoutPocNestedInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUpdateManyWithoutContributorNestedInputSchema).optional()
 }).strict();
 
-export const POCUncheckedUpdateInputSchema: z.ZodType<Prisma.POCUncheckedUpdateInput> = z.object({
+export const ContributorUncheckedUpdateInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  histories: z.lazy(() => POCHistoryUncheckedUpdateManyWithoutPocNestedInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUncheckedUpdateManyWithoutContributorNestedInputSchema).optional()
 }).strict();
 
-export const POCCreateManyInputSchema: z.ZodType<Prisma.POCCreateManyInput> = z.object({
-  id: z.string(),
+export const ContributorCreateManyInputSchema: z.ZodType<Prisma.ContributorCreateManyInput> = z.object({
+  id: z.string().optional(),
   daoId: z.string(),
   userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
 }).strict();
 
-export const POCUpdateManyMutationInputSchema: z.ZodType<Prisma.POCUpdateManyMutationInput> = z.object({
+export const ContributorUpdateManyMutationInputSchema: z.ZodType<Prisma.ContributorUpdateManyMutationInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCUncheckedUpdateManyInputSchema: z.ZodType<Prisma.POCUncheckedUpdateManyInput> = z.object({
+export const ContributorUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryCreateInputSchema: z.ZodType<Prisma.POCHistoryCreateInput> = z.object({
-  id: z.string(),
+export const ContributorHistoryCreateInputSchema: z.ZodType<Prisma.ContributorHistoryCreateInput> = z.object({
+  id: z.string().optional(),
   tag: z.string(),
   value: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  poc: z.lazy(() => POCCreateNestedOneWithoutHistoriesInputSchema)
+  contributor: z.lazy(() => ContributorCreateNestedOneWithoutHistoriesInputSchema)
 }).strict();
 
-export const POCHistoryUncheckedCreateInputSchema: z.ZodType<Prisma.POCHistoryUncheckedCreateInput> = z.object({
-  id: z.string(),
+export const ContributorHistoryUncheckedCreateInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedCreateInput> = z.object({
+  id: z.string().optional(),
   tag: z.string(),
   value: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  pocId: z.string()
+  contributorId: z.string()
 }).strict();
 
-export const POCHistoryUpdateInputSchema: z.ZodType<Prisma.POCHistoryUpdateInput> = z.object({
+export const ContributorHistoryUpdateInputSchema: z.ZodType<Prisma.ContributorHistoryUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  poc: z.lazy(() => POCUpdateOneRequiredWithoutHistoriesNestedInputSchema).optional()
+  contributor: z.lazy(() => ContributorUpdateOneRequiredWithoutHistoriesNestedInputSchema).optional()
 }).strict();
 
-export const POCHistoryUncheckedUpdateInputSchema: z.ZodType<Prisma.POCHistoryUncheckedUpdateInput> = z.object({
+export const ContributorHistoryUncheckedUpdateInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedUpdateInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  pocId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryCreateManyInputSchema: z.ZodType<Prisma.POCHistoryCreateManyInput> = z.object({
-  id: z.string(),
+export const ContributorHistoryCreateManyInputSchema: z.ZodType<Prisma.ContributorHistoryCreateManyInput> = z.object({
+  id: z.string().optional(),
   tag: z.string(),
   value: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
-  pocId: z.string()
+  contributorId: z.string()
 }).strict();
 
-export const POCHistoryUpdateManyMutationInputSchema: z.ZodType<Prisma.POCHistoryUpdateManyMutationInput> = z.object({
+export const ContributorHistoryUpdateManyMutationInputSchema: z.ZodType<Prisma.ContributorHistoryUpdateManyMutationInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -2584,13 +2555,13 @@ export const POCHistoryUpdateManyMutationInputSchema: z.ZodType<Prisma.POCHistor
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.POCHistoryUncheckedUpdateManyInput> = z.object({
+export const ContributorHistoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedUpdateManyInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  pocId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -2770,10 +2741,10 @@ export const DaoListRelationFilterSchema: z.ZodType<Prisma.DaoListRelationFilter
   none: z.lazy(() => DaoWhereInputSchema).optional()
 }).strict();
 
-export const POCListRelationFilterSchema: z.ZodType<Prisma.POCListRelationFilter> = z.object({
-  every: z.lazy(() => POCWhereInputSchema).optional(),
-  some: z.lazy(() => POCWhereInputSchema).optional(),
-  none: z.lazy(() => POCWhereInputSchema).optional()
+export const ContributorListRelationFilterSchema: z.ZodType<Prisma.ContributorListRelationFilter> = z.object({
+  every: z.lazy(() => ContributorWhereInputSchema).optional(),
+  some: z.lazy(() => ContributorWhereInputSchema).optional(),
+  none: z.lazy(() => ContributorWhereInputSchema).optional()
 }).strict();
 
 export const DaoStarOrderByRelationAggregateInputSchema: z.ZodType<Prisma.DaoStarOrderByRelationAggregateInput> = z.object({
@@ -2784,7 +2755,7 @@ export const DaoOrderByRelationAggregateInputSchema: z.ZodType<Prisma.DaoOrderBy
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCOrderByRelationAggregateInputSchema: z.ZodType<Prisma.POCOrderByRelationAggregateInput> = z.object({
+export const ContributorOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ContributorOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -3303,13 +3274,7 @@ export const BoolWithAggregatesFilterSchema: z.ZodType<Prisma.BoolWithAggregates
   _max: z.lazy(() => NestedBoolFilterSchema).optional()
 }).strict();
 
-export const AssetTokenChainIdAddressCompoundUniqueInputSchema: z.ZodType<Prisma.AssetTokenChainIdAddressCompoundUniqueInput> = z.object({
-  chainId: z.number(),
-  address: z.string()
-}).strict();
-
 export const AssetTokenCountOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenCountOrderByAggregateInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   symbol: z.lazy(() => SortOrderSchema).optional(),
@@ -3323,14 +3288,12 @@ export const AssetTokenCountOrderByAggregateInputSchema: z.ZodType<Prisma.AssetT
 }).strict();
 
 export const AssetTokenAvgOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenAvgOrderByAggregateInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional(),
   launchFee: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AssetTokenMaxOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenMaxOrderByAggregateInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   symbol: z.lazy(() => SortOrderSchema).optional(),
@@ -3344,7 +3307,6 @@ export const AssetTokenMaxOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTok
 }).strict();
 
 export const AssetTokenMinOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenMinOrderByAggregateInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   address: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
   symbol: z.lazy(() => SortOrderSchema).optional(),
@@ -3358,7 +3320,6 @@ export const AssetTokenMinOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTok
 }).strict();
 
 export const AssetTokenSumOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenSumOrderByAggregateInput> = z.object({
-  chainId: z.lazy(() => SortOrderSchema).optional(),
   decimals: z.lazy(() => SortOrderSchema).optional(),
   priceUsd: z.lazy(() => SortOrderSchema).optional(),
   launchFee: z.lazy(() => SortOrderSchema).optional()
@@ -3405,103 +3366,100 @@ export const UserNullableScalarRelationFilterSchema: z.ZodType<Prisma.UserNullab
   isNot: z.lazy(() => UserWhereInputSchema).optional().nullable()
 }).strict();
 
-export const POCHistoryListRelationFilterSchema: z.ZodType<Prisma.POCHistoryListRelationFilter> = z.object({
-  every: z.lazy(() => POCHistoryWhereInputSchema).optional(),
-  some: z.lazy(() => POCHistoryWhereInputSchema).optional(),
-  none: z.lazy(() => POCHistoryWhereInputSchema).optional()
+export const ContributorHistoryListRelationFilterSchema: z.ZodType<Prisma.ContributorHistoryListRelationFilter> = z.object({
+  every: z.lazy(() => ContributorHistoryWhereInputSchema).optional(),
+  some: z.lazy(() => ContributorHistoryWhereInputSchema).optional(),
+  none: z.lazy(() => ContributorHistoryWhereInputSchema).optional()
 }).strict();
 
-export const POCHistoryOrderByRelationAggregateInputSchema: z.ZodType<Prisma.POCHistoryOrderByRelationAggregateInput> = z.object({
+export const ContributorHistoryOrderByRelationAggregateInputSchema: z.ZodType<Prisma.ContributorHistoryOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCCountOrderByAggregateInputSchema: z.ZodType<Prisma.POCCountOrderByAggregateInput> = z.object({
+export const ContributorCountOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.lazy(() => SortOrderSchema).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
   userPlatformId: z.lazy(() => SortOrderSchema).optional(),
   userPlatformName: z.lazy(() => SortOrderSchema).optional(),
-  userPlatformUrl: z.lazy(() => SortOrderSchema).optional(),
   userPlatformAvatar: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   snapshotValue: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCAvgOrderByAggregateInputSchema: z.ZodType<Prisma.POCAvgOrderByAggregateInput> = z.object({
+export const ContributorAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorAvgOrderByAggregateInput> = z.object({
   snapshotValue: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCMaxOrderByAggregateInputSchema: z.ZodType<Prisma.POCMaxOrderByAggregateInput> = z.object({
+export const ContributorMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.lazy(() => SortOrderSchema).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
   userPlatformId: z.lazy(() => SortOrderSchema).optional(),
   userPlatformName: z.lazy(() => SortOrderSchema).optional(),
-  userPlatformUrl: z.lazy(() => SortOrderSchema).optional(),
   userPlatformAvatar: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   snapshotValue: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCMinOrderByAggregateInputSchema: z.ZodType<Prisma.POCMinOrderByAggregateInput> = z.object({
+export const ContributorMinOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   daoId: z.lazy(() => SortOrderSchema).optional(),
   userAddress: z.lazy(() => SortOrderSchema).optional(),
   isValid: z.lazy(() => SortOrderSchema).optional(),
   userPlatformId: z.lazy(() => SortOrderSchema).optional(),
   userPlatformName: z.lazy(() => SortOrderSchema).optional(),
-  userPlatformUrl: z.lazy(() => SortOrderSchema).optional(),
   userPlatformAvatar: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
   snapshotValue: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCSumOrderByAggregateInputSchema: z.ZodType<Prisma.POCSumOrderByAggregateInput> = z.object({
+export const ContributorSumOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorSumOrderByAggregateInput> = z.object({
   snapshotValue: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCScalarRelationFilterSchema: z.ZodType<Prisma.POCScalarRelationFilter> = z.object({
-  is: z.lazy(() => POCWhereInputSchema).optional(),
-  isNot: z.lazy(() => POCWhereInputSchema).optional()
+export const ContributorScalarRelationFilterSchema: z.ZodType<Prisma.ContributorScalarRelationFilter> = z.object({
+  is: z.lazy(() => ContributorWhereInputSchema).optional(),
+  isNot: z.lazy(() => ContributorWhereInputSchema).optional()
 }).strict();
 
-export const POCHistoryCountOrderByAggregateInputSchema: z.ZodType<Prisma.POCHistoryCountOrderByAggregateInput> = z.object({
+export const ContributorHistoryCountOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorHistoryCountOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   tag: z.lazy(() => SortOrderSchema).optional(),
   value: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  pocId: z.lazy(() => SortOrderSchema).optional()
+  contributorId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCHistoryAvgOrderByAggregateInputSchema: z.ZodType<Prisma.POCHistoryAvgOrderByAggregateInput> = z.object({
+export const ContributorHistoryAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorHistoryAvgOrderByAggregateInput> = z.object({
   value: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCHistoryMaxOrderByAggregateInputSchema: z.ZodType<Prisma.POCHistoryMaxOrderByAggregateInput> = z.object({
+export const ContributorHistoryMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorHistoryMaxOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   tag: z.lazy(() => SortOrderSchema).optional(),
   value: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  pocId: z.lazy(() => SortOrderSchema).optional()
+  contributorId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCHistoryMinOrderByAggregateInputSchema: z.ZodType<Prisma.POCHistoryMinOrderByAggregateInput> = z.object({
+export const ContributorHistoryMinOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorHistoryMinOrderByAggregateInput> = z.object({
   id: z.lazy(() => SortOrderSchema).optional(),
   tag: z.lazy(() => SortOrderSchema).optional(),
   value: z.lazy(() => SortOrderSchema).optional(),
   createdAt: z.lazy(() => SortOrderSchema).optional(),
   updatedAt: z.lazy(() => SortOrderSchema).optional(),
-  pocId: z.lazy(() => SortOrderSchema).optional()
+  contributorId: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
-export const POCHistorySumOrderByAggregateInputSchema: z.ZodType<Prisma.POCHistorySumOrderByAggregateInput> = z.object({
+export const ContributorHistorySumOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorHistorySumOrderByAggregateInput> = z.object({
   value: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
@@ -3539,11 +3497,11 @@ export const DaoCreateNestedManyWithoutCreatorInputSchema: z.ZodType<Prisma.DaoC
   connect: z.union([ z.lazy(() => DaoWhereUniqueInputSchema),z.lazy(() => DaoWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.POCCreateNestedManyWithoutUserInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutUserInputSchema),z.lazy(() => POCCreateWithoutUserInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutUserInputSchema),z.lazy(() => POCCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyUserInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
+export const ContributorCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.ContributorCreateNestedManyWithoutUserInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutUserInputSchema),z.lazy(() => ContributorCreateWithoutUserInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyUserInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoStarUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.DaoStarUncheckedCreateNestedManyWithoutUserInput> = z.object({
@@ -3560,11 +3518,11 @@ export const DaoUncheckedCreateNestedManyWithoutCreatorInputSchema: z.ZodType<Pr
   connect: z.union([ z.lazy(() => DaoWhereUniqueInputSchema),z.lazy(() => DaoWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.POCUncheckedCreateNestedManyWithoutUserInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutUserInputSchema),z.lazy(() => POCCreateWithoutUserInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutUserInputSchema),z.lazy(() => POCCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyUserInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
+export const ContributorUncheckedCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.ContributorUncheckedCreateNestedManyWithoutUserInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutUserInputSchema),z.lazy(() => ContributorCreateWithoutUserInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyUserInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const EnumUserRoleFieldUpdateOperationsInputSchema: z.ZodType<Prisma.EnumUserRoleFieldUpdateOperationsInput> = z.object({
@@ -3604,18 +3562,18 @@ export const DaoUpdateManyWithoutCreatorNestedInputSchema: z.ZodType<Prisma.DaoU
   deleteMany: z.union([ z.lazy(() => DaoScalarWhereInputSchema),z.lazy(() => DaoScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.POCUpdateManyWithoutUserNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutUserInputSchema),z.lazy(() => POCCreateWithoutUserInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutUserInputSchema),z.lazy(() => POCCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => POCUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => POCUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyUserInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => POCUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => POCUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => POCUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => POCUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
+export const ContributorUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.ContributorUpdateManyWithoutUserNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutUserInputSchema),z.lazy(() => ContributorCreateWithoutUserInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ContributorUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => ContributorUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyUserInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ContributorUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => ContributorUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ContributorUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => ContributorUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ContributorScalarWhereInputSchema),z.lazy(() => ContributorScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoStarUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.DaoStarUncheckedUpdateManyWithoutUserNestedInput> = z.object({
@@ -3646,18 +3604,18 @@ export const DaoUncheckedUpdateManyWithoutCreatorNestedInputSchema: z.ZodType<Pr
   deleteMany: z.union([ z.lazy(() => DaoScalarWhereInputSchema),z.lazy(() => DaoScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.POCUncheckedUpdateManyWithoutUserNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutUserInputSchema),z.lazy(() => POCCreateWithoutUserInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutUserInputSchema),z.lazy(() => POCCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => POCUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => POCUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyUserInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => POCUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => POCUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => POCUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => POCUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
+export const ContributorUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateManyWithoutUserNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutUserInputSchema),z.lazy(() => ContributorCreateWithoutUserInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ContributorUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => ContributorUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyUserInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ContributorUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => ContributorUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ContributorUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => ContributorUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ContributorScalarWhereInputSchema),z.lazy(() => ContributorScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoCreateNestedOneWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateNestedOneWithoutStarsInput> = z.object({
@@ -3714,11 +3672,11 @@ export const DaoStarCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.DaoS
   connect: z.union([ z.lazy(() => DaoStarWhereUniqueInputSchema),z.lazy(() => DaoStarWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.POCCreateNestedManyWithoutDaoInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutDaoInputSchema),z.lazy(() => POCCreateWithoutDaoInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema),z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyDaoInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
+export const ContributorCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.ContributorCreateNestedManyWithoutDaoInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutDaoInputSchema),z.lazy(() => ContributorCreateWithoutDaoInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyDaoInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoContentCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentCreateNestedManyWithoutDaoInput> = z.object({
@@ -3742,11 +3700,11 @@ export const DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Pr
   connect: z.union([ z.lazy(() => DaoStarWhereUniqueInputSchema),z.lazy(() => DaoStarWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.POCUncheckedCreateNestedManyWithoutDaoInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutDaoInputSchema),z.lazy(() => POCCreateWithoutDaoInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema),z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyDaoInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
+export const ContributorUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUncheckedCreateNestedManyWithoutDaoInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutDaoInputSchema),z.lazy(() => ContributorCreateWithoutDaoInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyDaoInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUncheckedCreateNestedManyWithoutDaoInput> = z.object({
@@ -3820,18 +3778,18 @@ export const DaoStarUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.DaoS
   deleteMany: z.union([ z.lazy(() => DaoStarScalarWhereInputSchema),z.lazy(() => DaoStarScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.POCUpdateManyWithoutDaoNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutDaoInputSchema),z.lazy(() => POCCreateWithoutDaoInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema),z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => POCUpsertWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => POCUpsertWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyDaoInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => POCUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => POCUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => POCUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => POCUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
+export const ContributorUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.ContributorUpdateManyWithoutDaoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutDaoInputSchema),z.lazy(() => ContributorCreateWithoutDaoInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ContributorUpsertWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => ContributorUpsertWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyDaoInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ContributorUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => ContributorUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ContributorUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => ContributorUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ContributorScalarWhereInputSchema),z.lazy(() => ContributorScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoContentUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.DaoContentUpdateManyWithoutDaoNestedInput> = z.object({
@@ -3884,18 +3842,18 @@ export const DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Pr
   deleteMany: z.union([ z.lazy(() => DaoStarScalarWhereInputSchema),z.lazy(() => DaoStarScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.POCUncheckedUpdateManyWithoutDaoNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutDaoInputSchema),z.lazy(() => POCCreateWithoutDaoInputSchema).array(),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema),z.lazy(() => POCCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => POCUpsertWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => POCUpsertWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCCreateManyDaoInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => POCWhereUniqueInputSchema),z.lazy(() => POCWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => POCUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => POCUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => POCUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => POCUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
+export const ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateManyWithoutDaoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutDaoInputSchema),z.lazy(() => ContributorCreateWithoutDaoInputSchema).array(),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema),z.lazy(() => ContributorCreateOrConnectWithoutDaoInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ContributorUpsertWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => ContributorUpsertWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorCreateManyDaoInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ContributorWhereUniqueInputSchema),z.lazy(() => ContributorWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ContributorUpdateWithWhereUniqueWithoutDaoInputSchema),z.lazy(() => ContributorUpdateWithWhereUniqueWithoutDaoInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ContributorUpdateManyWithWhereWithoutDaoInputSchema),z.lazy(() => ContributorUpdateManyWithWhereWithoutDaoInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ContributorScalarWhereInputSchema),z.lazy(() => ContributorScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema: z.ZodType<Prisma.DaoContentUncheckedUpdateManyWithoutDaoNestedInput> = z.object({
@@ -4044,9 +4002,9 @@ export const DaoUpdateOneRequiredWithoutMessagesNestedInputSchema: z.ZodType<Pri
   update: z.union([ z.lazy(() => DaoUpdateToOneWithWhereWithoutMessagesInputSchema),z.lazy(() => DaoUpdateWithoutMessagesInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutMessagesInputSchema) ]).optional(),
 }).strict();
 
-export const DaoCreateNestedOneWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateNestedOneWithoutPocsInput> = z.object({
-  create: z.union([ z.lazy(() => DaoCreateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutPocsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutPocsInputSchema).optional(),
+export const DaoCreateNestedOneWithoutContributorsInputSchema: z.ZodType<Prisma.DaoCreateNestedOneWithoutContributorsInput> = z.object({
+  create: z.union([ z.lazy(() => DaoCreateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContributorsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutContributorsInputSchema).optional(),
   connect: z.lazy(() => DaoWhereUniqueInputSchema).optional()
 }).strict();
 
@@ -4056,26 +4014,26 @@ export const UserCreateNestedOneWithoutContributionsInputSchema: z.ZodType<Prism
   connect: z.lazy(() => UserWhereUniqueInputSchema).optional()
 }).strict();
 
-export const POCHistoryCreateNestedManyWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryCreateNestedManyWithoutPocInput> = z.object({
-  create: z.union([ z.lazy(() => POCHistoryCreateWithoutPocInputSchema),z.lazy(() => POCHistoryCreateWithoutPocInputSchema).array(),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema),z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCHistoryCreateManyPocInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
+export const ContributorHistoryCreateNestedManyWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryCreateNestedManyWithoutContributorInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema).array(),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorHistoryCreateManyContributorInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCHistoryUncheckedCreateNestedManyWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUncheckedCreateNestedManyWithoutPocInput> = z.object({
-  create: z.union([ z.lazy(() => POCHistoryCreateWithoutPocInputSchema),z.lazy(() => POCHistoryCreateWithoutPocInputSchema).array(),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema),z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCHistoryCreateManyPocInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
+export const ContributorHistoryUncheckedCreateNestedManyWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedCreateNestedManyWithoutContributorInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema).array(),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorHistoryCreateManyContributorInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
-export const DaoUpdateOneRequiredWithoutPocsNestedInputSchema: z.ZodType<Prisma.DaoUpdateOneRequiredWithoutPocsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => DaoCreateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutPocsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutPocsInputSchema).optional(),
-  upsert: z.lazy(() => DaoUpsertWithoutPocsInputSchema).optional(),
+export const DaoUpdateOneRequiredWithoutContributorsNestedInputSchema: z.ZodType<Prisma.DaoUpdateOneRequiredWithoutContributorsNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DaoCreateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContributorsInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutContributorsInputSchema).optional(),
+  upsert: z.lazy(() => DaoUpsertWithoutContributorsInputSchema).optional(),
   connect: z.lazy(() => DaoWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => DaoUpdateToOneWithWhereWithoutPocsInputSchema),z.lazy(() => DaoUpdateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutPocsInputSchema) ]).optional(),
+  update: z.union([ z.lazy(() => DaoUpdateToOneWithWhereWithoutContributorsInputSchema),z.lazy(() => DaoUpdateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutContributorsInputSchema) ]).optional(),
 }).strict();
 
 export const UserUpdateOneWithoutContributionsNestedInputSchema: z.ZodType<Prisma.UserUpdateOneWithoutContributionsNestedInput> = z.object({
@@ -4088,46 +4046,46 @@ export const UserUpdateOneWithoutContributionsNestedInputSchema: z.ZodType<Prism
   update: z.union([ z.lazy(() => UserUpdateToOneWithWhereWithoutContributionsInputSchema),z.lazy(() => UserUpdateWithoutContributionsInputSchema),z.lazy(() => UserUncheckedUpdateWithoutContributionsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryUpdateManyWithoutPocNestedInputSchema: z.ZodType<Prisma.POCHistoryUpdateManyWithoutPocNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCHistoryCreateWithoutPocInputSchema),z.lazy(() => POCHistoryCreateWithoutPocInputSchema).array(),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema),z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => POCHistoryUpsertWithWhereUniqueWithoutPocInputSchema),z.lazy(() => POCHistoryUpsertWithWhereUniqueWithoutPocInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCHistoryCreateManyPocInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => POCHistoryUpdateWithWhereUniqueWithoutPocInputSchema),z.lazy(() => POCHistoryUpdateWithWhereUniqueWithoutPocInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => POCHistoryUpdateManyWithWhereWithoutPocInputSchema),z.lazy(() => POCHistoryUpdateManyWithWhereWithoutPocInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => POCHistoryScalarWhereInputSchema),z.lazy(() => POCHistoryScalarWhereInputSchema).array() ]).optional(),
+export const ContributorHistoryUpdateManyWithoutContributorNestedInputSchema: z.ZodType<Prisma.ContributorHistoryUpdateManyWithoutContributorNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema).array(),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ContributorHistoryUpsertWithWhereUniqueWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUpsertWithWhereUniqueWithoutContributorInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorHistoryCreateManyContributorInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ContributorHistoryUpdateWithWhereUniqueWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUpdateWithWhereUniqueWithoutContributorInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ContributorHistoryUpdateManyWithWhereWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUpdateManyWithWhereWithoutContributorInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ContributorHistoryScalarWhereInputSchema),z.lazy(() => ContributorHistoryScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCHistoryUncheckedUpdateManyWithoutPocNestedInputSchema: z.ZodType<Prisma.POCHistoryUncheckedUpdateManyWithoutPocNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCHistoryCreateWithoutPocInputSchema),z.lazy(() => POCHistoryCreateWithoutPocInputSchema).array(),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema),z.lazy(() => POCHistoryCreateOrConnectWithoutPocInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => POCHistoryUpsertWithWhereUniqueWithoutPocInputSchema),z.lazy(() => POCHistoryUpsertWithWhereUniqueWithoutPocInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => POCHistoryCreateManyPocInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => POCHistoryWhereUniqueInputSchema),z.lazy(() => POCHistoryWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => POCHistoryUpdateWithWhereUniqueWithoutPocInputSchema),z.lazy(() => POCHistoryUpdateWithWhereUniqueWithoutPocInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => POCHistoryUpdateManyWithWhereWithoutPocInputSchema),z.lazy(() => POCHistoryUpdateManyWithWhereWithoutPocInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => POCHistoryScalarWhereInputSchema),z.lazy(() => POCHistoryScalarWhereInputSchema).array() ]).optional(),
+export const ContributorHistoryUncheckedUpdateManyWithoutContributorNestedInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedUpdateManyWithoutContributorNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema).array(),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema),z.lazy(() => ContributorHistoryCreateOrConnectWithoutContributorInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => ContributorHistoryUpsertWithWhereUniqueWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUpsertWithWhereUniqueWithoutContributorInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => ContributorHistoryCreateManyContributorInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => ContributorHistoryWhereUniqueInputSchema),z.lazy(() => ContributorHistoryWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => ContributorHistoryUpdateWithWhereUniqueWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUpdateWithWhereUniqueWithoutContributorInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => ContributorHistoryUpdateManyWithWhereWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUpdateManyWithWhereWithoutContributorInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => ContributorHistoryScalarWhereInputSchema),z.lazy(() => ContributorHistoryScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
-export const POCCreateNestedOneWithoutHistoriesInputSchema: z.ZodType<Prisma.POCCreateNestedOneWithoutHistoriesInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedCreateWithoutHistoriesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => POCCreateOrConnectWithoutHistoriesInputSchema).optional(),
-  connect: z.lazy(() => POCWhereUniqueInputSchema).optional()
+export const ContributorCreateNestedOneWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorCreateNestedOneWithoutHistoriesInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutHistoriesInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => ContributorCreateOrConnectWithoutHistoriesInputSchema).optional(),
+  connect: z.lazy(() => ContributorWhereUniqueInputSchema).optional()
 }).strict();
 
-export const POCUpdateOneRequiredWithoutHistoriesNestedInputSchema: z.ZodType<Prisma.POCUpdateOneRequiredWithoutHistoriesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => POCCreateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedCreateWithoutHistoriesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => POCCreateOrConnectWithoutHistoriesInputSchema).optional(),
-  upsert: z.lazy(() => POCUpsertWithoutHistoriesInputSchema).optional(),
-  connect: z.lazy(() => POCWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => POCUpdateToOneWithWhereWithoutHistoriesInputSchema),z.lazy(() => POCUpdateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedUpdateWithoutHistoriesInputSchema) ]).optional(),
+export const ContributorUpdateOneRequiredWithoutHistoriesNestedInputSchema: z.ZodType<Prisma.ContributorUpdateOneRequiredWithoutHistoriesNestedInput> = z.object({
+  create: z.union([ z.lazy(() => ContributorCreateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutHistoriesInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => ContributorCreateOrConnectWithoutHistoriesInputSchema).optional(),
+  upsert: z.lazy(() => ContributorUpsertWithoutHistoriesInputSchema).optional(),
+  connect: z.lazy(() => ContributorWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => ContributorUpdateToOneWithWhereWithoutHistoriesInputSchema),z.lazy(() => ContributorUpdateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutHistoriesInputSchema) ]).optional(),
 }).strict();
 
 export const NestedStringFilterSchema: z.ZodType<Prisma.NestedStringFilter> = z.object({
@@ -4496,7 +4454,7 @@ export const DaoCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoCreateWitho
   tokenInfo: z.lazy(() => DaoTokenInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -4518,7 +4476,7 @@ export const DaoUncheckedCreateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -4532,41 +4490,39 @@ export const DaoCreateManyCreatorInputEnvelopeSchema: z.ZodType<Prisma.DaoCreate
   skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const POCCreateWithoutUserInputSchema: z.ZodType<Prisma.POCCreateWithoutUserInput> = z.object({
-  id: z.string(),
+export const ContributorCreateWithoutUserInputSchema: z.ZodType<Prisma.ContributorCreateWithoutUserInput> = z.object({
+  id: z.string().optional(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  dao: z.lazy(() => DaoCreateNestedOneWithoutPocsInputSchema),
-  histories: z.lazy(() => POCHistoryCreateNestedManyWithoutPocInputSchema).optional()
+  dao: z.lazy(() => DaoCreateNestedOneWithoutContributorsInputSchema),
+  histories: z.lazy(() => ContributorHistoryCreateNestedManyWithoutContributorInputSchema).optional()
 }).strict();
 
-export const POCUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.POCUncheckedCreateWithoutUserInput> = z.object({
-  id: z.string(),
+export const ContributorUncheckedCreateWithoutUserInputSchema: z.ZodType<Prisma.ContributorUncheckedCreateWithoutUserInput> = z.object({
+  id: z.string().optional(),
   daoId: z.string(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  histories: z.lazy(() => POCHistoryUncheckedCreateNestedManyWithoutPocInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUncheckedCreateNestedManyWithoutContributorInputSchema).optional()
 }).strict();
 
-export const POCCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.POCCreateOrConnectWithoutUserInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => POCCreateWithoutUserInputSchema),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema) ]),
+export const ContributorCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.ContributorCreateOrConnectWithoutUserInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ContributorCreateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema) ]),
 }).strict();
 
-export const POCCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.POCCreateManyUserInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => POCCreateManyUserInputSchema),z.lazy(() => POCCreateManyUserInputSchema).array() ]),
+export const ContributorCreateManyUserInputEnvelopeSchema: z.ZodType<Prisma.ContributorCreateManyUserInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => ContributorCreateManyUserInputSchema),z.lazy(() => ContributorCreateManyUserInputSchema).array() ]),
   skipDuplicates: z.boolean().optional()
 }).strict();
 
@@ -4632,33 +4588,32 @@ export const DaoScalarWhereInputSchema: z.ZodType<Prisma.DaoScalarWhereInput> = 
   priceUsd: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
 }).strict();
 
-export const POCUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.POCUpsertWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => POCUpdateWithoutUserInputSchema),z.lazy(() => POCUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => POCCreateWithoutUserInputSchema),z.lazy(() => POCUncheckedCreateWithoutUserInputSchema) ]),
+export const ContributorUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.ContributorUpsertWithWhereUniqueWithoutUserInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => ContributorUpdateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutUserInputSchema) ]),
+  create: z.union([ z.lazy(() => ContributorCreateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutUserInputSchema) ]),
 }).strict();
 
-export const POCUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.POCUpdateWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => POCUpdateWithoutUserInputSchema),z.lazy(() => POCUncheckedUpdateWithoutUserInputSchema) ]),
+export const ContributorUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.ContributorUpdateWithWhereUniqueWithoutUserInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => ContributorUpdateWithoutUserInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutUserInputSchema) ]),
 }).strict();
 
-export const POCUpdateManyWithWhereWithoutUserInputSchema: z.ZodType<Prisma.POCUpdateManyWithWhereWithoutUserInput> = z.object({
-  where: z.lazy(() => POCScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => POCUpdateManyMutationInputSchema),z.lazy(() => POCUncheckedUpdateManyWithoutUserInputSchema) ]),
+export const ContributorUpdateManyWithWhereWithoutUserInputSchema: z.ZodType<Prisma.ContributorUpdateManyWithWhereWithoutUserInput> = z.object({
+  where: z.lazy(() => ContributorScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => ContributorUpdateManyMutationInputSchema),z.lazy(() => ContributorUncheckedUpdateManyWithoutUserInputSchema) ]),
 }).strict();
 
-export const POCScalarWhereInputSchema: z.ZodType<Prisma.POCScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCScalarWhereInputSchema),z.lazy(() => POCScalarWhereInputSchema).array() ]).optional(),
+export const ContributorScalarWhereInputSchema: z.ZodType<Prisma.ContributorScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributorScalarWhereInputSchema),z.lazy(() => ContributorScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorScalarWhereInputSchema),z.lazy(() => ContributorScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   daoId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   userPlatformId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userPlatformName: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  userPlatformUrl: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   userPlatformAvatar: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
@@ -4683,7 +4638,7 @@ export const DaoCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoCreateWithout
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   tokenInfo: z.lazy(() => DaoTokenInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -4705,7 +4660,7 @@ export const DaoUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUnch
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -4724,7 +4679,7 @@ export const UserCreateWithoutStarsInputSchema: z.ZodType<Prisma.UserCreateWitho
   updatedAt: z.coerce.date().optional(),
   invitedBy: z.union([ z.lazy(() => UserCreateinvitedByInputSchema),z.string().array() ]).optional(),
   daos: z.lazy(() => DaoCreateNestedManyWithoutCreatorInputSchema).optional(),
-  contributions: z.lazy(() => POCCreateNestedManyWithoutUserInputSchema).optional()
+  contributions: z.lazy(() => ContributorCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutStarsInput> = z.object({
@@ -4737,7 +4692,7 @@ export const UserUncheckedCreateWithoutStarsInputSchema: z.ZodType<Prisma.UserUn
   updatedAt: z.coerce.date().optional(),
   invitedBy: z.union([ z.lazy(() => UserCreateinvitedByInputSchema),z.string().array() ]).optional(),
   daos: z.lazy(() => DaoUncheckedCreateNestedManyWithoutCreatorInputSchema).optional(),
-  contributions: z.lazy(() => POCUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  contributions: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutStarsInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutStarsInput> = z.object({
@@ -4774,7 +4729,7 @@ export const DaoUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUpdateWithout
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   tokenInfo: z.lazy(() => DaoTokenInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -4796,7 +4751,7 @@ export const DaoUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.DaoUnch
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -4821,7 +4776,7 @@ export const UserUpdateWithoutStarsInputSchema: z.ZodType<Prisma.UserUpdateWitho
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   invitedBy: z.union([ z.lazy(() => UserUpdateinvitedByInputSchema),z.string().array() ]).optional(),
   daos: z.lazy(() => DaoUpdateManyWithoutCreatorNestedInputSchema).optional(),
-  contributions: z.lazy(() => POCUpdateManyWithoutUserNestedInputSchema).optional()
+  contributions: z.lazy(() => ContributorUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutStarsInput> = z.object({
@@ -4834,7 +4789,7 @@ export const UserUncheckedUpdateWithoutStarsInputSchema: z.ZodType<Prisma.UserUn
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   invitedBy: z.union([ z.lazy(() => UserUpdateinvitedByInputSchema),z.string().array() ]).optional(),
   daos: z.lazy(() => DaoUncheckedUpdateManyWithoutCreatorNestedInputSchema).optional(),
-  contributions: z.lazy(() => POCUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  contributions: z.lazy(() => ContributorUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserCreateWithoutDaosInputSchema: z.ZodType<Prisma.UserCreateWithoutDaosInput> = z.object({
@@ -4847,7 +4802,7 @@ export const UserCreateWithoutDaosInputSchema: z.ZodType<Prisma.UserCreateWithou
   updatedAt: z.coerce.date().optional(),
   invitedBy: z.union([ z.lazy(() => UserCreateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutUserInputSchema).optional(),
-  contributions: z.lazy(() => POCCreateNestedManyWithoutUserInputSchema).optional()
+  contributions: z.lazy(() => ContributorCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserUncheckedCreateWithoutDaosInputSchema: z.ZodType<Prisma.UserUncheckedCreateWithoutDaosInput> = z.object({
@@ -4860,7 +4815,7 @@ export const UserUncheckedCreateWithoutDaosInputSchema: z.ZodType<Prisma.UserUnc
   updatedAt: z.coerce.date().optional(),
   invitedBy: z.union([ z.lazy(() => UserCreateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutUserInputSchema).optional(),
-  contributions: z.lazy(() => POCUncheckedCreateNestedManyWithoutUserInputSchema).optional()
+  contributions: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutUserInputSchema).optional()
 }).strict();
 
 export const UserCreateOrConnectWithoutDaosInputSchema: z.ZodType<Prisma.UserCreateOrConnectWithoutDaosInput> = z.object({
@@ -4955,41 +4910,39 @@ export const DaoStarCreateManyDaoInputEnvelopeSchema: z.ZodType<Prisma.DaoStarCr
   skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const POCCreateWithoutDaoInputSchema: z.ZodType<Prisma.POCCreateWithoutDaoInput> = z.object({
-  id: z.string(),
+export const ContributorCreateWithoutDaoInputSchema: z.ZodType<Prisma.ContributorCreateWithoutDaoInput> = z.object({
+  id: z.string().optional(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   user: z.lazy(() => UserCreateNestedOneWithoutContributionsInputSchema).optional(),
-  histories: z.lazy(() => POCHistoryCreateNestedManyWithoutPocInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryCreateNestedManyWithoutContributorInputSchema).optional()
 }).strict();
 
-export const POCUncheckedCreateWithoutDaoInputSchema: z.ZodType<Prisma.POCUncheckedCreateWithoutDaoInput> = z.object({
-  id: z.string(),
+export const ContributorUncheckedCreateWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUncheckedCreateWithoutDaoInput> = z.object({
+  id: z.string().optional(),
   userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  histories: z.lazy(() => POCHistoryUncheckedCreateNestedManyWithoutPocInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUncheckedCreateNestedManyWithoutContributorInputSchema).optional()
 }).strict();
 
-export const POCCreateOrConnectWithoutDaoInputSchema: z.ZodType<Prisma.POCCreateOrConnectWithoutDaoInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => POCCreateWithoutDaoInputSchema),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema) ]),
+export const ContributorCreateOrConnectWithoutDaoInputSchema: z.ZodType<Prisma.ContributorCreateOrConnectWithoutDaoInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ContributorCreateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema) ]),
 }).strict();
 
-export const POCCreateManyDaoInputEnvelopeSchema: z.ZodType<Prisma.POCCreateManyDaoInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => POCCreateManyDaoInputSchema),z.lazy(() => POCCreateManyDaoInputSchema).array() ]),
+export const ContributorCreateManyDaoInputEnvelopeSchema: z.ZodType<Prisma.ContributorCreateManyDaoInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => ContributorCreateManyDaoInputSchema),z.lazy(() => ContributorCreateManyDaoInputSchema).array() ]),
   skipDuplicates: z.boolean().optional()
 }).strict();
 
@@ -5044,7 +4997,7 @@ export const UserUpdateWithoutDaosInputSchema: z.ZodType<Prisma.UserUpdateWithou
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   invitedBy: z.union([ z.lazy(() => UserUpdateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutUserNestedInputSchema).optional(),
-  contributions: z.lazy(() => POCUpdateManyWithoutUserNestedInputSchema).optional()
+  contributions: z.lazy(() => ContributorUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const UserUncheckedUpdateWithoutDaosInputSchema: z.ZodType<Prisma.UserUncheckedUpdateWithoutDaosInput> = z.object({
@@ -5057,7 +5010,7 @@ export const UserUncheckedUpdateWithoutDaosInputSchema: z.ZodType<Prisma.UserUnc
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   invitedBy: z.union([ z.lazy(() => UserUpdateinvitedByInputSchema),z.string().array() ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutUserNestedInputSchema).optional(),
-  contributions: z.lazy(() => POCUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
+  contributions: z.lazy(() => ContributorUncheckedUpdateManyWithoutUserNestedInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUpsertWithoutDaoInputSchema: z.ZodType<Prisma.DaoTokenInfoUpsertWithoutDaoInput> = z.object({
@@ -5150,20 +5103,20 @@ export const DaoStarUpdateManyWithWhereWithoutDaoInputSchema: z.ZodType<Prisma.D
   data: z.union([ z.lazy(() => DaoStarUpdateManyMutationInputSchema),z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoInputSchema) ]),
 }).strict();
 
-export const POCUpsertWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.POCUpsertWithWhereUniqueWithoutDaoInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => POCUpdateWithoutDaoInputSchema),z.lazy(() => POCUncheckedUpdateWithoutDaoInputSchema) ]),
-  create: z.union([ z.lazy(() => POCCreateWithoutDaoInputSchema),z.lazy(() => POCUncheckedCreateWithoutDaoInputSchema) ]),
+export const ContributorUpsertWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUpsertWithWhereUniqueWithoutDaoInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => ContributorUpdateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutDaoInputSchema) ]),
+  create: z.union([ z.lazy(() => ContributorCreateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutDaoInputSchema) ]),
 }).strict();
 
-export const POCUpdateWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.POCUpdateWithWhereUniqueWithoutDaoInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => POCUpdateWithoutDaoInputSchema),z.lazy(() => POCUncheckedUpdateWithoutDaoInputSchema) ]),
+export const ContributorUpdateWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUpdateWithWhereUniqueWithoutDaoInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => ContributorUpdateWithoutDaoInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutDaoInputSchema) ]),
 }).strict();
 
-export const POCUpdateManyWithWhereWithoutDaoInputSchema: z.ZodType<Prisma.POCUpdateManyWithWhereWithoutDaoInput> = z.object({
-  where: z.lazy(() => POCScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => POCUpdateManyMutationInputSchema),z.lazy(() => POCUncheckedUpdateManyWithoutDaoInputSchema) ]),
+export const ContributorUpdateManyWithWhereWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUpdateManyWithWhereWithoutDaoInput> = z.object({
+  where: z.lazy(() => ContributorScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => ContributorUpdateManyMutationInputSchema),z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoInputSchema) ]),
 }).strict();
 
 export const DaoContentUpsertWithWhereUniqueWithoutDaoInputSchema: z.ZodType<Prisma.DaoContentUpsertWithWhereUniqueWithoutDaoInput> = z.object({
@@ -5215,7 +5168,7 @@ export const DaoCreateWithoutContentsInputSchema: z.ZodType<Prisma.DaoCreateWith
   tokenInfo: z.lazy(() => DaoTokenInfoCreateNestedOneWithoutDaoInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional()
+  contributors: z.lazy(() => ContributorCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedCreateWithoutContentsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutContentsInput> = z.object({
@@ -5237,7 +5190,7 @@ export const DaoUncheckedCreateWithoutContentsInputSchema: z.ZodType<Prisma.DaoU
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
+  contributors: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
 export const DaoCreateOrConnectWithoutContentsInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutContentsInput> = z.object({
@@ -5275,7 +5228,7 @@ export const DaoUpdateWithoutContentsInputSchema: z.ZodType<Prisma.DaoUpdateWith
   tokenInfo: z.lazy(() => DaoTokenInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional()
+  contributors: z.lazy(() => ContributorUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoUncheckedUpdateWithoutContentsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutContentsInput> = z.object({
@@ -5297,7 +5250,7 @@ export const DaoUncheckedUpdateWithoutContentsInputSchema: z.ZodType<Prisma.DaoU
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
+  contributors: z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoCreateWithoutHoldersInputSchema: z.ZodType<Prisma.DaoTokenInfoCreateWithoutHoldersInput> = z.object({
@@ -5398,7 +5351,7 @@ export const DaoCreateWithoutTokenInfoInputSchema: z.ZodType<Prisma.DaoCreateWit
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   messages: z.lazy(() => ForumMessageCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -5420,7 +5373,7 @@ export const DaoUncheckedCreateWithoutTokenInfoInputSchema: z.ZodType<Prisma.Dao
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   messages: z.lazy(() => ForumMessageUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -5478,7 +5431,7 @@ export const DaoUpdateWithoutTokenInfoInputSchema: z.ZodType<Prisma.DaoUpdateWit
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -5500,7 +5453,7 @@ export const DaoUncheckedUpdateWithoutTokenInfoInputSchema: z.ZodType<Prisma.Dao
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -5547,7 +5500,7 @@ export const DaoCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateWith
   creator: z.lazy(() => UserCreateNestedOneWithoutDaosInputSchema),
   tokenInfo: z.lazy(() => DaoTokenInfoCreateNestedOneWithoutDaoInputSchema),
   stars: z.lazy(() => DaoStarCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -5569,7 +5522,7 @@ export const DaoUncheckedCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
   marketCapUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   stars: z.lazy(() => DaoStarUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedCreateNestedManyWithoutDaoInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
@@ -5607,7 +5560,7 @@ export const DaoUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoUpdateWith
   creator: z.lazy(() => UserUpdateOneRequiredWithoutDaosNestedInputSchema).optional(),
   tokenInfo: z.lazy(() => DaoTokenInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -5629,11 +5582,11 @@ export const DaoUncheckedUpdateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoU
   marketCapUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
-export const DaoCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateWithoutPocsInput> = z.object({
+export const DaoCreateWithoutContributorsInputSchema: z.ZodType<Prisma.DaoCreateWithoutContributorsInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
   url: z.string(),
@@ -5655,7 +5608,7 @@ export const DaoCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateWithoutP
   contents: z.lazy(() => DaoContentCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
-export const DaoUncheckedCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutPocsInput> = z.object({
+export const DaoUncheckedCreateWithoutContributorsInputSchema: z.ZodType<Prisma.DaoUncheckedCreateWithoutContributorsInput> = z.object({
   id: z.string().optional(),
   name: z.string(),
   url: z.string(),
@@ -5677,9 +5630,9 @@ export const DaoUncheckedCreateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUnche
   contents: z.lazy(() => DaoContentUncheckedCreateNestedManyWithoutDaoInputSchema).optional()
 }).strict();
 
-export const DaoCreateOrConnectWithoutPocsInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutPocsInput> = z.object({
+export const DaoCreateOrConnectWithoutContributorsInputSchema: z.ZodType<Prisma.DaoCreateOrConnectWithoutContributorsInput> = z.object({
   where: z.lazy(() => DaoWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => DaoCreateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutPocsInputSchema) ]),
+  create: z.union([ z.lazy(() => DaoCreateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContributorsInputSchema) ]),
 }).strict();
 
 export const UserCreateWithoutContributionsInputSchema: z.ZodType<Prisma.UserCreateWithoutContributionsInput> = z.object({
@@ -5713,44 +5666,44 @@ export const UserCreateOrConnectWithoutContributionsInputSchema: z.ZodType<Prism
   create: z.union([ z.lazy(() => UserCreateWithoutContributionsInputSchema),z.lazy(() => UserUncheckedCreateWithoutContributionsInputSchema) ]),
 }).strict();
 
-export const POCHistoryCreateWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryCreateWithoutPocInput> = z.object({
-  id: z.string(),
+export const ContributorHistoryCreateWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryCreateWithoutContributorInput> = z.object({
+  id: z.string().optional(),
   tag: z.string(),
   value: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
-export const POCHistoryUncheckedCreateWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUncheckedCreateWithoutPocInput> = z.object({
-  id: z.string(),
+export const ContributorHistoryUncheckedCreateWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedCreateWithoutContributorInput> = z.object({
+  id: z.string().optional(),
   tag: z.string(),
   value: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
-export const POCHistoryCreateOrConnectWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryCreateOrConnectWithoutPocInput> = z.object({
-  where: z.lazy(() => POCHistoryWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => POCHistoryCreateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema) ]),
+export const ContributorHistoryCreateOrConnectWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryCreateOrConnectWithoutContributorInput> = z.object({
+  where: z.lazy(() => ContributorHistoryWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema) ]),
 }).strict();
 
-export const POCHistoryCreateManyPocInputEnvelopeSchema: z.ZodType<Prisma.POCHistoryCreateManyPocInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => POCHistoryCreateManyPocInputSchema),z.lazy(() => POCHistoryCreateManyPocInputSchema).array() ]),
+export const ContributorHistoryCreateManyContributorInputEnvelopeSchema: z.ZodType<Prisma.ContributorHistoryCreateManyContributorInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => ContributorHistoryCreateManyContributorInputSchema),z.lazy(() => ContributorHistoryCreateManyContributorInputSchema).array() ]),
   skipDuplicates: z.boolean().optional()
 }).strict();
 
-export const DaoUpsertWithoutPocsInputSchema: z.ZodType<Prisma.DaoUpsertWithoutPocsInput> = z.object({
-  update: z.union([ z.lazy(() => DaoUpdateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutPocsInputSchema) ]),
-  create: z.union([ z.lazy(() => DaoCreateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutPocsInputSchema) ]),
+export const DaoUpsertWithoutContributorsInputSchema: z.ZodType<Prisma.DaoUpsertWithoutContributorsInput> = z.object({
+  update: z.union([ z.lazy(() => DaoUpdateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutContributorsInputSchema) ]),
+  create: z.union([ z.lazy(() => DaoCreateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedCreateWithoutContributorsInputSchema) ]),
   where: z.lazy(() => DaoWhereInputSchema).optional()
 }).strict();
 
-export const DaoUpdateToOneWithWhereWithoutPocsInputSchema: z.ZodType<Prisma.DaoUpdateToOneWithWhereWithoutPocsInput> = z.object({
+export const DaoUpdateToOneWithWhereWithoutContributorsInputSchema: z.ZodType<Prisma.DaoUpdateToOneWithWhereWithoutContributorsInput> = z.object({
   where: z.lazy(() => DaoWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => DaoUpdateWithoutPocsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutPocsInputSchema) ]),
+  data: z.union([ z.lazy(() => DaoUpdateWithoutContributorsInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutContributorsInputSchema) ]),
 }).strict();
 
-export const DaoUpdateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutPocsInput> = z.object({
+export const DaoUpdateWithoutContributorsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutContributorsInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5772,7 +5725,7 @@ export const DaoUpdateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUpdateWithoutP
   contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
-export const DaoUncheckedUpdateWithoutPocsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutPocsInput> = z.object({
+export const DaoUncheckedUpdateWithoutContributorsInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateWithoutContributorsInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   url: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5831,100 +5784,96 @@ export const UserUncheckedUpdateWithoutContributionsInputSchema: z.ZodType<Prism
   daos: z.lazy(() => DaoUncheckedUpdateManyWithoutCreatorNestedInputSchema).optional()
 }).strict();
 
-export const POCHistoryUpsertWithWhereUniqueWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUpsertWithWhereUniqueWithoutPocInput> = z.object({
-  where: z.lazy(() => POCHistoryWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => POCHistoryUpdateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedUpdateWithoutPocInputSchema) ]),
-  create: z.union([ z.lazy(() => POCHistoryCreateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedCreateWithoutPocInputSchema) ]),
+export const ContributorHistoryUpsertWithWhereUniqueWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUpsertWithWhereUniqueWithoutContributorInput> = z.object({
+  where: z.lazy(() => ContributorHistoryWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => ContributorHistoryUpdateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedUpdateWithoutContributorInputSchema) ]),
+  create: z.union([ z.lazy(() => ContributorHistoryCreateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedCreateWithoutContributorInputSchema) ]),
 }).strict();
 
-export const POCHistoryUpdateWithWhereUniqueWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUpdateWithWhereUniqueWithoutPocInput> = z.object({
-  where: z.lazy(() => POCHistoryWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => POCHistoryUpdateWithoutPocInputSchema),z.lazy(() => POCHistoryUncheckedUpdateWithoutPocInputSchema) ]),
+export const ContributorHistoryUpdateWithWhereUniqueWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUpdateWithWhereUniqueWithoutContributorInput> = z.object({
+  where: z.lazy(() => ContributorHistoryWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => ContributorHistoryUpdateWithoutContributorInputSchema),z.lazy(() => ContributorHistoryUncheckedUpdateWithoutContributorInputSchema) ]),
 }).strict();
 
-export const POCHistoryUpdateManyWithWhereWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUpdateManyWithWhereWithoutPocInput> = z.object({
-  where: z.lazy(() => POCHistoryScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => POCHistoryUpdateManyMutationInputSchema),z.lazy(() => POCHistoryUncheckedUpdateManyWithoutPocInputSchema) ]),
+export const ContributorHistoryUpdateManyWithWhereWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUpdateManyWithWhereWithoutContributorInput> = z.object({
+  where: z.lazy(() => ContributorHistoryScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => ContributorHistoryUpdateManyMutationInputSchema),z.lazy(() => ContributorHistoryUncheckedUpdateManyWithoutContributorInputSchema) ]),
 }).strict();
 
-export const POCHistoryScalarWhereInputSchema: z.ZodType<Prisma.POCHistoryScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => POCHistoryScalarWhereInputSchema),z.lazy(() => POCHistoryScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => POCHistoryScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => POCHistoryScalarWhereInputSchema),z.lazy(() => POCHistoryScalarWhereInputSchema).array() ]).optional(),
+export const ContributorHistoryScalarWhereInputSchema: z.ZodType<Prisma.ContributorHistoryScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributorHistoryScalarWhereInputSchema),z.lazy(() => ContributorHistoryScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributorHistoryScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributorHistoryScalarWhereInputSchema),z.lazy(() => ContributorHistoryScalarWhereInputSchema).array() ]).optional(),
   id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   tag: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   value: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
   createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  pocId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
 }).strict();
 
-export const POCCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.POCCreateWithoutHistoriesInput> = z.object({
-  id: z.string(),
+export const ContributorCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorCreateWithoutHistoriesInput> = z.object({
+  id: z.string().optional(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  dao: z.lazy(() => DaoCreateNestedOneWithoutPocsInputSchema),
+  dao: z.lazy(() => DaoCreateNestedOneWithoutContributorsInputSchema),
   user: z.lazy(() => UserCreateNestedOneWithoutContributionsInputSchema).optional()
 }).strict();
 
-export const POCUncheckedCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.POCUncheckedCreateWithoutHistoriesInput> = z.object({
-  id: z.string(),
+export const ContributorUncheckedCreateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorUncheckedCreateWithoutHistoriesInput> = z.object({
+  id: z.string().optional(),
   daoId: z.string(),
   userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
   snapshotValue: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
 }).strict();
 
-export const POCCreateOrConnectWithoutHistoriesInputSchema: z.ZodType<Prisma.POCCreateOrConnectWithoutHistoriesInput> = z.object({
-  where: z.lazy(() => POCWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => POCCreateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedCreateWithoutHistoriesInputSchema) ]),
+export const ContributorCreateOrConnectWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorCreateOrConnectWithoutHistoriesInput> = z.object({
+  where: z.lazy(() => ContributorWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => ContributorCreateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutHistoriesInputSchema) ]),
 }).strict();
 
-export const POCUpsertWithoutHistoriesInputSchema: z.ZodType<Prisma.POCUpsertWithoutHistoriesInput> = z.object({
-  update: z.union([ z.lazy(() => POCUpdateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedUpdateWithoutHistoriesInputSchema) ]),
-  create: z.union([ z.lazy(() => POCCreateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedCreateWithoutHistoriesInputSchema) ]),
-  where: z.lazy(() => POCWhereInputSchema).optional()
+export const ContributorUpsertWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorUpsertWithoutHistoriesInput> = z.object({
+  update: z.union([ z.lazy(() => ContributorUpdateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutHistoriesInputSchema) ]),
+  create: z.union([ z.lazy(() => ContributorCreateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedCreateWithoutHistoriesInputSchema) ]),
+  where: z.lazy(() => ContributorWhereInputSchema).optional()
 }).strict();
 
-export const POCUpdateToOneWithWhereWithoutHistoriesInputSchema: z.ZodType<Prisma.POCUpdateToOneWithWhereWithoutHistoriesInput> = z.object({
-  where: z.lazy(() => POCWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => POCUpdateWithoutHistoriesInputSchema),z.lazy(() => POCUncheckedUpdateWithoutHistoriesInputSchema) ]),
+export const ContributorUpdateToOneWithWhereWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorUpdateToOneWithWhereWithoutHistoriesInput> = z.object({
+  where: z.lazy(() => ContributorWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => ContributorUpdateWithoutHistoriesInputSchema),z.lazy(() => ContributorUncheckedUpdateWithoutHistoriesInputSchema) ]),
 }).strict();
 
-export const POCUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.POCUpdateWithoutHistoriesInput> = z.object({
+export const ContributorUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorUpdateWithoutHistoriesInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  dao: z.lazy(() => DaoUpdateOneRequiredWithoutPocsNestedInputSchema).optional(),
+  dao: z.lazy(() => DaoUpdateOneRequiredWithoutContributorsNestedInputSchema).optional(),
   user: z.lazy(() => UserUpdateOneWithoutContributionsNestedInputSchema).optional()
 }).strict();
 
-export const POCUncheckedUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.POCUncheckedUpdateWithoutHistoriesInput> = z.object({
+export const ContributorUncheckedUpdateWithoutHistoriesInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateWithoutHistoriesInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -5953,13 +5902,12 @@ export const DaoCreateManyCreatorInputSchema: z.ZodType<Prisma.DaoCreateManyCrea
   priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional()
 }).strict();
 
-export const POCCreateManyUserInputSchema: z.ZodType<Prisma.POCCreateManyUserInput> = z.object({
-  id: z.string(),
+export const ContributorCreateManyUserInputSchema: z.ZodType<Prisma.ContributorCreateManyUserInput> = z.object({
+  id: z.string().optional(),
   daoId: z.string(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -5996,7 +5944,7 @@ export const DaoUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUpdateWitho
   tokenInfo: z.lazy(() => DaoTokenInfoUpdateOneRequiredWithoutDaoNestedInputSchema).optional(),
   messages: z.lazy(() => ForumMessageUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -6018,7 +5966,7 @@ export const DaoUncheckedUpdateWithoutCreatorInputSchema: z.ZodType<Prisma.DaoUn
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   messages: z.lazy(() => ForumMessageUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   stars: z.lazy(() => DaoStarUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
-  pocs: z.lazy(() => POCUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
+  contributors: z.lazy(() => ContributorUncheckedUpdateManyWithoutDaoNestedInputSchema).optional(),
   contents: z.lazy(() => DaoContentUncheckedUpdateManyWithoutDaoNestedInputSchema).optional()
 }).strict();
 
@@ -6040,41 +5988,38 @@ export const DaoUncheckedUpdateManyWithoutCreatorInputSchema: z.ZodType<Prisma.D
   priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCUpdateWithoutUserInputSchema: z.ZodType<Prisma.POCUpdateWithoutUserInput> = z.object({
+export const ContributorUpdateWithoutUserInputSchema: z.ZodType<Prisma.ContributorUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  dao: z.lazy(() => DaoUpdateOneRequiredWithoutPocsNestedInputSchema).optional(),
-  histories: z.lazy(() => POCHistoryUpdateManyWithoutPocNestedInputSchema).optional()
+  dao: z.lazy(() => DaoUpdateOneRequiredWithoutContributorsNestedInputSchema).optional(),
+  histories: z.lazy(() => ContributorHistoryUpdateManyWithoutContributorNestedInputSchema).optional()
 }).strict();
 
-export const POCUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.POCUncheckedUpdateWithoutUserInput> = z.object({
+export const ContributorUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateWithoutUserInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  histories: z.lazy(() => POCHistoryUncheckedUpdateManyWithoutPocNestedInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUncheckedUpdateManyWithoutContributorNestedInputSchema).optional()
 }).strict();
 
-export const POCUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.POCUncheckedUpdateManyWithoutUserInput> = z.object({
+export const ContributorUncheckedUpdateManyWithoutUserInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateManyWithoutUserInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   daoId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6096,13 +6041,12 @@ export const DaoStarCreateManyDaoInputSchema: z.ZodType<Prisma.DaoStarCreateMany
   userAddress: z.string()
 }).strict();
 
-export const POCCreateManyDaoInputSchema: z.ZodType<Prisma.POCCreateManyDaoInput> = z.object({
-  id: z.string(),
+export const ContributorCreateManyDaoInputSchema: z.ZodType<Prisma.ContributorCreateManyDaoInput> = z.object({
+  id: z.string().optional(),
   userAddress: z.string().optional().nullable(),
   isValid: z.boolean().optional(),
   userPlatformId: z.string(),
   userPlatformName: z.string(),
-  userPlatformUrl: z.string(),
   userPlatformAvatar: z.string(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional(),
@@ -6164,41 +6108,38 @@ export const DaoStarUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.D
   userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCUpdateWithoutDaoInputSchema: z.ZodType<Prisma.POCUpdateWithoutDaoInput> = z.object({
+export const ContributorUpdateWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUpdateWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
   user: z.lazy(() => UserUpdateOneWithoutContributionsNestedInputSchema).optional(),
-  histories: z.lazy(() => POCHistoryUpdateManyWithoutPocNestedInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUpdateManyWithoutContributorNestedInputSchema).optional()
 }).strict();
 
-export const POCUncheckedUpdateWithoutDaoInputSchema: z.ZodType<Prisma.POCUncheckedUpdateWithoutDaoInput> = z.object({
+export const ContributorUncheckedUpdateWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   snapshotValue: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  histories: z.lazy(() => POCHistoryUncheckedUpdateManyWithoutPocNestedInputSchema).optional()
+  histories: z.lazy(() => ContributorHistoryUncheckedUpdateManyWithoutContributorNestedInputSchema).optional()
 }).strict();
 
-export const POCUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.POCUncheckedUpdateManyWithoutDaoInput> = z.object({
+export const ContributorUncheckedUpdateManyWithoutDaoInputSchema: z.ZodType<Prisma.ContributorUncheckedUpdateManyWithoutDaoInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformName: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  userPlatformUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   userPlatformAvatar: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6255,15 +6196,15 @@ export const DaoTokenHolderUncheckedUpdateManyWithoutTokenInfoInputSchema: z.Zod
   balance: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryCreateManyPocInputSchema: z.ZodType<Prisma.POCHistoryCreateManyPocInput> = z.object({
-  id: z.string(),
+export const ContributorHistoryCreateManyContributorInputSchema: z.ZodType<Prisma.ContributorHistoryCreateManyContributorInput> = z.object({
+  id: z.string().optional(),
   tag: z.string(),
   value: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   createdAt: z.coerce.date().optional(),
   updatedAt: z.coerce.date().optional()
 }).strict();
 
-export const POCHistoryUpdateWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUpdateWithoutPocInput> = z.object({
+export const ContributorHistoryUpdateWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUpdateWithoutContributorInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6271,7 +6212,7 @@ export const POCHistoryUpdateWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryU
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryUncheckedUpdateWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUncheckedUpdateWithoutPocInput> = z.object({
+export const ContributorHistoryUncheckedUpdateWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedUpdateWithoutContributorInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6279,7 +6220,7 @@ export const POCHistoryUncheckedUpdateWithoutPocInputSchema: z.ZodType<Prisma.PO
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
-export const POCHistoryUncheckedUpdateManyWithoutPocInputSchema: z.ZodType<Prisma.POCHistoryUncheckedUpdateManyWithoutPocInput> = z.object({
+export const ContributorHistoryUncheckedUpdateManyWithoutContributorInputSchema: z.ZodType<Prisma.ContributorHistoryUncheckedUpdateManyWithoutContributorInput> = z.object({
   id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
   value: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
@@ -6839,128 +6780,128 @@ export const ForumMessageFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ForumMess
   where: ForumMessageWhereUniqueInputSchema,
 }).strict() ;
 
-export const POCFindFirstArgsSchema: z.ZodType<Prisma.POCFindFirstArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereInputSchema.optional(),
-  orderBy: z.union([ POCOrderByWithRelationInputSchema.array(),POCOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCWhereUniqueInputSchema.optional(),
+export const ContributorFindFirstArgsSchema: z.ZodType<Prisma.ContributorFindFirstArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorOrderByWithRelationInputSchema.array(),ContributorOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ POCScalarFieldEnumSchema,POCScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ ContributorScalarFieldEnumSchema,ContributorScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const POCFindFirstOrThrowArgsSchema: z.ZodType<Prisma.POCFindFirstOrThrowArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereInputSchema.optional(),
-  orderBy: z.union([ POCOrderByWithRelationInputSchema.array(),POCOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCWhereUniqueInputSchema.optional(),
+export const ContributorFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ContributorFindFirstOrThrowArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorOrderByWithRelationInputSchema.array(),ContributorOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ POCScalarFieldEnumSchema,POCScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ ContributorScalarFieldEnumSchema,ContributorScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const POCFindManyArgsSchema: z.ZodType<Prisma.POCFindManyArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereInputSchema.optional(),
-  orderBy: z.union([ POCOrderByWithRelationInputSchema.array(),POCOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCWhereUniqueInputSchema.optional(),
+export const ContributorFindManyArgsSchema: z.ZodType<Prisma.ContributorFindManyArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorOrderByWithRelationInputSchema.array(),ContributorOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
-  distinct: z.union([ POCScalarFieldEnumSchema,POCScalarFieldEnumSchema.array() ]).optional(),
+  distinct: z.union([ ContributorScalarFieldEnumSchema,ContributorScalarFieldEnumSchema.array() ]).optional(),
 }).strict() ;
 
-export const POCAggregateArgsSchema: z.ZodType<Prisma.POCAggregateArgs> = z.object({
-  where: POCWhereInputSchema.optional(),
-  orderBy: z.union([ POCOrderByWithRelationInputSchema.array(),POCOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const POCGroupByArgsSchema: z.ZodType<Prisma.POCGroupByArgs> = z.object({
-  where: POCWhereInputSchema.optional(),
-  orderBy: z.union([ POCOrderByWithAggregationInputSchema.array(),POCOrderByWithAggregationInputSchema ]).optional(),
-  by: POCScalarFieldEnumSchema.array(),
-  having: POCScalarWhereWithAggregatesInputSchema.optional(),
+export const ContributorAggregateArgsSchema: z.ZodType<Prisma.ContributorAggregateArgs> = z.object({
+  where: ContributorWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorOrderByWithRelationInputSchema.array(),ContributorOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const POCFindUniqueArgsSchema: z.ZodType<Prisma.POCFindUniqueArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereUniqueInputSchema,
-}).strict() ;
-
-export const POCFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.POCFindUniqueOrThrowArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereUniqueInputSchema,
-}).strict() ;
-
-export const POCHistoryFindFirstArgsSchema: z.ZodType<Prisma.POCHistoryFindFirstArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereInputSchema.optional(),
-  orderBy: z.union([ POCHistoryOrderByWithRelationInputSchema.array(),POCHistoryOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCHistoryWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ POCHistoryScalarFieldEnumSchema,POCHistoryScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const POCHistoryFindFirstOrThrowArgsSchema: z.ZodType<Prisma.POCHistoryFindFirstOrThrowArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereInputSchema.optional(),
-  orderBy: z.union([ POCHistoryOrderByWithRelationInputSchema.array(),POCHistoryOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCHistoryWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ POCHistoryScalarFieldEnumSchema,POCHistoryScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const POCHistoryFindManyArgsSchema: z.ZodType<Prisma.POCHistoryFindManyArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereInputSchema.optional(),
-  orderBy: z.union([ POCHistoryOrderByWithRelationInputSchema.array(),POCHistoryOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCHistoryWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ POCHistoryScalarFieldEnumSchema,POCHistoryScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const POCHistoryAggregateArgsSchema: z.ZodType<Prisma.POCHistoryAggregateArgs> = z.object({
-  where: POCHistoryWhereInputSchema.optional(),
-  orderBy: z.union([ POCHistoryOrderByWithRelationInputSchema.array(),POCHistoryOrderByWithRelationInputSchema ]).optional(),
-  cursor: POCHistoryWhereUniqueInputSchema.optional(),
+export const ContributorGroupByArgsSchema: z.ZodType<Prisma.ContributorGroupByArgs> = z.object({
+  where: ContributorWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorOrderByWithAggregationInputSchema.array(),ContributorOrderByWithAggregationInputSchema ]).optional(),
+  by: ContributorScalarFieldEnumSchema.array(),
+  having: ContributorScalarWhereWithAggregatesInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const POCHistoryGroupByArgsSchema: z.ZodType<Prisma.POCHistoryGroupByArgs> = z.object({
-  where: POCHistoryWhereInputSchema.optional(),
-  orderBy: z.union([ POCHistoryOrderByWithAggregationInputSchema.array(),POCHistoryOrderByWithAggregationInputSchema ]).optional(),
-  by: POCHistoryScalarFieldEnumSchema.array(),
-  having: POCHistoryScalarWhereWithAggregatesInputSchema.optional(),
+export const ContributorFindUniqueArgsSchema: z.ZodType<Prisma.ContributorFindUniqueArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributorFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ContributorFindUniqueOrThrowArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributorHistoryFindFirstArgsSchema: z.ZodType<Prisma.ContributorHistoryFindFirstArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorHistoryOrderByWithRelationInputSchema.array(),ContributorHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributorHistoryScalarFieldEnumSchema,ContributorHistoryScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributorHistoryFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ContributorHistoryFindFirstOrThrowArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorHistoryOrderByWithRelationInputSchema.array(),ContributorHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributorHistoryScalarFieldEnumSchema,ContributorHistoryScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributorHistoryFindManyArgsSchema: z.ZodType<Prisma.ContributorHistoryFindManyArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorHistoryOrderByWithRelationInputSchema.array(),ContributorHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributorHistoryScalarFieldEnumSchema,ContributorHistoryScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributorHistoryAggregateArgsSchema: z.ZodType<Prisma.ContributorHistoryAggregateArgs> = z.object({
+  where: ContributorHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorHistoryOrderByWithRelationInputSchema.array(),ContributorHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributorHistoryWhereUniqueInputSchema.optional(),
   take: z.number().optional(),
   skip: z.number().optional(),
 }).strict() ;
 
-export const POCHistoryFindUniqueArgsSchema: z.ZodType<Prisma.POCHistoryFindUniqueArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereUniqueInputSchema,
+export const ContributorHistoryGroupByArgsSchema: z.ZodType<Prisma.ContributorHistoryGroupByArgs> = z.object({
+  where: ContributorHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ ContributorHistoryOrderByWithAggregationInputSchema.array(),ContributorHistoryOrderByWithAggregationInputSchema ]).optional(),
+  by: ContributorHistoryScalarFieldEnumSchema.array(),
+  having: ContributorHistoryScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
 }).strict() ;
 
-export const POCHistoryFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.POCHistoryFindUniqueOrThrowArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereUniqueInputSchema,
+export const ContributorHistoryFindUniqueArgsSchema: z.ZodType<Prisma.ContributorHistoryFindUniqueArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributorHistoryFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ContributorHistoryFindUniqueOrThrowArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereUniqueInputSchema,
 }).strict() ;
 
 export const ApiKeyCreateArgsSchema: z.ZodType<Prisma.ApiKeyCreateArgs> = z.object({
@@ -7441,110 +7382,110 @@ export const ForumMessageDeleteManyArgsSchema: z.ZodType<Prisma.ForumMessageDele
   limit: z.number().optional(),
 }).strict() ;
 
-export const POCCreateArgsSchema: z.ZodType<Prisma.POCCreateArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  data: z.union([ POCCreateInputSchema,POCUncheckedCreateInputSchema ]),
+export const ContributorCreateArgsSchema: z.ZodType<Prisma.ContributorCreateArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  data: z.union([ ContributorCreateInputSchema,ContributorUncheckedCreateInputSchema ]),
 }).strict() ;
 
-export const POCUpsertArgsSchema: z.ZodType<Prisma.POCUpsertArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereUniqueInputSchema,
-  create: z.union([ POCCreateInputSchema,POCUncheckedCreateInputSchema ]),
-  update: z.union([ POCUpdateInputSchema,POCUncheckedUpdateInputSchema ]),
+export const ContributorUpsertArgsSchema: z.ZodType<Prisma.ContributorUpsertArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereUniqueInputSchema,
+  create: z.union([ ContributorCreateInputSchema,ContributorUncheckedCreateInputSchema ]),
+  update: z.union([ ContributorUpdateInputSchema,ContributorUncheckedUpdateInputSchema ]),
 }).strict() ;
 
-export const POCCreateManyArgsSchema: z.ZodType<Prisma.POCCreateManyArgs> = z.object({
-  data: z.union([ POCCreateManyInputSchema,POCCreateManyInputSchema.array() ]),
+export const ContributorCreateManyArgsSchema: z.ZodType<Prisma.ContributorCreateManyArgs> = z.object({
+  data: z.union([ ContributorCreateManyInputSchema,ContributorCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const POCCreateManyAndReturnArgsSchema: z.ZodType<Prisma.POCCreateManyAndReturnArgs> = z.object({
-  data: z.union([ POCCreateManyInputSchema,POCCreateManyInputSchema.array() ]),
+export const ContributorCreateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributorCreateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributorCreateManyInputSchema,ContributorCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const POCDeleteArgsSchema: z.ZodType<Prisma.POCDeleteArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  where: POCWhereUniqueInputSchema,
+export const ContributorDeleteArgsSchema: z.ZodType<Prisma.ContributorDeleteArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  where: ContributorWhereUniqueInputSchema,
 }).strict() ;
 
-export const POCUpdateArgsSchema: z.ZodType<Prisma.POCUpdateArgs> = z.object({
-  select: POCSelectSchema.optional(),
-  include: POCIncludeSchema.optional(),
-  data: z.union([ POCUpdateInputSchema,POCUncheckedUpdateInputSchema ]),
-  where: POCWhereUniqueInputSchema,
+export const ContributorUpdateArgsSchema: z.ZodType<Prisma.ContributorUpdateArgs> = z.object({
+  select: ContributorSelectSchema.optional(),
+  include: ContributorIncludeSchema.optional(),
+  data: z.union([ ContributorUpdateInputSchema,ContributorUncheckedUpdateInputSchema ]),
+  where: ContributorWhereUniqueInputSchema,
 }).strict() ;
 
-export const POCUpdateManyArgsSchema: z.ZodType<Prisma.POCUpdateManyArgs> = z.object({
-  data: z.union([ POCUpdateManyMutationInputSchema,POCUncheckedUpdateManyInputSchema ]),
-  where: POCWhereInputSchema.optional(),
+export const ContributorUpdateManyArgsSchema: z.ZodType<Prisma.ContributorUpdateManyArgs> = z.object({
+  data: z.union([ ContributorUpdateManyMutationInputSchema,ContributorUncheckedUpdateManyInputSchema ]),
+  where: ContributorWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
-export const POCUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.POCUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ POCUpdateManyMutationInputSchema,POCUncheckedUpdateManyInputSchema ]),
-  where: POCWhereInputSchema.optional(),
+export const ContributorUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributorUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributorUpdateManyMutationInputSchema,ContributorUncheckedUpdateManyInputSchema ]),
+  where: ContributorWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
-export const POCDeleteManyArgsSchema: z.ZodType<Prisma.POCDeleteManyArgs> = z.object({
-  where: POCWhereInputSchema.optional(),
+export const ContributorDeleteManyArgsSchema: z.ZodType<Prisma.ContributorDeleteManyArgs> = z.object({
+  where: ContributorWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
-export const POCHistoryCreateArgsSchema: z.ZodType<Prisma.POCHistoryCreateArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  data: z.union([ POCHistoryCreateInputSchema,POCHistoryUncheckedCreateInputSchema ]),
+export const ContributorHistoryCreateArgsSchema: z.ZodType<Prisma.ContributorHistoryCreateArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  data: z.union([ ContributorHistoryCreateInputSchema,ContributorHistoryUncheckedCreateInputSchema ]),
 }).strict() ;
 
-export const POCHistoryUpsertArgsSchema: z.ZodType<Prisma.POCHistoryUpsertArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereUniqueInputSchema,
-  create: z.union([ POCHistoryCreateInputSchema,POCHistoryUncheckedCreateInputSchema ]),
-  update: z.union([ POCHistoryUpdateInputSchema,POCHistoryUncheckedUpdateInputSchema ]),
+export const ContributorHistoryUpsertArgsSchema: z.ZodType<Prisma.ContributorHistoryUpsertArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereUniqueInputSchema,
+  create: z.union([ ContributorHistoryCreateInputSchema,ContributorHistoryUncheckedCreateInputSchema ]),
+  update: z.union([ ContributorHistoryUpdateInputSchema,ContributorHistoryUncheckedUpdateInputSchema ]),
 }).strict() ;
 
-export const POCHistoryCreateManyArgsSchema: z.ZodType<Prisma.POCHistoryCreateManyArgs> = z.object({
-  data: z.union([ POCHistoryCreateManyInputSchema,POCHistoryCreateManyInputSchema.array() ]),
+export const ContributorHistoryCreateManyArgsSchema: z.ZodType<Prisma.ContributorHistoryCreateManyArgs> = z.object({
+  data: z.union([ ContributorHistoryCreateManyInputSchema,ContributorHistoryCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const POCHistoryCreateManyAndReturnArgsSchema: z.ZodType<Prisma.POCHistoryCreateManyAndReturnArgs> = z.object({
-  data: z.union([ POCHistoryCreateManyInputSchema,POCHistoryCreateManyInputSchema.array() ]),
+export const ContributorHistoryCreateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributorHistoryCreateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributorHistoryCreateManyInputSchema,ContributorHistoryCreateManyInputSchema.array() ]),
   skipDuplicates: z.boolean().optional(),
 }).strict() ;
 
-export const POCHistoryDeleteArgsSchema: z.ZodType<Prisma.POCHistoryDeleteArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  where: POCHistoryWhereUniqueInputSchema,
+export const ContributorHistoryDeleteArgsSchema: z.ZodType<Prisma.ContributorHistoryDeleteArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  where: ContributorHistoryWhereUniqueInputSchema,
 }).strict() ;
 
-export const POCHistoryUpdateArgsSchema: z.ZodType<Prisma.POCHistoryUpdateArgs> = z.object({
-  select: POCHistorySelectSchema.optional(),
-  include: POCHistoryIncludeSchema.optional(),
-  data: z.union([ POCHistoryUpdateInputSchema,POCHistoryUncheckedUpdateInputSchema ]),
-  where: POCHistoryWhereUniqueInputSchema,
+export const ContributorHistoryUpdateArgsSchema: z.ZodType<Prisma.ContributorHistoryUpdateArgs> = z.object({
+  select: ContributorHistorySelectSchema.optional(),
+  include: ContributorHistoryIncludeSchema.optional(),
+  data: z.union([ ContributorHistoryUpdateInputSchema,ContributorHistoryUncheckedUpdateInputSchema ]),
+  where: ContributorHistoryWhereUniqueInputSchema,
 }).strict() ;
 
-export const POCHistoryUpdateManyArgsSchema: z.ZodType<Prisma.POCHistoryUpdateManyArgs> = z.object({
-  data: z.union([ POCHistoryUpdateManyMutationInputSchema,POCHistoryUncheckedUpdateManyInputSchema ]),
-  where: POCHistoryWhereInputSchema.optional(),
+export const ContributorHistoryUpdateManyArgsSchema: z.ZodType<Prisma.ContributorHistoryUpdateManyArgs> = z.object({
+  data: z.union([ ContributorHistoryUpdateManyMutationInputSchema,ContributorHistoryUncheckedUpdateManyInputSchema ]),
+  where: ContributorHistoryWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
-export const POCHistoryUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.POCHistoryUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ POCHistoryUpdateManyMutationInputSchema,POCHistoryUncheckedUpdateManyInputSchema ]),
-  where: POCHistoryWhereInputSchema.optional(),
+export const ContributorHistoryUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributorHistoryUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributorHistoryUpdateManyMutationInputSchema,ContributorHistoryUncheckedUpdateManyInputSchema ]),
+  where: ContributorHistoryWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
 
-export const POCHistoryDeleteManyArgsSchema: z.ZodType<Prisma.POCHistoryDeleteManyArgs> = z.object({
-  where: POCHistoryWhereInputSchema.optional(),
+export const ContributorHistoryDeleteManyArgsSchema: z.ZodType<Prisma.ContributorHistoryDeleteManyArgs> = z.object({
+  where: ContributorHistoryWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;
