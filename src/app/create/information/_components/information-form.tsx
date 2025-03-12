@@ -352,16 +352,16 @@ const InformationForm = () => {
           </div>
           <div className="flex items-center justify-center col-span-4">
             <Button
-              className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
+              className="h-16 w-full max-w-48 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
               type="submit"
               disabled={isVerifying}
             >
-              Next! Connect your wallet
               {(isVerifying || isPending) ? (
                 <Loader2 className="animate-spin" />
               ) : (
                 <Wallet className="" />
               )}
+              Next
             </Button>
           </div>
         </form>

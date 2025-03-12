@@ -1,28 +1,36 @@
 "use client"
 import { cn } from "~/lib/utils"
 import { AnimatePresence, motion } from "motion/react"
-import { CircleCheck, CircleCheckBig, CircleX } from "lucide-react"
+import {
+  CircleCheck,
+  CircleCheckBig,
+  CircleX,
+  LoaderCircle
+} from "lucide-react"
 import { Button } from "~/components/ui/button"
 
-export type LoadingState = {
+export type visibleState = {
   text: string;
 };
 
 const LoaderCore = ({
-  loadingStates,
+  visible,
   errorState = -1,
+  progressState = -1,
   value = 0
 }: {
-  loadingStates: LoadingState[];
+  visible: visibleState[];
   value?: number;
   errorState?: number;
+  progressState?: number;
 }) => {
   return (
     <div className="relative mx-auto mt-40 flex max-w-xl flex-col justify-start">
-      {loadingStates.map((loadingState, index) => {
+      {visible.map((loadingState, index) => {
         const distance = Math.abs(index - value)
         const opacity = Math.max(1 - distance * 0.2, 0)
         const currentError = value === index && value == errorState
+        const currentProgress = value === index && value == progressState
         return (
           <motion.div
             key={index}
@@ -35,26 +43,23 @@ const LoaderCore = ({
           >
             <div>
               {index > value && (
-                <CircleCheck className="text-black dark:text-white" />
+                <CircleCheck className="text-white" />
               )}
-              {index <= value &&
-                (currentError ? (
-                  <CircleX className={"text-destructive"} />
-                ) : (
-                  <CircleCheck
-                    className={cn(
-                      "text-black dark:text-white",
-                      value === index &&
-                        "text-black opacity-100 dark:text-lime-500",
-                    )}
-                  />
-                ))}
+              {index <= value && !currentProgress && (
+                <CircleCheck className={"text-lime-500"} />
+              )}
+              {currentError ? (
+                <CircleX className={"text-destructive"} />
+              ) : (
+                currentProgress && <LoaderCircle className={"animate-spin"} />
+              )}
             </div>
             <span
               className={cn(
-                "text-black dark:text-white",
-                value === index && "text-black opacity-100 dark:text-lime-500",
-                currentError && "dark:text-destructive",
+                "text-white",
+                index <= value && "text-lime-500 opacity-100 ",
+                currentError && "text-destructive",
+                currentProgress && "text-white"
               )}
             >
               {loadingState.text}
@@ -70,18 +75,21 @@ export const MultiStepLoader = ({
   loadingStates,
   currentState,
   errorState = -1,
-  loading,
-  onClose
+  progressState = -1,
+  visible,
+  onClose,onFinish
 }: {
-  loadingStates: LoadingState[];
+  loadingStates: visibleState[];
   currentState: number;
   errorState?: number;
-  loading?: boolean;
+  progressState?: number;
+  visible?: boolean;
   onClose?: () => void;
+  onFinish?: () => void;
 }) => {
   return (
     <AnimatePresence mode="wait">
-      {loading && (
+      {visible && (
         <motion.div
           initial={{
             opacity: 0
@@ -92,13 +100,14 @@ export const MultiStepLoader = ({
           exit={{
             opacity: 0
           }}
-          className="fixed inset-0 z-[100] flex flex-col h-full w-full items-center justify-center backdrop-blur-2xl"
+          className="fixed inset-0 z-[100] flex h-full w-full flex-col items-center justify-center backdrop-blur-2xl"
         >
-          <div className="relative h-96 z-[120]">
+          <div className="relative z-[120] h-96">
             <LoaderCore
               value={currentState}
-              loadingStates={loadingStates}
+              visible={loadingStates}
               errorState={errorState}
+              progressState={progressState}
             />
 
             {errorState >= 0 && (
@@ -109,6 +118,16 @@ export const MultiStepLoader = ({
                 className={"mt-8 w-20 cursor-pointer"}
               >
                 Close
+              </Button>
+            )}
+            {((currentState === loadingStates.length - 1) && progressState < 0) && (
+              <Button
+                onClick={() => {
+                  onFinish?.()
+                }}
+                className={"mt-8 w-20 cursor-pointer"}
+              >
+                Finish
               </Button>
             )}
           </div>

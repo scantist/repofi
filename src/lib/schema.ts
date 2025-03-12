@@ -72,8 +72,8 @@ export const createDaoParamsSchema = daoInformationParamsSchema.merge(z.object({
 export const launchSchema = z.object({
   totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "Total Supply is required." }),
   raisedAssetAmount: z.bigint({ message: "Raised asset amount is required." }).min(1n, { message: "Raised asset amount is required." }),
-  salesRatio: z.number({ message: "Sales ratio is required." }).max(99, { message: "Max value is 99." }),
-  reservedRatio: z.number({ message: "Reserved ratio is required." }).max(99, { message: "Max value is 99." }),
+  salesRatio: z.number({ message: "Sales ratio is required." }).min(0, { message: "Min value is 0." }).max(100, { message: "Max value is 100." }),
+  reservedRatio: z.number({ message: "Reserved ratio is required." }).min(0, { message: "Min value is 0." }).max(100, { message: "Max value is 100." }),
   assetToken: z.string({ message: "Asset token must select!" })
 })
 

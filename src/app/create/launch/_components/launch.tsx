@@ -94,6 +94,7 @@ const Launch = () => {
   const [showSteps, setShowSteps] = useState(false)
   const [currentStep, setCurrentStep] = useState({
     now: 0,
+    progress: -1,
     error: -1
   })
   const { address } = useAccount()
@@ -213,7 +214,7 @@ const Launch = () => {
         setCurrentStep({ ...currentStep, error: currentStep.now })
         throw new Error("Failed to parse launch event")
       }
-      setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
+      setCurrentStep({ ...currentStep, now: currentStep.now + 1, progress: currentStep.now + 1 })
       return tokenId
     }
     throw new Error("Failed to launch DAO")
@@ -222,32 +223,40 @@ const Launch = () => {
   const submit = async (data: LaunchParams) => {
     if (address && currentAssetToken) {
       setShowSteps(true)
-      startVerify(async () => {
-        setCurrentStep({ now: 0, error: -1 })
-        if (!currentAssetToken.isNative) {
-          await approveAssetToken(true)
-        }
-        const tokenId = await launchDaoToken(data)
-        try {
-          await createMutate({
-            ...daoInformation,
-            tokenId
-          })
-          setCurrentStep({
-            ...currentStep,
-            now: currentStep.now + 1
-          })
-          setTimeout(() => {
-            setShowSteps(false)
-          }, 1000)
-        } catch (e) {
-          console.error(e)
-          setCurrentStep({
-            ...currentStep,
-            error: currentStep.now
-          })
-        }
-      })
+      setCurrentStep({ now: 0, error: -1, progress: 0 })
+      setTimeout(() => {
+        setCurrentStep({ now: 1, error: -1, progress: 1 })
+      }, 2000)
+      setTimeout(() => {
+        setCurrentStep({ now: 1, error: -1, progress: -1 })
+      }, 4000)
+      // startVerify(async () => {
+      //   setCurrentStep({ now: 0, error: -1, progress: 0 })
+      //   if (!currentAssetToken.isNative) {
+      //     await approveAssetToken(true)
+      //   }
+      //   const tokenId = await launchDaoToken(data)
+      //   try {
+      //     await createMutate({
+      //       ...daoInformation,
+      //       tokenId
+      //     })
+      //     setCurrentStep({
+      //       ...currentStep,
+      //       now: currentStep.now + 1,
+      //       progress: -1
+      //     })
+      //     setTimeout(() => {
+      //       setShowSteps(false)
+      //     }, 1000)
+      //   } catch (e) {
+      //     console.error(e)
+      //     setCurrentStep({
+      //       ...currentStep,
+      //       error: currentStep.now
+      //     })
+      //   }
+      // })
     }
   }
   return (
@@ -258,14 +267,19 @@ const Launch = () => {
       <MultiStepLoader
         loadingStates={stepState}
         errorState={currentStep.error}
-        loading={showSteps}
+        visible={showSteps}
         currentState={currentStep.now}
+        progressState={currentStep.progress}
         onClose={() => {
           setShowSteps(false)
           setCurrentStep({
             now: 0,
-            error: -1
+            error: -1,
+            progress: -1
           })
+        }}
+        onFinish={() => {
+          setShowSteps(false)
         }}
       />
       <Form {...form}>
@@ -546,8 +560,8 @@ const Launch = () => {
                       </SelectContent>
                     </Select>
                     {currentAssetToken && (
-                      <p className={"text-muted-foreground text-sm"}>
-                        Launch Fee {currentAssetToken?.launchFee}
+                      <p className={"text-muted-foreground text-sm font-thin"}>
+                        Launch Fee <span className={"font-bold"}>{formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals)} {currentAssetToken.symbol}</span>
                       </p>
                     )}
                     <p className="text-destructive mt-2 text-sm">
