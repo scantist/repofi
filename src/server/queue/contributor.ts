@@ -55,9 +55,13 @@ const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (
         )
       } catch (error) {
         logger.error(
-            `Failed to initialize contributors for DAO ${job.data.daoId}: ${error instanceof Error ? error.message : String(error)}`,
+          `Failed to initialize contributors for DAO ${job.data.daoId}: ${error instanceof Error ? error.message : String(error)}`,
         )
-        throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to initialize contributors" as string, error)
+        throw new CommonError(
+          ErrorCode.INTERNAL_ERROR,
+          "Failed to initialize contributors" as string,
+          error,
+        )
       }
       break
     case "contributor-update":

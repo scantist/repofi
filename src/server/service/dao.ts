@@ -1,19 +1,25 @@
 import {
   type CreateDaoParams,
-  createDaoParamsSchema,
-  type DaoInformationParams,
   type DaoLinks,
   type HomeSearchParams,
   type Pageable
 } from "~/lib/schema"
 import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
-import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
+import {
+  fetchRepoContributors,
+  fetchRepoInfo,
+  parseRepoUrl
+} from "~/server/tool/repo"
 import { type PageableData } from "~/types/data"
-import { type DaoTokenInfo } from "~/lib/zod"
 import { emitContributorInit } from "~/server/queue/contributor"
+
 class DaoService {
-  async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
+  async search(
+    params: HomeSearchParams,
+    pageable: Pageable,
+    userAddress: string | undefined,
+  ) {
     const whereOptions: Prisma.DaoWhereInput = {}
     if (params.status) {
       whereOptions.status = { in: params.status }
@@ -56,7 +62,7 @@ class DaoService {
         createdAt: true,
         updatedAt: true,
         createdBy: true,
-        tokenId:true,
+        tokenId: true,
         links: true,
         status: true,
         marketCapUsd: true,
@@ -73,19 +79,20 @@ class DaoService {
         },
         stars: userAddress
           ? {
-            where: {
-              userAddress
-            },
-            select: {
-              userAddress: true
+              where: {
+                userAddress
+              },
+              select: {
+                userAddress: true
+              }
             }
-          }
           : false
       },
       where: whereOptions,
-      orderBy: params.orderBy === "latest"
-        ? { createdAt: "desc" }
-        : { marketCapUsd: "desc" }
+      orderBy:
+        params.orderBy === "latest"
+          ? { createdAt: "desc" }
+          : { marketCapUsd: "desc" }
     })
     const daoList = []
     for (const dao of data) {
@@ -114,23 +121,26 @@ class DaoService {
       list: daoList,
       pages: Math.ceil(total / pageable.size),
       total: total
-    } as PageableData<typeof daoList[number]>
+    } as PageableData<(typeof daoList)[number]>
   }
-
 
   async checkNameExists(name: string) {
-    return await db.dao.count({
-      where: {
-        name
-      }
-    }) > 0
+    return (
+      (await db.dao.count({
+        where: {
+          name
+        }
+      })) > 0
+    )
   }
   async checkTickerExists(ticker: string) {
-    return await db.dao.count({
-      where: {
-        ticker
-      }
-    }) > 0
+    return (
+      (await db.dao.count({
+        where: {
+          ticker
+        }
+      })) > 0
+    )
   }
 
   async create(params: CreateDaoParams, userAddress: string) {
@@ -166,7 +176,7 @@ class DaoService {
         type: params.type,
         avatar: params.avatar,
         createdBy: userAddress,
-        tokenId:tokenInfo.tokenId,
+        tokenId: tokenInfo.tokenId,
         links,
         status: DaoStatus.LAUNCHING,
         platform: repoMeta.platform
@@ -178,20 +188,28 @@ class DaoService {
   }
   async repoInfo(url: string) {
     const repoMeta = parseRepoUrl(url)
-    return await fetchRepoInfo(repoMeta.platform, repoMeta.owner, repoMeta.repo)
+    return await fetchRepoInfo(
+      repoMeta.platform,
+      repoMeta.owner,
+      repoMeta.repo,
+    )
   }
   async repoContributors(url: string) {
     const repoMeta = parseRepoUrl(url)
-    return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
+    return await fetchRepoContributors(
+      repoMeta.platform,
+      repoMeta.owner,
+      repoMeta.repo,
+    )
   }
-  async star(daoId:string,userAddress:string){
+  async star(daoId: string, userAddress: string) {
     const daoStar = await db.daoStar.findFirst({
       where: {
         daoId,
         userAddress
       }
     })
-    if(daoStar){
+    if (daoStar) {
       await db.daoStar.delete({
         where: {
           daoId_userAddress: {
@@ -201,9 +219,9 @@ class DaoService {
         }
       })
       return false
-    }else{
+    } else {
       await db.daoStar.create({
-        data:{
+        data: {
           daoId,
           userAddress
         }
@@ -213,4 +231,3 @@ class DaoService {
   }
 }
 export const daoService = new DaoService()
-

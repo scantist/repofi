@@ -126,7 +126,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware)
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx, next }) => {
-    if (!ctx.session.address) {
+    if (!ctx.session?.address) {
       throw new TRPCError({ code: "UNAUTHORIZED" })
     }
     return next({ ctx })
@@ -134,7 +134,7 @@ export const protectedProcedure = t.procedure
 export const identifyRole = (roles: UserRole[]) => {
   return t.middleware(async ({ ctx, next }) => {
     for (const role of roles) {
-      if (ctx.session.role===role) {
+      if (ctx.session?.role===role) {
         return next({ ctx: ctx })
       }
     }

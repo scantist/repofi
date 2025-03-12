@@ -9,10 +9,10 @@ const generateReferralCode = (): string => {
 }
 
 class UserService {
-  async createUser(address: string,referralCode?:string) {
+  async createUser(address: string, referralCode?: string) {
     let referrer: User | null = null
     if (referralCode) {
-       referrer = await db.user.findUnique({
+      referrer = await db.user.findUnique({
         where: {
           referralCode
         }
@@ -28,11 +28,11 @@ class UserService {
     })
   }
   async getUserByAddress(address: string) {
-      return await db.user.findUnique({
-        where: {
-          address: address
-        }
-      })
+    return await db.user.findUnique({
+      where: {
+        address: address
+      }
+    })
   }
 }
 export const userService = new UserService()

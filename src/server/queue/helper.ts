@@ -1,11 +1,11 @@
 import {
   type Job,
+  MetricsTime,
   Queue,
   type QueueOptions,
   Worker,
   type WorkerOptions
 } from "bullmq"
-import { MetricsTime } from "bullmq"
 import { connection } from "~/server/redis"
 
 export const DEFAULT_QUEUE_CONFIG = {

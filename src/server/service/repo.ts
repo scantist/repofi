@@ -59,13 +59,15 @@ class RepoService {
       }
       try {
         const { data } = await client.rest.search.repos({
-            q: `
+          q: `
             user:@me 
             is:public 
             fork:false
             sort:updated
             ${search ? `${search} in:name,description` : ""}
-          `.trim().replace(/\s+/g, " "),
+          `
+            .trim()
+            .replace(/\s+/g, " "),
           per_page: pageable.size,
           page: pageable.page + 1
         })
@@ -84,7 +86,7 @@ class RepoService {
         )
         return {
           list: repositories,
-          total:data.total_count,
+          total: data.total_count,
           pages: Math.ceil(data.total_count / pageable.size)
         } as PageableData<(typeof repositories)[number]>
       } catch (error) {

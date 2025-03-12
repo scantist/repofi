@@ -3,7 +3,7 @@ import { type Pageable } from "~/lib/schema"
 
 class HolderService {
   async getTop10Holders(tokenId: bigint) {
-      return await db.daoTokenHolder.findMany({
+    return await db.daoTokenHolder.findMany({
       where: {
         tokenId,
         balance: {
@@ -16,7 +16,7 @@ class HolderService {
       take: 10
     })
   }
-  async getHolders(tokenId:bigint,pageable:Pageable) {
+  async getHolders(tokenId: bigint, pageable: Pageable) {
     const totalItems = await db.daoTokenHolder.count({
       where: {
         tokenId,
