@@ -61,6 +61,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     {
       accessToken: githubToken,
       platform: DaoPlatform.GITHUB,
+      search: condition.name,
       pageable: { ...condition.pageable }
     },
     { enabled: !!githubToken },

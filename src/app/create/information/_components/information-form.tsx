@@ -66,7 +66,6 @@ const InformationForm = () => {
   } = form
   const [isVerifying, startVerify] = useTransition()
 
-  console.log(errors)
   const submit = (data: DaoInformationParams) => {
     setDaoInformation({ ...data })
     setStep("LAUNCH")

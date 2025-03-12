@@ -22,6 +22,7 @@ export const repoRouter = createTRPCRouter({
         input.accessToken,
         input.platform,
         input.pageable,
+        input.search
       )
     }),
   fetchPlatformInfo: protectedProcedure

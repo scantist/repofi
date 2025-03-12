@@ -110,8 +110,8 @@ class DaoService {
         license: repoInfo.license?.spdx_id,
         tokenInfo: {
           ...dao.tokenInfo,
-          marketCap: dao.tokenInfo.marketCap.toString(),
-          totalSupply: dao.tokenInfo.totalSupply.toString(),
+          marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
+          totalSupply: dao.tokenInfo.totalSupply?.toString() ?? "",
           holderCount: dao.tokenInfo.holderCount.toString()
         }
       })
