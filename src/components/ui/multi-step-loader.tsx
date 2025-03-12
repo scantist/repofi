@@ -3,7 +3,6 @@ import { cn } from "~/lib/utils"
 import { AnimatePresence, motion } from "motion/react"
 import {
   CircleCheck,
-  CircleCheckBig,
   CircleX,
   LoaderCircle
 } from "lucide-react"
@@ -11,16 +10,18 @@ import { Button } from "~/components/ui/button"
 
 export type visibleState = {
   text: string;
-};
+}
 
 const LoaderCore = ({
   visible,
+                      description,
   errorState = -1,
   progressState = -1,
   value = 0
 }: {
   visible: visibleState[];
   value?: number;
+  description?: string | boolean,
   errorState?: number;
   progressState?: number;
 }) => {
@@ -35,7 +36,7 @@ const LoaderCore = ({
           <motion.div
             key={index}
             className={cn(
-              "mb-4 flex gap-2 text-left text-sm md:text-lg lg:text-xl",
+              "mb-4 flex gap-2 items-center text-left text-sm md:text-lg lg:text-xl",
             )}
             initial={{ opacity: 0, y: -(value * 40) }}
             animate={{ opacity: opacity, y: -(value * 40) }}
@@ -54,16 +55,23 @@ const LoaderCore = ({
                 currentProgress && <LoaderCircle className={"animate-spin"} />
               )}
             </div>
-            <span
+            <div
               className={cn(
-                "text-white",
+                "text-white flex flex-col",
                 index <= value && "text-lime-500 opacity-100 ",
                 currentProgress && "text-white",
                 currentError && "text-destructive"
               )}
             >
-              {loadingState.text}
-            </span>
+              <div>{loadingState.text}</div>
+              {
+                description && currentProgress && value === index && (
+                  <div className="text-xs md:text-sm font-thin">
+                    {description}
+                  </div>
+                )
+              }
+            </div>
           </motion.div>
         )
       })}
@@ -74,6 +82,7 @@ const LoaderCore = ({
 export const MultiStepLoader = ({
   loadingStates,
   currentState,
+  description,
   errorState = -1,
   progressState = -1,
   visible,
@@ -81,6 +90,7 @@ export const MultiStepLoader = ({
 }: {
   loadingStates: visibleState[];
   currentState: number;
+  description?: string | boolean,
   errorState?: number;
   progressState?: number;
   visible?: boolean;
@@ -108,6 +118,7 @@ export const MultiStepLoader = ({
               visible={loadingStates}
               errorState={errorState}
               progressState={progressState}
+              description={description}
             />
 
             {errorState >= 0 && (

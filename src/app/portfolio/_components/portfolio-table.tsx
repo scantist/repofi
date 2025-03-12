@@ -121,7 +121,7 @@ const PortfolioTable = () => {
     getCoreRowModel: getCoreRowModel(),
     debugTable: true
   })
-  return <CardWrapper borderClassName={"w-full"}>
+  return <CardWrapper borderClassName={"w-full"} contentClassName={"bg-card"}>
     <div className={"-mt-1 -ml-1 rounded-lg"}>
       <table
         className={"overflow-hidden rounded-lg"}

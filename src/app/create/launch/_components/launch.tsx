@@ -92,13 +92,19 @@ const Launch = () => {
     return currentAssetToken.isNative ? LaunchNativeSteps : LaunchNoNativeSteps
   }, [currentAssetToken])
   const [showSteps, setShowSteps] = useState(false)
-  const [currentStep, setCurrentStep] = useState({
+
+  const [currentStep, setCurrentStep] = useState<{
+    now: number,
+    progress: number,
+    error: number
+  }>({
     now: 0,
     progress: -1,
     error: -1
   })
   const { address } = useAccount()
   const config = useConfig()
+  const [description, setDescription] = useState<string | boolean>()
   const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 
   const approveAssetToken = async (root = true) => {
@@ -215,6 +221,7 @@ const Launch = () => {
 
   const submit = async (data: LaunchParams) => {
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    setDescription(false)
     if (address && currentAssetToken) {
       let tempCurrentStep = 0
       setShowSteps(true)
@@ -265,6 +272,7 @@ const Launch = () => {
         errorState={currentStep.error}
         visible={showSteps}
         currentState={currentStep.now}
+        description={description}
         progressState={currentStep.progress}
         onClose={() => {
           setShowSteps(false)
@@ -276,6 +284,9 @@ const Launch = () => {
         }}
         onFinish={() => {
           setShowSteps(false)
+          setTimeout(() => {
+            router.push("/create/finish")
+          }, 1000)
         }}
       />
       <Form {...form}>

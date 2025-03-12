@@ -20,7 +20,7 @@ const PortfolioPage = () => {
       <div className={"max-w-2xl font-thin text-white/70"}>If you participated in Auction Round 1, you may be eligible for  additional Repofi rewards. Click here to check your eligibility and claim!</div>
       <div className={"border border-white rounded-lg py-1 cursor-pointer px-5 max-w-max"}>Airdrop</div>
     </BannerWrapper>
-    <div className={"w-full my-10"}>
+    <div className={"w-full my-10"} >
       <PortfolioTable />
     </div>
   </div>

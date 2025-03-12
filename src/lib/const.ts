@@ -8,6 +8,6 @@ export const LaunchNativeSteps: visibleState[] = [
 ]
 
 export const LaunchNoNativeSteps: visibleState[] = [
-  { text: "Approve asset token." },
+  { text: "Approve asset amount." },
   ...LaunchNativeSteps
 ]
