@@ -134,7 +134,7 @@ model DaoContent {
 model DaoTokenHolder {
   userAddress String  @map("user_address") @db.VarChar(255)
   tokenId     BigInt  @map("token_id") @db.BigInt
-  balance     Decimal @map("token_amount") @db.Decimal(40, 18)
+  balance     Decimal @map("balance") @db.Decimal(40, 18)
 
   tokenInfo DaoTokenInfo @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
 
@@ -175,7 +175,7 @@ model AssetToken {
   isAllowed Boolean @default(false) @map("is_allowed")
   isNative  Boolean @default(false) @map("is_native")
   isValid   Boolean @default(false) @map("is_valid")
-  
+
   @@map("t_asset_token")
 }
 
