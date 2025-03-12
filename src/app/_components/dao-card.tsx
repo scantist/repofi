@@ -44,7 +44,6 @@ const DaoCard: FC<Props> = ({ data }) => {
           {data.name}
         </div>
         <div className={"truncate text-sm text-white/58"}>
-          Repository:&nbsp;
           <Link href={data.url}>{data.url}</Link>
         </div>
         <div className={"flex flex-row gap-x-6 mt-2 text-xs"}>
