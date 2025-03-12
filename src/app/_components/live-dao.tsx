@@ -1,11 +1,10 @@
 "use client"
 
 import CardWrapper from "~/components/card-wrapper"
-import DaoCard from "~/app/_components/dao-card"
 import { useState } from "react"
 import { cn } from "~/lib/utils"
-import LiveTable from "~/app/launchpad/_components/live-table"
-import DaoGrid from "~/app/launchpad/_components/dao-grid"
+import DaoGrid from "./dao-grid"
+import LiveTable from "~/app/_components/live-table"
 
 const LiveDao = () => {
   const [type, setType] = useState<"DISCOVER" | "ANALYTICS">("DISCOVER")

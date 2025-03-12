@@ -1,7 +1,7 @@
 "use client"
 
 import CardWrapper from "~/components/card-wrapper"
-import DaoGrid from "~/app/launchpad/_components/dao-grid"
+import DaoGrid from "./dao-grid"
 
 const LaunchingDao = () => {
   return (

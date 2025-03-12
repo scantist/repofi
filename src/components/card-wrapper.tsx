@@ -8,9 +8,10 @@ type Props = {
   className?: string
   borderClassName?: string
   contentClassName?: string
+  onClick?: () => void
 }
 
-const CardWrapper: FC<Props> = ({ children, borderClassName, className, contentClassName }) => {
+const CardWrapper: FC<Props> = ({ children, borderClassName, className, contentClassName, onClick }) => {
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState(0)
 
@@ -36,7 +37,7 @@ const CardWrapper: FC<Props> = ({ children, borderClassName, className, contentC
   }, [children]) // 当 children 改变时重新计算
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative", className)} onClick={() => onClick?.()}>
       <div
         ref={contentRef}
         className={cn("m-1 relative z-10", contentClassName)}

@@ -19,15 +19,15 @@ import { Badge } from "~/components/ui/badge"
 import React from "react"
 import { Toaster } from "sonner"
 
-const sans = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-sans"
-})
-const mono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-mono"
-})
+// const sans = Space_Grotesk({
+//   subsets: ["latin"],
+//   variable: "--font-sans"
+// })
+// const mono = Space_Mono({
+//   subsets: ["latin"],
+//   weight: ["400", "700"],
+//   variable: "--font-mono"
+// })
 
 const socialMedias = [
   {
@@ -63,7 +63,7 @@ export default async function RootLayout({
   )
   return (
     <html lang="en" className={`dark ${GeistSans.variable}`}>
-      <body className={`font-sans ${sans.variable} ${mono.variable} dark`}>
+      <body className={"font-sans dark"}>
         <QueryClientReactProvider>
           <TRPCReactProvider>
             <AuthProvider session={session} wagmiState={wagmiState}>

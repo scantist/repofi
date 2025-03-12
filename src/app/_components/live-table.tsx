@@ -2,17 +2,12 @@
 
 import {
   createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  type PaginationState,
-  useReactTable
+  type PaginationState
 } from "@tanstack/react-table"
-import React, { Fragment, useState } from "react"
-import { cn } from "~/lib/utils"
-import CardWrapper from "~/components/card-wrapper"
+import React, { useState } from "react"
 import { type DaoPage } from "~/types/data"
 import DataTable from "~/components/data-table"
-import type { HomeSearchParams, Pageable } from "~/lib/schema"
+import type { HomeSearchParams } from "~/lib/schema"
 import { api } from "~/trpc/react"
 
 interface Condition extends HomeSearchParams{

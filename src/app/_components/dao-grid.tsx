@@ -1,17 +1,8 @@
 "use client"
-import { type FC, useMemo, useState } from "react"
+import { type FC, useState } from "react"
 import type { HomeSearchParams, Pageable } from "~/lib/schema"
 import { api } from "~/trpc/react"
 import DaoCard from "~/app/_components/dao-card"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious
-} from "~/components/ui/pagination"
 import ListPagination from "~/components/list-pagination"
 
 type Props = {
@@ -40,7 +31,7 @@ const DaoGrid: FC<Props> = ({
   }
 
   return (
-    <div className={"grid grid-cols-3"}>
+    <div className={"grid grid-cols-3 gap-x-2 gap-y-5"}>
       {response && response?.list.length > 0 ? (
         <>
           {response?.list.map((item) => (

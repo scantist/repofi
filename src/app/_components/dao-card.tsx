@@ -7,6 +7,7 @@ import CardWrapper from "~/components/card-wrapper"
 import { type DaoPage } from "~/types/data"
 import { type DaoLinks } from "~/lib/schema"
 import { House } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 type Props = {
   children?: React.ReactNode,
@@ -15,6 +16,7 @@ type Props = {
 
 const DaoCard: FC<Props> = ({ data }) => {
 
+  const router = useRouter()
   const IconComponent = ({ type, href }: { type: string, href: string }) => {
     let Icon
     if (type.toLowerCase() === "website") {
@@ -32,7 +34,7 @@ const DaoCard: FC<Props> = ({ data }) => {
     </Link> : null
   }
   return (
-    <CardWrapper borderClassName={"border-1"}>
+    <CardWrapper borderClassName={"border-1"} >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
@@ -67,25 +69,27 @@ const DaoCard: FC<Props> = ({ data }) => {
         >
           <div className={"mr-2 border-r-1 border-r-gray-400"}>
             <div className={"text-muted-foreground text-sm"}>Market cap</div>
-            <div className={"text-primary-foreground mt-2 text-lg font-bold"}>
-              {data.tokenInfo.marketCap}
+            <div className={"text-primary-foreground mt-2 text-md font-bold"}>
+              {data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}
             </div>
           </div>
           <div className={"pl-3"}>
             <div className={"text-muted-foreground text-sm"}># Holders</div>
-            <div className={"text-primary-foreground mt-2 text-lg font-bold"}>
+            <div className={"text-primary-foreground mt-2 text-md font-bold"}>
               {data.tokenInfo.holderCount}
             </div>
           </div>
           <div className={"border-l-1 border-l-gray-400 pl-5"}>
             <div className={"text-muted-foreground text-sm"}>Status</div>
-            <div className={"text-primary-foreground mt-2 text-lg font-bold"}>
+            <div className={"text-primary-foreground mt-2 text-md tracking-tighter font-bold"}>
               {data.status}
             </div>
           </div>
         </div>
         <div className={"flex flex-row items-center justify-between"}>
-          <div className={"text-xs"}>{data.license}</div>
+          <div className={"text-sm cursor-pointer font-bold"} onClick={() => {
+            router.push("/dao/test")
+          }}>DETAIL</div>
           <div className={"flex flex-row gap-2"}>
             {
               (data.links as DaoLinks).map((link, index) => (
