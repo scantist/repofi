@@ -18,7 +18,7 @@ const Content = () => {
         </div>
       </div>
       <div className={"max-w-[579px]"}>
-        <img className={"w-full"} src={"http://downloads.echocow.cn/content.png"} />
+        <img className={"w-full"} src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} />
       </div>
     </div>
   )

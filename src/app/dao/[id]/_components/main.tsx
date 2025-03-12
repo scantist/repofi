@@ -30,7 +30,7 @@ const DaoContent = () => {
             <SiX />
           </div>
         </CardWrapper>
-        <img src={"http://downloads.echocow.cn/K.png"} alt={"K"} />
+        <img src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} alt={"K"} />
         <CardWrapper contentClassName={"bg-card"}>
           <div className={"flex w-full flex-col gap-4 px-10 py-5"}>
             <div className={"text-2xl font-bold"}>Message Board</div>
