@@ -23,14 +23,8 @@ export const homeSearchParamsSchema = z.object({
     .default("marketCap")
     .catch("marketCap"),
   status:z.array(DaoStatusSchema).optional(),
-  owned: z.preprocess(
-    (val) => val !== undefined && val !== "false",
-    z.boolean().optional().default(false),
-  ),
-  starred: z.preprocess(
-    (val) => val !== undefined && val !== "false",
-    z.boolean().optional().default(false),
-  )
+  owned: z.boolean().optional().default(false),
+  starred: z.boolean().optional().default(false)
 })
 export const DaoContentParamsSchema=z.object({
   title:z.string({ message:"Title is required." })
