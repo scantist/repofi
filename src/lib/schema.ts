@@ -80,7 +80,7 @@ export const launchSchema = z.object({
 export const repoInfoSchema = z.object({
   name: z.string(),
   full_name: z.string(),
-  description: z.string(),
+  description: z.string().nullable().default(""),
   fork: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
@@ -95,15 +95,9 @@ export const repoInfoSchema = z.object({
     type: z.string(),
     avatar_url: z.string()
   }),
-  organization: z.object({
-    login: z.string(),
-    id: z.number(),
-    avatar_url: z.string(),
-    type: z.string()
-  }),
   license: z.object({
     spdx_id: z.string()
-  })
+  }).nullable().transform(license => license ?? { spdx_id: "unknown" })
 })
 
 export const repoMetaSchema = z.object({

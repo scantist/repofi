@@ -16,7 +16,6 @@ export const daoRouter = createTRPCRouter({
     .input(homeSearchParamsSchema.merge(pageableSchema))
     .query(async ({ ctx, input }) => {
       const userAddress = ctx.session?.address
-      console.log("session", ctx.session)
       const { page, size, ...homeSearchParams } = input
       return daoService.search(homeSearchParams, { page, size }, userAddress)
     }),
