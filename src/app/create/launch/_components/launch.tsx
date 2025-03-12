@@ -115,9 +115,7 @@ const Launch = () => {
         allowance >= currentAssetToken.launchFee ||
         currentAssetToken.launchFee === 0n
       ) {
-        // 代币足够，直接下一步
-        setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
-        return
+        return true
       }
       const { request, result } = await simulateContract(config, {
         abi: erc20Abi,
@@ -127,9 +125,8 @@ const Launch = () => {
         account: address
       })
       if (!result) {
-        //第一步 error 处理
-        setCurrentStep({ ...currentStep, error: currentStep.now })
-        return
+
+        return false
       }
       try {
         const hash = await writeContract(config, request)
@@ -138,18 +135,16 @@ const Launch = () => {
         // 递归 直到approve完毕
         await approveAssetToken(false)
         if (root) {
-          // 第一个已经完成
-          setCurrentStep({ ...currentStep, now: currentStep.now + 1 })
+          return true
         }
       } catch (error) {
         console.error(error)
-        setCurrentStep({ ...currentStep, error: currentStep.now })
-        return
+        return false
       }
     }
   }
 
-  const launchDaoToken = async (data: LaunchParams) => {
+  const launchDaoToken = async (data: LaunchParams):Promise<[bigint,boolean]> => {
     const salesRatio = BigInt(data.salesRatio * 100)
     const reservedRatio = BigInt(data.reservedRatio * 100)
     if (address && currentAssetToken) {
@@ -192,10 +187,9 @@ const Launch = () => {
       )
 
       if (!item) {
-        setCurrentStep({ ...currentStep, error: currentStep.now })
-        throw new Error("Failed to find launch event")
+        console.log("Failed to find launch event")
+        return [0n, false]
       }
-
       const { args } = decodeEventLog({
         ...item,
         abi: launchPadAbi
@@ -211,52 +205,54 @@ const Launch = () => {
       }
 
       if (!asset || !tokenId || !initialPrice) {
-        setCurrentStep({ ...currentStep, error: currentStep.now })
-        throw new Error("Failed to parse launch event")
+        console.log("Failed to parse launch event")
+        return [0n, false]
       }
-      setCurrentStep({ ...currentStep, now: currentStep.now + 1, progress: currentStep.now + 1 })
-      return tokenId
+      return [tokenId, true]
     }
-    throw new Error("Failed to launch DAO")
+    return [0n, false]
   }
 
   const submit = async (data: LaunchParams) => {
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
     if (address && currentAssetToken) {
+      let tempCurrentStep = 0
       setShowSteps(true)
-      setCurrentStep({ now: 0, error: -1, progress: 0 })
-      setTimeout(() => {
-        setCurrentStep({ now: 1, error: -1, progress: 1 })
-      }, 2000)
-      setTimeout(() => {
-        setCurrentStep({ now: 1, error: -1, progress: -1 })
-      }, 4000)
-      // startVerify(async () => {
-      //   setCurrentStep({ now: 0, error: -1, progress: 0 })
-      //   if (!currentAssetToken.isNative) {
-      //     await approveAssetToken(true)
-      //   }
-      //   const tokenId = await launchDaoToken(data)
-      //   try {
-      //     await createMutate({
-      //       ...daoInformation,
-      //       tokenId
-      //     })
-      //     setCurrentStep({
-      //       ...currentStep,
-      //       now: currentStep.now + 1,
-      //       progress: -1
-      //     })
-      //     setTimeout(() => {
-      //       setShowSteps(false)
-      //     }, 1000)
-      //   } catch (e) {
-      //     console.error(e)
-      //     setCurrentStep({
-      //       ...currentStep,
-      //       error: currentStep.now
-      //     })
-      //   }
-      // })
+      setCurrentStep({ now: tempCurrentStep, error: -1, progress: tempCurrentStep })
+      startVerify(async () => {
+        try {
+          if (!currentAssetToken.isNative) {
+            if (!await approveAssetToken(true)) {
+              throw new Error("Approve asset token failed")
+            }
+          }
+          tempCurrentStep += 1
+          setCurrentStep({ now: tempCurrentStep, error: -1, progress: tempCurrentStep })
+
+          const [tokenId, flag] = await launchDaoToken(data)
+          if (!flag) {
+            throw new Error("Launch DAO token failed")
+          }
+          tempCurrentStep += 1
+          setCurrentStep({ now: tempCurrentStep, error: -1, progress: tempCurrentStep })
+          await createMutate({
+            ...daoInformation,
+            tokenId
+          })
+          setCurrentStep({
+            now: tempCurrentStep,
+            error: -1,
+            progress: -1
+          })
+        } catch (e) {
+          console.error(e)
+          setCurrentStep({
+            now: tempCurrentStep,
+            error: tempCurrentStep,
+            progress: -1
+          })
+        }
+      })
     }
   }
   return (
@@ -534,7 +530,7 @@ const Launch = () => {
                           "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
                         )}
                       >
-                        <SelectValue placeholder="Select asset token" />
+                        <SelectValue placeholder="Select asset token"/>
                       </SelectTrigger>
                       <SelectContent>
                         {isPending ? (
@@ -542,7 +538,7 @@ const Launch = () => {
                             <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
                           </div>
                         ) : assetTokenOptions &&
-                          assetTokenOptions.length > 0 ? (
+                        assetTokenOptions.length > 0 ? (
                           assetTokenOptions.map((token) => (
                             <SelectItem
                               key={`at-${token.name}-${token.symbol}`}
@@ -561,7 +557,8 @@ const Launch = () => {
                     </Select>
                     {currentAssetToken && (
                       <p className={"text-muted-foreground text-sm font-thin"}>
-                        Launch Fee <span className={"font-bold"}>{formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals)} {currentAssetToken.symbol}</span>
+                        Launch Fee <span
+                        className={"font-bold"}>{formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals)} {currentAssetToken.symbol}</span>
                       </p>
                     )}
                     <p className="text-destructive mt-2 text-sm">
@@ -579,9 +576,9 @@ const Launch = () => {
               disabled={isVerifying}
             >
               {isVerifying ? (
-                <Loader2 className="animate-spin" />
+                <Loader2 className="animate-spin"/>
               ) : (
-                <Rocket className="" />
+                <Rocket className=""/>
               )}
               Launch
             </Button>
