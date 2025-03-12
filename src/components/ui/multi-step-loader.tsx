@@ -45,7 +45,7 @@ const LoaderCore = ({
               {index > value && (
                 <CircleCheck className="text-white" />
               )}
-              {index <= value && !currentProgress && (
+              {index <= value && !currentProgress && !currentError && (
                 <CircleCheck className={"text-lime-500"} />
               )}
               {currentError ? (
@@ -58,8 +58,8 @@ const LoaderCore = ({
               className={cn(
                 "text-white",
                 index <= value && "text-lime-500 opacity-100 ",
-                currentError && "text-destructive",
-                currentProgress && "text-white"
+                currentProgress && "text-white",
+                currentError && "text-destructive"
               )}
             >
               {loadingState.text}
@@ -120,7 +120,7 @@ export const MultiStepLoader = ({
                 Close
               </Button>
             )}
-            {((currentState === loadingStates.length - 1) && progressState < 0) && (
+            {((currentState === loadingStates.length - 1) && progressState < 0) && errorState < 0 && (
               <Button
                 onClick={() => {
                   onFinish?.()
