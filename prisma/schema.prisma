@@ -134,7 +134,7 @@ model DaoContent {
 model DaoTokenHolder {
   userAddress String  @map("user_address") @db.VarChar(255)
   tokenId     BigInt  @map("token_id") @db.BigInt
-  balance     Decimal @map("balance") @db.Decimal(40, 18)
+  balance     Decimal @map("balance") @db.Decimal(50, 18)
 
   tokenInfo DaoTokenInfo @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
 
@@ -156,11 +156,11 @@ model DaoTokenInfo {
   liquidity         Decimal?  @map("liquidity") @db.Decimal(50, 18)
   price             Decimal?  @map("price") @db.Decimal(50, 18)
   marketCap         Decimal?  @map("market_cap") @db.Decimal(50, 18)
-  totalSupply       BigInt?   @map("total_supply")
-  raisedAssetAmount BigInt?   @map("raised_asset_amount")
-  salesRatio        Decimal?  @db.Decimal(5, 2)
-  reservedRatio     Decimal?  @db.Decimal(5, 2)
-  unlockRatio       Decimal?  @db.Decimal(5, 2)
+  totalSupply       Decimal?  @map("total_supply") @db.Decimal(78, 0)
+  raisedAssetAmount Decimal?  @map("raised_asset_amount") @db.Decimal(78, 0)
+  salesRatio        Decimal?  @map("sales_ratio") @db.Decimal(5, 2)
+  reservedRatio     Decimal?  @map("reserved_ratio") @db.Decimal(5, 2)
+  unlockRatio       Decimal?  @map("unlock_ratio") @db.Decimal(5, 2)
   holderCount       Int       @default(0) @map("holder_count")
   assetTokenAddress String    @default("") @map("asset_token_address") @db.VarChar(255)
   graduatedAt       DateTime? @map("graduated_at")
@@ -179,7 +179,7 @@ model AssetToken {
   decimals  Int     @map("decimals")
   logoUrl   String  @map("logo_url") @db.VarChar(255)
   priceUsd  Decimal @default(0) @map("price_usd") @db.Decimal(50, 18)
-  launchFee BigInt  @default(0) @map("launch_fee")
+  launchFee Decimal @default(0) @map("launch_fee") @db.Decimal(78, 0)
   isAllowed Boolean @default(false) @map("is_allowed")
   isNative  Boolean @default(false) @map("is_native")
   isValid   Boolean @default(false) @map("is_valid")
