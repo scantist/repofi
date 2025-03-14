@@ -22,18 +22,12 @@ const stepList: {
   },
   {
     level: 1,
-    title: "Configuration base Information",
+    title: "Configuration basic Information",
     url: stepPath.INFORMATION,
     target: "INFORMATION"
   },
   {
     level: 2,
-    title: "Launch your token",
-    url: stepPath.LAUNCH,
-    target: "LAUNCH"
-  },
-  {
-    level: 3,
     title: "Done!",
     url: stepPath.FINISH,
     target: "FINISH"
@@ -43,8 +37,7 @@ const stepList: {
 const stepLevel = {
   BIND: 0,
   INFORMATION: 1,
-  LAUNCH: 2,
-  FINISH: 3
+  FINISH: 2
 }
 
 const Step = () => {

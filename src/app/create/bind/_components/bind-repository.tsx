@@ -20,7 +20,7 @@ import { Button } from "~/components/ui/button"
 import ListPagination from "~/components/list-pagination"
 import { type Pageable } from "~/lib/schema"
 import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
-import createDaoStore, { daoInformationAtom, stepAtom, stepPath } from "~/store/create-dao-store"
+import createDaoStore, { daoFormsAtom, stepAtom, stepPath } from "~/store/create-dao-store"
 import { useAtom, useStore } from "jotai"
 import { useRouter } from "next/navigation"
 
@@ -39,12 +39,12 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
   const router = useRouter()
-  const [daoParams, setDaoParams] = useAtom(daoInformationAtom)
+  const [daoForms, setDaoForms] = useAtom(daoFormsAtom)
   const [step, setStep] = useAtom(stepAtom)
   const { data: session } = useSession()
   useEffect(() => {
     setStep("BIND")
-  }, [])
+  }, [setStep])
   const [condition, setCondition] = useState<Condition>({
     name: "",
     pageable: {
@@ -210,8 +210,8 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                       onClick={() => {
                         setCurrent(repo)
                         setStep("INFORMATION")
-                        setDaoParams({
-                          ...daoParams,
+                        setDaoForms({
+                          ...daoForms,
                           url: repo.url
                         })
                         router.push(stepPath.INFORMATION)

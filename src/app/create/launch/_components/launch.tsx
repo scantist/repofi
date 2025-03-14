@@ -10,7 +10,7 @@ import CardWrapper from "~/components/card-wrapper"
 import { Form } from "~/components/ui/form"
 import { useStore } from "jotai/index"
 import {
-  daoInformationAtom,
+  daoFormsAtom,
   launchAtom,
   stepAtom
 } from "~/store/create-dao-store"
@@ -48,7 +48,7 @@ import launchPadAbi from "~/lib/abi/LaunchPad.json"
 import { useAtom } from "jotai"
 
 const Launch = () => {
-  const [daoInformation, setDaoInformation] = useAtom(daoInformationAtom)
+  const [daoInformation, setDaoInformation] = useAtom(daoFormsAtom)
   const [launchStep, setLaunchStep] = useAtom(stepAtom)
   useEffect(() => {
     setLaunchStep("LAUNCH")
@@ -107,8 +107,9 @@ const Launch = () => {
   const [description, setDescription] = useState<string | boolean>()
   const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 
-  const approveAssetToken = async (root = true) => {
+  const approveAssetToken = async () => {
     if (address && currentAssetToken) {
+      setDescription("checking allowance...")
       const allowance = await readContract(config, {
         abi: erc20Abi,
         address: currentAssetToken.address as `0x${string}`,
@@ -116,33 +117,25 @@ const Launch = () => {
         functionName: "allowance",
         args: [address, env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS]
       })
-      console.log(allowance)
-      if (
-        allowance >= currentAssetToken.launchFee ||
-        currentAssetToken.launchFee === 0n
-      ) {
+      const launchFee = BigInt(currentAssetToken.launchFee.toString())
+      if (allowance >= launchFee) {
         return true
       }
+      setDescription("approving allowance...")
       const { request, result } = await simulateContract(config, {
         abi: erc20Abi,
         address: currentAssetToken.address as `0x${string}`,
         functionName: "approve",
-        args: [contractAddress, currentAssetToken.launchFee],
+        args: [contractAddress, launchFee],
         account: address
       })
       if (!result) {
-
         return false
       }
       try {
         const hash = await writeContract(config, request)
-
         await waitForTransactionReceipt(config, { hash })
-        // 递归 直到approve完毕
-        await approveAssetToken(false)
-        if (root) {
-          return true
-        }
+        return await approveAssetToken()
       } catch (error) {
         console.error(error)
         return false
@@ -157,7 +150,7 @@ const Launch = () => {
       let amount = 0n
       if (currentAssetToken.isNative) {
         amount = parseEther(
-          formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals),
+          formatUnits(BigInt(currentAssetToken.launchFee.toString()), currentAssetToken.decimals),
         )
       }
       const { request } = await simulateContract(config, {
@@ -220,7 +213,7 @@ const Launch = () => {
   }
 
   const submit = async (data: LaunchParams) => {
-    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
     setDescription(false)
     if (address && currentAssetToken) {
       let tempCurrentStep = 0
@@ -229,7 +222,7 @@ const Launch = () => {
       startVerify(async () => {
         try {
           if (!currentAssetToken.isNative) {
-            if (!await approveAssetToken(true)) {
+            if (!await approveAssetToken()) {
               throw new Error("Approve asset token failed")
             }
           }
@@ -568,8 +561,8 @@ const Launch = () => {
                     </Select>
                     {currentAssetToken && (
                       <p className={"text-muted-foreground text-sm font-thin"}>
-                        Launch Fee <span
-                        className={"font-bold"}>{formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals)} {currentAssetToken.symbol}</span>
+                        {/*Launch Fee <span*/}
+                        {/*className={"font-bold"}>{formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals)} {currentAssetToken.symbol}</span>*/}
                       </p>
                     )}
                     <p className="text-destructive mt-2 text-sm">
