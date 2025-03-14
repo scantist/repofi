@@ -172,6 +172,38 @@ model DaoTokenInfo {
   @@map("t_dao_token_info")
 }
 
+model KLine1m {
+  tokenId BigInt  @map("token_id") @db.BigInt
+  openTs  BigInt  @default(0) @map("open_ts") @db.BigInt
+  closeTs BigInt  @default(0) @map("close_ts") @db.BigInt
+  open    Decimal @default(0) @map("open") @db.Decimal(50, 18)
+  high    Decimal @default(0) @map("high") @db.Decimal(50, 18)
+  low     Decimal @default(0) @map("low") @db.Decimal(50, 18)
+  close   Decimal @default(0) @map("close") @db.Decimal(50, 18)
+  volume  Decimal @default(0) @map("volume") @db.Decimal(50, 18)
+  amount  Decimal @default(0) @map("amount") @db.Decimal(50, 18)
+  txnNum  BigInt  @default(0) @map("txn_num") @db.BigInt
+
+  @@id([tokenId, openTs])
+  @@map("t_kline_1m")
+}
+
+model KLine5m {
+  tokenId BigInt  @map("token_id") @db.BigInt
+  openTs  BigInt  @default(0) @map("open_ts") @db.BigInt
+  closeTs BigInt  @default(0) @map("close_ts") @db.BigInt
+  open    Decimal @default(0) @map("open") @db.Decimal(50, 18)
+  high    Decimal @default(0) @map("high") @db.Decimal(50, 18)
+  low     Decimal @default(0) @map("low") @db.Decimal(50, 18)
+  close   Decimal @default(0) @map("close") @db.Decimal(50, 18)
+  volume  Decimal @default(0) @map("volume") @db.Decimal(50, 18)
+  amount  Decimal @default(0) @map("amount") @db.Decimal(50, 18)
+  txnNum  BigInt  @default(0) @map("txn_num") @db.BigInt
+
+  @@id([tokenId, openTs])
+  @@map("t_kline_5m")
+}
+
 model AssetToken {
   address   String  @id @map("address") @db.VarChar(255)
   name      String  @map("name") @db.VarChar(255)

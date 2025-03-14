@@ -232,5 +232,62 @@ class DaoService {
   async findByUrl(url:string){
     return await db.dao.findUnique({ where:{ url:url } })
   }
+
+  async chart(tokenId:bigint, to:number, countBack: number, resolution:string) {
+    let kineData = []
+    if (resolution === "1") {
+      kineData = await db.kLine1m.findMany({
+        where: {
+          tokenId,
+          openTs: {
+            lt: to
+          }
+        },
+        orderBy: {
+          openTs: "asc"
+        },
+        skip: 0,
+        take: countBack
+      })
+    } else {
+      kineData = await db.kLine5m.findMany({
+        where: {
+          tokenId,
+          openTs: {
+            lt: to
+          }
+        },
+        orderBy: {
+          openTs: "asc"
+        },
+        skip: 0,
+        take: countBack
+      })
+    }
+
+    const data: {
+      time: number;
+      open: number;
+      high: number;
+      low: number;
+      close: number;
+      volume: number;
+    }[] = []
+
+    data.push(
+      ...kineData.map((item) => {
+        return {
+          time: Number(item.openTs) * 1000,
+          open: Number(item.open),
+          high: Number(item.high),
+          low: Number(item.low),
+          close: Number(item.close),
+          volume: Number(item.volume)
+        }
+      }),
+    )
+
+    return { data, noData: kineData.length < countBack }
+  }
 }
 export const daoService = new DaoService()
