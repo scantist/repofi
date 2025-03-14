@@ -31,5 +31,10 @@ export const daoRouter = createTRPCRouter({
         await daoService.checkNameExists(input.name),
         await daoService.checkTickerExists(input.ticker)
       ]
+    }),
+  findByUrl: protectedProcedure
+    .input(z.object({ url: z.string() }))
+    .query(async ({  input }) => {
+      return await daoService.findByUrl(input.url)
     })
 })

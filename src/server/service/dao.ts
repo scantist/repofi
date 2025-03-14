@@ -229,5 +229,8 @@ class DaoService {
       return true
     }
   }
+  async findByUrl(url:string){
+    return await db.dao.findUnique({ where:{ url:url } })
+  }
 }
 export const daoService = new DaoService()
