@@ -10,7 +10,7 @@ const LaunchpadPage = async () => {
     orderBy: "latest",
     owned: false,
     starred: false,
-    size: 10,
+    size: 6,
     page: 0
   })
 
@@ -19,9 +19,10 @@ const LaunchpadPage = async () => {
     orderBy: "latest",
     owned: false,
     starred: false,
-    size: 10,
+    size: 6,
     page: 0
   })
+  console.log("launchingDao", launchingDao.total, "liveDao", liveDao.total)
   return <div className={"mt-10 min-h-full"}>
     <BannerWrapper className={"flex w-full flex-col pb-20"}>
       <div

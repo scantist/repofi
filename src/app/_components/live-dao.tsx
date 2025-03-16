@@ -8,7 +8,7 @@ import LiveTable from "~/app/_components/live-table"
 import { type DaoSearchResult } from "~/server/service/dao"
 
 interface LiveDaoProps {
-  initialData?: DaoSearchResult;
+  initialData: DaoSearchResult;
 }
 
 const LiveDao = ({ initialData }: LiveDaoProps) => {
@@ -54,9 +54,15 @@ const LiveDao = ({ initialData }: LiveDaoProps) => {
       {type === "DISCOVER" ? (
         <DaoGrid
           initialData={initialData}
+          initParam={{
+            status: ["LAUNCHED"],
+            orderBy: "latest",
+            owned: false,
+            starred: false
+          }}
         />
       ) : (
-        <LiveTable />
+        <LiveTable initialData={initialData}/>
       )}
     </div>
   )

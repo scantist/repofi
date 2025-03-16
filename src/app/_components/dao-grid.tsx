@@ -30,7 +30,7 @@ const DaoGrid: FC<Props> = ({
       ...pageable,
       ...param
     },
-    { initialData },
+    { initialData: initialData },
   )
 
   if (isPending) {

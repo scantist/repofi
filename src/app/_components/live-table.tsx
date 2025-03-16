@@ -9,12 +9,17 @@ import { type DaoPage } from "~/types/data"
 import DataTable from "~/components/data-table"
 import type { HomeSearchParams } from "~/lib/schema"
 import { api } from "~/trpc/react"
+import { type DaoSearchResult } from "~/server/service/dao"
 
-interface Condition extends HomeSearchParams{
+interface Condition extends HomeSearchParams {
   pagination: PaginationState;
 }
 
-const LiveTable = () => {
+interface LiveTableProps {
+  initialData: DaoSearchResult;
+}
+
+const LiveTable = ({ initialData }: LiveTableProps) => {
   const columnHelper = createColumnHelper<DaoPage>()
   const [condition, setCondition] = useState<Condition>({
     status: ["LAUNCHED"],
@@ -29,7 +34,7 @@ const LiveTable = () => {
   const { data: response, isPending } = api.dao.search.useQuery({
     ...condition,
     ...condition.pagination
-  })
+  }, { initialData })
   const columns = [
     columnHelper.accessor("id", {
       header: () => "#",
