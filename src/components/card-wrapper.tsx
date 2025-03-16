@@ -12,42 +12,12 @@ type Props = {
 }
 
 const CardWrapper: FC<Props> = ({ children, borderClassName, className, contentClassName, onClick }) => {
-  const contentRef = useRef<HTMLDivElement>(null)
-  const [contentHeight, setContentHeight] = useState(0)
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setContentHeight(contentRef.current.clientHeight)
-    }
-
-    // 可选：使用 ResizeObserver 监听尺寸变化
-    const resizeObserver = new ResizeObserver(entries => {
-      for (const entry of entries) {
-        setContentHeight(entry.contentRect.height)
-      }
-    })
-
-    if (contentRef.current) {
-      resizeObserver.observe(contentRef.current)
-    }
-
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [children]) // 当 children 改变时重新计算
-
   return (
-    <div className={cn("mx-4 md:mx-0 relative", className)} onClick={() => onClick?.()}>
-      <div
-        ref={contentRef}
-        className={cn("m-1 relative z-10 bg-card", contentClassName)}
-      >
+    <div className={cn("p-[1px] relative", className)}>
+      <div className={cn("absolute inset-0 bg-gradient-to-b from-[#F8D3537F] to-[#6E6DF07F] rounded-lg", borderClassName)} />
+      <div className={cn("bg-card rounded-lg  relative group", contentClassName)}>
         {children}
       </div>
-      <div
-        className={cn("w-full linear-border top-0 absolute p-4 border-1", borderClassName)}
-        style={{ height: contentHeight ? `${contentHeight+7}px` : "auto" }}
-      />
     </div>
   )
 }

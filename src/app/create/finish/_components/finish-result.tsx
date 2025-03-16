@@ -15,15 +15,14 @@ const FinishResult = () => {
   }, [])
   return (
     <CardWrapper
-      className={"col-span-1 w-auto md:col-span-2"}
-
+      className={"col-span-1 w-auto md:col-span-2 max-h-fit"}
     >
       <div
         className={
           "flex w-full flex-col items-center justify-center gap-4 py-20"
         }
       >
-        <Rocket className={"text-muted-foreground h-72 w-72"} />
+        <Rocket className={"text-muted-foreground h-52 w-52"} />
         <div className={"text-muted-foreground text-lg"}>
           Congratulations, your DAO has been successfully launched!
         </div>

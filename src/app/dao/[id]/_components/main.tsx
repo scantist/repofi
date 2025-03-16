@@ -9,7 +9,7 @@ const DaoContent = () => {
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
         <CardWrapper>
           <div
-            className={"flex flex-row justify-between bg-black/50 px-12 py-3"}
+            className={"flex flex-row justify-between bg-black/50 px-12 py-3 rounded-lg"}
           >
             <div className={"max-w-max text-center"}>
               <div className={"text-sm font-thin"}>Market Cap</div>
@@ -129,7 +129,7 @@ const DaoContent = () => {
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
         <CardWrapper>
-          <div className={"bg-black/50 px-5 py-6"}>
+          <div className={"bg-black/50 px-5 py-6 rounded-lg"}>
             <div className={"w-full px-6"}>
               <CardWrapper className={"w-full"}>
                 <div
@@ -186,7 +186,7 @@ const DaoContent = () => {
         </CardWrapper>
         <ContributorCard />
         <CardWrapper>
-          <div className={"mb-1 rounded-lg bg-black/60 p-4"}>
+          <div className={"rounded-lg bg-black/60 p-4"}>
             <div className={"text-2xl font-medium"}>Token Distribution</div>
             <div className={"mt-3 flex flex-col gap-2"}>
               {Array.from({ length: 11 }, (_, i) => i).map((item, index) => (

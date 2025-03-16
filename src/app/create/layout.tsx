@@ -31,7 +31,7 @@ const CreateLayout =async ({
         </BannerWrapper>
         <div
           className={
-            "mx-auto my-10 grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-3"
+            "mx-4 md:mx-auto my-10 grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-3"
           }
         >
           <div className={"col-span-1 flex flex-col gap-y-4"}>

@@ -13,9 +13,9 @@ const DaoPage = () => {
     <div className={"mt-20 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col"}>
         <div className={"my-10 flex w-full flex-col gap-8 md:flex-row"}>
-          <CardWrapper>
+          <CardWrapper className={"max-h-fit max-w-fit"}>
             <Image
-              height={220}
+              height={240}
               width={335}
               alt={"banner"}
               src={
@@ -51,7 +51,7 @@ const DaoPage = () => {
           </div>
         </div>
       </BannerWrapper>
-      <div className={"max-w-7xl mx-auto"}>
+      <div className={"max-w-7xl mx-4 md:mx-auto"}>
         <DaoContent />
         <ArticleList />
         <TeamList />

@@ -36,7 +36,7 @@ const BindRepositoryEmpty: FC<Props> = ({ githubToken }) => {
   return (
     <div
       className={
-        "bg-card flex min-h-96 flex-col items-center justify-center gap-10 px-14 py-8"
+        "bg-card flex min-h-96 flex-col items-center justify-center gap-10 px-14 py-8 rounded-lg"
       }
     >
       <Waypoints className={"size-32"} />

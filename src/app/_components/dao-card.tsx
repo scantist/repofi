@@ -34,14 +34,14 @@ const DaoCard: FC<Props> = ({ data }) => {
     </Link> : null
   }
   return (
-    <CardWrapper borderClassName={"border-1"} >
+    <CardWrapper>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
         alt={"bg"}
         src={"https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"}
       />
-      <div className={"mb-1 flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
+      <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
         <div className={"truncate text-3xl leading-10 tracking-tighter"}>
           {data.name}
         </div>

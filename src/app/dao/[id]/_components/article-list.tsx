@@ -6,15 +6,17 @@ const ArticleList = () => {
       <div className={"text-4xl font-bold tracking-tight"}>
         Currently Fundraising
       </div>
-      <div className={"grid grid-cols-3 pt-10 gap-8"}>
-        <CardWrapper>
+      <div
+        className={"grid grid-cols-1 gap-8 pt-10 sm:grid-cols-4 md:grid-cols-3"}
+      >
+        <CardWrapper className={"col-span-1 sm:col-span-2 md:col-span-1"}>
           <img
             src={
               "https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"
             }
-            className={" w-full"}
+            className={"w-full rounded-t-lg"}
           />
-          <div className={"mx-6 my-4 pb-4 flex flex-col gap-4"}>
+          <div className={"mx-6 mt-4 flex flex-col gap-4 rounded-lg pb-4"}>
             <div className={"text-xl font-bold"}>
               Identification ofa candidate yeastavatar
             </div>
@@ -25,18 +27,24 @@ const ArticleList = () => {
               have already been studied.
             </div>
             <div className={"flex justify-end"}>
-              <div className={"border border-primary rounded-lg px-2 py-1 left-0 max-w-max"}>Learn More</div>
+              <div
+                className={
+                  "border-primary left-0 max-w-max rounded-lg border px-2 py-1"
+                }
+              >
+                Learn More
+              </div>
             </div>
           </div>
         </CardWrapper>
-        <CardWrapper contentClassName={"bg-card "}>
+        <CardWrapper className={"col-span-1 sm:col-span-2 md:col-span-1"}>
           <img
             src={
               "https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"
             }
-            className={" w-full"}
+            className={"w-full rounded-t-lg"}
           />
-          <div className={"mx-6 my-4 pb-4 flex flex-col gap-4"}>
+          <div className={"mx-6 mt-4 flex flex-col gap-4 rounded-lg pb-4"}>
             <div className={"text-xl font-bold"}>
               Identification ofa candidate yeastavatar
             </div>
@@ -47,18 +55,24 @@ const ArticleList = () => {
               have already been studied.
             </div>
             <div className={"flex justify-end"}>
-              <div className={"border border-primary rounded-lg px-2 py-1 left-0 max-w-max"}>Learn More</div>
+              <div
+                className={
+                  "border-primary left-0 max-w-max rounded-lg border px-2 py-1"
+                }
+              >
+                Learn More
+              </div>
             </div>
           </div>
         </CardWrapper>
-        <CardWrapper>
+        <CardWrapper className={"col-span-1 sm:col-span-2 md:col-span-1"}>
           <img
             src={
               "https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"
             }
-            className={" w-full"}
+            className={"w-full rounded-t-lg"}
           />
-          <div className={"mx-6 my-4 pb-4 flex flex-col gap-4"}>
+          <div className={"mx-6 mt-4 flex flex-col gap-4 rounded-lg pb-4"}>
             <div className={"text-xl font-bold"}>
               Identification ofa candidate yeastavatar
             </div>
@@ -69,7 +83,13 @@ const ArticleList = () => {
               have already been studied.
             </div>
             <div className={"flex justify-end"}>
-              <div className={"border border-primary rounded-lg px-2 py-1 left-0 max-w-max"}>Learn More</div>
+              <div
+                className={
+                  "border-primary left-0 max-w-max rounded-lg border px-2 py-1"
+                }
+              >
+                Learn More
+              </div>
             </div>
           </div>
         </CardWrapper>

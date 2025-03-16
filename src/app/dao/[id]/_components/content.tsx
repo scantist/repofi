@@ -1,9 +1,14 @@
 const Content = () => {
   return (
-    <div className={"my-10 pb-20 flex flex-row"}>
-      <div className={"flex flex-col  flex-1"}>
+    <div className={"my-10 pb-20 flex flex-col md:flex-row"}>
+      <div className={"flex flex-col flex-1"}>
         <div className={"text-4xl font-bold tracking-tight"}>Content</div>
-        <div className={"text-white/50 text-md mt-10 mr-20"}>
+        
+        <div className={"md:hidden mt-6 mb-6 max-w-full"}>
+          <img className={"w-full"} src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} />
+        </div>
+        
+        <div className={"text-white/50 text-md mt-0 md:mt-10 md:mr-20"}>
           The REPO Protocol emerges against the backdrop of the growing
           importance of open source software in today&#39;s technology - driven
           world. As open source projects form the backbone of critical
@@ -17,7 +22,7 @@ const Content = () => {
           development.
         </div>
       </div>
-      <div className={"max-w-[579px]"}>
+      <div className={"hidden md:block max-w-[579px] md:mt-0"}>
         <img className={"w-full"} src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} />
       </div>
     </div>
