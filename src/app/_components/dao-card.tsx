@@ -38,8 +38,8 @@ const DaoCard: FC<Props> = ({ data }) => {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
-        alt={"bg"}
-        src={"https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"}
+        alt={data.name}
+        src={data.avatar}
       />
       <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
         <div className={"truncate text-3xl leading-10 tracking-tighter"}>

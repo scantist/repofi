@@ -1,8 +1,12 @@
 import BannerWrapper from "~/components/banner-wrapper"
 import LaunchingDao from "~/app/_components/launching-dao"
 import LiveDao from "~/app/_components/live-dao"
+import { type HomeSearchParams } from "~/lib/schema"
 
-const LaunchpadPage = () => {
+const LaunchpadPage = async ({ searchParams }: {
+  searchParams: Promise<HomeSearchParams>
+}) => {
+  console.log(await searchParams)
   return <div className={"mt-10 min-h-full"}>
     <BannerWrapper className={"flex w-full flex-col pb-20"}>
       <div

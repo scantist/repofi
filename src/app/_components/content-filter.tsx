@@ -13,11 +13,12 @@ import { useAuth } from "~/components/auth/auth-context"
 import Switcher from "~/components/ui/switcher"
 import Sorter from "~/app/_components/content-filter-sort"
 
-const ContentFilter: FC<HomeSearchParams> = ({
+const ContentFilter: FC<HomeSearchParams & {prefix?: string}> = ({
   owned,
   starred,
   search,
-  orderBy
+  orderBy,
+   prefix
 }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -39,9 +40,9 @@ const ContentFilter: FC<HomeSearchParams> = ({
   ) => {
     const newSearchParams = new URLSearchParams(searchParams)
     if (!value) {
-      newSearchParams.delete(key)
+      newSearchParams.delete(`${prefix ?? "" }${key}`)
     } else {
-      newSearchParams.set(key, String(value))
+      newSearchParams.set(`${prefix ?? "" }${key}`, String(value))
     }
     startTransition(() => {
       set(value)
