@@ -10,14 +10,13 @@ import { House } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 type Props = {
-  children?: React.ReactNode,
-  data: DaoPage,
+  children?: React.ReactNode;
+  data: DaoPage;
 };
 
 const DaoCard: FC<Props> = ({ data }) => {
-
   const router = useRouter()
-  const IconComponent = ({ type, href }: { type: string, href: string }) => {
+  const IconComponent = ({ type, href }: { type: string; href: string }) => {
     let Icon
     if (type.toLowerCase() === "website") {
       Icon = House
@@ -29,9 +28,18 @@ const DaoCard: FC<Props> = ({ data }) => {
         SiTelegram
       }[IconName]
     }
-    return Icon ? <Link href={href} className={"cursor-pointer"} target={"_blank"}>
-      <Icon className="size-3" />
-    </Link> : null
+
+    if (Icon) {
+      return href ? (
+        <Link href={href} className={"cursor-pointer"} target={"_blank"}>
+          <Icon className="size-4" />
+        </Link>
+      ) : (
+        <Icon className="size-4 text-foreground/30" />
+      )
+    }
+
+    return null
   }
   return (
     <CardWrapper>
@@ -48,7 +56,7 @@ const DaoCard: FC<Props> = ({ data }) => {
         <div className={"truncate text-sm text-white/58"}>
           <Link href={data.url}>{data.url}</Link>
         </div>
-        <div className={"flex flex-row gap-x-6 mt-2 text-xs"}>
+        <div className={"mt-2 flex flex-row gap-x-6 text-xs"}>
           <div>
             <span className={"mr-1"}>Stars:</span>
             <span className={"text-white/80"}>{data.repoStar}</span>
@@ -69,33 +77,50 @@ const DaoCard: FC<Props> = ({ data }) => {
         >
           <div className={"mr-2 border-r-1 border-r-gray-400"}>
             <div className={"text-muted-foreground text-sm"}>Market cap</div>
-            <div className={"text-primary-foreground mt-2 text-md font-bold"}>
-              {data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}
+            <div className={"text-primary-foreground text-md mt-2 font-bold"}>
+              {data.tokenInfo.marketCap.length === 0
+                ? "0"
+                : data.tokenInfo.marketCap}
             </div>
           </div>
           <div className={"pl-3"}>
             <div className={"text-muted-foreground text-sm"}># Holders</div>
-            <div className={"text-primary-foreground mt-2 text-md font-bold"}>
+            <div className={"text-primary-foreground text-md mt-2 font-bold"}>
               {data.tokenInfo.holderCount}
             </div>
           </div>
           <div className={"border-l-1 border-l-gray-400 pl-5"}>
             <div className={"text-muted-foreground text-sm"}>Status</div>
-            <div className={"text-primary-foreground mt-2 text-md tracking-tighter font-bold"}>
+            <div
+              className={
+                "text-primary-foreground text-md mt-2 font-bold tracking-tighter"
+              }
+            >
               {data.status}
             </div>
           </div>
         </div>
         <div className={"flex flex-row items-center justify-between"}>
-          <div className={"text-sm cursor-pointer font-bold"} onClick={() => {
-            router.push("/dao/test")
-          }}>DETAIL</div>
           <div className={"flex flex-row gap-2"}>
-            {
-              (data.links as DaoLinks).map((link, index) => (
-                <IconComponent key={index} type={link.type} href={link.value}/>
-              ))
-            }
+            {["website", "x", "discord", "telegram"].map((socialType) => (
+              <IconComponent
+                key={socialType}
+                type={socialType}
+                href={
+                  (data.links as DaoLinks).find(
+                    (link) => link.type.toLowerCase() === socialType,
+                  )?.value ?? ""
+                }
+              />
+            ))}{" "}
+          </div>
+          <div
+            className={"cursor-pointer text-sm font-bold"}
+            onClick={() => {
+              router.push("/dao/test")
+            }}
+          >
+            {data.ticker}
           </div>
         </div>
       </div>

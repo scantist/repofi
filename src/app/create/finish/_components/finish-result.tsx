@@ -6,12 +6,37 @@ import { useSetAtom } from "jotai"
 import { stepAtom } from "~/store/create-dao-store"
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
+import confetti from "canvas-confetti"
 
 const FinishResult = () => {
   const setAtom = useSetAtom(stepAtom)
   const router = useRouter()
   useEffect(() => {
     setAtom("FINISH")
+    const end = Date.now() + 3 * 1000 // 3 seconds
+
+    const frame = () => {
+      if (Date.now() > end) return
+
+      void confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 0, y: 0.5 }
+      })
+      void confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 1, y: 0.5 }
+      })
+
+      requestAnimationFrame(frame)
+    }
+
+    frame()
   }, [])
   return (
     <CardWrapper
@@ -24,7 +49,7 @@ const FinishResult = () => {
       >
         <Rocket className={"text-muted-foreground h-52 w-52"} />
         <div className={"text-muted-foreground text-lg"}>
-          Congratulations, your DAO has been successfully launched!
+          Congratulations, your DAO has been successfully created!
         </div>
         <div className={"text-muted-foreground text-lg"}>
           Please go to the{" "}

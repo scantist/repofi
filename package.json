@@ -50,6 +50,7 @@
     "@wagmi/core": "^2.16.4",
     "arctic": "^3.5.0",
     "bullmq": "^5.41.7",
+    "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cookies-next": "^5.1.0",
@@ -77,6 +78,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/eslint": "^8.56.12",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
