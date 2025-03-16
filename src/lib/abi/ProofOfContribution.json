@@ -1,6 +1,16 @@
 [
   {
     "inputs": [],
+    "name": "EnforcedPause",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ExpectedPause",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "InvalidInitialization",
     "type": "error"
   },
@@ -32,39 +42,59 @@
     "type": "error"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "cycleId",
+        "type": "uint256"
       }
     ],
-    "name": "SafeERC20FailedOperation",
-    "type": "error"
+    "name": "ContributionCycleStarted",
+    "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "cycleId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "contributor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "contributorId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "score",
         "type": "uint256"
       }
     ],
-    "name": "ClaimedInstant",
+    "name": "ContributionUpdated",
     "type": "event"
   },
   {
@@ -73,48 +103,17 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "token",
+        "name": "updater",
         "type": "address"
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
       }
     ],
-    "name": "ClaimedLinear",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "totalAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "ClaimedLinearFinished",
+    "name": "ContributionUpdaterSet",
     "type": "event"
   },
   {
@@ -174,29 +173,24 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "token",
+        "name": "account",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint64",
-        "name": "unlockRatio",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint48",
-        "name": "lockPeriod",
-        "type": "uint48"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint48",
-        "name": "lockStart",
-        "type": "uint48"
       }
     ],
-    "name": "TokenLockInitialized",
+    "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Unpaused",
     "type": "event"
   },
   {
@@ -209,37 +203,27 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "claim",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "defaultLockPeriod",
+    "name": "contributions",
     "outputs": [
       {
         "internalType": "uint48",
-        "name": "",
+        "name": "startTime",
         "type": "uint48"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "defaultUnlockRatio",
-    "outputs": [
+      },
       {
-        "internalType": "uint64",
-        "name": "",
-        "type": "uint64"
+        "internalType": "uint256",
+        "name": "totalScore",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -248,17 +232,17 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
       },
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
+        "internalType": "uint48",
+        "name": "timestamp",
+        "type": "uint48"
       }
     ],
-    "name": "getLinearClaimableAmount",
+    "name": "findCycleByTimestamp",
     "outputs": [
       {
         "internalType": "uint256",
@@ -272,16 +256,63 @@
   {
     "inputs": [
       {
-        "internalType": "uint64",
-        "name": "defaultUnlockRatio_",
-        "type": "uint64"
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cycleId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "contributor",
+        "type": "address"
+      }
+    ],
+    "name": "getContribution",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
       },
       {
         "internalType": "uint48",
-        "name": "defaultLockPeriod_",
+        "name": "timestamp",
         "type": "uint48"
+      },
+      {
+        "internalType": "address",
+        "name": "contributor",
+        "type": "address"
       }
     ],
+    "name": "getContributionByTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -291,23 +322,16 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "token",
+        "name": "",
         "type": "address"
       }
     ],
-    "name": "initializeTokenLock",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "launchPad",
+    "name": "isUpdater",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "bool",
         "name": "",
-        "type": "address"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -321,6 +345,19 @@
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "paused",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -349,69 +386,32 @@
   {
     "inputs": [
       {
-        "internalType": "uint48",
-        "name": "newDefaultLockPeriod",
-        "type": "uint48"
-      }
-    ],
-    "name": "setDefaultLockPeriod",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint64",
-        "name": "newDefaultUnlockRatio",
-        "type": "uint64"
-      }
-    ],
-    "name": "setDefaultUnlockRatio",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
-        "name": "_launchPad",
+        "name": "updater",
         "type": "address"
-      }
-    ],
-    "name": "setLaunchPadAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "tokenLockInfo",
-    "outputs": [
-      {
-        "internalType": "uint64",
-        "name": "unlockRatio",
-        "type": "uint64"
       },
       {
-        "internalType": "uint48",
-        "name": "lockPeriod",
-        "type": "uint48"
-      },
-      {
-        "internalType": "uint48",
-        "name": "lockStart",
-        "type": "uint48"
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
       }
     ],
-    "stateMutability": "view",
+    "name": "setContributionUpdater",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "startNewCycle",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -430,35 +430,29 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "userLockInfo",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "instantClaimed",
-        "type": "bool"
-      },
-      {
         "internalType": "uint256",
-        "name": "linearClaimedAmount",
+        "name": "tokenId",
         "type": "uint256"
       },
       {
+        "internalType": "address",
+        "name": "contributor",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "contributorId",
+        "type": "string"
+      },
+      {
         "internalType": "uint256",
-        "name": "linearClaimedTotal",
+        "name": "score",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "updateContribution",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
