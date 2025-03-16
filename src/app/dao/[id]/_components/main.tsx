@@ -7,7 +7,7 @@ const DaoContent = () => {
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
-        <CardWrapper contentClassName={"bg-card"}>
+        <CardWrapper>
           <div
             className={"flex flex-row justify-between bg-black/50 px-12 py-3"}
           >
@@ -31,7 +31,7 @@ const DaoContent = () => {
           </div>
         </CardWrapper>
         <img src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} alt={"K"} />
-        <CardWrapper contentClassName={"bg-card"}>
+        <CardWrapper>
           <div className={"flex w-full flex-col gap-4 px-10 py-5"}>
             <div className={"text-2xl font-bold"}>Message Board</div>
             <div
@@ -128,10 +128,10 @@ const DaoContent = () => {
         </CardWrapper>
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
-        <CardWrapper contentClassName={"bg-card"}>
+        <CardWrapper>
           <div className={"bg-black/50 px-5 py-6"}>
             <div className={"w-full px-6"}>
-              <CardWrapper className={"w-full"} contentClassName={"bg-card"}>
+              <CardWrapper className={"w-full"}>
                 <div
                   className={
                     "text-md flex w-full flex-row items-center justify-around"
@@ -185,7 +185,7 @@ const DaoContent = () => {
           </div>
         </CardWrapper>
         <ContributorCard />
-        <CardWrapper contentClassName={"bg-card"}>
+        <CardWrapper>
           <div className={"mb-1 rounded-lg bg-black/60 p-4"}>
             <div className={"text-2xl font-medium"}>Token Distribution</div>
             <div className={"mt-3 flex flex-col gap-2"}>

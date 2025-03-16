@@ -51,7 +51,7 @@ const Launch = () => {
   const [daoInformation, setDaoInformation] = useAtom(daoFormsAtom)
   const [launchStep, setLaunchStep] = useAtom(stepAtom)
   useEffect(() => {
-    setLaunchStep("LAUNCH")
+    setLaunchStep("INFORMATION")
   }, [])
   const form = useForm<LaunchParams>({
     resolver: zodResolver(launchSchema, { async: true }),
@@ -257,7 +257,7 @@ const Launch = () => {
   }
   return (
     <CardWrapper
-      className={"col-span-1 w-full md:col-span-2"}
+      className={"col-span-1 w-auto md:col-span-2"}
       contentClassName={"bg-card "}
     >
       <MultiStepLoader

@@ -15,8 +15,8 @@ const FinishResult = () => {
   }, [])
   return (
     <CardWrapper
-      className={"col-span-1 w-full md:col-span-2"}
-      contentClassName={"bg-card"}
+      className={"col-span-1 w-auto md:col-span-2"}
+
     >
       <div
         className={

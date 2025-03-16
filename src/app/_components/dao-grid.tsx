@@ -31,13 +31,13 @@ const DaoGrid: FC<Props> = ({
   }
 
   return (
-    <div className={"grid grid-cols-3 gap-x-2 gap-y-5"}>
+    <div className={"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-2 gap-y-5"}>
       {response && response?.list.length > 0 ? (
         <>
           {response?.list.map((item) => (
             <DaoCard data={item} key={`launching-dao-${item.id}`} />
           ))}
-          <div className={"col-span-3 mt-6"}>
+          <div className={"col-span-1 sm:col-span-2 md:col-span-3 mt-6"}>
             <ListPagination
               pageable={pageable}
               totalPages={response?.pages ?? 0}

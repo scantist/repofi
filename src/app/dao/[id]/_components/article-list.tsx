@@ -7,7 +7,7 @@ const ArticleList = () => {
         Currently Fundraising
       </div>
       <div className={"grid grid-cols-3 pt-10 gap-8"}>
-        <CardWrapper contentClassName={"bg-card"}>
+        <CardWrapper>
           <img
             src={
               "https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"
@@ -51,7 +51,7 @@ const ArticleList = () => {
             </div>
           </div>
         </CardWrapper>
-        <CardWrapper contentClassName={"bg-card"}>
+        <CardWrapper>
           <img
             src={
               "https://storage.googleapis.com/repofi/launchpad/avatar/1741621897031_85936f2e95.png"

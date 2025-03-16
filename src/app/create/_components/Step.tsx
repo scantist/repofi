@@ -49,7 +49,7 @@ const Step = () => {
     setCurrent(stepLevel[currentStep])
   }, [currentStep])
   return (
-    <CardWrapper contentClassName={"bg-card"}>
+    <CardWrapper>
       <div className={"relative mx-6 flex flex-col gap-y-8 py-8"}>
         {stepList.map((item) => (
           <div

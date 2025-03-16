@@ -15,7 +15,7 @@ const LiveDao = () => {
       }
     >
       <div className={"text-4xl font-bold"}>Live DAOs</div>
-      <CardWrapper contentClassName={"bg-card"}>
+      <CardWrapper>
         <div className={"p-4 text-sm font-thin"}>
           Join DeSci by participating in the early stage funding of new BioDAOs.
           Your participation fuels cutting-edge research, open collaboration,

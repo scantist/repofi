@@ -37,10 +37,10 @@ const CardWrapper: FC<Props> = ({ children, borderClassName, className, contentC
   }, [children]) // 当 children 改变时重新计算
 
   return (
-    <div className={cn("relative", className)} onClick={() => onClick?.()}>
+    <div className={cn("mx-4 md:mx-0 relative", className)} onClick={() => onClick?.()}>
       <div
         ref={contentRef}
-        className={cn("m-1 relative z-10", contentClassName)}
+        className={cn("m-1 relative z-10 bg-card", contentClassName)}
       >
         {children}
       </div>

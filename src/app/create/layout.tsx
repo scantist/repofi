@@ -36,7 +36,7 @@ const CreateLayout =async ({
         >
           <div className={"col-span-1 flex flex-col gap-y-4"}>
             <Step />
-            <CardWrapper contentClassName={"bg-card"}>
+            <CardWrapper className={""}>
               <div className={"flex flex-col gap-y-5 px-11 py-10"}>
                 <div className={"flex flex-row gap-x-4"}>
                   <Sparkle />
