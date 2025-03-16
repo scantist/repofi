@@ -2,8 +2,13 @@
 
 import CardWrapper from "~/components/card-wrapper"
 import DaoGrid from "./dao-grid"
+import type { DaoSearchResult } from "~/server/service/dao"
 
-const LaunchingDao = () => {
+interface LaunchingDaoProps {
+  initialData: DaoSearchResult;
+}
+
+const LaunchingDao = ({ initialData }: LaunchingDaoProps) => {
   return (
     <div
       className={
@@ -19,12 +24,7 @@ const LaunchingDao = () => {
         </div>
       </CardWrapper>
       <DaoGrid
-        initParam={{
-          status: ["LAUNCHING"],
-          orderBy: "latest",
-          owned: false,
-          starred: false
-        }}
+        initialData={initialData}
       />
     </div>
   )

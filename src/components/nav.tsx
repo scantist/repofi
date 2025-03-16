@@ -8,7 +8,7 @@ import { MobileMenu } from "./mobile-menu"
 export const navItems = [
   {
     name: "Launchpad",
-    href: "/launchpad",
+    href: "/",
     requiresLogin: false
   },
   {

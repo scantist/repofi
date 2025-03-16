@@ -5,8 +5,13 @@ import { useState } from "react"
 import { cn } from "~/lib/utils"
 import DaoGrid from "./dao-grid"
 import LiveTable from "~/app/_components/live-table"
+import { type DaoSearchResult } from "~/server/service/dao"
 
-const LiveDao = () => {
+interface LiveDaoProps {
+  initialData?: DaoSearchResult;
+}
+
+const LiveDao = ({ initialData }: LiveDaoProps) => {
   const [type, setType] = useState<"DISCOVER" | "ANALYTICS">("DISCOVER")
   return (
     <div
@@ -47,16 +52,9 @@ const LiveDao = () => {
         </div>
       </div>
       {type === "DISCOVER" ? (
-        <div className={"grid grid-cols-3"}>
-          <DaoGrid
-            initParam={{
-              status: ["LAUNCHED"],
-              orderBy: "latest",
-              owned: false,
-              starred: false
-            }}
-          />
-        </div>
+        <DaoGrid
+          initialData={initialData}
+        />
       ) : (
         <LiveTable />
       )}

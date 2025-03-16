@@ -290,4 +290,6 @@ class DaoService {
     return { data, noData: kineData.length < countBack }
   }
 }
+
+export type DaoSearchResult = Awaited<ReturnType<typeof daoService.search>>
 export const daoService = new DaoService()

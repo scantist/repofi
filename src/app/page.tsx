@@ -1,12 +1,27 @@
 import BannerWrapper from "~/components/banner-wrapper"
 import LaunchingDao from "~/app/_components/launching-dao"
 import LiveDao from "~/app/_components/live-dao"
-import { type HomeSearchParams } from "~/lib/schema"
+import { api } from "~/trpc/server"
+import type { DaoSearchResult } from "~/server/service/dao"
 
-const LaunchpadPage = async ({ searchParams }: {
-  searchParams: Promise<HomeSearchParams>
-}) => {
-  console.log(await searchParams)
+const LaunchpadPage = async () => {
+  const launchingDao: DaoSearchResult = await api.dao.search({
+    status: ["LAUNCHING"],
+    orderBy: "latest",
+    owned: false,
+    starred: false,
+    size: 10,
+    page: 0
+  })
+
+  const liveDao: DaoSearchResult = await api.dao.search({
+    status: ["LAUNCHED"],
+    orderBy: "latest",
+    owned: false,
+    starred: false,
+    size: 10,
+    page: 0
+  })
   return <div className={"mt-10 min-h-full"}>
     <BannerWrapper className={"flex w-full flex-col pb-20"}>
       <div
@@ -38,8 +53,8 @@ const LaunchpadPage = async ({ searchParams }: {
         </div>
       </div>
     </BannerWrapper>
-    <LaunchingDao/>
-    <LiveDao/>
+    <LaunchingDao initialData={launchingDao}/>
+    <LiveDao initialData={liveDao}/>
   </div>
 }
 

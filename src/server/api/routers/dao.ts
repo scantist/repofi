@@ -9,12 +9,12 @@ import {
   homeSearchParamsSchema,
   pageableSchema
 } from "~/lib/schema"
-import { daoService } from "~/server/service/dao"
+import { type DaoSearchResult, daoService } from "~/server/service/dao"
 
 export const daoRouter = createTRPCRouter({
   search: publicProcedure
     .input(homeSearchParamsSchema.merge(pageableSchema))
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): DaoSearchResult => {
       const userAddress = ctx.session?.address
       const { page, size, ...homeSearchParams } = input
       return daoService.search(homeSearchParams, { page, size }, userAddress)
