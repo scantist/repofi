@@ -12,8 +12,10 @@ import {
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
-import { useTreasuryVaultAddress } from "~/hooks/use-launch-contract"
-import { erc20Abi } from "viem"
+import {
+  useAssetAllowance,
+  useBalance as useLaunchBalance
+} from "~/hooks/use-launch-contract"
 
 const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 /**
@@ -76,113 +78,6 @@ export function useAmountOutMin({
   }
 }
 
-export function useAllowance({
-  amount,
-  tokenAddress,
-  contractAddress
-}: {
-  amount: bigint;
-  tokenAddress: `0x${string}` | undefined;
-  contractAddress: `0x${string}` | undefined;
-}) {
-  const { address } = useAccount()
-
-  const {
-    data: allowance,
-    isLoading: isAllowanceLoading,
-    refetch: refetchAllowance
-  } = useReadContract({
-    abi: erc20Abi,
-    address: tokenAddress,
-    functionName: "allowance",
-    args: [address!, contractAddress!],
-    query: {
-      enabled: !!address && !!contractAddress && !!tokenAddress && amount > 0n
-    }
-  })
-
-  const allowanceOk =
-    amount === 0n
-      ? true
-      : !isAllowanceLoading && !!allowance && allowance >= amount
-
-  const {
-    data: simulateResult,
-    isLoading: isSimulating,
-    isError: isSimulateError,
-    error: simulateError
-  } = useSimulateContract({
-    abi: erc20Abi,
-    address: tokenAddress,
-    functionName: "approve",
-    args: [contractAddress!, amount],
-    query: {
-      enabled:
-        !!contractAddress &&
-        !!tokenAddress &&
-        !!address &&
-        amount > BigInt(0) &&
-        !allowanceOk
-    }
-  })
-
-  const {
-    data: hash,
-    writeContract,
-    isPending: isWritingContract,
-    isError: isWritingContractError,
-    error: writingContractError,
-    reset
-  } = useWriteContract()
-
-  const {
-    data: receipt,
-    isLoading: isReceiptLoading,
-    isError: isReceiptError,
-    error: receiptError
-  } = useWaitForTransactionReceipt({
-    hash,
-    query: {
-      enabled: !!hash
-    }
-  })
-
-  const checkAllowance = useCallback(
-    function () {
-      if (allowanceOk) {
-        return true
-      }
-
-      if (simulateResult && !isSimulateError) {
-        writeContract(simulateResult.request)
-      }
-      return false
-    },
-    [allowanceOk, simulateResult, isSimulateError, writeContract],
-  )
-
-  if (!allowanceOk && !!receipt) {
-    void refetchAllowance()
-  }
-
-  const _reset = useCallback(() => {
-    reset()
-    void refetchAllowance()
-  }, [reset, refetchAllowance])
-
-  return {
-    checkAllowance,
-    reset: _reset,
-    receipt,
-    error: simulateError ?? writingContractError ?? receiptError,
-    isAllowanceOk: allowanceOk,
-    isApprovePending: isSimulating,
-    isApproving: isWritingContract || isReceiptLoading,
-    isApproveError: isWritingContractError || isSimulateError || isReceiptError,
-    hasBeenApproved: !!receipt
-  }
-}
-
 function isOverLaunchPoint(message: string) {
   return message.includes("Total share is greater than sell launch point")
 }
@@ -198,22 +93,20 @@ function isOverLaunchPoint(message: string) {
  */
 export function useTrade({
   action,
-  tokenIn,
-  tokenOut,
+  tokenId,
+  assetAddress,
+  isNativeAsset,
   amountIn,
   amountOutMin
 }: {
   action: "buy" | "sell";
-  tokenIn: `0x${string}`;
-  tokenOut: `0x${string}`;
+  tokenId: bigint;
+  assetAddress: `0x${string}`;
+  isNativeAsset: boolean;
   amountIn: bigint;
   amountOutMin: bigint;
 }) {
   const { address: userAddress } = useAccount()
-
-  const { address: treasuryVaultAddress, isLoading: isBondingCurveLoading } =
-    useTreasuryVaultAddress()
-
   const {
     data: inBalance,
     isLoading: isInBalanceLoading,
@@ -221,20 +114,17 @@ export function useTrade({
   } = useBalance({
     address: userAddress,
     chainId: defaultChain.id,
-    token: tokenIn,
+    ...(isNativeAsset ? {} : { token: assetAddress }),
     query: {
       enabled: !!userAddress
     }
   })
 
   const { isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
-    useBalance({
+    useLaunchBalance({
       address: userAddress,
-      chainId: defaultChain.id,
-      token: tokenOut,
-      query: {
-        enabled: !!userAddress && !!tokenOut
-      }
+      tokenId: tokenId,
+      enabled: !!userAddress && !!tokenId
     })
 
   const balanceOk = !!inBalance && inBalance.value >= amountIn
@@ -248,13 +138,11 @@ export function useTrade({
     isApproveError,
     hasBeenApproved,
     reset: resetApproval
-  } = useAllowance({
+  } = useAssetAllowance({
     amount: amountIn,
-    tokenAddress: tokenIn,
-    contractAddress: launchPadAddress
+    assetAddress,
+    isNativeAsset
   })
-
-  const aiToken = action === "buy" ? tokenOut : tokenIn
 
   const {
     data: tradeSimulation,
@@ -265,7 +153,7 @@ export function useTrade({
     abi: launchPadAbi,
     address: launchPadAddress,
     functionName: action === "buy" ? "buy" : "sell",
-    args: [amountIn, aiToken, amountOutMin],
+    args: [tokenId, amountIn, amountOutMin],
     query: {
       enabled:
         isAllowanceOk &&
@@ -285,7 +173,7 @@ export function useTrade({
     abi: launchPadAbi,
     address: launchPadAddress,
     functionName: "buyMax",
-    args: [aiToken],
+    args: [tokenId],
     query: {
       enabled:
         action === "buy" &&
@@ -388,9 +276,7 @@ export function useTrade({
     isApproveError,
     hasBeenApproved,
 
-    isTradePending:
-      isBondingCurveLoading ||
-      isInBalanceLoading ||
+    isTradePending: isInBalanceLoading ||
       isOutBalanceLoading ||
       isTradeSimulating ||
       isBuyMaxSimulating,
