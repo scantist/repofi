@@ -170,10 +170,6 @@ export function useLaunchTransaction({
   onLaunchError?: (error: unknown) => void,
   targetContractAddress?: `0x${string}`;
 }) {
-  const totalSupply = 1000000
-  const raisedAssetAmount = 500000
-  const salesRatio = 5000
-  const reservedRatio = 1000
   const { address } = useAccount()
   const config = useConfig()
   const [daoForms] = useAtom(daoFormsAtom)
@@ -205,10 +201,6 @@ export function useLaunchTransaction({
           args: [
             daoForms.name,
             daoForms.ticker,
-            totalSupply,
-            raisedAssetAmount,
-            salesRatio,
-            reservedRatio,
             currentAsset.address as `0x${string}`
           ],
           account: address,
@@ -240,16 +232,18 @@ export function useLaunchTransaction({
           abi: launchPadAbi
         })
         const {
+          user: userAddress,  // Changed from userAddress:userAddress to user: userAddress
           asset: eventAsset,
           tokenId: tokenId,
           initialPrice: initialPrice
         } = args as unknown as {
+          user: `0x${string}`;  // Changed from userAddress to user
           asset: `0x${string}`;
           tokenId: bigint;
           initialPrice: bigint;
         }
-
-        if (!eventAsset || !tokenId || !initialPrice) {
+        console.log("Decoded event args:", args)
+        if (!eventAsset || !tokenId || !initialPrice||!userAddress) {
           onLaunchError?.(new Error("Failed to parse launch event"))
           return
         }
