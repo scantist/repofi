@@ -36,3 +36,21 @@ export function useTreasuryVaultAddress() {
     isLoading
   }
 }
+
+
+export function useTokenLockerAddress() {
+  const { data: address, isLoading } = useReadContract({
+    abi: launchPadAbi,
+    address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
+    functionName: "tokenLocker",
+    query: {
+      placeholderData: keepPreviousData,
+      staleTime: 1000 * 60 * 60 * 24
+    }
+  })
+
+  return {
+    address: address as `0x${string}` | undefined,
+    isLoading
+  }
+}
