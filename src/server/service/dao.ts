@@ -70,11 +70,26 @@ class DaoService {
         platform: true,
         tokenInfo: {
           select: {
+            tokenId: true,
             tokenAddress: true,
+            name: true,
+            ticker: true,
+            creator: true,
+            isGraduated: true,
+            createdAt: true,
+            updatedAt: true,
+            liquidity: true,
+            price: true,
             marketCap: true,
             totalSupply: true,
+            raisedAssetAmount: true,
+            salesRatio: true,
+            reservedRatio: true,
+            unlockRatio: true,
             holderCount: true,
-            assetTokenAddress: true
+            assetTokenAddress: true,
+            graduatedAt: true,
+            uniswapV3Pair: true
           }
         },
         stars: userAddress
@@ -299,6 +314,93 @@ class DaoService {
         sort:"asc"
       }
     })
+  }
+
+  async detail(daoId:string,userAddress?:string) {
+    const dao = await db.dao.findUnique({
+      where: {
+        id: daoId
+      },
+      select: {
+        id: true,
+        name: true,
+        ticker: true,
+        description: true,
+        url: true,
+        type: true,
+        avatar: true,
+        createdAt: true,
+        updatedAt: true,
+        createdBy: true,
+        tokenId: true,
+        links: true,
+        status: true,
+        marketCapUsd: true,
+        priceUsd: true,
+        platform: true,
+        tokenInfo: {
+          select: {
+            tokenId: true,
+            tokenAddress: true,
+            name: true,
+            ticker: true,
+            creator: true,
+            isGraduated: true,
+            createdAt: true,
+            updatedAt: true,
+            liquidity: true,
+            price: true,
+            marketCap: true,
+            totalSupply: true,
+            raisedAssetAmount: true,
+            salesRatio: true,
+            reservedRatio: true,
+            unlockRatio: true,
+            holderCount: true,
+            assetTokenAddress: true,
+            graduatedAt: true,
+            uniswapV3Pair: true
+          }
+        },
+        contents: {
+          select: {
+            id:true,
+            sort:true,
+            title:true,
+            type:true,
+            data:true
+          }
+        },
+        stars: {
+          select: {
+            userAddress: true
+          }
+        }
+      }
+    })
+    if(!dao){
+      return null
+    }
+    const { platform, owner, repo } = parseRepoUrl(dao.url)
+    const repoInfo = await fetchRepoInfo(platform, owner, repo)
+    return {
+      ...dao,
+      marketCapUsd: dao.marketCapUsd.toString(),
+      priceUsd: dao.priceUsd.toString(),
+      isStarred: dao.stars?.some((star) => star.userAddress === userAddress),
+      stars:dao.stars?.length,
+      repoStar: repoInfo.stargazers_count,
+      repoWatch: repoInfo.watchers_count,
+      repoIssues: repoInfo.open_issues_count,
+      repoForks: repoInfo.forks_count,
+      license: repoInfo.license?.spdx_id,
+      tokenInfo: {
+        ...dao.tokenInfo,
+        marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
+        totalSupply: dao.tokenInfo.totalSupply?.toString() ?? "",
+        holderCount: dao.tokenInfo.holderCount.toString()
+      }
+    }
   }
 }
 
