@@ -16,6 +16,7 @@ export function toHumanAmount(
   decimalPlaces = 2
 ) {
   const _value = value.toString()
+  console.log("toHumanAmount", value, new Decimal(_value).div(new Decimal(10).pow(decimal)).toFixed(decimalPlaces, Decimal.ROUND_DOWN))
   return new Decimal(_value)
     .div(new Decimal(10).pow(decimal))
     .toFixed(decimalPlaces, Decimal.ROUND_DOWN)

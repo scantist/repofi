@@ -379,7 +379,7 @@ class DaoService {
       }
     })
     if(!dao){
-      return null
+      throw new Error("Not found dao!")
     }
     const { platform, owner, repo } = parseRepoUrl(dao.url)
     const repoInfo = await fetchRepoInfo(platform, owner, repo)
@@ -405,4 +405,5 @@ class DaoService {
 }
 
 export type DaoSearchResult = Awaited<ReturnType<typeof daoService.search>>
+export type DaoDetailResult = Awaited<ReturnType<typeof daoService.detail>>
 export const daoService = new DaoService()

@@ -1,27 +1,54 @@
+"use client"
+
 import { SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import CardWrapper from "~/components/card-wrapper"
-import { Input } from "~/components/ui/input"
 import ContributorCard from "~/app/dashboard/_components/contributor-card"
+import TradingCard from "~/app/dao/[id]/trading/card"
+import { type DaoDetailResult } from "~/server/service/dao"
+import { shortenAddress } from "~/lib/web3"
 
-const DaoContent = () => {
+interface DaoContentProps {
+  data: DaoDetailResult;
+}
+
+const DaoContent = ({ data }: DaoContentProps) => {
+  console.log(data?.tokenInfo?.tokenAddress)
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
         <CardWrapper>
           <div
-            className={"flex flex-row justify-between bg-black/50 px-12 py-3 rounded-lg"}
+            className={
+              "flex flex-row justify-between rounded-lg bg-black/50 px-12 py-3"
+            }
           >
+            <div className={"text-center"}>
+              <div className={"text-sm font-thin"}>Token Id</div>
+              <div className={"mt-2 text-xl"}>{data?.tokenId}</div>
+            </div>
             <div className={"max-w-max text-center"}>
               <div className={"text-sm font-thin"}>Market Cap</div>
-              <div className={"mt-2 text-xl"}>9.13k</div>
+              <div className={"mt-2 text-xl"}>{data?.marketCapUsd}</div>
             </div>
             <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Created By</div>
-              <div className={"mt-2 text-xl"}>0x2eFd...7dCF</div>
+              <a
+                target="_blank"
+                rel="noreferrer"
+                className="underline mt-2 block hover:no-underline"
+              >
+                {shortenAddress(data?.createdBy ?? "")}
+              </a>
             </div>
             <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Token Address</div>
-              <div className={"mt-2 text-xl"}>0x2eFd...7dCF</div>
+              <a
+                target="_blank"
+                rel="noreferrer"
+                className="underline mt-2 block hover:no-underline"
+              >
+                {shortenAddress(data?.tokenInfo?.tokenAddress ?? "")}
+              </a>
             </div>
           </div>
           <div className={"bg-secondary flex flex-row gap-4 px-12 py-3"}>
@@ -30,7 +57,10 @@ const DaoContent = () => {
             <SiX />
           </div>
         </CardWrapper>
-        <img src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} alt={"K"} />
+        <img
+          src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"}
+          alt={"K"}
+        />
         <CardWrapper>
           <div className={"flex w-full flex-col gap-4 px-10 py-5"}>
             <div className={"text-2xl font-bold"}>Message Board</div>
@@ -128,62 +158,7 @@ const DaoContent = () => {
         </CardWrapper>
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
-        <CardWrapper>
-          <div className={"bg-black/50 px-5 py-6 rounded-lg"}>
-            <div className={"w-full px-6"}>
-              <CardWrapper className={"w-full"}>
-                <div
-                  className={
-                    "text-md flex w-full flex-row items-center justify-around"
-                  }
-                >
-                  <div
-                    className={
-                      "bg-secondary w-full flex-1 cursor-pointer rounded-lg py-2 text-center"
-                    }
-                  >
-                    Buy
-                  </div>
-                  <div
-                    className={
-                      "w-full flex-1 cursor-pointer rounded-lg py-2 text-center"
-                    }
-                  >
-                    Sell
-                  </div>
-                </div>
-              </CardWrapper>
-            </div>
-            <div className={"mt-10 flex flex-row justify-between"}>
-              <div className={"text-gray-500"}>Balance 11,323.23 AGENT</div>
-              <div className={"font-thin"}>MAX</div>
-            </div>
-            <Input className={"h-14"} />
-            <div className={"mt-4 grid grid-cols-3 gap-4"}>
-              <div className={"bg-[#22272B] py-1 text-center font-thin"}>
-                10
-              </div>
-              <div className={"bg-[#22272B] py-1 text-center font-thin"}>
-                100
-              </div>
-              <div className={"bg-[#22272B] py-1 text-center font-thin"}>
-                1000
-              </div>
-            </div>
-            <div className={"mt-4 text-gray-600"}>
-              You will receive{" "}
-              <span className={"text-white"}>2.343 $FORTUNA</span>
-            </div>
-            <div className={"mt-8 text-gray-600"}>Trading Fee</div>
-            <div
-              className={
-                "bg-secondary mt-8 w-full rounded-4xl py-4 text-center"
-              }
-            >
-              Place Trade
-            </div>
-          </div>
-        </CardWrapper>
+        <TradingCard data={data} />
         <ContributorCard />
         <CardWrapper>
           <div className={"rounded-lg bg-black/60 p-4"}>

@@ -41,6 +41,9 @@ const DaoCard: FC<Props> = ({ data }) => {
 
     return null
   }
+  const toDetail = () => {
+    router.push(`/dao/${data.id}`)
+  }
   return (
     <CardWrapper>
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -48,9 +51,10 @@ const DaoCard: FC<Props> = ({ data }) => {
         className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
         alt={data.name}
         src={data.avatar}
+        onClick={toDetail}
       />
       <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
-        <div className={"truncate text-3xl leading-10 tracking-tighter"}>
+        <div className={"truncate text-3xl leading-10 tracking-tighter cursor-pointer"} onClick={toDetail}>
           {data.name}
         </div>
         <div className={"truncate text-sm text-white/58"}>
@@ -116,9 +120,7 @@ const DaoCard: FC<Props> = ({ data }) => {
           </div>
           <div
             className={"cursor-pointer text-sm font-bold"}
-            onClick={() => {
-              router.push("/dao/test")
-            }}
+            onClick={toDetail}
           >
             {data.ticker}
           </div>

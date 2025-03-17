@@ -1,8 +1,8 @@
 "use client"
 
-import { type OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client"
 import { type ReactNode } from "react"
 import { useAuth } from "./auth-context"
+import { type OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client/appkit-base-client"
 
 export default function SignedIn({
   children

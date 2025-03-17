@@ -9,7 +9,11 @@ import {
   homeSearchParamsSchema,
   pageableSchema
 } from "~/lib/schema"
-import { type DaoSearchResult, daoService } from "~/server/service/dao"
+import {
+  type DaoDetailResult,
+  type DaoSearchResult,
+  daoService
+} from "~/server/service/dao"
 
 export const daoRouter = createTRPCRouter({
   search: publicProcedure
@@ -34,33 +38,42 @@ export const daoRouter = createTRPCRouter({
     }),
   findByUrl: protectedProcedure
     .input(z.object({ url: z.string() }))
-    .query(async ({  input }) => {
+    .query(async ({ input }) => {
       return await daoService.findByUrl(input.url)
     }),
-  chart:publicProcedure
-    .input(z.object({
-      tokenId:z.bigint(),
-      to:z.number(),
-      countBack:z.number(),
-      resolution:z.enum(["1", "5"])
-        .optional()
-        .default("1")
-        .catch("1")
-    }))
-    .query(async ({ input })=>{
-      return await daoService.chart(input.tokenId,input.to,input.countBack,input.resolution)
+  chart: publicProcedure
+    .input(
+      z.object({
+        tokenId: z.bigint(),
+        to: z.number(),
+        countBack: z.number(),
+        resolution: z.enum(["1", "5"]).optional().default("1").catch("1")
+      }),
+    )
+    .query(async ({ input }) => {
+      return await daoService.chart(
+        input.tokenId,
+        input.to,
+        input.countBack,
+        input.resolution,
+      )
     }),
-  contents:publicProcedure
-    .input(z.object({
-      daoId:z.string()
-    }))
-    .query(async ({ input })=>{
+  contents: publicProcedure
+    .input(
+      z.object({
+        daoId: z.string()
+      }),
+    )
+    .query(async ({ input }) => {
       return await daoService.contents(input.daoId)
     }),
-  detail:publicProcedure.input(z.object({
-    daoId:z.string()
-  }))
-    .query(async ({ input })=>{
+  detail: publicProcedure
+    .input(
+      z.object({
+        daoId: z.string()
+      }),
+    )
+    .query(async ({ input }): Promise<DaoDetailResult> => {
       return await daoService.detail(input.daoId)
     })
 })

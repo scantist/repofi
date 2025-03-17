@@ -44,6 +44,9 @@ export function useAmountsOut({
       placeholderData: keepPreviousData
     }
   })
+  console.log("useAmountsOut ---- ", data)
+  console.log("amountIn ---- ", amountIn)
+  console.log("tokenId ---- ", tokenId)
 
   return {
     data: data as bigint | undefined,
@@ -120,7 +123,7 @@ export function useTrade({
     }
   })
 
-  const { isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
+  const { balance: outBalance, isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
     useLaunchBalance({
       address: userAddress,
       tokenId: tokenId,
@@ -288,8 +291,10 @@ export function useTrade({
       approveError ?? (shouldBuyMax ? buyMaxSimulateError : tradeSimulateError),
 
     balance: inBalance,
+    outBalance,
     isBalanceOk: balanceOk,
     isBalanceLoading: isInBalanceLoading,
+    isOutBalanceLoading: isOutBalanceLoading,
 
     shouldBuyMax,
     tradeReceipt,

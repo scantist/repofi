@@ -1,6 +1,6 @@
 "use client"
 
-import { type OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client"
+import { type OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client/appkit-base-client"
 import { createContext, useContext } from "react"
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react"
 import { useSession } from "next-auth/react"

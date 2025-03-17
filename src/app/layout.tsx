@@ -98,7 +98,6 @@ export default async function RootLayout({
                     <div className="flex items-center gap-6">
                       <ToTop className="group flex flex-row gap-2 items-center">
                         <LogoRepoIcon className="size-12 text-primary transition-all group-hover:-rotate-45 group-hover:text-foreground" />
-                        <div className={"text-3xl font-bold tracking-tighter"}>REPO Protocol</div>
                       </ToTop>
 
                       <Badge
