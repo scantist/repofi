@@ -38,7 +38,7 @@ pipeline {
               withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
                 sh 'echo "$BRANCH_NAME" > version'
                 sh 'cat version'
-                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '--no-cache --build-arg NEXT_PUBLIC_CHAIN_ID=11155111 --build-arg NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0x48758a056d55Cc74bA94463731e68577444dc418 --build-arg NEXT_PUBLIC_REOWN_PROJECT_ID=d198cf7bba856bb5f9a7ec73cb03235e', '.', "${env.BRANCH_NAME}")
+                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '--no-cache --build-arg NEXT_PUBLIC_CHAIN_ID=11155111 --build-arg NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0x2A7A16616602Ef92b38CaA39103D004080B64429 --build-arg NEXT_PUBLIC_REOWN_PROJECT_ID=d198cf7bba856bb5f9a7ec73cb03235e', '.', "${env.BRANCH_NAME}")
                 pushHangoutsNotify("Build image for repofi on branch ${env.BRANCH_NAME}")
                 sh """
                 curl -X POST \
@@ -71,7 +71,7 @@ pipeline {
                     $WEBHOOK_URL
                     """
               }
-                
+
             }
         }
 

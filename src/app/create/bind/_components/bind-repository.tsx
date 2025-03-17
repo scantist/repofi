@@ -75,6 +75,30 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       refetchOnMount: false
     },
   )
+  const { data: currentDao, isLoading: isLoadingDao  } = api.dao.findByUrl.useQuery(
+    { url: current?.url ?? "" },
+    {
+      enabled: !!current?.url
+    }
+  )
+  // 使用useEffect监听current变化
+  useEffect(() => {
+    console.log("current changed", currentDao)
+    if(!current){
+      return
+    }
+    if (currentDao) {
+      console.log("dao exists")
+    } else {
+      setStep("INFORMATION")
+      setDaoForms({
+        ...daoForms,
+        url: current.url
+      })
+      router.push(stepPath.INFORMATION)
+    }
+  }, [currentDao])
+
   if (!session || !githubToken) {
     return (
       <CardWrapper className={"col-span-1 w-auto md:col-span-2 max-h-fit"}>
@@ -209,15 +233,11 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                       )}
                       onClick={() => {
                         setCurrent(repo)
-                        setStep("INFORMATION")
-                        setDaoForms({
-                          ...daoForms,
-                          url: repo.url
-                        })
-                        router.push(stepPath.INFORMATION)
                       }}
                     >
-                      Bind
+                      {isLoadingDao && current === repo ? (
+                        <LoadingSpinner size={16} className="inline mr-1" />
+                      ) : "Bind"}
                     </div>
                   </div>
                 </div>
