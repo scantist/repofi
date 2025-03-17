@@ -43,7 +43,7 @@ pipeline {
                 sh """
                 curl -X POST \
                     -H "Content-Type: application/json" \
-                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: push ${env.BRANCH_NAME} to SWR"}}' \
+                    -d '{"msg_type": "text","content": {"text": "Push branch: ${env.BRANCH_NAME} to SWR, commit: ${env.GIT_COMMIT}, refer to JenkinsJob ${env.JOB_NAME}-${env.BUILD_NUMBER} details here: ${env.BUILD_URL}"}}' \
                     $WEBHOOK_URL
                     """
               }
@@ -67,7 +67,7 @@ pipeline {
                 sh """
                 curl -X POST \
                     -H "Content-Type: application/json" \
-                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: push ${env.TAG_NAME} to SWR"}}' \
+                    -d '{"msg_type": "text","content": {"text": "Push tag: ${env.TAG_NAME} to SWR, commit: ${env.GIT_COMMIT}, refer to JenkinsJob ${env.JOB_NAME}-${env.BUILD_NUMBER} details here: ${env.BUILD_URL}"}}' \
                     $WEBHOOK_URL
                     """
               }
@@ -92,7 +92,7 @@ pipeline {
                 sh """
                 curl -X POST \
                     -H "Content-Type: application/json" \
-                    -d '{"msg_type": "text","content": {"text": "JenkinsJob: ${env.JOB_NAME} on branch: ${env.BRANCH_NAME} FAILED!"}}' \
+                    -d '{"msg_type": "text","content": {"text": "JenkinsJob FAILED! Refer to JenkinsJob ${env.JOB_NAME}-${env.BUILD_NUMBER} details here: ${env.BUILD_URL}"}}' \
                     $WEBHOOK_URL
                     """
             }
