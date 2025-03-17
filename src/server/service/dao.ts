@@ -289,6 +289,17 @@ class DaoService {
 
     return { data, noData: kineData.length < countBack }
   }
+
+  async contents(daoId: string) {
+    return  await db.daoContent.findMany({
+      where: {
+        daoId
+      },
+      orderBy: {
+        sort:"asc"
+      }
+    })
+  }
 }
 
 export type DaoSearchResult = Awaited<ReturnType<typeof daoService.search>>

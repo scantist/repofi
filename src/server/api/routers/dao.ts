@@ -49,5 +49,12 @@ export const daoRouter = createTRPCRouter({
     }))
     .query(async ({ input })=>{
       return await daoService.chart(input.tokenId,input.to,input.countBack,input.resolution)
+    }),
+  content:publicProcedure
+    .input(z.object({
+      daoId:z.string()
+    }))
+    .query(async ({ input })=>{
+      return await daoService.contents(input.daoId)
     })
 })
