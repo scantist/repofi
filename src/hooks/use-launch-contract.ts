@@ -72,41 +72,6 @@ export function useBalance({
   }
 }
 
-export function useAssetAllowance({
-  amount,
-  assetAddress,
-  isNativeAsset
-}: {
-  amount: bigint;
-  assetAddress: `0x${string}` | undefined;
-  isNativeAsset: boolean;
-}) {
-  // 使用 useMemo 来返回原生代币的默认值，而不是条件调用 hooks
-  const nativeTokenResult = {
-    error: undefined,
-    checkAllowance: () => true,
-    isAllowanceOk: true,
-    isApprovePending: false,
-    isApproving: false,
-    isApproveError: false,
-    hasBeenApproved: false,
-    reset: () => {
-      /* 原生代币不需要重置授权 */
-    },
-    receipt: undefined
-  }
-
-  // 始终调用 useAllowance，但在原生代币的情况下传入零值
-  const nonNativeResult = useAllowance({
-    amount: amount,
-    tokenAddress: assetAddress,
-    contractAddress: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
-  })
-
-  // 根据是否是原生代币返回不同的结果
-  return isNativeAsset ? nativeTokenResult : nonNativeResult
-}
-
 // 添加 TokenFullInfo 类型定义
 export type TokenMetadata = {
   name: string;

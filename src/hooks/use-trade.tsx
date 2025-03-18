@@ -13,9 +13,9 @@ import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
 import {
-  useAssetAllowance,
   useBalance as useLaunchBalance
 } from "~/hooks/use-launch-contract"
+import { useAllowance as useTokenAllowance } from "~/hooks/use-token"
 
 const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 
@@ -45,13 +45,10 @@ export function useAmountOut({
     args: [tokenId, amountIn],
     query: {
       enabled: !!launchPadAddress,
-      placeholderData: keepPreviousData
+      placeholderData: keepPreviousData,
+      retry: false
     }
   })
-  console.log("useAmountsOut ---- ", data)
-  console.log("amountIn ---- ", amountIn)
-  console.log("tokenId ---- ", tokenId)
-
   return {
     data: data as bigint | undefined,
     isLoading: isLoading,
@@ -70,12 +67,11 @@ export function useAmountOutMin({
   amountIn: bigint;
   slippagePercent: number;
 }) {
-  const { data: amountOut, isLoading } = useAmountOut({
+  const { data: amountOut, isLoading, ...rest } = useAmountOut({
     action,
     tokenId,
     amountIn
   })
-
   const amountOutMin = amountOut
     ? (amountOut * BigInt(Math.floor((100 - slippagePercent) * 100))) /
       BigInt(10000)
@@ -84,12 +80,50 @@ export function useAmountOutMin({
   return {
     amountOutMin,
     amountOut,
-    isLoading
+    isLoading,
+    ...rest
   }
 }
 
 function isOverLaunchPoint(message: string) {
-  return message.includes("Total share is greater than sell launch point")
+  return message.includes("amountIn is too large")
+}
+
+export function useAllowance({
+          action,
+                                    amount,
+                                    assetAddress,
+                                    isNativeAsset
+                                  }: {
+  action: "buy" | "sell";
+  amount: bigint;
+  assetAddress: `0x${string}` | undefined;
+  isNativeAsset: boolean;
+}) {
+  // 使用 useMemo 来返回默认值，而不是条件调用 hooks
+  const noneResult = {
+    error: undefined,
+    checkAllowance: () => true,
+    isAllowanceOk: true,
+    isApprovePending: false,
+    isApproving: false,
+    isApproveError: false,
+    hasBeenApproved: false,
+    reset: () => {
+      /* 原生代币不需要重置授权 */
+    },
+    receipt: undefined
+  }
+
+  // 始终调用 useAllowance，但在原生代币的情况下传入零值
+  const nonNativeResult = useTokenAllowance({
+    amount: amount,
+    tokenAddress: assetAddress,
+    contractAddress: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
+  })
+
+  // 根据是否是原生代币返回不同的结果
+  return isNativeAsset||action=="sell" ? noneResult : nonNativeResult
 }
 
 /**
@@ -157,7 +191,8 @@ export function useTrade({
     isApproveError,
     hasBeenApproved,
     reset: resetApproval
-  } = useAssetAllowance({
+  } = useAllowance({
+    action,
     amount: amountIn,
     assetAddress,
     isNativeAsset
@@ -177,7 +212,7 @@ export function useTrade({
       enabled:
         isAllowanceOk &&
         amountIn > BigInt(0) &&
-        amountOutMin > BigInt(0) &&
+        amountOutMin >= BigInt(0) &&
         balanceOk &&
         !!userAddress
     }
@@ -225,7 +260,7 @@ export function useTrade({
 
   const startTrading = useCallback(() => {
     if (!launchPadAddress) {
-      toast.error("Bonding curve not available")
+      toast.error("Launch pad not available")
       return
     }
 
@@ -248,7 +283,7 @@ export function useTrade({
         tradeWriteContract(buyMaxSimulation.request)
       } else {
         toast.error("Unable to trade", {
-          description: "Simulation of contract write failed"
+          description: "Simulation of contract write failed 1"
         })
         resetTrading()
       }
@@ -257,7 +292,7 @@ export function useTrade({
         tradeWriteContract(tradeSimulation.request)
       } else {
         toast.error("Unable to trade", {
-          description: "Simulation of contract write failed"
+          description: "Simulation of contract write failed 2"
         })
         resetTrading()
       }
