@@ -6,16 +6,11 @@ import {
   PopoverTrigger
 } from "~/components/ui/popover"
 import { Info } from "lucide-react"
+import { useTaxRatio } from "~/hooks/use-launch-contract"
 
-const TradingFeePopover = ({
-  assetTokenAddress
-}: {
-  assetTokenAddress: `0x${string}`;
-}) => {
-  // const { buyTax, sellTax, isLoading } = useBuySellTax(assetTokenAddress);
-  const isLoading = false
-  const buyTax = 3
-  const sellTax = 3
+const TradingFeePopover = () => {
+  const { buyTaxRatio, sellTaxRatio, isLoading } = useTaxRatio()
+  console.log("useTaxRatio", buyTaxRatio, sellTaxRatio)
   return (
     <Popover>
       <PopoverTrigger className="flex cursor-pointer items-center gap-2">
@@ -30,13 +25,13 @@ const TradingFeePopover = ({
           <div className="flex gap-3">
             <div>Buy</div>
             <div className="text-foreground font-bold">
-              {isLoading ? "-" : `${buyTax / 10}%`}
+              {isLoading ? "-" : `${(buyTaxRatio) / 100n}%`}
             </div>
           </div>
           <div className="flex gap-2">
             <div>Sell</div>
             <div className="text-foreground font-bold">
-              {isLoading ? "-" : `${sellTax / 10}%`}
+              {isLoading ? "-" : `${(sellTaxRatio) / 100n}%`}
             </div>
           </div>
         </div>
