@@ -135,15 +135,6 @@ export async function getApiKey(
       return { user }
     }
 
-    // const agent = await db.agent.findUnique({
-    //   where: {
-    //     walletAddress: apiKeyDb.userAddress,
-    //   },
-    // });
-    //
-    // if (agent) {
-    //   return { agent };
-    // }
   }
 
   return null

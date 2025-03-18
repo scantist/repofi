@@ -98,8 +98,92 @@
     --radius-xl: calc(var(--radius) + 4px);
 }
 
+@theme {
+    --animation-stroke-dash: stroke-dash 3s linear;
+    --animation-stroke-appear: appear 3s ease-out;
+    --animation-swap-in: swap-in 4s ease-in-out infinite;
+    --animation-swap-out: swap-out 4s ease-in-out infinite;
+
+    @keyframes stroke-dash {
+        0% {
+            stroke-dashoffset: 100%;
+            opacity: 1;
+        }
+        50% {
+            stroke-dashoffset: 50%;
+            opacity: 1;
+        }
+        100% {
+            stroke-dashoffset: 0;
+            opacity: 0;
+        }
+    }
+
+    @keyframes border {
+        100% {
+            --border-angle: 360deg;
+        }
+    }
+
+    @keyframes swap-in {
+        0% {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            filter: blur(0px);
+        }
+        25% {
+            transform: translateX(48px) scale(0.75);
+            opacity: 0.75;
+            filter: blur(10px);
+        }
+        45% {
+            transform: translateX(96px) scale(1);
+            opacity: 1;
+            filter: blur(0px);
+        }
+        55% {
+            transform: translateX(96px) scale(1);
+        }
+        75% {
+            transform: translateX(48px) scale(1.5);
+            z-index: 40;
+        }
+        95% {
+            transform: translateX(0) scale(1);
+            z-index: 40;
+        }
+    }
+
+    @keyframes swap-out {
+        0% {
+            transform: translateX(0) scale(1);
+        }
+        25% {
+            transform: translateX(-48px) scale(1.5);
+        }
+        45% {
+            transform: translateX(-96px) scale(1);
+        }
+        55% {
+            transform: translateX(-96px) scale(1);
+            opacity: 1;
+            filter: blur(0px);
+        }
+        75% {
+            transform: translateX(-48px) scale(0.75);
+            opacity: 0.75;
+            filter: blur(10px);
+        }
+        95% {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            filter: blur(0px);
+        }
+    }
+}
+
 @utility bg {
-    background:  linear-gradient(360deg, #000000 -7.45%, #353535 102.25%) !important;
+    background: linear-gradient(360deg, #000000 -7.45%, #353535 102.25%) !important;
 }
 /*---break---*/
 
@@ -111,14 +195,4 @@
     body {
         @apply bg-background text-foreground;
     }
-}
-
-.linear-border {
-    border-radius: 10px;
-    background: linear-gradient(180deg, rgba(248, 211, 83, 0.5), rgba(110, 109, 240, 0.5));
-    padding: 1px;
-    mask: linear-gradient(#fff 0 100%) content-box, linear-gradient(#fff 0 100%);
-    mask-composite: xor;
-    -webkit-mask: linear-gradient(#fff 0 100%) content-box, linear-gradient(#fff 0 100%);
-    -webkit-mask-composite: xor;
 }

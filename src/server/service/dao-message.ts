@@ -335,10 +335,10 @@ class DaoMessageService {
     })
   }
 
-  async deleteMessage(id: string) {
+  async deleteMessage(id: string, userAddress: string) {
     await db.$transaction(async (tx) => {
       const message = await tx.forumMessage.findUnique({
-        where: { id },
+        where: { id, createdBy: userAddress },
         select: { rootMessageId: true }
       })
 
@@ -347,7 +347,7 @@ class DaoMessageService {
       }
 
       await tx.forumMessage.update({
-        where: { id },
+        where: { id, createdBy: userAddress },
         data: { deletedAt: new Date() }
       })
 

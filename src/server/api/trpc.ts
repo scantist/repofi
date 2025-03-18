@@ -6,13 +6,16 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC,TRPCError } from "@trpc/server"
+import { initTRPC, TRPCError } from "@trpc/server"
 import superjson from "superjson"
-import { ZodError } from "zod"
+import { z, ZodError } from "zod"
 
 import { db } from "~/server/db"
 import { auth, getApiKey } from "~/server/auth"
 import { type UserRole } from "@prisma/client"
+import { CommonError } from "~/lib/error"
+
+
 /**
  * 1. CONTEXT
  *
@@ -40,10 +43,10 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     session:
       entity && "user" in entity
         ? {
-          address: entity.user.address,
-          user: entity.user,
-          role: entity.user.role
-        }
+            address: entity.user.address,
+            user: entity.user,
+            role: entity.user.role
+          }
         : undefined,
     ...opts
   }
@@ -114,6 +117,41 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result
 })
 
+const errorHandlerMiddleware = t.middleware(async ({ next }) => {
+  const resp = await next()
+  if (!resp.ok) {
+    const error = resp.error.cause
+    if (error instanceof CommonError) {
+      throw new TRPCError({
+        code:
+          error.code === "UNAUTHORIZED"
+            ? "UNAUTHORIZED"
+            : error.code === "NOT_FOUND"
+              ? "NOT_FOUND"
+              : error.code === "INVALID_STATE" || error.code === "BAD_PARAMS"
+                ? "BAD_REQUEST"
+                : "INTERNAL_SERVER_ERROR",
+        message: error.description,
+        cause: error.cause
+      })
+    }
+  }
+  return resp
+})
+const protectionMiddleware = t.middleware(({ ctx, next }) => {
+  if (!ctx.session?.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" })
+  }
+
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user }
+    }
+  })
+})
+
+
 /**
  * Public (unauthenticated) procedure
  *
@@ -134,7 +172,7 @@ export const protectedProcedure = t.procedure
 export const identifyRole = (roles: UserRole[]) => {
   return t.middleware(async ({ ctx, next }) => {
     for (const role of roles) {
-      if (ctx.session?.role===role) {
+      if (ctx.session?.role === role) {
         return next({ ctx: ctx })
       }
     }
@@ -144,3 +182,33 @@ export const identifyRole = (roles: UserRole[]) => {
     })
   })
 }
+
+export const protectedUserDaoProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(errorHandlerMiddleware)
+  // .use(apiAccessMiddleware)
+  .use(protectionMiddleware)
+  .input(z.object({ daoId: z.string() }))
+  .use(async (opts) => {
+    const { ctx, next, input } = opts
+
+    const { daoId } = input
+
+    const dao = await db.dao.findUnique({
+      where: { id: daoId }
+    })
+
+    if (dao && dao.createdBy === ctx.session.address) {
+      return next({
+        ctx: {
+          ...ctx,
+          agent: dao
+        }
+      })
+    }
+
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Missing dao info or dao not found"
+    })
+  })

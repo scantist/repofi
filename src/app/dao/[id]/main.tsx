@@ -6,13 +6,13 @@ import ContributorCard from "~/app/dashboard/_components/contributor-card"
 import TradingCard from "~/app/dao/[id]/trading/card"
 import { type DaoDetailResult } from "~/server/service/dao"
 import { shortenAddress } from "~/lib/web3"
+import MessageList from "~/app/dao/[id]/message/message-list"
 
 interface DaoContentProps {
   data: DaoDetailResult;
 }
 
 const DaoContent = ({ data }: DaoContentProps) => {
-  console.log(data?.tokenInfo?.tokenAddress)
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
@@ -62,99 +62,7 @@ const DaoContent = ({ data }: DaoContentProps) => {
           alt={"K"}
         />
         <CardWrapper>
-          <div className={"flex w-full flex-col gap-4 px-10 py-5"}>
-            <div className={"text-2xl font-bold"}>Message Board</div>
-            <div
-              className={"mt-4 flex flex-col gap-4 rounded-lg bg-[#22272B] p-2"}
-            >
-              <div className={"flex flex-row items-center justify-between"}>
-                <div className={"text-lg"}>
-                  0x2eFD...2343
-                  <span className={"ml-6 text-sm text-gray-400"}>
-                    2024-12-17 23:32:34
-                  </span>
-                </div>
-                <div className={"text-sm"}>Reply</div>
-              </div>
-              <div className={"text-gray-400"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-                sed ultrices urna. Sed interdum felis ac lectus tristique, eget
-                ullamcorper lectus tincidunt.
-              </div>
-            </div>
-            <div
-              className={"mt-4 flex flex-col gap-4 rounded-lg bg-[#22272B] p-2"}
-            >
-              <div className={"flex flex-row items-center justify-between"}>
-                <div className={"text-lg"}>
-                  0x2eFD...2343
-                  <span className={"ml-6 text-sm text-gray-400"}>
-                    2024-12-17 23:32:34
-                  </span>
-                </div>
-                <div className={"text-sm"}>Reply</div>
-              </div>
-              <div className={"text-gray-400"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-                sed ultrices urna. Sed interdum felis ac lectus tristique, eget
-                ullamcorper lectus tincidunt.
-              </div>
-            </div>
-            <div
-              className={"mt-4 flex flex-col gap-4 rounded-lg bg-[#22272B] p-2"}
-            >
-              <div className={"flex flex-row items-center justify-between"}>
-                <div className={"text-lg"}>
-                  0x2eFD...2343
-                  <span className={"ml-6 text-sm text-gray-400"}>
-                    2024-12-17 23:32:34
-                  </span>
-                </div>
-                <div className={"text-sm"}>Reply</div>
-              </div>
-              <div className={"text-gray-400"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-                sed ultrices urna. Sed interdum felis ac lectus tristique, eget
-                ullamcorper lectus tincidunt.
-              </div>
-            </div>
-            <div
-              className={"mt-4 flex flex-col gap-4 rounded-lg bg-[#22272B] p-2"}
-            >
-              <div className={"flex flex-row items-center justify-between"}>
-                <div className={"text-lg"}>
-                  0x2eFD...2343
-                  <span className={"ml-6 text-sm text-gray-400"}>
-                    2024-12-17 23:32:34
-                  </span>
-                </div>
-                <div className={"text-sm"}>Reply</div>
-              </div>
-              <div className={"text-gray-400"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-                sed ultrices urna. Sed interdum felis ac lectus tristique, eget
-                ullamcorper lectus tincidunt.
-              </div>
-            </div>
-            <div
-              className={"mt-4 flex flex-col gap-4 rounded-lg bg-[#22272B] p-2"}
-            >
-              <div className={"flex flex-row items-center justify-between"}>
-                <div className={"text-lg"}>
-                  0x2eFD...2343
-                  <span className={"ml-6 text-sm text-gray-400"}>
-                    2024-12-17 23:32:34
-                  </span>
-                </div>
-                <div className={"text-sm"}>Reply</div>
-              </div>
-              <div className={"text-gray-400"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-                sed ultrices urna. Sed interdum felis ac lectus tristique, eget
-                ullamcorper lectus tincidunt.
-              </div>
-            </div>
-          </div>
+          <MessageList data={data}/>
         </CardWrapper>
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
