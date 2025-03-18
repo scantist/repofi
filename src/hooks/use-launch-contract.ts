@@ -1,26 +1,8 @@
 import { keepPreviousData } from "@tanstack/react-query"
-import { useAccount, useReadContract, useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi"
+import { useReadContract } from "wagmi"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
-import { erc20Abi } from "viem"
-import { useCallback } from "react"
-export function useUniswapV3PoolContractAddress() {
-  const { data: manager, isLoading: isManagerLoading } = useReadContract({
-    abi: launchPadAbi,
-    address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
-    functionName: "uniswapV3PositionManager",
-    query: {
-      placeholderData: keepPreviousData,
-      staleTime: 1000 * 60 * 60 * 24
-    }
-  })
-
-  return {
-    address: manager as `0x${string}` | undefined,
-    isLoading: isManagerLoading
-  }
-}
-
+import { useAllowance } from "~/hooks/use-token"
 
 export function useTreasuryVaultAddress() {
   const { data: address, isLoading } = useReadContract({
@@ -39,7 +21,6 @@ export function useTreasuryVaultAddress() {
   }
 }
 
-
 export function useTokenLockerAddress() {
   const { data: address, isLoading } = useReadContract({
     abi: launchPadAbi,
@@ -57,15 +38,19 @@ export function useTokenLockerAddress() {
   }
 }
 export function useBalance({
-                                  tokenId,
-                                  address,
-                                  enabled = true
-                                }: {
+  tokenId,
+  address,
+  enabled = true
+}: {
   tokenId: bigint;
-  address: `0x${string}`| undefined;
+  address: `0x${string}` | undefined;
   enabled?: boolean;
 }) {
-  const { data: balance, isLoading,refetch } = useReadContract({
+  const {
+    data: balance,
+    isLoading,
+    refetch
+  } = useReadContract({
     abi: launchPadAbi,
     address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
     functionName: "balanceOf",
@@ -78,124 +63,20 @@ export function useBalance({
   })
 
   return {
-    data:{
-      value:balance as bigint,
-      decimals:18
-    } ,
+    data: {
+      value: balance as bigint,
+      decimals: 18
+    },
     isLoading,
     refetch
   }
 }
 
-export function useAllowance({
-                               amount,
-                               tokenAddress
-                             }: {
-  amount: bigint;
-  tokenAddress: `0x${string}` | undefined;
-}) {
-  const { address } = useAccount()
-  const launchPadAddress=env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
-  const {
-    data: allowance,
-    isLoading: isAllowanceLoading,
-    refetch: refetchAllowance
-  } = useReadContract({
-    abi: erc20Abi,
-    address: tokenAddress,
-    functionName: "allowance",
-    args: [address!, launchPadAddress],
-    query: {
-      enabled: !!address && !!launchPadAddress && !!tokenAddress && amount > 0n
-    }
-  })
-  const allowanceOk =
-    amount === 0n
-      ? true
-      : !isAllowanceLoading && !!allowance && allowance >= amount
-
-  const {
-    data: simulateResult,
-    isLoading: isSimulating,
-    isError: isSimulateError,
-    error: simulateError
-  } = useSimulateContract({
-    abi: erc20Abi,
-    address: tokenAddress,
-    functionName: "approve",
-    args: [launchPadAddress, amount],
-    query: {
-      enabled:
-        !!launchPadAddress &&
-        !!tokenAddress &&
-        !!address &&
-        amount > BigInt(0) &&
-        !allowanceOk
-    }
-  })
-
-  const {
-    data: hash,
-    writeContract,
-    isPending: isWritingContract,
-    isError: isWritingContractError,
-    error: writingContractError,
-    reset
-  } = useWriteContract()
-
-  const {
-    data: receipt,
-    isLoading: isReceiptLoading,
-    isError: isReceiptError,
-    error: receiptError
-  } = useWaitForTransactionReceipt({
-    hash,
-    query: {
-      enabled: !!hash
-    }
-  })
-
-  const checkAllowance = useCallback(
-    function () {
-      if (allowanceOk) {
-        return true
-      }
-
-      if (simulateResult && !isSimulateError) {
-        writeContract(simulateResult.request)
-      }
-      return false
-    },
-    [allowanceOk, simulateResult, isSimulateError, writeContract],
-  )
-
-  if (!allowanceOk && !!receipt) {
-    void refetchAllowance()
-  }
-
-  const _reset = useCallback(() => {
-    reset()
-    void refetchAllowance()
-  }, [reset, refetchAllowance])
-
-  return {
-    checkAllowance,
-    reset: _reset,
-    receipt,
-    error: simulateError ?? writingContractError ?? receiptError,
-    isAllowanceOk: allowanceOk,
-    isApprovePending: isSimulating,
-    isApproving: isWritingContract || isReceiptLoading,
-    isApproveError: isWritingContractError || isSimulateError || isReceiptError,
-    hasBeenApproved: !!receipt
-  }
-}
-
 export function useAssetAllowance({
-                             amount,
-                             assetAddress,
-                             isNativeAsset
-                           }: {
+  amount,
+  assetAddress,
+  isNativeAsset
+}: {
   amount: bigint;
   assetAddress: `0x${string}` | undefined;
   isNativeAsset: boolean;
@@ -209,14 +90,17 @@ export function useAssetAllowance({
     isApproving: false,
     isApproveError: false,
     hasBeenApproved: false,
-    reset: () => {/* 原生代币不需要重置授权 */},
+    reset: () => {
+      /* 原生代币不需要重置授权 */
+    },
     receipt: undefined
   }
 
   // 始终调用 useAllowance，但在原生代币的情况下传入零值
   const nonNativeResult = useAllowance({
     amount: amount,
-    tokenAddress: assetAddress
+    tokenAddress: assetAddress,
+    contractAddress: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
   })
 
   // 根据是否是原生代币返回不同的结果
@@ -259,12 +143,12 @@ export type TokenFullInfo = {
   curveParameter: CurveParameter;
 };
 
-export function useTokenFullInfo(tokenId: bigint | undefined) {
+export function useTokenFullInfo(tokenId: bigint) {
   const { data, isLoading, refetch } = useReadContract({
     abi: launchPadAbi,
     address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
     functionName: "getTokenFullInfo",
-    args: tokenId ? [tokenId] : undefined,
+    args: [tokenId],
     query: {
       enabled: !!tokenId,
       placeholderData: keepPreviousData,
@@ -273,8 +157,88 @@ export function useTokenFullInfo(tokenId: bigint | undefined) {
   })
 
   return {
-    tokenInfo: data as TokenFullInfo | undefined,
+    data: data as TokenFullInfo | undefined,
     isLoading,
     refetch
+  }
+}
+
+export function useTokenCurveParameter(tokenId: bigint) {
+  const { data, isLoading, refetch } = useReadContract({
+    abi: launchPadAbi,
+    address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
+    functionName: "getTokenCurveParameter",
+    args: [tokenId],
+    query: {
+      enabled: !!tokenId,
+      placeholderData: keepPreviousData,
+      staleTime: 1000 * 30 // 30 seconds
+    }
+  })
+
+  return {
+    data: data as CurveParameter | undefined,
+    isLoading,
+    refetch
+  }
+}
+
+export function useTaxRatio() {
+  const { data: buyTaxRatio, isLoading: isBuyLoading } = useReadContract({
+    abi: launchPadAbi,
+    address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
+    functionName: "buyTaxRatio",
+    query: {
+      placeholderData: keepPreviousData,
+      staleTime: 1000 * 60 * 5 // 5 minutes
+    }
+  })
+
+  const { data: sellTaxRatio, isLoading: isSellLoading } = useReadContract({
+    abi: launchPadAbi,
+    address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
+    functionName: "sellTaxRatio",
+    query: {
+      placeholderData: keepPreviousData,
+      staleTime: 1000 * 60 * 5 // 5 minutes
+    }
+  })
+
+  return {
+    buyTaxRatio: buyTaxRatio as bigint,
+    sellTaxRatio: sellTaxRatio as bigint,
+    isLoading: isBuyLoading || isSellLoading
+  }
+}
+
+export function useTokenStats(tokenId: bigint) {
+  const { data: tokenInfo, isLoading: isTokenFullInfoLoading } =
+    useTokenFullInfo(tokenId)
+  const { buyTaxRatio, isLoading: isBuyTaxRatioLoading } = useTaxRatio()
+
+  // 计算最大asset买入量
+  const maxBuyAssetAmount = tokenInfo
+    ? tokenInfo.curveParameter.finalY - tokenInfo.currentY
+    : undefined
+  // 计算含税的最大asset买入量
+  const maxBuyAssetAmountWithTax =
+    maxBuyAssetAmount && buyTaxRatio !== undefined
+      ? (maxBuyAssetAmount * 10000n) / (10000n - buyTaxRatio)
+      : undefined
+
+  // 计算当前能买到的token数量
+  const maxBuyTokenAmount = tokenInfo
+    ? tokenInfo.currentX - tokenInfo.curveParameter.finalX
+    : undefined
+  const launchMarketCap = tokenInfo
+    ? (tokenInfo.curveParameter.finalX * tokenInfo.curveParameter.initialY) /
+      tokenInfo.curveParameter.finalY
+    : undefined
+  return {
+    maxBuyAssetAmount,
+    maxBuyAssetAmountWithTax,
+    maxBuyTokenAmount,
+    launchMarketCap,
+    isLoading: isTokenFullInfoLoading || isBuyTaxRatioLoading
   }
 }

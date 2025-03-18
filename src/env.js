@@ -35,7 +35,10 @@ export const env = createEnv({
     // https://cloud.reown.com
     NEXT_PUBLIC_REOWN_PROJECT_ID: z.string(),
     NEXT_PUBLIC_CHAIN_ID: z.preprocess((val) => Number(val), z.number()),
-    NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid launchpad address")
+    NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid launchpad address"),
+    NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid quoter address"),
+    NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid factory address"),
+    NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid swap router address")
   },
 
   /**
@@ -53,6 +56,9 @@ export const env = createEnv({
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
     NEXT_PUBLIC_REOWN_PROJECT_ID: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID,
     NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS: process.env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
+    NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS: process.env.NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS,
+    NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS: process.env.NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS,
+    NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS: process.env.NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS,
     AUTH_GITHUB_SECRET: process.env.AUTH_GITHUB_SECRET,
     AUTH_GITHUB_ID: process.env.AUTH_GITHUB_ID,
     AUTH_GITLAB_SECRET: process.env.AUTH_GITLAB_SECRET,
