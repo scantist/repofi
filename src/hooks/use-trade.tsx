@@ -18,18 +18,22 @@ import {
 } from "~/hooks/use-launch-contract"
 
 const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
+
 /**
  * This hook is used to get the expected amount of tokens that will be received when selling a certain amount of token (inputToken) on the bonding curve.
  *
+ * @param action - The mode of the trade (buy or sell)
  * @param tokenAddress - The address of the AI agent token
  * @param amountIn - The amount of the input token (sending amount)
  * @param mode - The mode of the trade (buy or sell)
  * @returns
  */
-export function useAmountsOut({
+export function useAmountOut({
+  action,
   tokenId,
   amountIn
 }: {
+  action: "buy" | "sell";
   tokenId: bigint;
   amountIn: bigint;
 }) {
@@ -37,17 +41,13 @@ export function useAmountsOut({
     abi: launchPadAbi,
     address: launchPadAddress,
     chainId: defaultChain.id,
-    functionName: "getBuyAmountOut",
+    functionName: action === "buy" ? "getBuyAmountOut" : "getSellAmountOut",
     args: [tokenId, amountIn],
     query: {
       enabled: !!launchPadAddress,
       placeholderData: keepPreviousData
     }
   })
-  console.log("useAmountsOut ---- ", data)
-  console.log("amountIn ---- ", amountIn)
-  console.log("tokenId ---- ", tokenId)
-
   return {
     data: data as bigint | undefined,
     isLoading: isLoading,
@@ -56,15 +56,18 @@ export function useAmountsOut({
 }
 
 export function useAmountOutMin({
+  action,
   tokenId,
   amountIn,
   slippagePercent
 }: {
+  action: "buy" | "sell";
   tokenId: bigint;
   amountIn: bigint;
   slippagePercent: number;
 }) {
-  const { data: amountOut, isLoading } = useAmountsOut({
+  const { data: amountOut, isLoading } = useAmountOut({
+    action,
     tokenId,
     amountIn
   })
@@ -123,12 +126,15 @@ export function useTrade({
     }
   })
 
-  const { data: outBalance, isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
-    useLaunchBalance({
-      address: userAddress,
-      tokenId: tokenId,
-      enabled: !!userAddress && !!tokenId
-    })
+  const {
+    data: outBalance,
+    isLoading: isOutBalanceLoading,
+    refetch: refetchOutBalance
+  } = useLaunchBalance({
+    address: userAddress,
+    tokenId: tokenId,
+    enabled: !!userAddress && !!tokenId
+  })
 
   const balanceOk = !!inBalance && inBalance.value >= amountIn
 
@@ -279,7 +285,8 @@ export function useTrade({
     isApproveError,
     hasBeenApproved,
 
-    isTradePending: isInBalanceLoading ||
+    isTradePending:
+      isInBalanceLoading ||
       isOutBalanceLoading ||
       isTradeSimulating ||
       isBuyMaxSimulating,

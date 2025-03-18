@@ -85,6 +85,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
     amountOut,
     isLoading: isAmountsOutLoading
   } = useAmountOutMin({
+    action:mode,
     tokenId: data.tokenId,
     amountIn,
     slippagePercent: slippage
