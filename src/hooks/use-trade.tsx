@@ -123,7 +123,7 @@ export function useTrade({
     }
   })
 
-  const { balance: outBalance, isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
+  const { data: outBalance, isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
     useLaunchBalance({
       address: userAddress,
       tokenId: tokenId,

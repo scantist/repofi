@@ -78,7 +78,10 @@ export function useBalance({
   })
 
   return {
-    balance: balance as bigint,
+    data:{
+      value:balance as bigint,
+      decimals:18
+    } ,
     isLoading,
     refetch
   }
@@ -218,4 +221,60 @@ export function useAssetAllowance({
 
   // 根据是否是原生代币返回不同的结果
   return isNativeAsset ? nativeTokenResult : nonNativeResult
+}
+
+// 添加 TokenFullInfo 类型定义
+export type TokenMetadata = {
+  name: string;
+  symbol: string;
+  creator: `0x${string}`;
+  baseAsset: `0x${string}`;
+  token: `0x${string}`;
+  uniswapV3Pair: `0x${string}`;
+};
+
+export type CurveParameter = {
+  initialX: bigint;
+  initialY: bigint;
+  finalX: bigint;
+  finalY: bigint;
+  totalSupply: bigint;
+  salesRatio: number;
+  reservedRatio: number;
+  liquidityPoolRatio: number;
+  raisedAssetAmount: bigint;
+  totalSalesAmount: bigint;
+};
+
+export type TokenFullInfo = {
+  launched: boolean;
+  graduated: boolean;
+  currentX: bigint;
+  currentY: bigint;
+  prevPrice: bigint;
+  price: bigint;
+  soldTokenAmount: bigint;
+  lastUpdated: number;
+  metadata: TokenMetadata;
+  curveParameter: CurveParameter;
+};
+
+export function useTokenFullInfo(tokenId: bigint | undefined) {
+  const { data, isLoading, refetch } = useReadContract({
+    abi: launchPadAbi,
+    address: env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS,
+    functionName: "getTokenFullInfo",
+    args: tokenId ? [tokenId] : undefined,
+    query: {
+      enabled: !!tokenId,
+      placeholderData: keepPreviousData,
+      staleTime: 1000 * 30 // 30 seconds
+    }
+  })
+
+  return {
+    tokenInfo: data as TokenFullInfo | undefined,
+    isLoading,
+    refetch
+  }
 }
