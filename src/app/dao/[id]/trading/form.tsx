@@ -1,47 +1,47 @@
-"use client"
+"use client";
 
-import { Input } from "~/components/ui/input"
-import { type DaoDetailResult } from "~/server/service/dao"
-import Image from "next/image"
-import { useState } from "react"
-import { useAssetTokenInfo } from "~/hooks/use-asset-token"
-import { z } from "zod"
-import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
-import { useAmountOutMin, useTrade } from "~/hooks/use-trade"
-import { useAuth } from "~/components/auth/auth-context"
-import { Button } from "~/components/ui/button"
-import { Loader2, Rocket } from "lucide-react"
-import NumberFlow from "@number-flow/react"
-import TradingFeePopover from "~/app/dao/[id]/trading/trading-fee-popover"
-import SlippagePopover from "~/app/dao/[id]/trading/slippage-popover"
-import { cn, formatMoney } from "~/lib/utils"
+import { Input } from "~/components/ui/input";
+import { type DaoDetailResult } from "~/server/service/dao";
+import Image from "next/image";
+import { useState } from "react";
+import { useAssetTokenInfo } from "~/hooks/use-asset-token";
+import { z } from "zod";
+import { fromHumanAmount, toHumanAmount } from "~/lib/web3";
+import { useAmountOutMin, useTrade } from "~/hooks/use-trade";
+import { useAuth } from "~/components/auth/auth-context";
+import { Button } from "~/components/ui/button";
+import { Loader2, Rocket } from "lucide-react";
+import NumberFlow from "@number-flow/react";
+import TradingFeePopover from "~/app/dao/[id]/trading/trading-fee-popover";
+import SlippagePopover from "~/app/dao/[id]/trading/slippage-popover";
+import { cn, formatMoney } from "~/lib/utils";
 import {
   ErrorOverlay,
   LoadingOverlay,
-  SuccessOverlay
-} from "./trading-components"
-import { useTokenStats } from "~/hooks/use-launch-contract"
+  SuccessOverlay,
+} from "./trading-components";
+import { useTokenStats } from "~/hooks/use-launch-contract";
 
 interface TradingFormProps {
   data: DaoDetailResult;
   mode: "buy" | "sell";
 }
 
-const leftTokenDecimals = 18
+const leftTokenDecimals = 18;
 const TradingForm = ({ data, mode }: TradingFormProps) => {
-  const isBuy = mode === "buy"
-  const { address, openDialog, isAuthenticated } = useAuth()
+  const isBuy = mode === "buy";
+  const { address, openDialog, isAuthenticated } = useAuth();
   const { data: assetTokenInfo } = useAssetTokenInfo(
     data.tokenInfo.assetTokenAddress,
-  )
+  );
   const repoToken = {
     ticker: data.ticker,
     address: data.tokenInfo.tokenAddress as `0x${string}`,
     decimals: 18,
     icon: (
       <Image src={data.avatar} alt="Avatar" fill className="object-cover" />
-    )
-  }
+    ),
+  };
 
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
@@ -54,19 +54,19 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         fill
         className="object-cover"
       />
-    )
-  }
+    ),
+  };
 
-  const tokenOut = isBuy ? repoToken : assetToken
-  const tokenIn = isBuy ? assetToken : repoToken
+  const tokenOut = isBuy ? repoToken : assetToken;
+  const tokenIn = isBuy ? assetToken : repoToken;
 
-  const [amountInRaw, setAmountInRaw] = useState<string>("0.00")
-  const [amountIn, setAmountIn] = useState<bigint>(0n)
-  const [slippage, setSlippage] = useState<number>(5)
+  const [amountInRaw, setAmountInRaw] = useState<string>("0.00");
+  const [amountIn, setAmountIn] = useState<bigint>(0n);
+  const [slippage, setSlippage] = useState<number>(5);
 
   const updateAmountInFromRaw = (rawValue: string) => {
     if (z.coerce.number().safeParse(rawValue).success) {
-      setAmountInRaw(rawValue)
+      setAmountInRaw(rawValue);
       setAmountIn(
         BigInt(
           fromHumanAmount(
@@ -74,35 +74,31 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
             tokenIn?.decimals ?? leftTokenDecimals,
           ).toString(),
         ),
-      )
+      );
     }
-  }
+  };
 
   const updateAmountIn = (value: bigint, decimals?: number) => {
-    setAmountIn(value)
-    setAmountInRaw(toHumanAmount(value, decimals ?? leftTokenDecimals, 2))
-  }
+    setAmountIn(value);
+    setAmountInRaw(toHumanAmount(value, decimals ?? leftTokenDecimals, 2));
+  };
 
-  console.log("slippage", slippage)
   const {
     amountOutMin,
     amountOut,
-    isLoading: isAmountsOutLoading
+    isLoading: isAmountsOutLoading,
   } = useAmountOutMin({
-    action:mode,
+    action: mode,
     tokenId: data.tokenId,
     amountIn,
-    slippagePercent: slippage
-  })
-  console.log("amountOut", amountOut)
+    slippagePercent: slippage,
+  });
+  console.log("amountOut", amountOut);
 
   const {
     balance,
-    outBalance,
     isBalanceOk,
     isBalanceLoading,
-    isOutBalanceLoading,
-
     isApprovePending,
     isApproving,
     isApproveError,
@@ -117,59 +113,60 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
     startTrading,
     resetTrading,
     tradeReceipt,
-    shouldBuyMax
+    shouldBuyMax,
   } = useTrade({
     tokenId: data.tokenId,
     assetAddress: assetToken.address,
     isNativeAsset: assetTokenInfo?.isNative ?? false,
     amountIn,
     amountOutMin,
-    action: mode
-  })
-  const [showBuyMaxTip, setShowBuyMaxTip] = useState(false)
+    action: mode,
+  });
+  const [showBuyMaxTip, setShowBuyMaxTip] = useState(false);
 
   const {
     maxBuyAssetAmount,
     maxBuyAssetAmountWithTax,
     maxBuyTokenAmount,
     launchMarketCap,
-    isLoading
-  } = useTokenStats(data.tokenId)
+    isLoading,
+  } = useTokenStats(data.tokenId);
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
-      void openDialog()
-      return
+      void openDialog();
+      return;
     }
 
     if (shouldBuyMax) {
-      setShowBuyMaxTip(true)
-      return
+      setShowBuyMaxTip(true);
+      return;
     }
 
-    startTrading()
-  }
+    startTrading();
+  };
 
   if (error) {
-    console.log(error)
+    console.log(error);
   }
-  const [showLaunchSuccess, setShowLaunchSuccess] = useState(false)
+  const [showLaunchSuccess, setShowLaunchSuccess] = useState(false);
   const [tradeTxHash, setTradeTxHash] = useState<`0x${string}` | undefined>(
     undefined,
-  )
+  );
 
   if (!data.tokenInfo.isGraduated && !showLaunchSuccess) {
-    setShowLaunchSuccess(true)
+    setShowLaunchSuccess(true);
   } else if (!!tradeReceipt) {
-    resetTrading()
-    setTradeTxHash(tradeReceipt.transactionHash)
+    resetTrading();
+    setTradeTxHash(tradeReceipt.transactionHash);
   }
   console.log("showBuyMaxTip || (hasBeenApproved && shouldBuyMax)", {
     showBuyMaxTip,
     hasBeenApproved,
     shouldBuyMax,
-    "showBuyMaxTip || (hasBeenApproved && shouldBuyMax)": showBuyMaxTip || (hasBeenApproved && shouldBuyMax)
-  })
+    "showBuyMaxTip || (hasBeenApproved && shouldBuyMax)":
+      showBuyMaxTip || (hasBeenApproved && shouldBuyMax),
+  });
 
   return (
     <div className={"relative w-full"}>
@@ -184,8 +181,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         approvingError={isApproveError}
         tradingError={isTradeError}
         onReset={() => {
-          resetTrading()
-          updateAmountInFromRaw("0.00")
+          resetTrading();
+          updateAmountInFromRaw("0.00");
         }}
       />
       <SuccessOverlay
@@ -194,8 +191,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         success={!!tradeTxHash}
         transactionHash={tradeTxHash ?? ""}
         onReset={() => {
-          updateAmountInFromRaw("0.00")
-          setTradeTxHash(undefined)
+          updateAmountInFromRaw("0.00");
+          setTradeTxHash(undefined);
         }}
       />
       {(showBuyMaxTip || (hasBeenApproved && shouldBuyMax)) && (
@@ -208,8 +205,10 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
           <p className="text-sm leading-loose">
             Do you want to purchase{" "}
             <strong>
-              {formatMoney(toHumanAmount(maxBuyTokenAmount ?? 0n, leftTokenDecimals, 2))} $
-              {data.ticker}
+              {formatMoney(
+                toHumanAmount(maxBuyTokenAmount ?? 0n, leftTokenDecimals, 2),
+              )}{" "}
+              ${data.ticker}
             </strong>{" "}
             using{" "}
             <strong>
@@ -227,8 +226,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
           <div className="mt-4 flex gap-2">
             <Button
               onClick={() => {
-                setShowBuyMaxTip(false)
-                startTrading()
+                setShowBuyMaxTip(false);
+                startTrading();
               }}
             >
               Purchase and Launch
@@ -236,8 +235,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
             <Button
               variant="ghost"
               onClick={() => {
-                setShowBuyMaxTip(false)
-                resetTrading()
+                setShowBuyMaxTip(false);
+                resetTrading();
               }}
             >
               Abort
@@ -249,25 +248,13 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         <div className={"text-gray-500"}>
           Balance{" "}
           {isAuthenticated ? (
-            isBuy ? (
-              isBalanceLoading ? (
-                "-"
-              ) : (
-                <strong>
-                  {toHumanAmount(
-                    balance?.value ?? 0n,
-                    balance?.decimals ?? leftTokenDecimals,
-                    2,
-                  )}
-                </strong>
-              )
-            ) : isOutBalanceLoading ? (
+            isBalanceLoading ? (
               "-"
             ) : (
               <strong>
                 {toHumanAmount(
-                  outBalance?.value ?? 0n,
-                  outBalance?.decimals ?? leftTokenDecimals,
+                  balance?.value ?? 0n,
+                  balance?.decimals ?? leftTokenDecimals,
                   2,
                 )}
               </strong>
@@ -279,17 +266,11 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         <div
           className={"cursor-pointer font-thin tracking-tighter underline"}
           onClick={() => {
-            if (balance && isBuy) {
+            if (balance) {
               updateAmountIn(
                 (balance.value * BigInt(100)) / 100n,
                 balance.decimals,
-              )
-            }
-            if (outBalance && !isBuy) {
-              updateAmountIn(
-                (outBalance.value * BigInt(100)) / 100n,
-                outBalance.decimals,
-              )
+              );
             }
           }}
         >
@@ -346,7 +327,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
           }
           format={{
             maximumFractionDigits: 2,
-            minimumFractionDigits: 2
+            minimumFractionDigits: 2,
           }}
           className="text-primary mx-1 font-bold"
         />
@@ -388,7 +369,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         )}
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default TradingForm
+export default TradingForm;

@@ -12,17 +12,15 @@ import {
 import ISwapRouter from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json"
 import IUniswapV3Pool from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json"
 import IUniswapV3Factory from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json"
-import IQuoter from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IQuoter.sol/IQuoter.json"
+import IQuoterV2 from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IQuoterV2.sol/IQuoterV2.json"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import { useAllowance } from "./use-token"
 
 const swapRouterAddress = env.NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS
 const quoterAddress = env.NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS
-const v3FactoryAddress=env.NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS
-const poolFee=3000n
-// 更新为使用V3的路由器合约
-// 更新为使用V3的路由器合约
+const v3FactoryAddress = env.NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS
+const poolFee = 3000n
 export function useAmountsOut({
   amountIn,
   tokenIn,
@@ -32,28 +30,35 @@ export function useAmountsOut({
   tokenIn: `0x${string}`;
   tokenOut: `0x${string}`;
 }) {
-  // V3使用quoter合约来获取报价
-  const { data: amountOut, isLoading: isAmountsOutLoading } = useReadContract({
-    abi: IQuoter.abi,
+  const {
+    data: simulationData,
+    isLoading: isSimulationLoading,
+    error: simulationError,
+    isError: isSimulationError
+  } = useSimulateContract({
+    abi: IQuoterV2.abi,
     address: quoterAddress,
     functionName: "quoteExactInputSingle",
     args: [
-      tokenIn,
-      tokenOut,
-      poolFee, // 默认使用0.3%费率，可以根据需要调整
-      amountIn,
-      0n // sqrtPriceLimitX96: 不设置价格限制
+      {
+        tokenIn,
+        tokenOut,
+        fee: poolFee,
+        amountIn,
+        sqrtPriceLimitX96: 0n
+      }
     ],
     query: {
       enabled: !!tokenIn && !!tokenOut && amountIn > 0n,
-      placeholderData: keepPreviousData,
-      staleTime: 1000 * 30 // 30 seconds
+      retry: 2,
+      retryDelay: 1000
     }
   })
-
   return {
-    amountOut: amountOut as bigint | undefined,
-    isLoading: isAmountsOutLoading
+    amountOut: simulationData?.result[0] as bigint | undefined,
+    isLoading: isSimulationLoading,
+    isError: isSimulationError,
+    error: simulationError
   }
 }
 
@@ -99,13 +104,6 @@ export function useTrade({
   amountOutMin: bigint;
 }) {
   const { address } = useAccount()
-
-  const { refetch: refetchReserves } = useTokenSpotPrice(
-    tokenIn,
-    tokenOut,
-    !!address && !!tokenIn,
-  )
-
   const {
     data: inBalance,
     isLoading: isInBalanceLoading,
@@ -249,14 +247,7 @@ export function useTrade({
     resetApproval()
     void refetchInBalance()
     void refetchOutBalance()
-    void refetchReserves()
-  }, [
-    resetTrading,
-    resetApproval,
-    refetchInBalance,
-    refetchOutBalance,
-    refetchReserves
-  ])
+  }, [resetTrading, resetApproval, refetchInBalance, refetchOutBalance])
 
   if (hasBeenApproved && tradeSimulation && !isTradeSimulateError) {
     startTrading()
@@ -286,11 +277,12 @@ export function useTrade({
   }
 }
 
-// V3需要更新价格计算方法
 export function useTokenSpotPrice(
   tokenA: `0x${string}`,
   tokenB: `0x${string}`,
   enabled = true,
+  tokenADecimals = 6, // 假设 tokenA 是 USDT (6位小数)
+  tokenBDecimals = 18, // 假设 tokenB 是标准ERC20 (18位小数)
 ) {
   // 获取池子地址
   const { data: poolAddress, isLoading: isPoolAddressLoading } =
@@ -303,7 +295,6 @@ export function useTokenSpotPrice(
         enabled: !!tokenA && !!tokenB && enabled
       }
     })
-
   // 获取池子当前状态
   const {
     data: slot0Data,
@@ -322,10 +313,9 @@ export function useTokenSpotPrice(
 
   // 计算现货价格
   const spotPrice = useMemo(() => {
-    if (!slot0Data) return undefined
+    if (!slot0Data || !tokenA || !tokenB) return undefined
+
     // 定义 slot0 返回值的类型
-    // Uniswap V3 Pool 的 slot0 函数返回以下结构:
-    // [sqrtPriceX96, tick, observationIndex, observationCardinality, observationCardinalityNext, feeProtocol, unlocked]
     type Slot0Return = [
       bigint, // sqrtPriceX96
       number, // tick
@@ -339,12 +329,54 @@ export function useTokenSpotPrice(
     // 使用正确的类型转换
     const [sqrtPriceX96] = slot0Data as Slot0Return
 
-    if (sqrtPriceX96 === 0n) return 0n
+    if (sqrtPriceX96 === 0n) {
+      return 0n
+    }
 
-    // 计算价格 = (sqrtPriceX96 / 2^96)^2
-    const price = (sqrtPriceX96 * sqrtPriceX96 * 10n ** 18n) / 2n ** 192n
-    return price
-  }, [slot0Data])
+    try {
+      // 直接比较地址的字典序来确定哪个是token0
+      // 在Uniswap V3中，较小的地址是token0
+      const isTokenAToken0 = tokenA.toLowerCase() < tokenB.toLowerCase()
+
+      // 计算原始价格 = (sqrtPriceX96 / 2^96)^2
+      // 使用更精确的计算方法，避免中间结果溢出或精度损失
+      const Q96 = 2n ** 96n
+      // 先计算 sqrtPrice = sqrtPriceX96 / 2^96
+      const sqrtPrice = (sqrtPriceX96 * 10n ** 18n) / Q96
+      let rawPrice = (sqrtPrice * sqrtPrice) / 10n ** 18n
+
+      // 调整精度 (考虑代币小数位数差异)
+      const decimalAdjustment = 10n ** BigInt(tokenBDecimals - tokenADecimals)
+
+      if (isTokenAToken0) {
+        // 如果 tokenA 是 token0，价格是 token1/token0，需要取倒数
+        if (rawPrice === 0n) {
+          return 0n
+        }
+        // 使用更高精度来计算倒数，避免精度损失
+        const scaleFactor = 10n ** 36n
+        rawPrice = scaleFactor / rawPrice
+
+        // 应用小数位调整
+        rawPrice = rawPrice / decimalAdjustment
+      } else {
+        // 如果 tokenA 是 token1，价格是 token0/token1，直接使用
+        rawPrice = rawPrice * decimalAdjustment
+      }
+
+      // 为了更好的可读性，计算人类可读的浮点数价格
+      const humanReadablePrice = Number(rawPrice) / Number(10n ** 18n)
+      console.log("Calculated price:", humanReadablePrice)
+
+      console.log("rawPrice:", rawPrice)
+
+      return rawPrice
+    } catch (error) {
+      console.error("Error calculating price:", error)
+      return 0n
+    }
+  }, [slot0Data, tokenA, tokenB, tokenADecimals, tokenBDecimals])
+
   return {
     spotPrice,
     refetch: refetchSlot0,

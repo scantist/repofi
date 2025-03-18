@@ -150,14 +150,6 @@ export function useTrade({
   amountIn: bigint;
   amountOutMin: bigint;
 }) {
-  console.log("action:", {
-    action,
-    tokenId,
-    assetAddress,
-    isNativeAsset,
-    amountIn,
-    amountOutMin
-  })
   const { address: userAddress } = useAccount()
   const {
     data: inBalance,
@@ -342,12 +334,9 @@ export function useTrade({
     error:
       approveError ?? (shouldBuyMax ? buyMaxSimulateError : tradeSimulateError),
 
-    balance: inBalance,
-    outBalance,
+    balance: action=="buy" ? inBalance : outBalance,
     isBalanceOk: balanceOk,
-    isBalanceLoading: isInBalanceLoading,
-    isOutBalanceLoading: isOutBalanceLoading,
-
+    isBalanceLoading: isInBalanceLoading||isOutBalanceLoading,
     shouldBuyMax,
     tradeReceipt,
     startTrading,
