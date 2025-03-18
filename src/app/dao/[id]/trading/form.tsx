@@ -37,6 +37,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   const repoToken = {
     ticker: data.ticker,
     address: data.tokenInfo.tokenAddress as `0x${string}`,
+    decimals: 18,
     icon: (
       <Image src={data.avatar} alt="Avatar" fill className="object-cover" />
     )
@@ -45,6 +46,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
     address: assetTokenInfo?.address as `0x${string}`,
+    decimals: assetTokenInfo?.decimals ?? 0,
     icon: (
       <Image
         src={assetTokenInfo?.logoUrl ?? ""}
@@ -69,8 +71,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         BigInt(
           fromHumanAmount(
             rawValue,
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-            balance?.decimals ?? leftTokenDecimals,
+            tokenIn?.decimals ?? leftTokenDecimals,
           ).toString(),
         ),
       )

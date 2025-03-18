@@ -145,8 +145,8 @@ export function useTrade({
       enabled: !!userAddress && !!tokenId
     })
 
-  const balanceOk = !!inBalance && inBalance.value >= amountIn
-  const outBalanceOk =!!outBalance && outBalance.value >= amountIn
+  const balanceOk = (!!inBalance && inBalance.value >= amountIn)||
+    (!!outBalance && outBalance.value >= amountIn)
 
   const {
     error: approveError,
@@ -309,7 +309,7 @@ export function useTrade({
 
     balance: inBalance,
     outBalance,
-    isBalanceOk: balanceOk || outBalanceOk,
+    isBalanceOk: balanceOk,
     isBalanceLoading: isInBalanceLoading,
     isOutBalanceLoading: isOutBalanceLoading,
 
