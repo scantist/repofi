@@ -72,13 +72,14 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
     }
   }
 
-  const updateAmountIn = (value: bigint) => {
+  const updateAmountIn = (value: bigint, decimals?: number) => {
     setAmountIn(value)
     setAmountInRaw(
-      toHumanAmount(value, balance?.decimals ?? leftTokenDecimals, 2),
+      toHumanAmount(value, decimals ?? leftTokenDecimals, 2),
     )
   }
 
+  console.log("slippage", slippage)
   const {
     amountOutMin,
     amountOut,
@@ -251,8 +252,11 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         <div
           className={"cursor-pointer font-thin tracking-tighter underline"}
           onClick={() => {
-            if (balance) {
-              updateAmountIn((balance.value * BigInt(100)) / 100n)
+            if (balance && isBuy) {
+              updateAmountIn((balance.value * BigInt(100)) / 100n, balance.decimals)
+            }
+            if (outBalance &&!isBuy) {
+              updateAmountIn((outBalance.value * BigInt(100)) / 100n, outBalance.decimals)
             }
           }}
         >
