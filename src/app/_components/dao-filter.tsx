@@ -23,7 +23,7 @@ interface Props {
 
 const DaoFilter: FC<Props> = ({ title, prefix = "", daoParam }) => {
   // 使用普通的 useState 来跟踪输入框的值
-  const [inputValue, setInputValue] = useState(daoParam.search || "")
+  const [inputValue, setInputValue] = useState(daoParam.search ?? "")
   
   // 添加过渡状态
   const [isPending, startTransitionEffect] = useTransition()
