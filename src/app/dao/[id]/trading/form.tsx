@@ -239,8 +239,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
                 </strong>
               ) : (isOutBalanceLoading ? "-" : <strong>
               {toHumanAmount(
-                0n,
-                leftTokenDecimals,
+                outBalance?.value ?? 0n,
+                outBalance?.decimals ?? leftTokenDecimals,
                 2,
               )}
             </strong>)

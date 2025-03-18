@@ -24,11 +24,10 @@ const DaoGrid: FC<Props> = ({
     page: 0,
     size: 6
   })
-  const [param, setParam] = useState<HomeSearchParams>(initParam)
   const { data: response, isPending } = api.dao.search.useQuery(
     {
       ...pageable,
-      ...param
+      ...initParam
     },
     { initialData: initialData },
   )

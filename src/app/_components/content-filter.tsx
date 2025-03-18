@@ -1,24 +1,20 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
-import {
-  type FC,
-  useOptimistic,
-  useState,
-  useTransition
-} from "react"
+import { type FC, useOptimistic, useState, useTransition } from "react"
 import SearchInput from "~/components/ui/search-input"
 import { type HomeSearchParams } from "~/lib/schema"
 import { useAuth } from "~/components/auth/auth-context"
 import Switcher from "~/components/ui/switcher"
 import Sorter from "~/app/_components/content-filter-sort"
+import { cn } from "~/lib/utils"
 
-const ContentFilter: FC<HomeSearchParams & {prefix?: string}> = ({
+const ContentFilter: FC<HomeSearchParams & { prefix?: string }> = ({
   owned,
   starred,
   search,
   orderBy,
-   prefix
+  prefix
 }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -40,9 +36,9 @@ const ContentFilter: FC<HomeSearchParams & {prefix?: string}> = ({
   ) => {
     const newSearchParams = new URLSearchParams(searchParams)
     if (!value) {
-      newSearchParams.delete(`${prefix ?? "" }${key}`)
+      newSearchParams.delete(`${prefix ?? ""}${key}`)
     } else {
-      newSearchParams.set(`${prefix ?? "" }${key}`, String(value))
+      newSearchParams.set(`${prefix ?? ""}${key}`, String(value))
     }
     startTransition(() => {
       set(value)
@@ -51,9 +47,12 @@ const ContentFilter: FC<HomeSearchParams & {prefix?: string}> = ({
   }
   return (
     <div
-      className={
-        "bg-background/40 top-16 z-10 grid grid-cols-1 items-center gap-8 rounded-lg border p-3.5 backdrop-blur sm:grid-cols-2 md:sticky lg:grid-cols-7"
-      }
+      className={cn(
+        "bg-background/40 top-16 z-10 grid grid-cols-1 items-center gap-8 rounded-lg border p-3.5 backdrop-blur sm:grid-cols-2 md:sticky lg:grid-cols-7",
+        isPending
+          ? "animate-border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]"
+          : "border-primary/30 bg-background"
+      )}
     >
       <div className="lg:col-span-2">
         <SearchInput
