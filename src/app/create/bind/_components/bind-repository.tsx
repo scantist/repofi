@@ -236,7 +236,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                       }}
                     >
                       {isLoadingDao && current === repo ? (
-                        <LoadingSpinner size={16} className="inline mr-1" />
+                        <LoadingSpinner size={16} className="inline mr-1" textClassName={"hidden"} />
                       ) : "Bind"}
                     </div>
                   </div>

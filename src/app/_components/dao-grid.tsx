@@ -5,6 +5,7 @@ import { api } from "~/trpc/react"
 import DaoCard from "~/app/_components/dao-card"
 import ListPagination from "~/components/list-pagination"
 import { type DaoSearchResult } from "~/server/service/dao"
+import NoData from "~/components/no-data"
 
 type Props = {
   initParam?: HomeSearchParams;
@@ -56,7 +57,7 @@ const DaoGrid: FC<Props> = ({
           </div>
         </>
       ) : (
-        <div>No Data</div>
+        <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"}/>
       )}
     </div>
   )

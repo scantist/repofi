@@ -4,6 +4,8 @@ import LiveDao from "~/app/_components/live-dao"
 import { api } from "~/trpc/server"
 import type { DaoSearchResult } from "~/server/service/dao"
 import type { HomeSearchParams } from "~/lib/schema"
+import { Button } from "~/components/ui/button"
+import Link from "next/link"
 
 const LaunchpadPage = async ({
   searchParams
@@ -60,7 +62,7 @@ const LaunchpadPage = async ({
         >
           <div className={"text-5xl tracking-tight"}>Curate & Fund</div>
           <div className={"text-5xl tracking-tight"}>Decentralized Science</div>
-          <div className={"text-md max-w-3xl font-thin text-white/70"}>
+          <div className={"text-md max-w-4xl font-thin text-white/70"}>
             REPO Protocol is a decentralized financial layer revolutionizing
             open science and open source software. Through a dual-token
             model—$REPO for governance and repository-specific tokens for
@@ -68,6 +70,11 @@ const LaunchpadPage = async ({
             RepoDAOs ensure sustainable funding, fair rewards, and decentralized
             governance, driving the democratization of AI and technology.
           </div>
+          <Link href="/create/bind">
+            <Button variant={"outline"} className={"max-w-52 bg-transparent text-xl h-14"}>
+              Create
+            </Button>
+          </Link>
           <div
             className={
               "bg-secondary mt-6 flex max-w-3xl flex-col justify-between rounded-lg px-4 py-7 md:flex-row md:px-8"

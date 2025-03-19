@@ -1,20 +1,20 @@
 import React from "react"
-import { Loader2 } from "lucide-react"
+import { FileX2 } from "lucide-react"
 import { cn } from "~/lib/utils"
 
-interface LoadingSpinnerProps {
+interface NoDataProps {
   size?: number;
   className?: string;
-  text?: string;
   textClassName?: string;
+  text?: string;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 24, className = "", text = "Loading...", textClassName="" }) => {
+const NoData: React.FC<NoDataProps> = ({ size = 24, className = "", textClassName = "", text = "The block no data." }) => {
   return (
     <div className={cn("flex flex-col items-center justify-center", className)}>
-      <Loader2
+      <FileX2
         size={size}
-        className="animate-spin text-primary mb-2"
+        className=" text-primary mb-2"
       />
       <p className={
         cn("text-sm text-gray-500", textClassName)
@@ -23,4 +23,4 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 24, className = 
   )
 }
 
-export default LoadingSpinner
+export default NoData

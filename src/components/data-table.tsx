@@ -11,6 +11,7 @@ import { Fragment, type ReactNode, useEffect, useMemo, useState } from "react"
 import { cn } from "~/lib/utils"
 import CardWrapper from "~/components/card-wrapper"
 import { type PageableData } from "~/types/data"
+import NoData from "~/components/no-data"
 
 interface Props<T> {
   data?: PageableData<T>;
@@ -127,7 +128,7 @@ const DataTable = <T,>({
             ) : (
               <tr>
                 <td className="px-6 py-4" colSpan={columns.length}>
-                  No Data
+                  <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"}/>
                 </td>
               </tr>
             )}

@@ -22,7 +22,7 @@ const DashboardPage = () => {
             <LineCard />
           </div>
           <div className={"md:col-span-2"}>
-            <ContributorCard />
+            {/*<ContributorCard initContributorList/>*/}
           </div>
         </div>
       </BannerWrapper>
