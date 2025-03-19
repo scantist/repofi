@@ -1,7 +1,8 @@
 import { z } from "zod"
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc"
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc"
 import { pageableSchema } from "~/lib/schema"
 import { contributorService } from "~/server/service/contributor"
+import { DaoPlatformSchema } from "~/lib/zod"
 
 export const contributorRouter = createTRPCRouter({
   getTop10Contributor: publicProcedure
@@ -16,5 +17,11 @@ export const contributorRouter = createTRPCRouter({
         page: input.page,
         size: input.size
       })
+    }),
+  bind:protectedProcedure
+    .input(z.object({ accessToken:z.string(),platform:DaoPlatformSchema }))
+    .mutation(async ({ input, ctx }) => {
+      const userAddress = ctx.session!.address
+      return await contributorService.bind(input.accessToken, input.platform, userAddress)
     })
 })

@@ -149,3 +149,30 @@ export function parseRepoUrl(url: string): RepoMeta {
   return repoMetaSchema.parse(result)
 }
 
+export async function fetchUserInfo(accessToken: string, platform: DaoPlatform) {
+  if (platform === DaoPlatform.GITHUB) {
+    const client = new Octokit({ auth: accessToken })
+    if (!client) {
+      throw new CommonError(
+        ErrorCode.INTERNAL_ERROR,
+        "GitHub client not available",
+      )
+    }
+    try {
+      const { data: user } = await client.rest.users.getAuthenticated()
+      return {
+        id: user.id.toString(),
+        avatar: user.avatar_url,
+        name: user.login
+      }
+    } catch (error) {
+      console.error("Error fetching GitHub user info:", error)
+      throw new CommonError(
+        ErrorCode.INTERNAL_ERROR,
+        "Failed to fetch GitHub user information",
+      )
+    }
+  }  else {
+    throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
+  }
+}
