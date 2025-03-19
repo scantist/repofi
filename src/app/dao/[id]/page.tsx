@@ -9,6 +9,8 @@ import Roadmap from "~/app/dao/[id]/_components/roadmap"
 import Content from "~/app/dao/[id]/_components/content"
 import { api } from "~/trpc/server"
 import { type DaoDetailResult } from "~/server/service/dao"
+import { type ContributorPage } from "~/server/service/contributor"
+import { type Top10Holders } from "~/server/service/holder"
 
 const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
@@ -16,6 +18,15 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (daoDetail === null) {
     return <div>No Data</div>
   }
+  const contributorList: ContributorPage =
+    await api.contributor.getContributors({
+      daoId: id,
+      page: 0,
+      size: 10
+    })
+  const top10Holders: Top10Holders = await api.holder.getTop10Holders({
+    tokenId: daoDetail.tokenId
+  })
   return (
     <div className={"mt-20 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col"}>
@@ -44,18 +55,22 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
             </div>
             <div className={"mt-1 flex flex-row gap-4 text-sm"}>
               <div>License: {daoDetail.license}</div>
-              <div className={"border-l border-gray-400 pl-4"}>Stars: {daoDetail.repoStar}</div>
-              <div className={"border-l border-gray-400 pl-4"}>Watch: {daoDetail.repoWatch}</div>
-              <div className={"border-l border-gray-400 pl-4"}>Forks: {daoDetail.repoForks}</div>
+              <div className={"border-l border-gray-400 pl-4"}>
+                Stars: {daoDetail.repoStar}
+              </div>
+              <div className={"border-l border-gray-400 pl-4"}>
+                Watch: {daoDetail.repoWatch}
+              </div>
+              <div className={"border-l border-gray-400 pl-4"}>
+                Forks: {daoDetail.repoForks}
+              </div>
             </div>
-            <div className={"mt-4 text-sm"}>
-              {daoDetail.description}
-            </div>
+            <div className={"mt-4 text-sm"}>{daoDetail.description}</div>
           </div>
         </div>
       </BannerWrapper>
       <div className={"mx-4 max-w-7xl md:mx-auto"}>
-        <DaoContent data={daoDetail} />
+        <DaoContent data={daoDetail} initContributorList={contributorList} top10Holders={top10Holders} />
         <ArticleList />
         <TeamList />
         <Roadmap />

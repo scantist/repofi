@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc"
 import { pageableSchema } from "~/lib/schema"
-import { contributorService } from "~/server/service/contributor"
+import { type ContributorPage, contributorService } from "~/server/service/contributor"
 import { DaoPlatformSchema } from "~/lib/zod"
 
 export const contributorRouter = createTRPCRouter({
@@ -12,7 +12,7 @@ export const contributorRouter = createTRPCRouter({
     }),
   getContributors: publicProcedure
     .input(z.object({ daoId: z.string() }).merge(pageableSchema))
-    .query(async ({ input }) => {
+    .query(async ({ input }): Promise<ContributorPage> => {
       return await contributorService.getContributors(input.daoId, {
         page: input.page,
         size: input.size

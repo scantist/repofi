@@ -118,7 +118,7 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
     amountIn,
     amountOutMin: amountOutMin
   })
-
+  console.log({ isApprovePending, isTradePending })
   const handleSubmit = async () => {
     if (!isAuthenticated) {
       void openDialog()

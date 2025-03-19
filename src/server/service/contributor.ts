@@ -55,5 +55,5 @@ class ContributorService {
     })
   }
 }
-
 export const contributorService = new ContributorService()
+export type ContributorPage = Awaited<ReturnType<typeof contributorService.getContributors>>

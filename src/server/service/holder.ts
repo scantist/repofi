@@ -52,3 +52,4 @@ class HolderService {
 }
 
 export const holderService = new HolderService()
+export type Top10Holders = Awaited<ReturnType<typeof holderService.getTop10Holders>>

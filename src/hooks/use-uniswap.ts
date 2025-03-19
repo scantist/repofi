@@ -157,7 +157,7 @@ export function useTrade({
     amountOutMinimum: amountOutMin,
     sqrtPriceLimitX96: 0n // 不设置价格限制
   }
-
+  console.log(exactInputParams)
   const {
     data: tradeSimulation,
     isLoading: isTradeSimulating,
@@ -174,7 +174,7 @@ export function useTrade({
         !!tokenOut &&
         isAllowanceOk &&
         amountIn > BigInt(0) &&
-        amountOutMin >= BigInt(0) &&
+        amountOutMin > BigInt(0) &&
         balanceOk &&
         !!address
     }
@@ -254,6 +254,7 @@ export function useTrade({
     resetApproval()
   }
 
+  console.log({ isInBalanceLoading, isOutBalanceLoading, isTradeSimulating, isTradeSimulateError })
   return {
     isAllowanceOk,
     isApprovePending,
