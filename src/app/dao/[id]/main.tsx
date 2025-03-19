@@ -10,6 +10,7 @@ import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 import { type ContributorPage } from "~/server/service/contributor"
 import { type Top10Holders } from "~/server/service/holder"
+import NoData from "~/components/no-data"
 
 interface DaoContentProps {
   data: DaoDetailResult;
@@ -85,16 +86,24 @@ const DaoContent = ({
         <CardWrapper>
           <div className={"rounded-lg bg-black/60 p-4"}>
             <div className={"text-2xl font-medium"}>Token Distribution</div>
-            <div className={"mt-3 flex flex-col gap-2"}>
-              {top10Holders.map((item, index) => (
-                <div
-                  key={`Token-Distribution-${item.userAddress}`}
-                  className={"flex flex-row items-center gap-2 font-thin"}
-                >
-                  <div className={"flex-1 truncate"}>{shortenAddress(item.userAddress)}</div>
-                  <div>{Number(item.balance).toFixed(2)}</div>
-                </div>
-              ))}
+            <div className={"mt-3 flex flex-col gap-2 min-h-95"}>
+              {top10Holders.length === 0 ? (
+                <NoData className={"mt-10"} size={65} textClassName={"text-xl"}/>
+              ) : (
+                <>
+                  {top10Holders.map((item, index) => (
+                    <div
+                      key={`Token-Distribution-${item.userAddress}`}
+                      className={"flex flex-row items-center gap-2 font-thin"}
+                    >
+                      <div className={"flex-1 truncate"}>
+                        {shortenAddress(item.userAddress)}
+                      </div>
+                      <div>{Number(item.balance).toFixed(2)}</div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </CardWrapper>

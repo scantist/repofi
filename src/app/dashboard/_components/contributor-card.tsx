@@ -27,7 +27,10 @@ const ContributorCard = ({
   return (
     <CardWrapper contentClassName={"min-h-95"}>
       <div className={"rounded-lg bg-black/60 p-4"}>
-        <div className={"text-2xl font-medium"}>Contributor List</div>
+        <div className={"text-2xl font-medium flex flex-row justify-between items-center"}>
+          <div>Contributor List</div>
+          <div className={"text-sm cursor-pointer text-muted-foreground"}>BIND</div>
+        </div>
         <div className={"mt-3 flex flex-col gap-2"}>
           {data?.list.map((item, index) => (
             <div
@@ -53,7 +56,6 @@ const ContributorCard = ({
                   </div>
                 ) : (
                   <div className={"text-muted-foreground text-xs cursor-pointer"}>
-                    Bind
                   </div>
                 )}
               </div>

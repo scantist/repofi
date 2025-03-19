@@ -107,7 +107,7 @@ const MessageList = ({ data }: MessageListProps) => {
   }, [messageData, isPending])
   return (
     <>
-      <div className={"flex w-full flex-col gap-4 px-10 py-5"}>
+      <div className={"flex w-full flex-col gap-4 px-10 py-5 h-full"}>
         <div
           className={
             "flex flex-row items-center justify-between text-2xl font-bold"
@@ -120,7 +120,9 @@ const MessageList = ({ data }: MessageListProps) => {
             </Button>
           </CreateMessage>
         </div>
-        {list}
+        <div className={"md:min-h-[600px]"}>
+          {list}
+        </div>
       </div>
     </>
   )
