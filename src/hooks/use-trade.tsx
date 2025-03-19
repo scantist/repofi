@@ -16,6 +16,7 @@ import {
   useBalance as useLaunchBalance
 } from "~/hooks/use-launch-contract"
 import { useAllowance as useTokenAllowance } from "~/hooks/use-token"
+import type Decimal from "decimal.js"
 
 const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 
@@ -139,6 +140,7 @@ export function useTrade({
   action,
   tokenId,
   assetAddress,
+  assetLaunchFee,
   isNativeAsset,
   amountIn,
   amountOutMin
@@ -146,6 +148,7 @@ export function useTrade({
   action: "buy" | "sell";
   tokenId: bigint;
   assetAddress: `0x${string}`;
+  assetLaunchFee:Decimal;
   isNativeAsset: boolean;
   amountIn: bigint;
   amountOutMin: bigint;
@@ -200,6 +203,7 @@ export function useTrade({
     address: launchPadAddress,
     functionName: action === "buy" ? "buy" : "sell",
     args: [tokenId, amountIn, amountOutMin],
+    value: isNativeAsset? amountIn :0n,
     query: {
       enabled:
         isAllowanceOk &&
@@ -209,7 +213,7 @@ export function useTrade({
         !!userAddress
     }
   })
-
+  console.log("amountIn", amountIn)
   const {
     data: buyMaxSimulation,
     isLoading: isBuyMaxSimulating,
@@ -220,12 +224,13 @@ export function useTrade({
     address: launchPadAddress,
     functionName: "buyMax",
     args: [tokenId],
+    value: isNativeAsset? BigInt(assetLaunchFee.toString()) :0n,
     query: {
       enabled:
         action === "buy" &&
         isAllowanceOk &&
         amountIn > BigInt(0) &&
-        amountOutMin > BigInt(0) &&
+        amountOutMin >= BigInt(0) &&
         balanceOk &&
         !!userAddress
     }
@@ -274,6 +279,7 @@ export function useTrade({
       if (buyMaxSimulation && !isBuyMaxSimulateError) {
         tradeWriteContract(buyMaxSimulation.request)
       } else {
+        console.log("BuyMax: Insufficient balance or insufficient allowance",buyMaxSimulateError)
         toast.error("Unable to trade", {
           description: "Simulation of contract write failed 1"
         })

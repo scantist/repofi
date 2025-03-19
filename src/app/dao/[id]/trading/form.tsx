@@ -21,6 +21,7 @@ import {
   SuccessOverlay
 } from "./trading-components"
 import { useTokenStats } from "~/hooks/use-launch-contract"
+import Decimal from "decimal.js";
 
 interface TradingFormProps {
   data: DaoDetailResult;
@@ -118,6 +119,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
     tokenId: data.tokenId,
     assetAddress: assetToken.address,
     isNativeAsset: assetTokenInfo?.isNative ?? false,
+    //TODO 解决decimal
+    assetLaunchFee:assetTokenInfo?.launchFee?? new Decimal(0),
     amountIn,
     amountOutMin,
     action: mode
