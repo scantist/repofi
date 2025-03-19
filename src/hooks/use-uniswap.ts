@@ -9,10 +9,10 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract
 } from "wagmi"
-import ISwapRouter from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json"
-import IUniswapV3Pool from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json"
-import IUniswapV3Factory from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Factory.sol/IUniswapV3Factory.json"
-import IQuoterV2 from "@uniswap/v3-periphery/artifacts/contracts/interfaces/IQuoterV2.sol/IQuoterV2.json"
+import SwapRouter02 from "~/lib/abi/UniswapV3SwapRouter02.json"
+import Pool from "~/lib/abi/UniswapV3Pool.json"
+import Factory from "~/lib/abi/UniswapV3Factory.json"
+import QuoterV2 from "~/lib/abi/UniswapV3QuoterV2.json"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import { useAllowance } from "./use-token"
@@ -21,6 +21,7 @@ const swapRouterAddress = env.NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS
 const quoterAddress = env.NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS
 const v3FactoryAddress = env.NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS
 const poolFee = 3000n
+
 export function useAmountsOut({
   amountIn,
   tokenIn,
@@ -36,7 +37,7 @@ export function useAmountsOut({
     error: simulationError,
     isError: isSimulationError
   } = useSimulateContract({
-    abi: IQuoterV2.abi,
+    abi: QuoterV2,
     address: quoterAddress,
     functionName: "quoteExactInputSingle",
     args: [
@@ -104,13 +105,16 @@ export function useTrade({
   amountOutMin: bigint;
 }) {
   const { address } = useAccount()
+  const chainId = defaultChain.id
+
+  // 获取余额
   const {
     data: inBalance,
     isLoading: isInBalanceLoading,
     refetch: refetchInBalance
   } = useBalance({
     address: address,
-    chainId: defaultChain.id,
+    chainId: chainId,
     token: tokenIn,
     query: {
       enabled: !!address && !!tokenIn
@@ -120,7 +124,7 @@ export function useTrade({
   const { isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
     useBalance({
       address: address,
-      chainId: defaultChain.id,
+      chainId: chainId,
       token: tokenOut,
       query: {
         enabled: !!address && !!tokenOut
@@ -144,39 +148,51 @@ export function useTrade({
     contractAddress: swapRouterAddress
   })
 
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 10) // 10 minutes
-
   // V3使用不同的交易参数结构
   const exactInputParams = {
     tokenIn,
     tokenOut,
     fee: 3000, // 默认0.3%费率
     recipient: address,
-    deadline,
     amountIn,
     amountOutMinimum: amountOutMin,
     sqrtPriceLimitX96: 0n // 不设置价格限制
   }
-  console.log(exactInputParams)
+  const simulationEnabled =
+    !!tokenIn &&
+    !!tokenOut &&
+    isAllowanceOk &&
+    amountIn > BigInt(0) &&
+    amountOutMin >= BigInt(0) &&
+    balanceOk &&
+    !!address &&
+    !!swapRouterAddress
+
+  console.log("Simulation enabled:", simulationEnabled, {
+    hasTokenIn: !!tokenIn,
+    hasTokenOut: !!tokenOut,
+    isAllowanceOk,
+    amountInPositive: amountIn > BigInt(0),
+    amountOutMinValid: amountOutMin >= BigInt(0),
+    balanceOk,
+    hasAddress: !!address,
+    hasRouter: !!swapRouterAddress
+  })
+
   const {
     data: tradeSimulation,
     isLoading: isTradeSimulating,
     isError: isTradeSimulateError,
     error: tradeSimulateError
   } = useSimulateContract({
-    abi: ISwapRouter.abi,
+    abi: SwapRouter02,
     address: swapRouterAddress,
     functionName: "exactInputSingle",
     args: [exactInputParams],
     query: {
-      enabled:
-        !!tokenIn &&
-        !!tokenOut &&
-        isAllowanceOk &&
-        amountIn > BigInt(0) &&
-        amountOutMin > BigInt(0) &&
-        balanceOk &&
-        !!address
+      enabled: simulationEnabled,
+      retry: 1,
+      retryDelay: 1000
     }
   })
 
@@ -185,6 +201,7 @@ export function useTrade({
     data: tradeWriteContractData,
     isPending: isTradeWritingContract,
     isError: isTradeWritingContractError,
+    error: tradeWriteError,
     reset: resetTrading
   } = useWriteContract()
 
@@ -216,17 +233,16 @@ export function useTrade({
       return
     }
 
-    console.log("start trade", {
-      trade: tradeSimulation,
-      isTrading: isTradeSimulating,
-      isTradingError: isTradeSimulateError
-    })
-
     if (tradeSimulation && !isTradeSimulateError) {
+      console.log("Executing trade with request:", tradeSimulation.request)
       tradeWriteContract(tradeSimulation.request)
     } else {
+      const errorMessage = tradeSimulateError
+        ? `Error: ${tradeSimulateError.message}`
+        : "Unknown error during simulation"
+
       toast.error("Unable to trade", {
-        description: "Simulation of contract write failed"
+        description: errorMessage
       })
       resetTrading()
     }
@@ -236,10 +252,11 @@ export function useTrade({
     address,
     balanceOk,
     tradeSimulation,
-    isTradeSimulating,
     isTradeSimulateError,
+    tradeSimulateError,
     tradeWriteContract,
-    resetTrading
+    resetTrading,
+    exactInputParams
   ])
 
   const reset = useCallback(() => {
@@ -254,7 +271,6 @@ export function useTrade({
     resetApproval()
   }
 
-  console.log({ isInBalanceLoading, isOutBalanceLoading, isTradeSimulating, isTradeSimulateError })
   return {
     isAllowanceOk,
     isApprovePending,
@@ -266,7 +282,7 @@ export function useTrade({
       isInBalanceLoading || isOutBalanceLoading || isTradeSimulating,
     isTrading: isTradeWritingContract || isTradeWaitingReceipt,
     isTradeError: isTradeSimulateError || isTradeWritingContractError,
-    error: approveError ?? tradeSimulateError,
+    error: approveError ?? tradeSimulateError ?? tradeWriteError,
 
     balance: inBalance,
     isBalanceOk: balanceOk,
@@ -288,7 +304,7 @@ export function useTokenSpotPrice(
   // 获取池子地址
   const { data: poolAddress, isLoading: isPoolAddressLoading } =
     useReadContract({
-      abi: IUniswapV3Factory.abi,
+      abi: Factory,
       address: v3FactoryAddress, // Uniswap V3 Factory
       functionName: "getPool",
       args: [tokenA, tokenB, poolFee], // 使用0.3%费率池
@@ -302,7 +318,7 @@ export function useTokenSpotPrice(
     isLoading: isSlot0Loading,
     refetch: refetchSlot0
   } = useReadContract({
-    abi: IUniswapV3Pool.abi,
+    abi: Pool,
     address: poolAddress as `0x${string}`,
     functionName: "slot0",
     query: {
