@@ -55,7 +55,7 @@ const FinishResult = () => {
           Please go to the{" "}
           <span
             onClick={() => {
-              router.push("/dao/test")
+              router.push("/")
             }}
             className={"cursor-pointer font-bold text-white"}
           >
@@ -66,7 +66,7 @@ const FinishResult = () => {
         <Button
           className={"mt-5 w-32 text-xl"}
           onClick={() => {
-            router.push("/dao/test")
+            router.push("/")
           }}
         >
           GO

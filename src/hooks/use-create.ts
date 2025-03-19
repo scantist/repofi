@@ -270,6 +270,7 @@ export function useDataPersistence({
 }) {
   const { mutateAsync: createMutate } = api.dao.create.useMutation()
   const [daoForms] = useAtom(daoFormsAtom)
+  console.log("daoForms", daoForms)
   const execute = useCallback(
     async function <T>(tokenId?: bigint): Promise<T | undefined> {
       try {

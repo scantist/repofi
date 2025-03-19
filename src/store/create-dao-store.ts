@@ -55,11 +55,10 @@ export const daoFormsSchema = daoRepositoryFormsSchema
 
 export type DaoForms = z.infer<typeof daoFormsSchema>;
 export type DaoInformationForms = z.infer<typeof daoInformationFormsSchema>;
-export const stepAtom = atomWithStorage<CreateDaoStep>(
-  "sgp-create-dao-step",
+export const stepAtom = atom<CreateDaoStep>(
   "BIND",
 )
-export const daoFormsAtom = atomWithStorage<DaoForms>("sgp-create-dao-params", {
+export const daoFormsAtom = atom<DaoForms>({
   avatar: "",
   url: "",
   type: DaoType.CODE,
