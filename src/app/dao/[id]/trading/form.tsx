@@ -21,7 +21,7 @@ import {
   SuccessOverlay
 } from "./trading-components"
 import { useTokenStats } from "~/hooks/use-launch-contract"
-import Decimal from "decimal.js";
+import Decimal from "decimal.js"
 
 interface TradingFormProps {
   data: DaoDetailResult;
