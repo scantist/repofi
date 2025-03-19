@@ -5,6 +5,16 @@ import { useTokenLockerAddress } from "~/hooks/use-launch-contract"
 import { useCallback } from "react"
 import { toast } from "sonner"
 
+type LockInfo = [
+  boolean, // hasLockInfo
+  boolean, // instantClaimed
+  bigint, // instantAmount
+  bigint, // linearClaimedAmount
+  bigint, // linearClaimableAmount
+  bigint, // linearRemainingAmount
+  bigint  // linearTotalAmount
+];
+
 /**
  * Hook to get the linear claimable amount for a specific token and user
  * @param tokenAddress The address of the token
@@ -35,6 +45,53 @@ export function useLinearClaimableAmount(
 
   return {
     claimableAmount,
+    isLoading: isLoading || isTokenLockerLoading,
+    isError,
+    error,
+    refetch
+  }
+}
+
+/**
+ * Hook to get the lock information for a specific token and user
+ * @param tokenAddress The address of the token
+ */
+export function useUserLockInfo(
+  tokenAddress?: `0x${string}`,
+) {
+  const { address: userAddress } = useAccount()
+  const { address: tokenLockerAddress, isLoading: isTokenLockerLoading } = useTokenLockerAddress()
+
+  const {
+    data: lockInfo ,
+    isLoading,
+    isError,
+    error,
+    refetch
+  } = useReadContract({
+    abi: tokenLockerAbi,
+    address: tokenLockerAddress,
+    functionName: "getUserLockInfo",
+    args: [tokenAddress, userAddress],
+    chainId: defaultChain.id,
+    query: {
+      enabled: !!tokenAddress && !!userAddress && !!tokenLockerAddress && !isTokenLockerLoading
+    }
+  })
+  const parsedLockInfo=lockInfo as LockInfo
+  // Transform the raw data into a more usable structure
+  const formattedLockInfo = parsedLockInfo ? {
+    hasLockInfo: parsedLockInfo[0],
+    instantClaimed: parsedLockInfo[1],
+    instantAmount: parsedLockInfo[2],
+    linearClaimedAmount: parsedLockInfo[3],
+    linearClaimableAmount: parsedLockInfo[4],
+    linearRemainingAmount: parsedLockInfo[5],
+    linearTotalAmount: parsedLockInfo[6]
+  } : undefined
+
+  return {
+    lockInfo: formattedLockInfo,
     isLoading: isLoading || isTokenLockerLoading,
     isError,
     error,

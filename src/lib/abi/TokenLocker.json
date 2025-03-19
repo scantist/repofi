@@ -308,6 +308,60 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getUserLockInfo",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "hasLockInfo",
+        "type": "bool"
+      },
+      {
+        "internalType": "bool",
+        "name": "instantClaimed",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "instantAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "linearClaimedAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "linearClaimableAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "linearRemainingAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "linearTotalAmount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint64",
         "name": "defaultUnlockRatio_",
         "type": "uint64"
