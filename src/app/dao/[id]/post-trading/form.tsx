@@ -20,7 +20,7 @@ import {
 import PostTradingFeePopover from "./post-trading-fee-popover"
 import PostSlippagePopover from "~/app/dao/[id]/post-trading/post-slippage-popover"
 import { useAmountOutMin, useTrade } from "~/hooks/use-uniswap"
-
+import { defaultWToken } from "~/components/auth/config"
 interface TradingFormProps {
   data: DaoDetailResult;
   mode: "buy" | "sell";
@@ -44,7 +44,7 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
 
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
-    address: assetTokenInfo?.address as `0x${string}`,
+    address: assetTokenInfo?.isNative?defaultWToken:assetTokenInfo?.address as `0x${string}`,
     decimals: assetTokenInfo?.decimals ?? 0,
     icon: (
       <Image

@@ -174,7 +174,7 @@ export function useTrade({
         !!tokenOut &&
         isAllowanceOk &&
         amountIn > BigInt(0) &&
-        amountOutMin > BigInt(0) &&
+        amountOutMin >= BigInt(0) &&
         balanceOk &&
         !!address
     }

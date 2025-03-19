@@ -15,6 +15,7 @@ import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
 
 const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
 const defaultChain = isMainNet ? base : sepolia
+const defaultWToken="0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14"
 const projectId = env.NEXT_PUBLIC_REOWN_PROJECT_ID
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [defaultChain]
 
@@ -136,4 +137,4 @@ createAppKit({
   // tokens
 })
 
-export { wagmiConfig, defaultChain }
+export { wagmiConfig, defaultChain,defaultWToken }
