@@ -7,12 +7,14 @@ import TradingCard from "~/app/dao/[id]/trading/card"
 import { type DaoDetailResult } from "~/server/service/dao"
 import { shortenAddress } from "~/lib/web3"
 import MessageList from "~/app/dao/[id]/message/message-list"
+import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 
 interface DaoContentProps {
   data: DaoDetailResult;
 }
 
 const DaoContent = ({ data }: DaoContentProps) => {
+  const graduated = data.tokenInfo.isGraduated
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
@@ -35,7 +37,7 @@ const DaoContent = ({ data }: DaoContentProps) => {
               <a
                 target="_blank"
                 rel="noreferrer"
-                className="underline mt-2 block hover:no-underline"
+                className="mt-2 block underline hover:no-underline"
               >
                 {shortenAddress(data?.createdBy ?? "")}
               </a>
@@ -45,7 +47,7 @@ const DaoContent = ({ data }: DaoContentProps) => {
               <a
                 target="_blank"
                 rel="noreferrer"
-                className="underline mt-2 block hover:no-underline"
+                className="mt-2 block underline hover:no-underline"
               >
                 {shortenAddress(data?.tokenInfo?.tokenAddress ?? "")}
               </a>
@@ -62,11 +64,15 @@ const DaoContent = ({ data }: DaoContentProps) => {
           alt={"K"}
         />
         <CardWrapper>
-          <MessageList data={data}/>
+          <MessageList data={data} />
         </CardWrapper>
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
-        <TradingCard data={data} />
+        {graduated ? (
+          <PostTradingCard data={data} />
+        ) : (
+          <TradingCard data={data} />
+        )}
         <ContributorCard />
         <CardWrapper>
           <div className={"rounded-lg bg-black/60 p-4"}>
