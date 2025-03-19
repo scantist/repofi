@@ -75,6 +75,6 @@ export const daoRouter = createTRPCRouter({
     )
     .query(async ({ input }): Promise<DaoDetailResult> => {
       return await daoService.detail(input.daoId)
-    }),
+    })
 
 })
