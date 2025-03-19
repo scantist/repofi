@@ -4,6 +4,8 @@ import { daoRouter } from "~/server/api/routers/dao"
 import { repoRouter } from "~/server/api/routers/repo"
 import { assetTokenRouter } from "~/server/api/routers/asset-token"
 import { messageRouter } from "~/server/api/routers/dao-message"
+import { contributorRouter } from "~/server/api/routers/contributor"
+import { holderRouter } from "~/server/api/routers/holder"
 
 /**
  * This is the primary router for your server.
@@ -15,7 +17,9 @@ export const appRouter = createTRPCRouter({
   dao: daoRouter,
   repo: repoRouter,
   assetToken: assetTokenRouter,
-  message: messageRouter
+  message: messageRouter,
+  contributor:contributorRouter,
+  holder:holderRouter
 })
 
 // export type definition of API

@@ -1,5 +1,6 @@
 import { db } from "~/server/db"
 import { type Pageable } from "~/lib/schema"
+import { type PageableData } from "~/types/data"
 
 class HolderService {
   async getTop10Holders(tokenId: bigint) {
@@ -28,8 +29,6 @@ class HolderService {
 
     const totalPages = Math.ceil(totalItems / pageable.size)
 
-    const actualPage = Math.max(0, Math.min(pageable.page, totalPages - 1))
-
     const holders = await db.daoTokenHolder.findMany({
       where: {
         tokenId,
@@ -37,7 +36,7 @@ class HolderService {
           gt: 0
         }
       },
-      skip: actualPage * pageable.size,
+      skip: pageable.page * pageable.size,
       take: pageable.size,
       orderBy: {
         balance: "desc"
@@ -45,11 +44,10 @@ class HolderService {
     })
 
     return {
-      items: holders,
-      totalPages,
-      currentPage: actualPage,
-      totalItems
-    }
+      list: holders,
+      total:totalItems,
+      pages:totalPages
+    } as PageableData<(typeof holders)[number]>
   }
 }
 
