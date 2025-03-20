@@ -12,10 +12,13 @@ import {
   formatMessage
 } from "@reown/appkit-siwe"
 import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
-
+const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
+  [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
+  [sepolia.id]: "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14" // Sepolia WETH
+} as const
 const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
 const defaultChain = isMainNet ? base : sepolia
-const defaultWToken="0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14"
+const defaultWCoinAddress = W_COIN_ADDRESSES[defaultChain.id]
 const projectId = env.NEXT_PUBLIC_REOWN_PROJECT_ID
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [defaultChain]
 
@@ -137,4 +140,4 @@ createAppKit({
   // tokens
 })
 
-export { wagmiConfig, defaultChain,defaultWToken }
+export { wagmiConfig, defaultChain,defaultWCoinAddress }

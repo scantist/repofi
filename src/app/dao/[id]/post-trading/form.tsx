@@ -20,7 +20,7 @@ import {
 import PostTradingFeePopover from "./post-trading-fee-popover"
 import PostSlippagePopover from "~/app/dao/[id]/post-trading/post-slippage-popover"
 import { useAmountOutMin, useTrade } from "~/hooks/use-uniswap"
-import { defaultWToken } from "~/components/auth/config"
+
 interface TradingFormProps {
   data: DaoDetailResult;
   mode: "buy" | "sell";
@@ -36,6 +36,7 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
   const repoToken = {
     ticker: data.ticker,
     address: data.tokenInfo.tokenAddress as `0x${string}`,
+    isNative: false,
     decimals: 18,
     icon: (
       <Image src={data.avatar} alt="Avatar" fill className="object-cover" />
@@ -44,7 +45,8 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
 
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
-    address: assetTokenInfo?.isNative?defaultWToken:assetTokenInfo?.address as `0x${string}`,
+    address: assetTokenInfo?.address as `0x${string}`,
+    isNative: assetTokenInfo?.isNative ?? false,
     decimals: assetTokenInfo?.decimals ?? 0,
     icon: (
       <Image
@@ -88,11 +90,12 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
     isLoading: isAmountsOutLoading
   } = useAmountOutMin({
     tokenIn: tokenIn.address,
+    tokenInIsNative: tokenIn.isNative,
     tokenOut: tokenOut.address,
+    tokenOutIsNative:tokenOut.isNative,
     amountIn,
     slippagePercent: slippage
   })
-  console.log("amountOut", amountOut)
 
   const {
     balance,
@@ -114,9 +117,11 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
     tradeReceipt
   } = useTrade({
     tokenIn: tokenIn.address,
+    tokenInIsNative:tokenIn.isNative,
     tokenOut: tokenOut.address,
+    tokenOutIsNative:tokenOut.isNative,
     amountIn,
-    amountOutMin: amountOutMin
+    amountOutMin
   })
   console.log({ isApprovePending, isTradePending })
   const handleSubmit = async () => {
