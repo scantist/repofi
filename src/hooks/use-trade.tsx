@@ -17,6 +17,7 @@ import {
 } from "~/hooks/use-launch-contract"
 import { useAllowance as useTokenAllowance } from "~/hooks/use-token"
 import type Decimal from "decimal.js"
+import { ethAddress } from "viem"
 
 const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 
@@ -93,13 +94,11 @@ function isOverLaunchPoint(message: string) {
 export function useAllowance({
           action,
                                     amount,
-                                    assetAddress,
-                                    isNativeAsset
+                                    assetAddress
                                   }: {
   action: "buy" | "sell";
   amount: bigint;
   assetAddress: `0x${string}` | undefined;
-  isNativeAsset: boolean;
 }) {
   // 使用 useMemo 来返回默认值，而不是条件调用 hooks
   const noneResult = {
@@ -124,7 +123,7 @@ export function useAllowance({
   })
 
   // 根据是否是原生代币返回不同的结果
-  return isNativeAsset||action=="sell" ? noneResult : nonNativeResult
+  return assetAddress==ethAddress||action=="sell" ? noneResult : nonNativeResult
 }
 
 /**
@@ -141,7 +140,6 @@ export function useTrade({
   tokenId,
   assetAddress,
   assetLaunchFee,
-  isNativeAsset,
   amountIn,
   amountOutMin
 }: {
@@ -149,10 +147,10 @@ export function useTrade({
   tokenId: bigint;
   assetAddress: `0x${string}`;
   assetLaunchFee:Decimal;
-  isNativeAsset: boolean;
   amountIn: bigint;
   amountOutMin: bigint;
 }) {
+  const isNativeAsset=assetAddress==ethAddress
   const { address: userAddress } = useAccount()
   const {
     data: inBalance,
@@ -189,8 +187,7 @@ export function useTrade({
   } = useAllowance({
     action,
     amount: amountIn,
-    assetAddress,
-    isNativeAsset
+    assetAddress
   })
 
   const {

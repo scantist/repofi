@@ -31,12 +31,11 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
   const isBuy = mode === "buy"
   const { address, openDialog, isAuthenticated } = useAuth()
   const { data: assetTokenInfo } = useAssetTokenInfo(
-    data.tokenInfo.assetTokenAddress,
+    data.tokenInfo.assetTokenAddress??"",
   )
   const repoToken = {
     ticker: data.ticker,
     address: data.tokenInfo.tokenAddress as `0x${string}`,
-    isNative: false,
     decimals: 18,
     icon: (
       <Image src={data.avatar} alt="Avatar" fill className="object-cover" />
@@ -46,7 +45,6 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
     address: assetTokenInfo?.address as `0x${string}`,
-    isNative: assetTokenInfo?.isNative ?? false,
     decimals: assetTokenInfo?.decimals ?? 0,
     icon: (
       <Image
@@ -90,9 +88,7 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
     isLoading: isAmountsOutLoading
   } = useAmountOutMin({
     tokenIn: tokenIn.address,
-    tokenInIsNative: tokenIn.isNative,
     tokenOut: tokenOut.address,
-    tokenOutIsNative:tokenOut.isNative,
     amountIn,
     slippagePercent: slippage
   })
@@ -117,9 +113,7 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
     tradeReceipt
   } = useTrade({
     tokenIn: tokenIn.address,
-    tokenInIsNative:tokenIn.isNative,
     tokenOut: tokenOut.address,
-    tokenOutIsNative:tokenOut.isNative,
     amountIn,
     amountOutMin
   })

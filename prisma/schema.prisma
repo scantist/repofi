@@ -162,7 +162,7 @@ model DaoTokenInfo {
   reservedRatio     Decimal?  @map("reserved_ratio") @db.Decimal(5, 2)
   unlockRatio       Decimal?  @map("unlock_ratio") @db.Decimal(5, 2)
   holderCount       Int       @default(0) @map("holder_count")
-  assetTokenAddress String    @default("") @map("asset_token_address") @db.VarChar(255)
+  assetTokenAddress String?   @map("asset_token_address") @db.VarChar(255)
   graduatedAt       DateTime? @map("graduated_at")
   uniswapV3Pair     String?   @map("uniswap_v3_pair") @db.VarChar(255)
 

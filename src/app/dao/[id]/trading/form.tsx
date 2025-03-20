@@ -118,7 +118,6 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   } = useTrade({
     tokenId: data.tokenId,
     assetAddress: assetToken.address,
-    isNativeAsset: assetTokenInfo?.isNative ?? false,
     //TODO 解决decimal
     assetLaunchFee:assetTokenInfo?.launchFee?? new Decimal(0),
     amountIn,

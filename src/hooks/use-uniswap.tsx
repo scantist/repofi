@@ -16,7 +16,7 @@ import QuoterV2 from "~/lib/abi/UniswapV3QuoterV2.json"
 import { defaultChain, defaultWCoinAddress } from "~/components/auth/config"
 import { env } from "~/env"
 import { useAllowance as useTokenAllowance } from "./use-token"
-import { encodeFunctionData } from "viem"
+import { encodeFunctionData, ethAddress } from "viem"
 
 const swapRouterAddress = env.NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS
 const quoterAddress = env.NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS
@@ -26,16 +26,14 @@ const poolFee = 3000n
 export function useAmountsOut({
   amountIn,
   tokenIn,
-  tokenInIsNative,
-  tokenOut,
-  tokenOutIsNative
+  tokenOut
 }: {
   amountIn: bigint;
   tokenIn: `0x${string}`;
-  tokenInIsNative:boolean;
   tokenOut: `0x${string}`;
-  tokenOutIsNative:boolean;
 }) {
+  const tokenInIsNative = tokenIn === ethAddress
+  const tokenOutIsNative = tokenOut === ethAddress
   const {
     data: simulationData,
     isLoading: isSimulationLoading,
@@ -71,24 +69,18 @@ export function useAmountsOut({
 export function useAmountOutMin({
   amountIn,
   tokenIn,
-  tokenInIsNative,
   tokenOut,
-  tokenOutIsNative,
   slippagePercent
 }: {
   amountIn: bigint;
   tokenIn: `0x${string}`;
-  tokenInIsNative:boolean;
   tokenOut: `0x${string}`;
-  tokenOutIsNative:boolean;
   slippagePercent: number; // e.g. 0.5 for 0.5% slippage
 }) {
   const { amountOut, isLoading } = useAmountsOut({
     amountIn,
     tokenIn,
-    tokenInIsNative,
-    tokenOut,
-    tokenOutIsNative
+    tokenOut
   })
 
   // 计算滑点容忍度，与V2相同
@@ -107,12 +99,10 @@ export function useAmountOutMin({
 export function useAllowance({
   amount,
   assetAddress,
-  contractAddress,
-  isNativeAsset
+  contractAddress
 }: {
   amount: bigint;
   assetAddress: `0x${string}` | undefined;
-  isNativeAsset: boolean;
   contractAddress: `0x${string}`;
 }) {
   const noneResult = {
@@ -135,27 +125,24 @@ export function useAllowance({
     contractAddress: contractAddress
   })
   // 根据是否是原生代币返回不同的结果
-  return isNativeAsset ? noneResult : nonNativeResult
+  return assetAddress==ethAddress ? noneResult : nonNativeResult
 }
 
 export function useTrade({
   tokenIn,
-  tokenInIsNative,
   tokenOut,
-  tokenOutIsNative,
   amountIn,
   amountOutMin
 }: {
   tokenIn: `0x${string}`;
-  tokenInIsNative: boolean;
   tokenOut: `0x${string}`;
-  tokenOutIsNative: boolean;
   amountIn: bigint;
   amountOutMin: bigint;
 }) {
   const { address } = useAccount()
   const chainId = defaultChain.id
-
+  const tokenInIsNative = tokenIn === ethAddress
+  const tokenOutIsNative = tokenOut === ethAddress
   // 获取余额
   const {
     data: inBalance,
@@ -194,18 +181,18 @@ export function useTrade({
   } = useAllowance({
     amount: amountIn,
     assetAddress: tokenIn,
-    isNativeAsset:tokenInIsNative,
     contractAddress: swapRouterAddress
   })
-  const exactInputParams = {
+  const exactInputParams = useMemo(() => ({
     tokenIn: tokenInIsNative ? defaultWCoinAddress : tokenIn,
     tokenOut: tokenOutIsNative ? defaultWCoinAddress : tokenOut,
-    fee: 3000,
-    recipient: tokenOutIsNative ? swapRouterAddress : address, // 如果输出是ETH，接收者应该是router
+    fee: poolFee,
+    recipient: tokenOutIsNative ? swapRouterAddress : address,
     amountIn,
     amountOutMinimum: amountOutMin,
     sqrtPriceLimitX96: 0n
-  }
+  }), [tokenInIsNative, tokenOutIsNative, tokenIn, tokenOut, address, amountIn, amountOutMin])
+
   const simulationEnabled =
     !!tokenIn &&
     !!tokenOut &&
@@ -216,21 +203,49 @@ export function useTrade({
     !!address &&
     !!swapRouterAddress
 
+  const simulationParams = useMemo(() => {
+    const baseParams = {
+      abi: SwapRouter02,
+      address: swapRouterAddress,
+      value: tokenInIsNative ? amountIn : 0n,
+      query: {
+        enabled: simulationEnabled
+      }
+    }
+    if (tokenOutIsNative) {
+      return {
+        ...baseParams,
+        functionName: "multicall",
+        args: [
+          [
+            encodeFunctionData({
+              abi: SwapRouter02,
+              functionName: "exactInputSingle",
+              args: [exactInputParams]
+            }),
+            encodeFunctionData({
+              abi: SwapRouter02,
+              functionName: "unwrapWETH9",
+              args: [amountOutMin, address]
+            })
+          ]
+        ]
+      }
+    } else {
+      return {
+        ...baseParams,
+        functionName: "exactInputSingle",
+        args: [exactInputParams]
+      }
+    }
+  }, [tokenOutIsNative, tokenInIsNative, amountIn, simulationEnabled, exactInputParams, amountOutMin, address])
+
   const {
     data: tradeSimulation,
     isLoading: isTradeSimulating,
     isError: isTradeSimulateError,
     error: tradeSimulateError
-  } = useSimulateContract({
-    abi: SwapRouter02,
-    address: swapRouterAddress,
-    functionName: "exactInputSingle",
-    args: [exactInputParams],
-    value: tokenInIsNative ? amountIn : 0n,
-    query: {
-      enabled: simulationEnabled
-    }
-  })
+  } = useSimulateContract(simulationParams)
   const {
     writeContract: tradeWriteContract,
     data: tradeWriteContractData,
@@ -269,32 +284,7 @@ export function useTrade({
     }
 
     if (tradeSimulation && !isTradeSimulateError) {
-      if (tokenOutIsNative) {
-        // 如果输出是ETH，使用multicall
-        tradeWriteContract({
-          address: swapRouterAddress,
-          abi: SwapRouter02,
-          functionName: "multicall",
-          args: [
-            [
-              encodeFunctionData({
-                abi: SwapRouter02,
-                functionName: "exactInputSingle",
-                args: [exactInputParams]
-              }),
-              encodeFunctionData({
-                abi: SwapRouter02,
-                functionName: "unwrapWETH9",
-                args: [amountOutMin, address]
-              })
-            ]
-          ],
-          value: tokenInIsNative ? amountIn : 0n
-        })
-      } else {
-        // 如果不是输出ETH，直接执行交易
-        tradeWriteContract(tradeSimulation.request)
-      }
+      tradeWriteContract(tradeSimulation.request)
     } else {
       const errorMessage = tradeSimulateError
         ? `Error: ${tradeSimulateError.message}`
@@ -305,22 +295,7 @@ export function useTrade({
       })
       resetTrading()
     }
-  }, [
-    checkAllowance,
-    swapRouterAddress,
-    address,
-    balanceOk,
-    tradeSimulation,
-    isTradeSimulateError,
-    tradeSimulateError,
-    tradeWriteContract,
-    resetTrading,
-    exactInputParams,
-    tokenOutIsNative,
-    amountOutMin,
-    tokenInIsNative,
-    amountIn
-  ])
+  }, [address, balanceOk, checkAllowance, tradeSimulation, isTradeSimulateError, tradeSimulateError, tradeWriteContract, resetTrading])
 
   const reset = useCallback(() => {
     resetTrading()
@@ -360,7 +335,6 @@ export function useTrade({
 export function useTokenSpotPrice(
   tokenA: `0x${string}`,
   tokenB: `0x${string}`,
-  enabled = true,
   tokenADecimals = 6, // 假设 tokenA 是 USDT (6位小数)
   tokenBDecimals = 18, // 假设 tokenB 是标准ERC20 (18位小数)
 ) {
@@ -372,7 +346,7 @@ export function useTokenSpotPrice(
       functionName: "getPool",
       args: [tokenA, tokenB, poolFee], // 使用0.3%费率池
       query: {
-        enabled: !!tokenA && !!tokenB && enabled
+        enabled: !!tokenA && !!tokenB
       }
     })
   // 获取池子当前状态
@@ -385,7 +359,7 @@ export function useTokenSpotPrice(
     address: poolAddress as `0x${string}`,
     functionName: "slot0",
     query: {
-      enabled: !!poolAddress && enabled,
+      enabled: !!poolAddress,
       placeholderData: keepPreviousData,
       refetchInterval: 1000 * 30
     }
