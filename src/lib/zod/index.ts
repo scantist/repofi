@@ -92,10 +92,6 @@ export const DaoTokenHolderScalarFieldEnumSchema = z.enum(['userAddress','tokenI
 
 export const DaoTokenInfoScalarFieldEnumSchema = z.enum(['tokenId','tokenAddress','name','ticker','creator','isGraduated','createdAt','updatedAt','liquidity','price','marketCap','totalSupply','raisedAssetAmount','salesRatio','reservedRatio','unlockRatio','holderCount','assetTokenAddress','graduatedAt','uniswapV3Pair']);
 
-export const KLine1mScalarFieldEnumSchema = z.enum(['tokenId','openTs','closeTs','open','high','low','close','volume','amount','txnNum']);
-
-export const KLine5mScalarFieldEnumSchema = z.enum(['tokenId','openTs','closeTs','open','high','low','close','volume','amount','txnNum']);
-
 export const AssetTokenScalarFieldEnumSchema = z.enum(['address','name','symbol','decimals','logoUrl','priceUsd','launchFee','isAllowed','isNative','isValid']);
 
 export const ForumMessageScalarFieldEnumSchema = z.enum(['id','daoId','message','createdAt','createdBy','deletedAt','replyToMessage','replyToUser','rootMessageId']);
@@ -103,6 +99,36 @@ export const ForumMessageScalarFieldEnumSchema = z.enum(['id','daoId','message',
 export const ContributorScalarFieldEnumSchema = z.enum(['id','daoId','userAddress','isValid','userPlatformId','userPlatformName','userPlatformAvatar','createdAt','updatedAt','snapshotValue']);
 
 export const ContributorHistoryScalarFieldEnumSchema = z.enum(['id','tag','value','createdAt','updatedAt','contributorId']);
+
+export const EvtTxnLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','address','topic0','topic1','topic2','topic3','data']);
+
+export const EvtTokenLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenId','assetAddress','initPrice','userAddress']);
+
+export const EvtGraduatedLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenId','tokenAddress','uniswapPool']);
+
+export const EvtTokenLockLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenAddress','unlockRatio','lockPeriod','lockStart']);
+
+export const EvtTradeLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenId','userAddress','assetAddress','tradeType','amountIn','amountOut','price']);
+
+export const EvtAssetLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','assetAddress','decimals','isAllowed','launchFee']);
+
+export const EvtAssetFeeLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','assetAddress','oldLaunchFee','newLaunchFee']);
+
+export const EvtContributionStartLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenId','cycleId']);
+
+export const EvtContributionUpdateLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenId','cycleId','contributor','contributorId','score']);
+
+export const EvtClaimLogScalarFieldEnumSchema = z.enum(['blockNumber','txnIndex','logIndex','blockTime','txnHash','tokenAddress','userAddress','amount','claimType']);
+
+export const KLine5mScalarFieldEnumSchema = z.enum(['tokenId','openTs','closeTs','open','high','low','close','volume','amount','txnNum']);
+
+export const KLine1mScalarFieldEnumSchema = z.enum(['tokenId','openTs','closeTs','open','high','low','close','volume','amount','txnNum']);
+
+export const ContributionInfoScalarFieldEnumSchema = z.enum(['tokenId','cycleId','startTs']);
+
+export const ContributionDetailScalarFieldEnumSchema = z.enum(['tokenId','cycleId','contributor','contributorId','score','updateTs']);
+
+export const UserClaimHistoryScalarFieldEnumSchema = z.enum(['userAddress','tokenAddress','claimType','claimAmount','claimTime']);
 
 export const SortOrderSchema = z.enum(['asc','desc']);
 
@@ -264,44 +290,6 @@ export const DaoTokenInfoSchema = z.object({
 export type DaoTokenInfo = z.infer<typeof DaoTokenInfoSchema>
 
 /////////////////////////////////////////
-// K LINE 1 M SCHEMA
-/////////////////////////////////////////
-
-export const KLine1mSchema = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint(),
-  closeTs: z.bigint(),
-  open: z.instanceof(Prisma.Decimal, { message: "Field 'open' must be a Decimal. Location: ['Models', 'KLine1m']"}),
-  high: z.instanceof(Prisma.Decimal, { message: "Field 'high' must be a Decimal. Location: ['Models', 'KLine1m']"}),
-  low: z.instanceof(Prisma.Decimal, { message: "Field 'low' must be a Decimal. Location: ['Models', 'KLine1m']"}),
-  close: z.instanceof(Prisma.Decimal, { message: "Field 'close' must be a Decimal. Location: ['Models', 'KLine1m']"}),
-  volume: z.instanceof(Prisma.Decimal, { message: "Field 'volume' must be a Decimal. Location: ['Models', 'KLine1m']"}),
-  amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'KLine1m']"}),
-  txnNum: z.bigint(),
-})
-
-export type KLine1m = z.infer<typeof KLine1mSchema>
-
-/////////////////////////////////////////
-// K LINE 5 M SCHEMA
-/////////////////////////////////////////
-
-export const KLine5mSchema = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint(),
-  closeTs: z.bigint(),
-  open: z.instanceof(Prisma.Decimal, { message: "Field 'open' must be a Decimal. Location: ['Models', 'KLine5m']"}),
-  high: z.instanceof(Prisma.Decimal, { message: "Field 'high' must be a Decimal. Location: ['Models', 'KLine5m']"}),
-  low: z.instanceof(Prisma.Decimal, { message: "Field 'low' must be a Decimal. Location: ['Models', 'KLine5m']"}),
-  close: z.instanceof(Prisma.Decimal, { message: "Field 'close' must be a Decimal. Location: ['Models', 'KLine5m']"}),
-  volume: z.instanceof(Prisma.Decimal, { message: "Field 'volume' must be a Decimal. Location: ['Models', 'KLine5m']"}),
-  amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'KLine5m']"}),
-  txnNum: z.bigint(),
-})
-
-export type KLine5m = z.infer<typeof KLine5mSchema>
-
-/////////////////////////////////////////
 // ASSET TOKEN SCHEMA
 /////////////////////////////////////////
 
@@ -371,6 +359,267 @@ export const ContributorHistorySchema = z.object({
 })
 
 export type ContributorHistory = z.infer<typeof ContributorHistorySchema>
+
+/////////////////////////////////////////
+// EVT TXN LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtTxnLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  address: z.string(),
+  topic0: z.string(),
+  topic1: z.string().nullable(),
+  topic2: z.string().nullable(),
+  topic3: z.string().nullable(),
+  data: z.string().nullable(),
+})
+
+export type EvtTxnLog = z.infer<typeof EvtTxnLogSchema>
+
+/////////////////////////////////////////
+// EVT TOKEN LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtTokenLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  assetAddress: z.string(),
+  initPrice: z.instanceof(Prisma.Decimal, { message: "Field 'initPrice' must be a Decimal. Location: ['Models', 'EvtTokenLog']"}),
+  userAddress: z.string(),
+})
+
+export type EvtTokenLog = z.infer<typeof EvtTokenLogSchema>
+
+/////////////////////////////////////////
+// EVT GRADUATED LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtGraduatedLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  tokenAddress: z.string(),
+  uniswapPool: z.string(),
+})
+
+export type EvtGraduatedLog = z.infer<typeof EvtGraduatedLogSchema>
+
+/////////////////////////////////////////
+// EVT TOKEN LOCK LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtTokenLockLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  unlockRatio: z.instanceof(Prisma.Decimal, { message: "Field 'unlockRatio' must be a Decimal. Location: ['Models', 'EvtTokenLockLog']"}),
+  lockPeriod: z.bigint(),
+  lockStart: z.bigint(),
+})
+
+export type EvtTokenLockLog = z.infer<typeof EvtTokenLockLogSchema>
+
+/////////////////////////////////////////
+// EVT TRADE LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtTradeLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  userAddress: z.string(),
+  assetAddress: z.string(),
+  tradeType: z.number().int(),
+  amountIn: z.instanceof(Prisma.Decimal, { message: "Field 'amountIn' must be a Decimal. Location: ['Models', 'EvtTradeLog']"}),
+  amountOut: z.instanceof(Prisma.Decimal, { message: "Field 'amountOut' must be a Decimal. Location: ['Models', 'EvtTradeLog']"}),
+  price: z.instanceof(Prisma.Decimal, { message: "Field 'price' must be a Decimal. Location: ['Models', 'EvtTradeLog']"}),
+})
+
+export type EvtTradeLog = z.infer<typeof EvtTradeLogSchema>
+
+/////////////////////////////////////////
+// EVT ASSET LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtAssetLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  decimals: z.number().int(),
+  isAllowed: z.boolean(),
+  launchFee: z.instanceof(Prisma.Decimal, { message: "Field 'launchFee' must be a Decimal. Location: ['Models', 'EvtAssetLog']"}).nullable(),
+})
+
+export type EvtAssetLog = z.infer<typeof EvtAssetLogSchema>
+
+/////////////////////////////////////////
+// EVT ASSET FEE LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtAssetFeeLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  oldLaunchFee: z.instanceof(Prisma.Decimal, { message: "Field 'oldLaunchFee' must be a Decimal. Location: ['Models', 'EvtAssetFeeLog']"}),
+  newLaunchFee: z.instanceof(Prisma.Decimal, { message: "Field 'newLaunchFee' must be a Decimal. Location: ['Models', 'EvtAssetFeeLog']"}),
+})
+
+export type EvtAssetFeeLog = z.infer<typeof EvtAssetFeeLogSchema>
+
+/////////////////////////////////////////
+// EVT CONTRIBUTION START LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtContributionStartLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+})
+
+export type EvtContributionStartLog = z.infer<typeof EvtContributionStartLogSchema>
+
+/////////////////////////////////////////
+// EVT CONTRIBUTION UPDATE LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtContributionUpdateLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.instanceof(Prisma.Decimal, { message: "Field 'score' must be a Decimal. Location: ['Models', 'EvtContributionUpdateLog']"}),
+})
+
+export type EvtContributionUpdateLog = z.infer<typeof EvtContributionUpdateLogSchema>
+
+/////////////////////////////////////////
+// EVT CLAIM LOG SCHEMA
+/////////////////////////////////////////
+
+export const EvtClaimLogSchema = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  userAddress: z.string(),
+  amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'EvtClaimLog']"}),
+  claimType: z.number().int(),
+})
+
+export type EvtClaimLog = z.infer<typeof EvtClaimLogSchema>
+
+/////////////////////////////////////////
+// K LINE 5 M SCHEMA
+/////////////////////////////////////////
+
+export const KLine5mSchema = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.instanceof(Prisma.Decimal, { message: "Field 'open' must be a Decimal. Location: ['Models', 'KLine5m']"}),
+  high: z.instanceof(Prisma.Decimal, { message: "Field 'high' must be a Decimal. Location: ['Models', 'KLine5m']"}),
+  low: z.instanceof(Prisma.Decimal, { message: "Field 'low' must be a Decimal. Location: ['Models', 'KLine5m']"}),
+  close: z.instanceof(Prisma.Decimal, { message: "Field 'close' must be a Decimal. Location: ['Models', 'KLine5m']"}),
+  volume: z.instanceof(Prisma.Decimal, { message: "Field 'volume' must be a Decimal. Location: ['Models', 'KLine5m']"}),
+  amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'KLine5m']"}),
+  txnNum: z.bigint(),
+})
+
+export type KLine5m = z.infer<typeof KLine5mSchema>
+
+/////////////////////////////////////////
+// K LINE 1 M SCHEMA
+/////////////////////////////////////////
+
+export const KLine1mSchema = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.instanceof(Prisma.Decimal, { message: "Field 'open' must be a Decimal. Location: ['Models', 'KLine1m']"}),
+  high: z.instanceof(Prisma.Decimal, { message: "Field 'high' must be a Decimal. Location: ['Models', 'KLine1m']"}),
+  low: z.instanceof(Prisma.Decimal, { message: "Field 'low' must be a Decimal. Location: ['Models', 'KLine1m']"}),
+  close: z.instanceof(Prisma.Decimal, { message: "Field 'close' must be a Decimal. Location: ['Models', 'KLine1m']"}),
+  volume: z.instanceof(Prisma.Decimal, { message: "Field 'volume' must be a Decimal. Location: ['Models', 'KLine1m']"}),
+  amount: z.instanceof(Prisma.Decimal, { message: "Field 'amount' must be a Decimal. Location: ['Models', 'KLine1m']"}),
+  txnNum: z.bigint(),
+})
+
+export type KLine1m = z.infer<typeof KLine1mSchema>
+
+/////////////////////////////////////////
+// CONTRIBUTION INFO SCHEMA
+/////////////////////////////////////////
+
+export const ContributionInfoSchema = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  startTs: z.bigint(),
+})
+
+export type ContributionInfo = z.infer<typeof ContributionInfoSchema>
+
+/////////////////////////////////////////
+// CONTRIBUTION DETAIL SCHEMA
+/////////////////////////////////////////
+
+export const ContributionDetailSchema = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.instanceof(Prisma.Decimal, { message: "Field 'score' must be a Decimal. Location: ['Models', 'ContributionDetail']"}),
+  updateTs: z.bigint(),
+})
+
+export type ContributionDetail = z.infer<typeof ContributionDetailSchema>
+
+/////////////////////////////////////////
+// USER CLAIM HISTORY SCHEMA
+/////////////////////////////////////////
+
+export const UserClaimHistorySchema = z.object({
+  userAddress: z.string(),
+  tokenAddress: z.string(),
+  claimType: z.number().int(),
+  claimAmount: z.instanceof(Prisma.Decimal, { message: "Field 'claimAmount' must be a Decimal. Location: ['Models', 'UserClaimHistory']"}),
+  claimTime: z.bigint(),
+})
+
+export type UserClaimHistory = z.infer<typeof UserClaimHistorySchema>
 
 /////////////////////////////////////////
 // SELECT & INCLUDE
@@ -593,38 +842,6 @@ export const DaoTokenInfoSelectSchema: z.ZodType<Prisma.DaoTokenInfoSelect> = z.
   _count: z.union([z.boolean(),z.lazy(() => DaoTokenInfoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
-// K LINE 1 M
-//------------------------------------------------------
-
-export const KLine1mSelectSchema: z.ZodType<Prisma.KLine1mSelect> = z.object({
-  tokenId: z.boolean().optional(),
-  openTs: z.boolean().optional(),
-  closeTs: z.boolean().optional(),
-  open: z.boolean().optional(),
-  high: z.boolean().optional(),
-  low: z.boolean().optional(),
-  close: z.boolean().optional(),
-  volume: z.boolean().optional(),
-  amount: z.boolean().optional(),
-  txnNum: z.boolean().optional(),
-}).strict()
-
-// K LINE 5 M
-//------------------------------------------------------
-
-export const KLine5mSelectSchema: z.ZodType<Prisma.KLine5mSelect> = z.object({
-  tokenId: z.boolean().optional(),
-  openTs: z.boolean().optional(),
-  closeTs: z.boolean().optional(),
-  open: z.boolean().optional(),
-  high: z.boolean().optional(),
-  low: z.boolean().optional(),
-  close: z.boolean().optional(),
-  volume: z.boolean().optional(),
-  amount: z.boolean().optional(),
-  txnNum: z.boolean().optional(),
-}).strict()
-
 // ASSET TOKEN
 //------------------------------------------------------
 
@@ -726,6 +943,222 @@ export const ContributorHistorySelectSchema: z.ZodType<Prisma.ContributorHistory
   updatedAt: z.boolean().optional(),
   contributorId: z.boolean().optional(),
   contributor: z.union([z.boolean(),z.lazy(() => ContributorArgsSchema)]).optional(),
+}).strict()
+
+// EVT TXN LOG
+//------------------------------------------------------
+
+export const EvtTxnLogSelectSchema: z.ZodType<Prisma.EvtTxnLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  address: z.boolean().optional(),
+  topic0: z.boolean().optional(),
+  topic1: z.boolean().optional(),
+  topic2: z.boolean().optional(),
+  topic3: z.boolean().optional(),
+  data: z.boolean().optional(),
+}).strict()
+
+// EVT TOKEN LOG
+//------------------------------------------------------
+
+export const EvtTokenLogSelectSchema: z.ZodType<Prisma.EvtTokenLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenId: z.boolean().optional(),
+  assetAddress: z.boolean().optional(),
+  initPrice: z.boolean().optional(),
+  userAddress: z.boolean().optional(),
+}).strict()
+
+// EVT GRADUATED LOG
+//------------------------------------------------------
+
+export const EvtGraduatedLogSelectSchema: z.ZodType<Prisma.EvtGraduatedLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenId: z.boolean().optional(),
+  tokenAddress: z.boolean().optional(),
+  uniswapPool: z.boolean().optional(),
+}).strict()
+
+// EVT TOKEN LOCK LOG
+//------------------------------------------------------
+
+export const EvtTokenLockLogSelectSchema: z.ZodType<Prisma.EvtTokenLockLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenAddress: z.boolean().optional(),
+  unlockRatio: z.boolean().optional(),
+  lockPeriod: z.boolean().optional(),
+  lockStart: z.boolean().optional(),
+}).strict()
+
+// EVT TRADE LOG
+//------------------------------------------------------
+
+export const EvtTradeLogSelectSchema: z.ZodType<Prisma.EvtTradeLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenId: z.boolean().optional(),
+  userAddress: z.boolean().optional(),
+  assetAddress: z.boolean().optional(),
+  tradeType: z.boolean().optional(),
+  amountIn: z.boolean().optional(),
+  amountOut: z.boolean().optional(),
+  price: z.boolean().optional(),
+}).strict()
+
+// EVT ASSET LOG
+//------------------------------------------------------
+
+export const EvtAssetLogSelectSchema: z.ZodType<Prisma.EvtAssetLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  assetAddress: z.boolean().optional(),
+  decimals: z.boolean().optional(),
+  isAllowed: z.boolean().optional(),
+  launchFee: z.boolean().optional(),
+}).strict()
+
+// EVT ASSET FEE LOG
+//------------------------------------------------------
+
+export const EvtAssetFeeLogSelectSchema: z.ZodType<Prisma.EvtAssetFeeLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  assetAddress: z.boolean().optional(),
+  oldLaunchFee: z.boolean().optional(),
+  newLaunchFee: z.boolean().optional(),
+}).strict()
+
+// EVT CONTRIBUTION START LOG
+//------------------------------------------------------
+
+export const EvtContributionStartLogSelectSchema: z.ZodType<Prisma.EvtContributionStartLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenId: z.boolean().optional(),
+  cycleId: z.boolean().optional(),
+}).strict()
+
+// EVT CONTRIBUTION UPDATE LOG
+//------------------------------------------------------
+
+export const EvtContributionUpdateLogSelectSchema: z.ZodType<Prisma.EvtContributionUpdateLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenId: z.boolean().optional(),
+  cycleId: z.boolean().optional(),
+  contributor: z.boolean().optional(),
+  contributorId: z.boolean().optional(),
+  score: z.boolean().optional(),
+}).strict()
+
+// EVT CLAIM LOG
+//------------------------------------------------------
+
+export const EvtClaimLogSelectSchema: z.ZodType<Prisma.EvtClaimLogSelect> = z.object({
+  blockNumber: z.boolean().optional(),
+  txnIndex: z.boolean().optional(),
+  logIndex: z.boolean().optional(),
+  blockTime: z.boolean().optional(),
+  txnHash: z.boolean().optional(),
+  tokenAddress: z.boolean().optional(),
+  userAddress: z.boolean().optional(),
+  amount: z.boolean().optional(),
+  claimType: z.boolean().optional(),
+}).strict()
+
+// K LINE 5 M
+//------------------------------------------------------
+
+export const KLine5mSelectSchema: z.ZodType<Prisma.KLine5mSelect> = z.object({
+  tokenId: z.boolean().optional(),
+  openTs: z.boolean().optional(),
+  closeTs: z.boolean().optional(),
+  open: z.boolean().optional(),
+  high: z.boolean().optional(),
+  low: z.boolean().optional(),
+  close: z.boolean().optional(),
+  volume: z.boolean().optional(),
+  amount: z.boolean().optional(),
+  txnNum: z.boolean().optional(),
+}).strict()
+
+// K LINE 1 M
+//------------------------------------------------------
+
+export const KLine1mSelectSchema: z.ZodType<Prisma.KLine1mSelect> = z.object({
+  tokenId: z.boolean().optional(),
+  openTs: z.boolean().optional(),
+  closeTs: z.boolean().optional(),
+  open: z.boolean().optional(),
+  high: z.boolean().optional(),
+  low: z.boolean().optional(),
+  close: z.boolean().optional(),
+  volume: z.boolean().optional(),
+  amount: z.boolean().optional(),
+  txnNum: z.boolean().optional(),
+}).strict()
+
+// CONTRIBUTION INFO
+//------------------------------------------------------
+
+export const ContributionInfoSelectSchema: z.ZodType<Prisma.ContributionInfoSelect> = z.object({
+  tokenId: z.boolean().optional(),
+  cycleId: z.boolean().optional(),
+  startTs: z.boolean().optional(),
+}).strict()
+
+// CONTRIBUTION DETAIL
+//------------------------------------------------------
+
+export const ContributionDetailSelectSchema: z.ZodType<Prisma.ContributionDetailSelect> = z.object({
+  tokenId: z.boolean().optional(),
+  cycleId: z.boolean().optional(),
+  contributor: z.boolean().optional(),
+  contributorId: z.boolean().optional(),
+  score: z.boolean().optional(),
+  updateTs: z.boolean().optional(),
+}).strict()
+
+// USER CLAIM HISTORY
+//------------------------------------------------------
+
+export const UserClaimHistorySelectSchema: z.ZodType<Prisma.UserClaimHistorySelect> = z.object({
+  userAddress: z.boolean().optional(),
+  tokenAddress: z.boolean().optional(),
+  claimType: z.boolean().optional(),
+  claimAmount: z.boolean().optional(),
+  claimTime: z.boolean().optional(),
 }).strict()
 
 
@@ -1494,172 +1927,6 @@ export const DaoTokenInfoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.
   uniswapV3Pair: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
-export const KLine1mWhereInputSchema: z.ZodType<Prisma.KLine1mWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => KLine1mWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
-  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-}).strict();
-
-export const KLine1mOrderByWithRelationInputSchema: z.ZodType<Prisma.KLine1mOrderByWithRelationInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine1mWhereUniqueInputSchema: z.ZodType<Prisma.KLine1mWhereUniqueInput> = z.object({
-  tokenId_openTs: z.lazy(() => KLine1mTokenIdOpenTsCompoundUniqueInputSchema)
-})
-.and(z.object({
-  tokenId_openTs: z.lazy(() => KLine1mTokenIdOpenTsCompoundUniqueInputSchema).optional(),
-  AND: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => KLine1mWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
-  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-}).strict());
-
-export const KLine1mOrderByWithAggregationInputSchema: z.ZodType<Prisma.KLine1mOrderByWithAggregationInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => KLine1mCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => KLine1mAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => KLine1mMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => KLine1mMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => KLine1mSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const KLine1mScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.KLine1mScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-  openTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-  closeTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-  open: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  high: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  low: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  close: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  volume: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  txnNum: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-}).strict();
-
-export const KLine5mWhereInputSchema: z.ZodType<Prisma.KLine5mWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => KLine5mWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
-  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-}).strict();
-
-export const KLine5mOrderByWithRelationInputSchema: z.ZodType<Prisma.KLine5mOrderByWithRelationInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine5mWhereUniqueInputSchema: z.ZodType<Prisma.KLine5mWhereUniqueInput> = z.object({
-  tokenId_openTs: z.lazy(() => KLine5mTokenIdOpenTsCompoundUniqueInputSchema)
-})
-.and(z.object({
-  tokenId_openTs: z.lazy(() => KLine5mTokenIdOpenTsCompoundUniqueInputSchema).optional(),
-  AND: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => KLine5mWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
-  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
-}).strict());
-
-export const KLine5mOrderByWithAggregationInputSchema: z.ZodType<Prisma.KLine5mOrderByWithAggregationInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional(),
-  _count: z.lazy(() => KLine5mCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => KLine5mAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => KLine5mMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => KLine5mMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => KLine5mSumOrderByAggregateInputSchema).optional()
-}).strict();
-
-export const KLine5mScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.KLine5mScalarWhereWithAggregatesInput> = z.object({
-  AND: z.union([ z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  OR: z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
-  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-  openTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-  closeTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-  open: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  high: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  low: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  close: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  volume: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
-  txnNum: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
-}).strict();
-
 export const AssetTokenWhereInputSchema: z.ZodType<Prisma.AssetTokenWhereInput> = z.object({
   AND: z.union([ z.lazy(() => AssetTokenWhereInputSchema),z.lazy(() => AssetTokenWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => AssetTokenWhereInputSchema).array().optional(),
@@ -1974,6 +2241,1131 @@ export const ContributorHistoryScalarWhereWithAggregatesInputSchema: z.ZodType<P
   createdAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   updatedAt: z.union([ z.lazy(() => DateTimeWithAggregatesFilterSchema),z.coerce.date() ]).optional(),
   contributorId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const EvtTxnLogWhereInputSchema: z.ZodType<Prisma.EvtTxnLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTxnLogWhereInputSchema),z.lazy(() => EvtTxnLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTxnLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTxnLogWhereInputSchema),z.lazy(() => EvtTxnLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  address: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  topic0: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  topic1: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  topic2: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  topic3: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  data: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+}).strict();
+
+export const EvtTxnLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtTxnLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  address: z.lazy(() => SortOrderSchema).optional(),
+  topic0: z.lazy(() => SortOrderSchema).optional(),
+  topic1: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  topic2: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  topic3: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTxnLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtTxnLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTxnLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTxnLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtTxnLogWhereInputSchema),z.lazy(() => EvtTxnLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTxnLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTxnLogWhereInputSchema),z.lazy(() => EvtTxnLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  address: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  topic0: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  topic1: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  topic2: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  topic3: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  data: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+}).strict());
+
+export const EvtTxnLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtTxnLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  address: z.lazy(() => SortOrderSchema).optional(),
+  topic0: z.lazy(() => SortOrderSchema).optional(),
+  topic1: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  topic2: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  topic3: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  data: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  _count: z.lazy(() => EvtTxnLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtTxnLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtTxnLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtTxnLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtTxnLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtTxnLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtTxnLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTxnLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTxnLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTxnLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTxnLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTxnLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  address: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  topic0: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  topic1: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  topic2: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  topic3: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+  data: z.union([ z.lazy(() => StringNullableWithAggregatesFilterSchema),z.string() ]).optional().nullable(),
+}).strict();
+
+export const EvtTokenLogWhereInputSchema: z.ZodType<Prisma.EvtTokenLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTokenLogWhereInputSchema),z.lazy(() => EvtTokenLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTokenLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTokenLogWhereInputSchema),z.lazy(() => EvtTokenLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  initPrice: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const EvtTokenLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtTokenLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtTokenLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTokenLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTokenLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtTokenLogWhereInputSchema),z.lazy(() => EvtTokenLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTokenLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTokenLogWhereInputSchema),z.lazy(() => EvtTokenLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  initPrice: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict());
+
+export const EvtTokenLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtTokenLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtTokenLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtTokenLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtTokenLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtTokenLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtTokenLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtTokenLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtTokenLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTokenLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTokenLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTokenLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTokenLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTokenLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  initPrice: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const EvtGraduatedLogWhereInputSchema: z.ZodType<Prisma.EvtGraduatedLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtGraduatedLogWhereInputSchema),z.lazy(() => EvtGraduatedLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtGraduatedLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtGraduatedLogWhereInputSchema),z.lazy(() => EvtGraduatedLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  uniswapPool: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const EvtGraduatedLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtGraduatedLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  uniswapPool: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtGraduatedLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtGraduatedLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtGraduatedLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtGraduatedLogWhereInputSchema),z.lazy(() => EvtGraduatedLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtGraduatedLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtGraduatedLogWhereInputSchema),z.lazy(() => EvtGraduatedLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  uniswapPool: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+}).strict());
+
+export const EvtGraduatedLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtGraduatedLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  uniswapPool: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtGraduatedLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtGraduatedLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtGraduatedLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtGraduatedLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtGraduatedLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtGraduatedLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtGraduatedLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtGraduatedLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtGraduatedLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtGraduatedLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtGraduatedLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  uniswapPool: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+}).strict();
+
+export const EvtTokenLockLogWhereInputSchema: z.ZodType<Prisma.EvtTokenLockLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTokenLockLogWhereInputSchema),z.lazy(() => EvtTokenLockLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTokenLockLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTokenLockLogWhereInputSchema),z.lazy(() => EvtTokenLockLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  unlockRatio: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lockPeriod: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  lockStart: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const EvtTokenLockLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtTokenLockLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtTokenLockLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTokenLockLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTokenLockLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtTokenLockLogWhereInputSchema),z.lazy(() => EvtTokenLockLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTokenLockLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTokenLockLogWhereInputSchema),z.lazy(() => EvtTokenLockLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  unlockRatio: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lockPeriod: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  lockStart: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const EvtTokenLockLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtTokenLockLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtTokenLockLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtTokenLockLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtTokenLockLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtTokenLockLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtTokenLockLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtTokenLockLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTokenLockLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTokenLockLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTokenLockLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTokenLockLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTokenLockLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  unlockRatio: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  lockPeriod: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  lockStart: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const EvtTradeLogWhereInputSchema: z.ZodType<Prisma.EvtTradeLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTradeLogWhereInputSchema),z.lazy(() => EvtTradeLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTradeLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTradeLogWhereInputSchema),z.lazy(() => EvtTradeLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tradeType: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  amountIn: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amountOut: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  price: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const EvtTradeLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtTradeLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTradeLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtTradeLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTradeLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtTradeLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtTradeLogWhereInputSchema),z.lazy(() => EvtTradeLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTradeLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTradeLogWhereInputSchema),z.lazy(() => EvtTradeLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tradeType: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  amountIn: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amountOut: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  price: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict());
+
+export const EvtTradeLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtTradeLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtTradeLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtTradeLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtTradeLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtTradeLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtTradeLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtTradeLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtTradeLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtTradeLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTradeLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtTradeLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtTradeLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtTradeLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tradeType: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  amountIn: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amountOut: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  price: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const EvtAssetLogWhereInputSchema: z.ZodType<Prisma.EvtAssetLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtAssetLogWhereInputSchema),z.lazy(() => EvtAssetLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtAssetLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtAssetLogWhereInputSchema),z.lazy(() => EvtAssetLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  decimals: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  isAllowed: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  launchFee: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+}).strict();
+
+export const EvtAssetLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtAssetLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  isAllowed: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+}).strict();
+
+export const EvtAssetLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtAssetLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtAssetLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtAssetLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtAssetLogWhereInputSchema),z.lazy(() => EvtAssetLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtAssetLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtAssetLogWhereInputSchema),z.lazy(() => EvtAssetLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  decimals: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  isAllowed: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  launchFee: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+}).strict());
+
+export const EvtAssetLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtAssetLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  isAllowed: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
+  _count: z.lazy(() => EvtAssetLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtAssetLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtAssetLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtAssetLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtAssetLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtAssetLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtAssetLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtAssetLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtAssetLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtAssetLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtAssetLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtAssetLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  decimals: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  isAllowed: z.union([ z.lazy(() => BoolWithAggregatesFilterSchema),z.boolean() ]).optional(),
+  launchFee: z.union([ z.lazy(() => DecimalNullableWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+}).strict();
+
+export const EvtAssetFeeLogWhereInputSchema: z.ZodType<Prisma.EvtAssetFeeLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtAssetFeeLogWhereInputSchema),z.lazy(() => EvtAssetFeeLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtAssetFeeLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtAssetFeeLogWhereInputSchema),z.lazy(() => EvtAssetFeeLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  oldLaunchFee: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  newLaunchFee: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const EvtAssetFeeLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtAssetFeeLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtAssetFeeLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtAssetFeeLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtAssetFeeLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtAssetFeeLogWhereInputSchema),z.lazy(() => EvtAssetFeeLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtAssetFeeLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtAssetFeeLogWhereInputSchema),z.lazy(() => EvtAssetFeeLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  oldLaunchFee: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  newLaunchFee: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict());
+
+export const EvtAssetFeeLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtAssetFeeLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtAssetFeeLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtAssetFeeLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtAssetFeeLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtAssetFeeLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtAssetFeeLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtAssetFeeLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtAssetFeeLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtAssetFeeLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtAssetFeeLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtAssetFeeLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtAssetFeeLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  assetAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  oldLaunchFee: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  newLaunchFee: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const EvtContributionStartLogWhereInputSchema: z.ZodType<Prisma.EvtContributionStartLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtContributionStartLogWhereInputSchema),z.lazy(() => EvtContributionStartLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtContributionStartLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtContributionStartLogWhereInputSchema),z.lazy(() => EvtContributionStartLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const EvtContributionStartLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtContributionStartLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtContributionStartLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtContributionStartLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtContributionStartLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtContributionStartLogWhereInputSchema),z.lazy(() => EvtContributionStartLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtContributionStartLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtContributionStartLogWhereInputSchema),z.lazy(() => EvtContributionStartLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const EvtContributionStartLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtContributionStartLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtContributionStartLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtContributionStartLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtContributionStartLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtContributionStartLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtContributionStartLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtContributionStartLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtContributionStartLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtContributionStartLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtContributionStartLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtContributionStartLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtContributionStartLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const EvtContributionUpdateLogWhereInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtContributionUpdateLogWhereInputSchema),z.lazy(() => EvtContributionUpdateLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtContributionUpdateLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtContributionUpdateLogWhereInputSchema),z.lazy(() => EvtContributionUpdateLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  contributor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  score: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const EvtContributionUpdateLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtContributionUpdateLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtContributionUpdateLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtContributionUpdateLogWhereInputSchema),z.lazy(() => EvtContributionUpdateLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtContributionUpdateLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtContributionUpdateLogWhereInputSchema),z.lazy(() => EvtContributionUpdateLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  contributor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  score: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict());
+
+export const EvtContributionUpdateLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtContributionUpdateLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtContributionUpdateLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtContributionUpdateLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtContributionUpdateLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtContributionUpdateLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  contributor: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  score: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const EvtClaimLogWhereInputSchema: z.ZodType<Prisma.EvtClaimLogWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtClaimLogWhereInputSchema),z.lazy(() => EvtClaimLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtClaimLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtClaimLogWhereInputSchema),z.lazy(() => EvtClaimLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  claimType: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const EvtClaimLogOrderByWithRelationInputSchema: z.ZodType<Prisma.EvtClaimLogOrderByWithRelationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtClaimLogWhereUniqueInputSchema: z.ZodType<Prisma.EvtClaimLogWhereUniqueInput> = z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtClaimLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema)
+})
+.and(z.object({
+  blockNumber_txnIndex_logIndex: z.lazy(() => EvtClaimLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => EvtClaimLogWhereInputSchema),z.lazy(() => EvtClaimLogWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtClaimLogWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtClaimLogWhereInputSchema),z.lazy(() => EvtClaimLogWhereInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  claimType: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+}).strict());
+
+export const EvtClaimLogOrderByWithAggregationInputSchema: z.ZodType<Prisma.EvtClaimLogOrderByWithAggregationInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => EvtClaimLogCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => EvtClaimLogAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => EvtClaimLogMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => EvtClaimLogMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => EvtClaimLogSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const EvtClaimLogScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.EvtClaimLogScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => EvtClaimLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtClaimLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => EvtClaimLogScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => EvtClaimLogScalarWhereWithAggregatesInputSchema),z.lazy(() => EvtClaimLogScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  blockNumber: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  logIndex: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  blockTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  txnHash: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  claimType: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+}).strict();
+
+export const KLine5mWhereInputSchema: z.ZodType<Prisma.KLine5mWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => KLine5mWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const KLine5mOrderByWithRelationInputSchema: z.ZodType<Prisma.KLine5mOrderByWithRelationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine5mWhereUniqueInputSchema: z.ZodType<Prisma.KLine5mWhereUniqueInput> = z.object({
+  tokenId_openTs: z.lazy(() => KLine5mTokenIdOpenTsCompoundUniqueInputSchema)
+})
+.and(z.object({
+  tokenId_openTs: z.lazy(() => KLine5mTokenIdOpenTsCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => KLine5mWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => KLine5mWhereInputSchema),z.lazy(() => KLine5mWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const KLine5mOrderByWithAggregationInputSchema: z.ZodType<Prisma.KLine5mOrderByWithAggregationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => KLine5mCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => KLine5mAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => KLine5mMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => KLine5mMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => KLine5mSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const KLine5mScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.KLine5mScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine5mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  openTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  closeTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  open: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  high: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  low: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  close: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  volume: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  txnNum: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const KLine1mWhereInputSchema: z.ZodType<Prisma.KLine1mWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => KLine1mWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const KLine1mOrderByWithRelationInputSchema: z.ZodType<Prisma.KLine1mOrderByWithRelationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine1mWhereUniqueInputSchema: z.ZodType<Prisma.KLine1mWhereUniqueInput> = z.object({
+  tokenId_openTs: z.lazy(() => KLine1mTokenIdOpenTsCompoundUniqueInputSchema)
+})
+.and(z.object({
+  tokenId_openTs: z.lazy(() => KLine1mTokenIdOpenTsCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => KLine1mWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => KLine1mWhereInputSchema),z.lazy(() => KLine1mWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  openTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  closeTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  open: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  high: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  low: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  close: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  volume: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  txnNum: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const KLine1mOrderByWithAggregationInputSchema: z.ZodType<Prisma.KLine1mOrderByWithAggregationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => KLine1mCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => KLine1mAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => KLine1mMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => KLine1mMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => KLine1mSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const KLine1mScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.KLine1mScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema),z.lazy(() => KLine1mScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  openTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  closeTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  open: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  high: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  low: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  close: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  volume: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  amount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  txnNum: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const ContributionInfoWhereInputSchema: z.ZodType<Prisma.ContributionInfoWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributionInfoWhereInputSchema),z.lazy(() => ContributionInfoWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributionInfoWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributionInfoWhereInputSchema),z.lazy(() => ContributionInfoWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  startTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const ContributionInfoOrderByWithRelationInputSchema: z.ZodType<Prisma.ContributionInfoOrderByWithRelationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionInfoWhereUniqueInputSchema: z.ZodType<Prisma.ContributionInfoWhereUniqueInput> = z.object({
+  tokenId_cycleId: z.lazy(() => ContributionInfoTokenIdCycleIdCompoundUniqueInputSchema)
+})
+.and(z.object({
+  tokenId_cycleId: z.lazy(() => ContributionInfoTokenIdCycleIdCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => ContributionInfoWhereInputSchema),z.lazy(() => ContributionInfoWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributionInfoWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributionInfoWhereInputSchema),z.lazy(() => ContributionInfoWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  startTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const ContributionInfoOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContributionInfoOrderByWithAggregationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => ContributionInfoCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => ContributionInfoAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => ContributionInfoMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => ContributionInfoMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => ContributionInfoSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const ContributionInfoScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ContributionInfoScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributionInfoScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributionInfoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributionInfoScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributionInfoScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributionInfoScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  startTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const ContributionDetailWhereInputSchema: z.ZodType<Prisma.ContributionDetailWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributionDetailWhereInputSchema),z.lazy(() => ContributionDetailWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributionDetailWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributionDetailWhereInputSchema),z.lazy(() => ContributionDetailWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  contributor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  score: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  updateTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const ContributionDetailOrderByWithRelationInputSchema: z.ZodType<Prisma.ContributionDetailOrderByWithRelationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionDetailWhereUniqueInputSchema: z.ZodType<Prisma.ContributionDetailWhereUniqueInput> = z.object({
+  tokenId_cycleId_contributor: z.lazy(() => ContributionDetailTokenIdCycleIdContributorCompoundUniqueInputSchema)
+})
+.and(z.object({
+  tokenId_cycleId_contributor: z.lazy(() => ContributionDetailTokenIdCycleIdContributorCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => ContributionDetailWhereInputSchema),z.lazy(() => ContributionDetailWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributionDetailWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributionDetailWhereInputSchema),z.lazy(() => ContributionDetailWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  contributor: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  score: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  updateTs: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const ContributionDetailOrderByWithAggregationInputSchema: z.ZodType<Prisma.ContributionDetailOrderByWithAggregationInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => ContributionDetailCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => ContributionDetailAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => ContributionDetailMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => ContributionDetailMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => ContributionDetailSumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const ContributionDetailScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.ContributionDetailScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => ContributionDetailScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributionDetailScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => ContributionDetailScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => ContributionDetailScalarWhereWithAggregatesInputSchema),z.lazy(() => ContributionDetailScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  cycleId: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+  contributor: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  contributorId: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  score: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  updateTs: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const UserClaimHistoryWhereInputSchema: z.ZodType<Prisma.UserClaimHistoryWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => UserClaimHistoryWhereInputSchema),z.lazy(() => UserClaimHistoryWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UserClaimHistoryWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UserClaimHistoryWhereInputSchema),z.lazy(() => UserClaimHistoryWhereInputSchema).array() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  claimType: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  claimAmount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  claimTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict();
+
+export const UserClaimHistoryOrderByWithRelationInputSchema: z.ZodType<Prisma.UserClaimHistoryOrderByWithRelationInput> = z.object({
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UserClaimHistoryWhereUniqueInputSchema: z.ZodType<Prisma.UserClaimHistoryWhereUniqueInput> = z.object({
+  userAddress_tokenAddress: z.lazy(() => UserClaimHistoryUserAddressTokenAddressCompoundUniqueInputSchema)
+})
+.and(z.object({
+  userAddress_tokenAddress: z.lazy(() => UserClaimHistoryUserAddressTokenAddressCompoundUniqueInputSchema).optional(),
+  AND: z.union([ z.lazy(() => UserClaimHistoryWhereInputSchema),z.lazy(() => UserClaimHistoryWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UserClaimHistoryWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UserClaimHistoryWhereInputSchema),z.lazy(() => UserClaimHistoryWhereInputSchema).array() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  claimType: z.union([ z.lazy(() => IntFilterSchema),z.number().int() ]).optional(),
+  claimAmount: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  claimTime: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+}).strict());
+
+export const UserClaimHistoryOrderByWithAggregationInputSchema: z.ZodType<Prisma.UserClaimHistoryOrderByWithAggregationInput> = z.object({
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional(),
+  _count: z.lazy(() => UserClaimHistoryCountOrderByAggregateInputSchema).optional(),
+  _avg: z.lazy(() => UserClaimHistoryAvgOrderByAggregateInputSchema).optional(),
+  _max: z.lazy(() => UserClaimHistoryMaxOrderByAggregateInputSchema).optional(),
+  _min: z.lazy(() => UserClaimHistoryMinOrderByAggregateInputSchema).optional(),
+  _sum: z.lazy(() => UserClaimHistorySumOrderByAggregateInputSchema).optional()
+}).strict();
+
+export const UserClaimHistoryScalarWhereWithAggregatesInputSchema: z.ZodType<Prisma.UserClaimHistoryScalarWhereWithAggregatesInput> = z.object({
+  AND: z.union([ z.lazy(() => UserClaimHistoryScalarWhereWithAggregatesInputSchema),z.lazy(() => UserClaimHistoryScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  OR: z.lazy(() => UserClaimHistoryScalarWhereWithAggregatesInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => UserClaimHistoryScalarWhereWithAggregatesInputSchema),z.lazy(() => UserClaimHistoryScalarWhereWithAggregatesInputSchema).array() ]).optional(),
+  userAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringWithAggregatesFilterSchema),z.string() ]).optional(),
+  claimType: z.union([ z.lazy(() => IntWithAggregatesFilterSchema),z.number() ]).optional(),
+  claimAmount: z.union([ z.lazy(() => DecimalWithAggregatesFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+  claimTime: z.union([ z.lazy(() => BigIntWithAggregatesFilterSchema),z.bigint() ]).optional(),
 }).strict();
 
 export const ApiKeyCreateInputSchema: z.ZodType<Prisma.ApiKeyCreateInput> = z.object({
@@ -2587,188 +3979,6 @@ export const DaoTokenInfoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.DaoTok
   uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
 
-export const KLine1mCreateInputSchema: z.ZodType<Prisma.KLine1mCreateInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint().optional(),
-  closeTs: z.bigint().optional(),
-  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  txnNum: z.bigint().optional()
-}).strict();
-
-export const KLine1mUncheckedCreateInputSchema: z.ZodType<Prisma.KLine1mUncheckedCreateInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint().optional(),
-  closeTs: z.bigint().optional(),
-  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  txnNum: z.bigint().optional()
-}).strict();
-
-export const KLine1mUpdateInputSchema: z.ZodType<Prisma.KLine1mUpdateInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine1mUncheckedUpdateInputSchema: z.ZodType<Prisma.KLine1mUncheckedUpdateInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine1mCreateManyInputSchema: z.ZodType<Prisma.KLine1mCreateManyInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint().optional(),
-  closeTs: z.bigint().optional(),
-  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  txnNum: z.bigint().optional()
-}).strict();
-
-export const KLine1mUpdateManyMutationInputSchema: z.ZodType<Prisma.KLine1mUpdateManyMutationInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine1mUncheckedUpdateManyInputSchema: z.ZodType<Prisma.KLine1mUncheckedUpdateManyInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine5mCreateInputSchema: z.ZodType<Prisma.KLine5mCreateInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint().optional(),
-  closeTs: z.bigint().optional(),
-  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  txnNum: z.bigint().optional()
-}).strict();
-
-export const KLine5mUncheckedCreateInputSchema: z.ZodType<Prisma.KLine5mUncheckedCreateInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint().optional(),
-  closeTs: z.bigint().optional(),
-  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  txnNum: z.bigint().optional()
-}).strict();
-
-export const KLine5mUpdateInputSchema: z.ZodType<Prisma.KLine5mUpdateInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine5mUncheckedUpdateInputSchema: z.ZodType<Prisma.KLine5mUncheckedUpdateInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine5mCreateManyInputSchema: z.ZodType<Prisma.KLine5mCreateManyInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint().optional(),
-  closeTs: z.bigint().optional(),
-  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
-  txnNum: z.bigint().optional()
-}).strict();
-
-export const KLine5mUpdateManyMutationInputSchema: z.ZodType<Prisma.KLine5mUpdateManyMutationInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
-export const KLine5mUncheckedUpdateManyInputSchema: z.ZodType<Prisma.KLine5mUncheckedUpdateManyInput> = z.object({
-  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
-  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
-
 export const AssetTokenCreateInputSchema: z.ZodType<Prisma.AssetTokenCreateInput> = z.object({
   address: z.string(),
   name: z.string(),
@@ -3096,6 +4306,1203 @@ export const ContributorHistoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.
   createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
   contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTxnLogCreateInputSchema: z.ZodType<Prisma.EvtTxnLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  address: z.string(),
+  topic0: z.string(),
+  topic1: z.string().optional().nullable(),
+  topic2: z.string().optional().nullable(),
+  topic3: z.string().optional().nullable(),
+  data: z.string().optional().nullable()
+}).strict();
+
+export const EvtTxnLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtTxnLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  address: z.string(),
+  topic0: z.string(),
+  topic1: z.string().optional().nullable(),
+  topic2: z.string().optional().nullable(),
+  topic3: z.string().optional().nullable(),
+  data: z.string().optional().nullable()
+}).strict();
+
+export const EvtTxnLogUpdateInputSchema: z.ZodType<Prisma.EvtTxnLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic0: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  data: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtTxnLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtTxnLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic0: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  data: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtTxnLogCreateManyInputSchema: z.ZodType<Prisma.EvtTxnLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  address: z.string(),
+  topic0: z.string(),
+  topic1: z.string().optional().nullable(),
+  topic2: z.string().optional().nullable(),
+  topic3: z.string().optional().nullable(),
+  data: z.string().optional().nullable()
+}).strict();
+
+export const EvtTxnLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtTxnLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic0: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  data: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtTxnLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtTxnLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic0: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  topic1: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic2: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  topic3: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  data: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtTokenLogCreateInputSchema: z.ZodType<Prisma.EvtTokenLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  assetAddress: z.string(),
+  initPrice: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  userAddress: z.string()
+}).strict();
+
+export const EvtTokenLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtTokenLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  assetAddress: z.string(),
+  initPrice: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  userAddress: z.string()
+}).strict();
+
+export const EvtTokenLogUpdateInputSchema: z.ZodType<Prisma.EvtTokenLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  initPrice: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtTokenLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  initPrice: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLogCreateManyInputSchema: z.ZodType<Prisma.EvtTokenLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  assetAddress: z.string(),
+  initPrice: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  userAddress: z.string()
+}).strict();
+
+export const EvtTokenLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtTokenLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  initPrice: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtTokenLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  initPrice: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtGraduatedLogCreateInputSchema: z.ZodType<Prisma.EvtGraduatedLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  tokenAddress: z.string(),
+  uniswapPool: z.string()
+}).strict();
+
+export const EvtGraduatedLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtGraduatedLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  tokenAddress: z.string(),
+  uniswapPool: z.string()
+}).strict();
+
+export const EvtGraduatedLogUpdateInputSchema: z.ZodType<Prisma.EvtGraduatedLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  uniswapPool: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtGraduatedLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtGraduatedLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  uniswapPool: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtGraduatedLogCreateManyInputSchema: z.ZodType<Prisma.EvtGraduatedLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  tokenAddress: z.string(),
+  uniswapPool: z.string()
+}).strict();
+
+export const EvtGraduatedLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtGraduatedLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  uniswapPool: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtGraduatedLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtGraduatedLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  uniswapPool: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLockLogCreateInputSchema: z.ZodType<Prisma.EvtTokenLockLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lockPeriod: z.bigint(),
+  lockStart: z.bigint()
+}).strict();
+
+export const EvtTokenLockLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtTokenLockLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lockPeriod: z.bigint(),
+  lockStart: z.bigint()
+}).strict();
+
+export const EvtTokenLockLogUpdateInputSchema: z.ZodType<Prisma.EvtTokenLockLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lockPeriod: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  lockStart: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLockLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtTokenLockLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lockPeriod: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  lockStart: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLockLogCreateManyInputSchema: z.ZodType<Prisma.EvtTokenLockLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  lockPeriod: z.bigint(),
+  lockStart: z.bigint()
+}).strict();
+
+export const EvtTokenLockLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtTokenLockLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lockPeriod: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  lockStart: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTokenLockLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtTokenLockLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  lockPeriod: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  lockStart: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTradeLogCreateInputSchema: z.ZodType<Prisma.EvtTradeLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  userAddress: z.string(),
+  assetAddress: z.string(),
+  tradeType: z.number().int(),
+  amountIn: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amountOut: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  price: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtTradeLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtTradeLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  userAddress: z.string(),
+  assetAddress: z.string(),
+  tradeType: z.number().int(),
+  amountIn: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amountOut: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  price: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtTradeLogUpdateInputSchema: z.ZodType<Prisma.EvtTradeLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tradeType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  amountIn: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amountOut: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTradeLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtTradeLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tradeType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  amountIn: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amountOut: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTradeLogCreateManyInputSchema: z.ZodType<Prisma.EvtTradeLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  userAddress: z.string(),
+  assetAddress: z.string(),
+  tradeType: z.number().int(),
+  amountIn: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amountOut: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  price: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtTradeLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtTradeLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tradeType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  amountIn: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amountOut: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtTradeLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtTradeLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tradeType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  amountIn: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amountOut: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtAssetLogCreateInputSchema: z.ZodType<Prisma.EvtAssetLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  decimals: z.number().int(),
+  isAllowed: z.boolean().optional(),
+  launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable()
+}).strict();
+
+export const EvtAssetLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtAssetLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  decimals: z.number().int(),
+  isAllowed: z.boolean().optional(),
+  launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable()
+}).strict();
+
+export const EvtAssetLogUpdateInputSchema: z.ZodType<Prisma.EvtAssetLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  launchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtAssetLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtAssetLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  launchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtAssetLogCreateManyInputSchema: z.ZodType<Prisma.EvtAssetLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  decimals: z.number().int(),
+  isAllowed: z.boolean().optional(),
+  launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable()
+}).strict();
+
+export const EvtAssetLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtAssetLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  launchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtAssetLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtAssetLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  launchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
+export const EvtAssetFeeLogCreateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  oldLaunchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  newLaunchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtAssetFeeLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  oldLaunchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  newLaunchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtAssetFeeLogUpdateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  oldLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  newLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtAssetFeeLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  oldLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  newLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtAssetFeeLogCreateManyInputSchema: z.ZodType<Prisma.EvtAssetFeeLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  assetAddress: z.string(),
+  oldLaunchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  newLaunchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtAssetFeeLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtAssetFeeLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  oldLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  newLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtAssetFeeLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtAssetFeeLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  assetAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  oldLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  newLaunchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionStartLogCreateInputSchema: z.ZodType<Prisma.EvtContributionStartLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint()
+}).strict();
+
+export const EvtContributionStartLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtContributionStartLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint()
+}).strict();
+
+export const EvtContributionStartLogUpdateInputSchema: z.ZodType<Prisma.EvtContributionStartLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionStartLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtContributionStartLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionStartLogCreateManyInputSchema: z.ZodType<Prisma.EvtContributionStartLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint()
+}).strict();
+
+export const EvtContributionStartLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtContributionStartLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionStartLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtContributionStartLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionUpdateLogCreateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtContributionUpdateLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtContributionUpdateLogUpdateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionUpdateLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionUpdateLogCreateManyInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' })
+}).strict();
+
+export const EvtContributionUpdateLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtContributionUpdateLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtClaimLogCreateInputSchema: z.ZodType<Prisma.EvtClaimLogCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  userAddress: z.string(),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  claimType: z.number().int()
+}).strict();
+
+export const EvtClaimLogUncheckedCreateInputSchema: z.ZodType<Prisma.EvtClaimLogUncheckedCreateInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  userAddress: z.string(),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  claimType: z.number().int()
+}).strict();
+
+export const EvtClaimLogUpdateInputSchema: z.ZodType<Prisma.EvtClaimLogUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtClaimLogUncheckedUpdateInputSchema: z.ZodType<Prisma.EvtClaimLogUncheckedUpdateInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtClaimLogCreateManyInputSchema: z.ZodType<Prisma.EvtClaimLogCreateManyInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint(),
+  blockTime: z.bigint(),
+  txnHash: z.string(),
+  tokenAddress: z.string(),
+  userAddress: z.string(),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  claimType: z.number().int()
+}).strict();
+
+export const EvtClaimLogUpdateManyMutationInputSchema: z.ZodType<Prisma.EvtClaimLogUpdateManyMutationInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const EvtClaimLogUncheckedUpdateManyInputSchema: z.ZodType<Prisma.EvtClaimLogUncheckedUpdateManyInput> = z.object({
+  blockNumber: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  logIndex: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  blockTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  txnHash: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine5mCreateInputSchema: z.ZodType<Prisma.KLine5mCreateInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  txnNum: z.bigint()
+}).strict();
+
+export const KLine5mUncheckedCreateInputSchema: z.ZodType<Prisma.KLine5mUncheckedCreateInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  txnNum: z.bigint()
+}).strict();
+
+export const KLine5mUpdateInputSchema: z.ZodType<Prisma.KLine5mUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine5mUncheckedUpdateInputSchema: z.ZodType<Prisma.KLine5mUncheckedUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine5mCreateManyInputSchema: z.ZodType<Prisma.KLine5mCreateManyInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  txnNum: z.bigint()
+}).strict();
+
+export const KLine5mUpdateManyMutationInputSchema: z.ZodType<Prisma.KLine5mUpdateManyMutationInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine5mUncheckedUpdateManyInputSchema: z.ZodType<Prisma.KLine5mUncheckedUpdateManyInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine1mCreateInputSchema: z.ZodType<Prisma.KLine1mCreateInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  txnNum: z.bigint()
+}).strict();
+
+export const KLine1mUncheckedCreateInputSchema: z.ZodType<Prisma.KLine1mUncheckedCreateInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  txnNum: z.bigint()
+}).strict();
+
+export const KLine1mUpdateInputSchema: z.ZodType<Prisma.KLine1mUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine1mUncheckedUpdateInputSchema: z.ZodType<Prisma.KLine1mUncheckedUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine1mCreateManyInputSchema: z.ZodType<Prisma.KLine1mCreateManyInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint(),
+  closeTs: z.bigint(),
+  open: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  high: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  low: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  close: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  volume: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  amount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  txnNum: z.bigint()
+}).strict();
+
+export const KLine1mUpdateManyMutationInputSchema: z.ZodType<Prisma.KLine1mUpdateManyMutationInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const KLine1mUncheckedUpdateManyInputSchema: z.ZodType<Prisma.KLine1mUncheckedUpdateManyInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  openTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  closeTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  open: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  high: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  low: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  close: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  volume: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  amount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  txnNum: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionInfoCreateInputSchema: z.ZodType<Prisma.ContributionInfoCreateInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  startTs: z.bigint()
+}).strict();
+
+export const ContributionInfoUncheckedCreateInputSchema: z.ZodType<Prisma.ContributionInfoUncheckedCreateInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  startTs: z.bigint()
+}).strict();
+
+export const ContributionInfoUpdateInputSchema: z.ZodType<Prisma.ContributionInfoUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  startTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionInfoUncheckedUpdateInputSchema: z.ZodType<Prisma.ContributionInfoUncheckedUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  startTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionInfoCreateManyInputSchema: z.ZodType<Prisma.ContributionInfoCreateManyInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  startTs: z.bigint()
+}).strict();
+
+export const ContributionInfoUpdateManyMutationInputSchema: z.ZodType<Prisma.ContributionInfoUpdateManyMutationInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  startTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionInfoUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContributionInfoUncheckedUpdateManyInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  startTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionDetailCreateInputSchema: z.ZodType<Prisma.ContributionDetailCreateInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  updateTs: z.bigint()
+}).strict();
+
+export const ContributionDetailUncheckedCreateInputSchema: z.ZodType<Prisma.ContributionDetailUncheckedCreateInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  updateTs: z.bigint()
+}).strict();
+
+export const ContributionDetailUpdateInputSchema: z.ZodType<Prisma.ContributionDetailUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  updateTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionDetailUncheckedUpdateInputSchema: z.ZodType<Prisma.ContributionDetailUncheckedUpdateInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  updateTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionDetailCreateManyInputSchema: z.ZodType<Prisma.ContributionDetailCreateManyInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string(),
+  contributorId: z.string(),
+  score: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  updateTs: z.bigint()
+}).strict();
+
+export const ContributionDetailUpdateManyMutationInputSchema: z.ZodType<Prisma.ContributionDetailUpdateManyMutationInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  updateTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const ContributionDetailUncheckedUpdateManyInputSchema: z.ZodType<Prisma.ContributionDetailUncheckedUpdateManyInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  cycleId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  contributor: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  contributorId: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  score: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  updateTs: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const UserClaimHistoryCreateInputSchema: z.ZodType<Prisma.UserClaimHistoryCreateInput> = z.object({
+  userAddress: z.string(),
+  tokenAddress: z.string(),
+  claimType: z.number().int(),
+  claimAmount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  claimTime: z.bigint()
+}).strict();
+
+export const UserClaimHistoryUncheckedCreateInputSchema: z.ZodType<Prisma.UserClaimHistoryUncheckedCreateInput> = z.object({
+  userAddress: z.string(),
+  tokenAddress: z.string(),
+  claimType: z.number().int(),
+  claimAmount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  claimTime: z.bigint()
+}).strict();
+
+export const UserClaimHistoryUpdateInputSchema: z.ZodType<Prisma.UserClaimHistoryUpdateInput> = z.object({
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  claimAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const UserClaimHistoryUncheckedUpdateInputSchema: z.ZodType<Prisma.UserClaimHistoryUncheckedUpdateInput> = z.object({
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  claimAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const UserClaimHistoryCreateManyInputSchema: z.ZodType<Prisma.UserClaimHistoryCreateManyInput> = z.object({
+  userAddress: z.string(),
+  tokenAddress: z.string(),
+  claimType: z.number().int(),
+  claimAmount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),
+  claimTime: z.bigint()
+}).strict();
+
+export const UserClaimHistoryUpdateManyMutationInputSchema: z.ZodType<Prisma.UserClaimHistoryUpdateManyMutationInput> = z.object({
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  claimAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const UserClaimHistoryUncheckedUpdateManyInputSchema: z.ZodType<Prisma.UserClaimHistoryUncheckedUpdateManyInput> = z.object({
+  userAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  claimType: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  claimAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  claimTime: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
 export const StringFilterSchema: z.ZodType<Prisma.StringFilter> = z.object({
@@ -3869,146 +6276,6 @@ export const DecimalNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Decimal
   _max: z.lazy(() => NestedDecimalNullableFilterSchema).optional()
 }).strict();
 
-export const KLine1mTokenIdOpenTsCompoundUniqueInputSchema: z.ZodType<Prisma.KLine1mTokenIdOpenTsCompoundUniqueInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint()
-}).strict();
-
-export const KLine1mCountOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mCountOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine1mAvgOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mAvgOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine1mMaxOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mMaxOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine1mMinOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mMinOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine1mSumOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mSumOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine5mTokenIdOpenTsCompoundUniqueInputSchema: z.ZodType<Prisma.KLine5mTokenIdOpenTsCompoundUniqueInput> = z.object({
-  tokenId: z.bigint(),
-  openTs: z.bigint()
-}).strict();
-
-export const KLine5mCountOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mCountOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine5mAvgOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mAvgOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine5mMaxOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mMaxOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine5mMinOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mMinOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
-export const KLine5mSumOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mSumOrderByAggregateInput> = z.object({
-  tokenId: z.lazy(() => SortOrderSchema).optional(),
-  openTs: z.lazy(() => SortOrderSchema).optional(),
-  closeTs: z.lazy(() => SortOrderSchema).optional(),
-  open: z.lazy(() => SortOrderSchema).optional(),
-  high: z.lazy(() => SortOrderSchema).optional(),
-  low: z.lazy(() => SortOrderSchema).optional(),
-  close: z.lazy(() => SortOrderSchema).optional(),
-  volume: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  txnNum: z.lazy(() => SortOrderSchema).optional()
-}).strict();
-
 export const AssetTokenCountOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenCountOrderByAggregateInput> = z.object({
   address: z.lazy(() => SortOrderSchema).optional(),
   name: z.lazy(() => SortOrderSchema).optional(),
@@ -4196,6 +6463,879 @@ export const ContributorHistoryMinOrderByAggregateInputSchema: z.ZodType<Prisma.
 
 export const ContributorHistorySumOrderByAggregateInputSchema: z.ZodType<Prisma.ContributorHistorySumOrderByAggregateInput> = z.object({
   value: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTxnLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtTxnLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtTxnLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTxnLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  address: z.lazy(() => SortOrderSchema).optional(),
+  topic0: z.lazy(() => SortOrderSchema).optional(),
+  topic1: z.lazy(() => SortOrderSchema).optional(),
+  topic2: z.lazy(() => SortOrderSchema).optional(),
+  topic3: z.lazy(() => SortOrderSchema).optional(),
+  data: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTxnLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTxnLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTxnLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTxnLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  address: z.lazy(() => SortOrderSchema).optional(),
+  topic0: z.lazy(() => SortOrderSchema).optional(),
+  topic1: z.lazy(() => SortOrderSchema).optional(),
+  topic2: z.lazy(() => SortOrderSchema).optional(),
+  topic3: z.lazy(() => SortOrderSchema).optional(),
+  data: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTxnLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTxnLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  address: z.lazy(() => SortOrderSchema).optional(),
+  topic0: z.lazy(() => SortOrderSchema).optional(),
+  topic1: z.lazy(() => SortOrderSchema).optional(),
+  topic2: z.lazy(() => SortOrderSchema).optional(),
+  topic3: z.lazy(() => SortOrderSchema).optional(),
+  data: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTxnLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTxnLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtTokenLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtTokenLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  initPrice: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtGraduatedLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtGraduatedLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtGraduatedLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  uniswapPool: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtGraduatedLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtGraduatedLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  uniswapPool: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtGraduatedLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  uniswapPool: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtGraduatedLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtGraduatedLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtTokenLockLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtTokenLockLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLockLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLockLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLockLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLockLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTokenLockLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTokenLockLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  unlockRatio: z.lazy(() => SortOrderSchema).optional(),
+  lockPeriod: z.lazy(() => SortOrderSchema).optional(),
+  lockStart: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTradeLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtTradeLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtTradeLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTradeLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTradeLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTradeLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTradeLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTradeLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTradeLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTradeLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtTradeLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtTradeLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  tradeType: z.lazy(() => SortOrderSchema).optional(),
+  amountIn: z.lazy(() => SortOrderSchema).optional(),
+  amountOut: z.lazy(() => SortOrderSchema).optional(),
+  price: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtAssetLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtAssetLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  isAllowed: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  isAllowed: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  isAllowed: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  decimals: z.lazy(() => SortOrderSchema).optional(),
+  launchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtAssetFeeLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtAssetFeeLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  assetAddress: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtAssetFeeLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtAssetFeeLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  oldLaunchFee: z.lazy(() => SortOrderSchema).optional(),
+  newLaunchFee: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtContributionStartLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtContributionStartLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionStartLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionStartLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionStartLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionStartLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionStartLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionStartLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtContributionUpdateLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtContributionUpdateLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtContributionUpdateLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtClaimLogBlockNumberTxnIndexLogIndexCompoundUniqueInputSchema: z.ZodType<Prisma.EvtClaimLogBlockNumberTxnIndexLogIndexCompoundUniqueInput> = z.object({
+  blockNumber: z.bigint(),
+  txnIndex: z.bigint(),
+  logIndex: z.bigint()
+}).strict();
+
+export const EvtClaimLogCountOrderByAggregateInputSchema: z.ZodType<Prisma.EvtClaimLogCountOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtClaimLogAvgOrderByAggregateInputSchema: z.ZodType<Prisma.EvtClaimLogAvgOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtClaimLogMaxOrderByAggregateInputSchema: z.ZodType<Prisma.EvtClaimLogMaxOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtClaimLogMinOrderByAggregateInputSchema: z.ZodType<Prisma.EvtClaimLogMinOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  txnHash: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const EvtClaimLogSumOrderByAggregateInputSchema: z.ZodType<Prisma.EvtClaimLogSumOrderByAggregateInput> = z.object({
+  blockNumber: z.lazy(() => SortOrderSchema).optional(),
+  txnIndex: z.lazy(() => SortOrderSchema).optional(),
+  logIndex: z.lazy(() => SortOrderSchema).optional(),
+  blockTime: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine5mTokenIdOpenTsCompoundUniqueInputSchema: z.ZodType<Prisma.KLine5mTokenIdOpenTsCompoundUniqueInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint()
+}).strict();
+
+export const KLine5mCountOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mCountOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine5mAvgOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mAvgOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine5mMaxOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mMaxOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine5mMinOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mMinOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine5mSumOrderByAggregateInputSchema: z.ZodType<Prisma.KLine5mSumOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine1mTokenIdOpenTsCompoundUniqueInputSchema: z.ZodType<Prisma.KLine1mTokenIdOpenTsCompoundUniqueInput> = z.object({
+  tokenId: z.bigint(),
+  openTs: z.bigint()
+}).strict();
+
+export const KLine1mCountOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mCountOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine1mAvgOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mAvgOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine1mMaxOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mMaxOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine1mMinOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mMinOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const KLine1mSumOrderByAggregateInputSchema: z.ZodType<Prisma.KLine1mSumOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  openTs: z.lazy(() => SortOrderSchema).optional(),
+  closeTs: z.lazy(() => SortOrderSchema).optional(),
+  open: z.lazy(() => SortOrderSchema).optional(),
+  high: z.lazy(() => SortOrderSchema).optional(),
+  low: z.lazy(() => SortOrderSchema).optional(),
+  close: z.lazy(() => SortOrderSchema).optional(),
+  volume: z.lazy(() => SortOrderSchema).optional(),
+  amount: z.lazy(() => SortOrderSchema).optional(),
+  txnNum: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionInfoTokenIdCycleIdCompoundUniqueInputSchema: z.ZodType<Prisma.ContributionInfoTokenIdCycleIdCompoundUniqueInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint()
+}).strict();
+
+export const ContributionInfoCountOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionInfoCountOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionInfoAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionInfoAvgOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionInfoMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionInfoMaxOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionInfoMinOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionInfoMinOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionInfoSumOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionInfoSumOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  startTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionDetailTokenIdCycleIdContributorCompoundUniqueInputSchema: z.ZodType<Prisma.ContributionDetailTokenIdCycleIdContributorCompoundUniqueInput> = z.object({
+  tokenId: z.bigint(),
+  cycleId: z.bigint(),
+  contributor: z.string()
+}).strict();
+
+export const ContributionDetailCountOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionDetailCountOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionDetailAvgOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionDetailAvgOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionDetailMaxOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionDetailMaxOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionDetailMinOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionDetailMinOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  contributor: z.lazy(() => SortOrderSchema).optional(),
+  contributorId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const ContributionDetailSumOrderByAggregateInputSchema: z.ZodType<Prisma.ContributionDetailSumOrderByAggregateInput> = z.object({
+  tokenId: z.lazy(() => SortOrderSchema).optional(),
+  cycleId: z.lazy(() => SortOrderSchema).optional(),
+  score: z.lazy(() => SortOrderSchema).optional(),
+  updateTs: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UserClaimHistoryUserAddressTokenAddressCompoundUniqueInputSchema: z.ZodType<Prisma.UserClaimHistoryUserAddressTokenAddressCompoundUniqueInput> = z.object({
+  userAddress: z.string(),
+  tokenAddress: z.string()
+}).strict();
+
+export const UserClaimHistoryCountOrderByAggregateInputSchema: z.ZodType<Prisma.UserClaimHistoryCountOrderByAggregateInput> = z.object({
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UserClaimHistoryAvgOrderByAggregateInputSchema: z.ZodType<Prisma.UserClaimHistoryAvgOrderByAggregateInput> = z.object({
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UserClaimHistoryMaxOrderByAggregateInputSchema: z.ZodType<Prisma.UserClaimHistoryMaxOrderByAggregateInput> = z.object({
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UserClaimHistoryMinOrderByAggregateInputSchema: z.ZodType<Prisma.UserClaimHistoryMinOrderByAggregateInput> = z.object({
+  userAddress: z.lazy(() => SortOrderSchema).optional(),
+  tokenAddress: z.lazy(() => SortOrderSchema).optional(),
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export const UserClaimHistorySumOrderByAggregateInputSchema: z.ZodType<Prisma.UserClaimHistorySumOrderByAggregateInput> = z.object({
+  claimType: z.lazy(() => SortOrderSchema).optional(),
+  claimAmount: z.lazy(() => SortOrderSchema).optional(),
+  claimTime: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const StringFieldUpdateOperationsInputSchema: z.ZodType<Prisma.StringFieldUpdateOperationsInput> = z.object({
@@ -7495,120 +10635,6 @@ export const DaoTokenInfoFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.DaoTokenI
   where: DaoTokenInfoWhereUniqueInputSchema,
 }).strict() ;
 
-export const KLine1mFindFirstArgsSchema: z.ZodType<Prisma.KLine1mFindFirstArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine1mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ KLine1mScalarFieldEnumSchema,KLine1mScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const KLine1mFindFirstOrThrowArgsSchema: z.ZodType<Prisma.KLine1mFindFirstOrThrowArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine1mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ KLine1mScalarFieldEnumSchema,KLine1mScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const KLine1mFindManyArgsSchema: z.ZodType<Prisma.KLine1mFindManyArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine1mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ KLine1mScalarFieldEnumSchema,KLine1mScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const KLine1mAggregateArgsSchema: z.ZodType<Prisma.KLine1mAggregateArgs> = z.object({
-  where: KLine1mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine1mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const KLine1mGroupByArgsSchema: z.ZodType<Prisma.KLine1mGroupByArgs> = z.object({
-  where: KLine1mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine1mOrderByWithAggregationInputSchema.array(),KLine1mOrderByWithAggregationInputSchema ]).optional(),
-  by: KLine1mScalarFieldEnumSchema.array(),
-  having: KLine1mScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const KLine1mFindUniqueArgsSchema: z.ZodType<Prisma.KLine1mFindUniqueArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine1mFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.KLine1mFindUniqueOrThrowArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine5mFindFirstArgsSchema: z.ZodType<Prisma.KLine5mFindFirstArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine5mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ KLine5mScalarFieldEnumSchema,KLine5mScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const KLine5mFindFirstOrThrowArgsSchema: z.ZodType<Prisma.KLine5mFindFirstOrThrowArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine5mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ KLine5mScalarFieldEnumSchema,KLine5mScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const KLine5mFindManyArgsSchema: z.ZodType<Prisma.KLine5mFindManyArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine5mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-  distinct: z.union([ KLine5mScalarFieldEnumSchema,KLine5mScalarFieldEnumSchema.array() ]).optional(),
-}).strict() ;
-
-export const KLine5mAggregateArgsSchema: z.ZodType<Prisma.KLine5mAggregateArgs> = z.object({
-  where: KLine5mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
-  cursor: KLine5mWhereUniqueInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const KLine5mGroupByArgsSchema: z.ZodType<Prisma.KLine5mGroupByArgs> = z.object({
-  where: KLine5mWhereInputSchema.optional(),
-  orderBy: z.union([ KLine5mOrderByWithAggregationInputSchema.array(),KLine5mOrderByWithAggregationInputSchema ]).optional(),
-  by: KLine5mScalarFieldEnumSchema.array(),
-  having: KLine5mScalarWhereWithAggregatesInputSchema.optional(),
-  take: z.number().optional(),
-  skip: z.number().optional(),
-}).strict() ;
-
-export const KLine5mFindUniqueArgsSchema: z.ZodType<Prisma.KLine5mFindUniqueArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine5mFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.KLine5mFindUniqueOrThrowArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereUniqueInputSchema,
-}).strict() ;
-
 export const AssetTokenFindFirstArgsSchema: z.ZodType<Prisma.AssetTokenFindFirstArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
   where: AssetTokenWhereInputSchema.optional(),
@@ -7850,6 +10876,861 @@ export const ContributorHistoryFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.Con
   select: ContributorHistorySelectSchema.optional(),
   include: ContributorHistoryIncludeSchema.optional(),
   where: ContributorHistoryWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTxnLogFindFirstArgsSchema: z.ZodType<Prisma.EvtTxnLogFindFirstArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTxnLogOrderByWithRelationInputSchema.array(),EvtTxnLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTxnLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTxnLogScalarFieldEnumSchema,EvtTxnLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTxnLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtTxnLogFindFirstOrThrowArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTxnLogOrderByWithRelationInputSchema.array(),EvtTxnLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTxnLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTxnLogScalarFieldEnumSchema,EvtTxnLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTxnLogFindManyArgsSchema: z.ZodType<Prisma.EvtTxnLogFindManyArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTxnLogOrderByWithRelationInputSchema.array(),EvtTxnLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTxnLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTxnLogScalarFieldEnumSchema,EvtTxnLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTxnLogAggregateArgsSchema: z.ZodType<Prisma.EvtTxnLogAggregateArgs> = z.object({
+  where: EvtTxnLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTxnLogOrderByWithRelationInputSchema.array(),EvtTxnLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTxnLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTxnLogGroupByArgsSchema: z.ZodType<Prisma.EvtTxnLogGroupByArgs> = z.object({
+  where: EvtTxnLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTxnLogOrderByWithAggregationInputSchema.array(),EvtTxnLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtTxnLogScalarFieldEnumSchema.array(),
+  having: EvtTxnLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTxnLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtTxnLogFindUniqueArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTxnLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtTxnLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLogFindFirstArgsSchema: z.ZodType<Prisma.EvtTokenLogFindFirstArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLogOrderByWithRelationInputSchema.array(),EvtTokenLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTokenLogScalarFieldEnumSchema,EvtTokenLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTokenLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtTokenLogFindFirstOrThrowArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLogOrderByWithRelationInputSchema.array(),EvtTokenLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTokenLogScalarFieldEnumSchema,EvtTokenLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTokenLogFindManyArgsSchema: z.ZodType<Prisma.EvtTokenLogFindManyArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLogOrderByWithRelationInputSchema.array(),EvtTokenLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTokenLogScalarFieldEnumSchema,EvtTokenLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTokenLogAggregateArgsSchema: z.ZodType<Prisma.EvtTokenLogAggregateArgs> = z.object({
+  where: EvtTokenLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLogOrderByWithRelationInputSchema.array(),EvtTokenLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLogGroupByArgsSchema: z.ZodType<Prisma.EvtTokenLogGroupByArgs> = z.object({
+  where: EvtTokenLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLogOrderByWithAggregationInputSchema.array(),EvtTokenLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtTokenLogScalarFieldEnumSchema.array(),
+  having: EvtTokenLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtTokenLogFindUniqueArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtTokenLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtGraduatedLogFindFirstArgsSchema: z.ZodType<Prisma.EvtGraduatedLogFindFirstArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtGraduatedLogOrderByWithRelationInputSchema.array(),EvtGraduatedLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtGraduatedLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtGraduatedLogScalarFieldEnumSchema,EvtGraduatedLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtGraduatedLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtGraduatedLogFindFirstOrThrowArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtGraduatedLogOrderByWithRelationInputSchema.array(),EvtGraduatedLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtGraduatedLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtGraduatedLogScalarFieldEnumSchema,EvtGraduatedLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtGraduatedLogFindManyArgsSchema: z.ZodType<Prisma.EvtGraduatedLogFindManyArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtGraduatedLogOrderByWithRelationInputSchema.array(),EvtGraduatedLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtGraduatedLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtGraduatedLogScalarFieldEnumSchema,EvtGraduatedLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtGraduatedLogAggregateArgsSchema: z.ZodType<Prisma.EvtGraduatedLogAggregateArgs> = z.object({
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtGraduatedLogOrderByWithRelationInputSchema.array(),EvtGraduatedLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtGraduatedLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogGroupByArgsSchema: z.ZodType<Prisma.EvtGraduatedLogGroupByArgs> = z.object({
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtGraduatedLogOrderByWithAggregationInputSchema.array(),EvtGraduatedLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtGraduatedLogScalarFieldEnumSchema.array(),
+  having: EvtGraduatedLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtGraduatedLogFindUniqueArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtGraduatedLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtGraduatedLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLockLogFindFirstArgsSchema: z.ZodType<Prisma.EvtTokenLockLogFindFirstArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLockLogOrderByWithRelationInputSchema.array(),EvtTokenLockLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLockLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTokenLockLogScalarFieldEnumSchema,EvtTokenLockLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTokenLockLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtTokenLockLogFindFirstOrThrowArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLockLogOrderByWithRelationInputSchema.array(),EvtTokenLockLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLockLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTokenLockLogScalarFieldEnumSchema,EvtTokenLockLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTokenLockLogFindManyArgsSchema: z.ZodType<Prisma.EvtTokenLockLogFindManyArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLockLogOrderByWithRelationInputSchema.array(),EvtTokenLockLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLockLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTokenLockLogScalarFieldEnumSchema,EvtTokenLockLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTokenLockLogAggregateArgsSchema: z.ZodType<Prisma.EvtTokenLockLogAggregateArgs> = z.object({
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLockLogOrderByWithRelationInputSchema.array(),EvtTokenLockLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTokenLockLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogGroupByArgsSchema: z.ZodType<Prisma.EvtTokenLockLogGroupByArgs> = z.object({
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTokenLockLogOrderByWithAggregationInputSchema.array(),EvtTokenLockLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtTokenLockLogScalarFieldEnumSchema.array(),
+  having: EvtTokenLockLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtTokenLockLogFindUniqueArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLockLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtTokenLockLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTradeLogFindFirstArgsSchema: z.ZodType<Prisma.EvtTradeLogFindFirstArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTradeLogOrderByWithRelationInputSchema.array(),EvtTradeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTradeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTradeLogScalarFieldEnumSchema,EvtTradeLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTradeLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtTradeLogFindFirstOrThrowArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTradeLogOrderByWithRelationInputSchema.array(),EvtTradeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTradeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTradeLogScalarFieldEnumSchema,EvtTradeLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTradeLogFindManyArgsSchema: z.ZodType<Prisma.EvtTradeLogFindManyArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTradeLogOrderByWithRelationInputSchema.array(),EvtTradeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTradeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtTradeLogScalarFieldEnumSchema,EvtTradeLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtTradeLogAggregateArgsSchema: z.ZodType<Prisma.EvtTradeLogAggregateArgs> = z.object({
+  where: EvtTradeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTradeLogOrderByWithRelationInputSchema.array(),EvtTradeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtTradeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTradeLogGroupByArgsSchema: z.ZodType<Prisma.EvtTradeLogGroupByArgs> = z.object({
+  where: EvtTradeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtTradeLogOrderByWithAggregationInputSchema.array(),EvtTradeLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtTradeLogScalarFieldEnumSchema.array(),
+  having: EvtTradeLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtTradeLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtTradeLogFindUniqueArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTradeLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtTradeLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetLogFindFirstArgsSchema: z.ZodType<Prisma.EvtAssetLogFindFirstArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetLogOrderByWithRelationInputSchema.array(),EvtAssetLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtAssetLogScalarFieldEnumSchema,EvtAssetLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtAssetLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtAssetLogFindFirstOrThrowArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetLogOrderByWithRelationInputSchema.array(),EvtAssetLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtAssetLogScalarFieldEnumSchema,EvtAssetLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtAssetLogFindManyArgsSchema: z.ZodType<Prisma.EvtAssetLogFindManyArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetLogOrderByWithRelationInputSchema.array(),EvtAssetLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtAssetLogScalarFieldEnumSchema,EvtAssetLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtAssetLogAggregateArgsSchema: z.ZodType<Prisma.EvtAssetLogAggregateArgs> = z.object({
+  where: EvtAssetLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetLogOrderByWithRelationInputSchema.array(),EvtAssetLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetLogGroupByArgsSchema: z.ZodType<Prisma.EvtAssetLogGroupByArgs> = z.object({
+  where: EvtAssetLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetLogOrderByWithAggregationInputSchema.array(),EvtAssetLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtAssetLogScalarFieldEnumSchema.array(),
+  having: EvtAssetLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtAssetLogFindUniqueArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtAssetLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetFeeLogFindFirstArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogFindFirstArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetFeeLogOrderByWithRelationInputSchema.array(),EvtAssetFeeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetFeeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtAssetFeeLogScalarFieldEnumSchema,EvtAssetFeeLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogFindFirstOrThrowArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetFeeLogOrderByWithRelationInputSchema.array(),EvtAssetFeeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetFeeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtAssetFeeLogScalarFieldEnumSchema,EvtAssetFeeLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogFindManyArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogFindManyArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetFeeLogOrderByWithRelationInputSchema.array(),EvtAssetFeeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetFeeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtAssetFeeLogScalarFieldEnumSchema,EvtAssetFeeLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogAggregateArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogAggregateArgs> = z.object({
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetFeeLogOrderByWithRelationInputSchema.array(),EvtAssetFeeLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtAssetFeeLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogGroupByArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogGroupByArgs> = z.object({
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtAssetFeeLogOrderByWithAggregationInputSchema.array(),EvtAssetFeeLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtAssetFeeLogScalarFieldEnumSchema.array(),
+  having: EvtAssetFeeLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogFindUniqueArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetFeeLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionStartLogFindFirstArgsSchema: z.ZodType<Prisma.EvtContributionStartLogFindFirstArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionStartLogOrderByWithRelationInputSchema.array(),EvtContributionStartLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionStartLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtContributionStartLogScalarFieldEnumSchema,EvtContributionStartLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtContributionStartLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtContributionStartLogFindFirstOrThrowArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionStartLogOrderByWithRelationInputSchema.array(),EvtContributionStartLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionStartLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtContributionStartLogScalarFieldEnumSchema,EvtContributionStartLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtContributionStartLogFindManyArgsSchema: z.ZodType<Prisma.EvtContributionStartLogFindManyArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionStartLogOrderByWithRelationInputSchema.array(),EvtContributionStartLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionStartLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtContributionStartLogScalarFieldEnumSchema,EvtContributionStartLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtContributionStartLogAggregateArgsSchema: z.ZodType<Prisma.EvtContributionStartLogAggregateArgs> = z.object({
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionStartLogOrderByWithRelationInputSchema.array(),EvtContributionStartLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionStartLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogGroupByArgsSchema: z.ZodType<Prisma.EvtContributionStartLogGroupByArgs> = z.object({
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionStartLogOrderByWithAggregationInputSchema.array(),EvtContributionStartLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtContributionStartLogScalarFieldEnumSchema.array(),
+  having: EvtContributionStartLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtContributionStartLogFindUniqueArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionStartLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtContributionStartLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionUpdateLogFindFirstArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogFindFirstArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionUpdateLogOrderByWithRelationInputSchema.array(),EvtContributionUpdateLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionUpdateLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtContributionUpdateLogScalarFieldEnumSchema,EvtContributionUpdateLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogFindFirstOrThrowArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionUpdateLogOrderByWithRelationInputSchema.array(),EvtContributionUpdateLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionUpdateLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtContributionUpdateLogScalarFieldEnumSchema,EvtContributionUpdateLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogFindManyArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogFindManyArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionUpdateLogOrderByWithRelationInputSchema.array(),EvtContributionUpdateLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionUpdateLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtContributionUpdateLogScalarFieldEnumSchema,EvtContributionUpdateLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogAggregateArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogAggregateArgs> = z.object({
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionUpdateLogOrderByWithRelationInputSchema.array(),EvtContributionUpdateLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtContributionUpdateLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogGroupByArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogGroupByArgs> = z.object({
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtContributionUpdateLogOrderByWithAggregationInputSchema.array(),EvtContributionUpdateLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtContributionUpdateLogScalarFieldEnumSchema.array(),
+  having: EvtContributionUpdateLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogFindUniqueArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionUpdateLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtClaimLogFindFirstArgsSchema: z.ZodType<Prisma.EvtClaimLogFindFirstArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtClaimLogOrderByWithRelationInputSchema.array(),EvtClaimLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtClaimLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtClaimLogScalarFieldEnumSchema,EvtClaimLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtClaimLogFindFirstOrThrowArgsSchema: z.ZodType<Prisma.EvtClaimLogFindFirstOrThrowArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtClaimLogOrderByWithRelationInputSchema.array(),EvtClaimLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtClaimLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtClaimLogScalarFieldEnumSchema,EvtClaimLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtClaimLogFindManyArgsSchema: z.ZodType<Prisma.EvtClaimLogFindManyArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtClaimLogOrderByWithRelationInputSchema.array(),EvtClaimLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtClaimLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ EvtClaimLogScalarFieldEnumSchema,EvtClaimLogScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const EvtClaimLogAggregateArgsSchema: z.ZodType<Prisma.EvtClaimLogAggregateArgs> = z.object({
+  where: EvtClaimLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtClaimLogOrderByWithRelationInputSchema.array(),EvtClaimLogOrderByWithRelationInputSchema ]).optional(),
+  cursor: EvtClaimLogWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtClaimLogGroupByArgsSchema: z.ZodType<Prisma.EvtClaimLogGroupByArgs> = z.object({
+  where: EvtClaimLogWhereInputSchema.optional(),
+  orderBy: z.union([ EvtClaimLogOrderByWithAggregationInputSchema.array(),EvtClaimLogOrderByWithAggregationInputSchema ]).optional(),
+  by: EvtClaimLogScalarFieldEnumSchema.array(),
+  having: EvtClaimLogScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const EvtClaimLogFindUniqueArgsSchema: z.ZodType<Prisma.EvtClaimLogFindUniqueArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtClaimLogFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.EvtClaimLogFindUniqueOrThrowArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine5mFindFirstArgsSchema: z.ZodType<Prisma.KLine5mFindFirstArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine5mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ KLine5mScalarFieldEnumSchema,KLine5mScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const KLine5mFindFirstOrThrowArgsSchema: z.ZodType<Prisma.KLine5mFindFirstOrThrowArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine5mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ KLine5mScalarFieldEnumSchema,KLine5mScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const KLine5mFindManyArgsSchema: z.ZodType<Prisma.KLine5mFindManyArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine5mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ KLine5mScalarFieldEnumSchema,KLine5mScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const KLine5mAggregateArgsSchema: z.ZodType<Prisma.KLine5mAggregateArgs> = z.object({
+  where: KLine5mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine5mOrderByWithRelationInputSchema.array(),KLine5mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine5mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const KLine5mGroupByArgsSchema: z.ZodType<Prisma.KLine5mGroupByArgs> = z.object({
+  where: KLine5mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine5mOrderByWithAggregationInputSchema.array(),KLine5mOrderByWithAggregationInputSchema ]).optional(),
+  by: KLine5mScalarFieldEnumSchema.array(),
+  having: KLine5mScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const KLine5mFindUniqueArgsSchema: z.ZodType<Prisma.KLine5mFindUniqueArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine5mFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.KLine5mFindUniqueOrThrowArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine1mFindFirstArgsSchema: z.ZodType<Prisma.KLine1mFindFirstArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine1mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ KLine1mScalarFieldEnumSchema,KLine1mScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const KLine1mFindFirstOrThrowArgsSchema: z.ZodType<Prisma.KLine1mFindFirstOrThrowArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine1mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ KLine1mScalarFieldEnumSchema,KLine1mScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const KLine1mFindManyArgsSchema: z.ZodType<Prisma.KLine1mFindManyArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine1mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ KLine1mScalarFieldEnumSchema,KLine1mScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const KLine1mAggregateArgsSchema: z.ZodType<Prisma.KLine1mAggregateArgs> = z.object({
+  where: KLine1mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine1mOrderByWithRelationInputSchema.array(),KLine1mOrderByWithRelationInputSchema ]).optional(),
+  cursor: KLine1mWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const KLine1mGroupByArgsSchema: z.ZodType<Prisma.KLine1mGroupByArgs> = z.object({
+  where: KLine1mWhereInputSchema.optional(),
+  orderBy: z.union([ KLine1mOrderByWithAggregationInputSchema.array(),KLine1mOrderByWithAggregationInputSchema ]).optional(),
+  by: KLine1mScalarFieldEnumSchema.array(),
+  having: KLine1mScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const KLine1mFindUniqueArgsSchema: z.ZodType<Prisma.KLine1mFindUniqueArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine1mFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.KLine1mFindUniqueOrThrowArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionInfoFindFirstArgsSchema: z.ZodType<Prisma.ContributionInfoFindFirstArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionInfoOrderByWithRelationInputSchema.array(),ContributionInfoOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionInfoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributionInfoScalarFieldEnumSchema,ContributionInfoScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributionInfoFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ContributionInfoFindFirstOrThrowArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionInfoOrderByWithRelationInputSchema.array(),ContributionInfoOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionInfoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributionInfoScalarFieldEnumSchema,ContributionInfoScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributionInfoFindManyArgsSchema: z.ZodType<Prisma.ContributionInfoFindManyArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionInfoOrderByWithRelationInputSchema.array(),ContributionInfoOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionInfoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributionInfoScalarFieldEnumSchema,ContributionInfoScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributionInfoAggregateArgsSchema: z.ZodType<Prisma.ContributionInfoAggregateArgs> = z.object({
+  where: ContributionInfoWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionInfoOrderByWithRelationInputSchema.array(),ContributionInfoOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionInfoWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const ContributionInfoGroupByArgsSchema: z.ZodType<Prisma.ContributionInfoGroupByArgs> = z.object({
+  where: ContributionInfoWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionInfoOrderByWithAggregationInputSchema.array(),ContributionInfoOrderByWithAggregationInputSchema ]).optional(),
+  by: ContributionInfoScalarFieldEnumSchema.array(),
+  having: ContributionInfoScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const ContributionInfoFindUniqueArgsSchema: z.ZodType<Prisma.ContributionInfoFindUniqueArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionInfoFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ContributionInfoFindUniqueOrThrowArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionDetailFindFirstArgsSchema: z.ZodType<Prisma.ContributionDetailFindFirstArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionDetailOrderByWithRelationInputSchema.array(),ContributionDetailOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionDetailWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributionDetailScalarFieldEnumSchema,ContributionDetailScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributionDetailFindFirstOrThrowArgsSchema: z.ZodType<Prisma.ContributionDetailFindFirstOrThrowArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionDetailOrderByWithRelationInputSchema.array(),ContributionDetailOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionDetailWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributionDetailScalarFieldEnumSchema,ContributionDetailScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributionDetailFindManyArgsSchema: z.ZodType<Prisma.ContributionDetailFindManyArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionDetailOrderByWithRelationInputSchema.array(),ContributionDetailOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionDetailWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ ContributionDetailScalarFieldEnumSchema,ContributionDetailScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const ContributionDetailAggregateArgsSchema: z.ZodType<Prisma.ContributionDetailAggregateArgs> = z.object({
+  where: ContributionDetailWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionDetailOrderByWithRelationInputSchema.array(),ContributionDetailOrderByWithRelationInputSchema ]).optional(),
+  cursor: ContributionDetailWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const ContributionDetailGroupByArgsSchema: z.ZodType<Prisma.ContributionDetailGroupByArgs> = z.object({
+  where: ContributionDetailWhereInputSchema.optional(),
+  orderBy: z.union([ ContributionDetailOrderByWithAggregationInputSchema.array(),ContributionDetailOrderByWithAggregationInputSchema ]).optional(),
+  by: ContributionDetailScalarFieldEnumSchema.array(),
+  having: ContributionDetailScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const ContributionDetailFindUniqueArgsSchema: z.ZodType<Prisma.ContributionDetailFindUniqueArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionDetailFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.ContributionDetailFindUniqueOrThrowArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereUniqueInputSchema,
+}).strict() ;
+
+export const UserClaimHistoryFindFirstArgsSchema: z.ZodType<Prisma.UserClaimHistoryFindFirstArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ UserClaimHistoryOrderByWithRelationInputSchema.array(),UserClaimHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: UserClaimHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ UserClaimHistoryScalarFieldEnumSchema,UserClaimHistoryScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const UserClaimHistoryFindFirstOrThrowArgsSchema: z.ZodType<Prisma.UserClaimHistoryFindFirstOrThrowArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ UserClaimHistoryOrderByWithRelationInputSchema.array(),UserClaimHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: UserClaimHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ UserClaimHistoryScalarFieldEnumSchema,UserClaimHistoryScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const UserClaimHistoryFindManyArgsSchema: z.ZodType<Prisma.UserClaimHistoryFindManyArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ UserClaimHistoryOrderByWithRelationInputSchema.array(),UserClaimHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: UserClaimHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+  distinct: z.union([ UserClaimHistoryScalarFieldEnumSchema,UserClaimHistoryScalarFieldEnumSchema.array() ]).optional(),
+}).strict() ;
+
+export const UserClaimHistoryAggregateArgsSchema: z.ZodType<Prisma.UserClaimHistoryAggregateArgs> = z.object({
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ UserClaimHistoryOrderByWithRelationInputSchema.array(),UserClaimHistoryOrderByWithRelationInputSchema ]).optional(),
+  cursor: UserClaimHistoryWhereUniqueInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const UserClaimHistoryGroupByArgsSchema: z.ZodType<Prisma.UserClaimHistoryGroupByArgs> = z.object({
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  orderBy: z.union([ UserClaimHistoryOrderByWithAggregationInputSchema.array(),UserClaimHistoryOrderByWithAggregationInputSchema ]).optional(),
+  by: UserClaimHistoryScalarFieldEnumSchema.array(),
+  having: UserClaimHistoryScalarWhereWithAggregatesInputSchema.optional(),
+  take: z.number().optional(),
+  skip: z.number().optional(),
+}).strict() ;
+
+export const UserClaimHistoryFindUniqueArgsSchema: z.ZodType<Prisma.UserClaimHistoryFindUniqueArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereUniqueInputSchema,
+}).strict() ;
+
+export const UserClaimHistoryFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.UserClaimHistoryFindUniqueOrThrowArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereUniqueInputSchema,
 }).strict() ;
 
 export const ApiKeyCreateArgsSchema: z.ZodType<Prisma.ApiKeyCreateArgs> = z.object({
@@ -8226,106 +12107,6 @@ export const DaoTokenInfoDeleteManyArgsSchema: z.ZodType<Prisma.DaoTokenInfoDele
   limit: z.number().optional(),
 }).strict() ;
 
-export const KLine1mCreateArgsSchema: z.ZodType<Prisma.KLine1mCreateArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  data: z.union([ KLine1mCreateInputSchema,KLine1mUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const KLine1mUpsertArgsSchema: z.ZodType<Prisma.KLine1mUpsertArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereUniqueInputSchema,
-  create: z.union([ KLine1mCreateInputSchema,KLine1mUncheckedCreateInputSchema ]),
-  update: z.union([ KLine1mUpdateInputSchema,KLine1mUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const KLine1mCreateManyArgsSchema: z.ZodType<Prisma.KLine1mCreateManyArgs> = z.object({
-  data: z.union([ KLine1mCreateManyInputSchema,KLine1mCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const KLine1mCreateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine1mCreateManyAndReturnArgs> = z.object({
-  data: z.union([ KLine1mCreateManyInputSchema,KLine1mCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const KLine1mDeleteArgsSchema: z.ZodType<Prisma.KLine1mDeleteArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  where: KLine1mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine1mUpdateArgsSchema: z.ZodType<Prisma.KLine1mUpdateArgs> = z.object({
-  select: KLine1mSelectSchema.optional(),
-  data: z.union([ KLine1mUpdateInputSchema,KLine1mUncheckedUpdateInputSchema ]),
-  where: KLine1mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine1mUpdateManyArgsSchema: z.ZodType<Prisma.KLine1mUpdateManyArgs> = z.object({
-  data: z.union([ KLine1mUpdateManyMutationInputSchema,KLine1mUncheckedUpdateManyInputSchema ]),
-  where: KLine1mWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const KLine1mUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine1mUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ KLine1mUpdateManyMutationInputSchema,KLine1mUncheckedUpdateManyInputSchema ]),
-  where: KLine1mWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const KLine1mDeleteManyArgsSchema: z.ZodType<Prisma.KLine1mDeleteManyArgs> = z.object({
-  where: KLine1mWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const KLine5mCreateArgsSchema: z.ZodType<Prisma.KLine5mCreateArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  data: z.union([ KLine5mCreateInputSchema,KLine5mUncheckedCreateInputSchema ]),
-}).strict() ;
-
-export const KLine5mUpsertArgsSchema: z.ZodType<Prisma.KLine5mUpsertArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereUniqueInputSchema,
-  create: z.union([ KLine5mCreateInputSchema,KLine5mUncheckedCreateInputSchema ]),
-  update: z.union([ KLine5mUpdateInputSchema,KLine5mUncheckedUpdateInputSchema ]),
-}).strict() ;
-
-export const KLine5mCreateManyArgsSchema: z.ZodType<Prisma.KLine5mCreateManyArgs> = z.object({
-  data: z.union([ KLine5mCreateManyInputSchema,KLine5mCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const KLine5mCreateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine5mCreateManyAndReturnArgs> = z.object({
-  data: z.union([ KLine5mCreateManyInputSchema,KLine5mCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
-
-export const KLine5mDeleteArgsSchema: z.ZodType<Prisma.KLine5mDeleteArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  where: KLine5mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine5mUpdateArgsSchema: z.ZodType<Prisma.KLine5mUpdateArgs> = z.object({
-  select: KLine5mSelectSchema.optional(),
-  data: z.union([ KLine5mUpdateInputSchema,KLine5mUncheckedUpdateInputSchema ]),
-  where: KLine5mWhereUniqueInputSchema,
-}).strict() ;
-
-export const KLine5mUpdateManyArgsSchema: z.ZodType<Prisma.KLine5mUpdateManyArgs> = z.object({
-  data: z.union([ KLine5mUpdateManyMutationInputSchema,KLine5mUncheckedUpdateManyInputSchema ]),
-  where: KLine5mWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const KLine5mUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine5mUpdateManyAndReturnArgs> = z.object({
-  data: z.union([ KLine5mUpdateManyMutationInputSchema,KLine5mUncheckedUpdateManyInputSchema ]),
-  where: KLine5mWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
-export const KLine5mDeleteManyArgsSchema: z.ZodType<Prisma.KLine5mDeleteManyArgs> = z.object({
-  where: KLine5mWhereInputSchema.optional(),
-  limit: z.number().optional(),
-}).strict() ;
-
 export const AssetTokenCreateArgsSchema: z.ZodType<Prisma.AssetTokenCreateArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
   data: z.union([ AssetTokenCreateInputSchema,AssetTokenUncheckedCreateInputSchema ]),
@@ -8535,5 +12316,755 @@ export const ContributorHistoryUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.C
 
 export const ContributorHistoryDeleteManyArgsSchema: z.ZodType<Prisma.ContributorHistoryDeleteManyArgs> = z.object({
   where: ContributorHistoryWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTxnLogCreateArgsSchema: z.ZodType<Prisma.EvtTxnLogCreateArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  data: z.union([ EvtTxnLogCreateInputSchema,EvtTxnLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtTxnLogUpsertArgsSchema: z.ZodType<Prisma.EvtTxnLogUpsertArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereUniqueInputSchema,
+  create: z.union([ EvtTxnLogCreateInputSchema,EvtTxnLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtTxnLogUpdateInputSchema,EvtTxnLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtTxnLogCreateManyArgsSchema: z.ZodType<Prisma.EvtTxnLogCreateManyArgs> = z.object({
+  data: z.union([ EvtTxnLogCreateManyInputSchema,EvtTxnLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTxnLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTxnLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTxnLogCreateManyInputSchema,EvtTxnLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTxnLogDeleteArgsSchema: z.ZodType<Prisma.EvtTxnLogDeleteArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  where: EvtTxnLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTxnLogUpdateArgsSchema: z.ZodType<Prisma.EvtTxnLogUpdateArgs> = z.object({
+  select: EvtTxnLogSelectSchema.optional(),
+  data: z.union([ EvtTxnLogUpdateInputSchema,EvtTxnLogUncheckedUpdateInputSchema ]),
+  where: EvtTxnLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTxnLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtTxnLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtTxnLogUpdateManyMutationInputSchema,EvtTxnLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTxnLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTxnLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTxnLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTxnLogUpdateManyMutationInputSchema,EvtTxnLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTxnLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTxnLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtTxnLogDeleteManyArgs> = z.object({
+  where: EvtTxnLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLogCreateArgsSchema: z.ZodType<Prisma.EvtTokenLogCreateArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  data: z.union([ EvtTokenLogCreateInputSchema,EvtTokenLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtTokenLogUpsertArgsSchema: z.ZodType<Prisma.EvtTokenLogUpsertArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereUniqueInputSchema,
+  create: z.union([ EvtTokenLogCreateInputSchema,EvtTokenLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtTokenLogUpdateInputSchema,EvtTokenLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtTokenLogCreateManyArgsSchema: z.ZodType<Prisma.EvtTokenLogCreateManyArgs> = z.object({
+  data: z.union([ EvtTokenLogCreateManyInputSchema,EvtTokenLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTokenLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTokenLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTokenLogCreateManyInputSchema,EvtTokenLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTokenLogDeleteArgsSchema: z.ZodType<Prisma.EvtTokenLogDeleteArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  where: EvtTokenLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLogUpdateArgsSchema: z.ZodType<Prisma.EvtTokenLogUpdateArgs> = z.object({
+  select: EvtTokenLogSelectSchema.optional(),
+  data: z.union([ EvtTokenLogUpdateInputSchema,EvtTokenLogUncheckedUpdateInputSchema ]),
+  where: EvtTokenLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtTokenLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtTokenLogUpdateManyMutationInputSchema,EvtTokenLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTokenLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTokenLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTokenLogUpdateManyMutationInputSchema,EvtTokenLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTokenLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtTokenLogDeleteManyArgs> = z.object({
+  where: EvtTokenLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogCreateArgsSchema: z.ZodType<Prisma.EvtGraduatedLogCreateArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  data: z.union([ EvtGraduatedLogCreateInputSchema,EvtGraduatedLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtGraduatedLogUpsertArgsSchema: z.ZodType<Prisma.EvtGraduatedLogUpsertArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereUniqueInputSchema,
+  create: z.union([ EvtGraduatedLogCreateInputSchema,EvtGraduatedLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtGraduatedLogUpdateInputSchema,EvtGraduatedLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtGraduatedLogCreateManyArgsSchema: z.ZodType<Prisma.EvtGraduatedLogCreateManyArgs> = z.object({
+  data: z.union([ EvtGraduatedLogCreateManyInputSchema,EvtGraduatedLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtGraduatedLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtGraduatedLogCreateManyInputSchema,EvtGraduatedLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogDeleteArgsSchema: z.ZodType<Prisma.EvtGraduatedLogDeleteArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  where: EvtGraduatedLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtGraduatedLogUpdateArgsSchema: z.ZodType<Prisma.EvtGraduatedLogUpdateArgs> = z.object({
+  select: EvtGraduatedLogSelectSchema.optional(),
+  data: z.union([ EvtGraduatedLogUpdateInputSchema,EvtGraduatedLogUncheckedUpdateInputSchema ]),
+  where: EvtGraduatedLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtGraduatedLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtGraduatedLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtGraduatedLogUpdateManyMutationInputSchema,EvtGraduatedLogUncheckedUpdateManyInputSchema ]),
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtGraduatedLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtGraduatedLogUpdateManyMutationInputSchema,EvtGraduatedLogUncheckedUpdateManyInputSchema ]),
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtGraduatedLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtGraduatedLogDeleteManyArgs> = z.object({
+  where: EvtGraduatedLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogCreateArgsSchema: z.ZodType<Prisma.EvtTokenLockLogCreateArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  data: z.union([ EvtTokenLockLogCreateInputSchema,EvtTokenLockLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtTokenLockLogUpsertArgsSchema: z.ZodType<Prisma.EvtTokenLockLogUpsertArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereUniqueInputSchema,
+  create: z.union([ EvtTokenLockLogCreateInputSchema,EvtTokenLockLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtTokenLockLogUpdateInputSchema,EvtTokenLockLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtTokenLockLogCreateManyArgsSchema: z.ZodType<Prisma.EvtTokenLockLogCreateManyArgs> = z.object({
+  data: z.union([ EvtTokenLockLogCreateManyInputSchema,EvtTokenLockLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTokenLockLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTokenLockLogCreateManyInputSchema,EvtTokenLockLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogDeleteArgsSchema: z.ZodType<Prisma.EvtTokenLockLogDeleteArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  where: EvtTokenLockLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLockLogUpdateArgsSchema: z.ZodType<Prisma.EvtTokenLockLogUpdateArgs> = z.object({
+  select: EvtTokenLockLogSelectSchema.optional(),
+  data: z.union([ EvtTokenLockLogUpdateInputSchema,EvtTokenLockLogUncheckedUpdateInputSchema ]),
+  where: EvtTokenLockLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTokenLockLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtTokenLockLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtTokenLockLogUpdateManyMutationInputSchema,EvtTokenLockLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTokenLockLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTokenLockLogUpdateManyMutationInputSchema,EvtTokenLockLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTokenLockLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtTokenLockLogDeleteManyArgs> = z.object({
+  where: EvtTokenLockLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTradeLogCreateArgsSchema: z.ZodType<Prisma.EvtTradeLogCreateArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  data: z.union([ EvtTradeLogCreateInputSchema,EvtTradeLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtTradeLogUpsertArgsSchema: z.ZodType<Prisma.EvtTradeLogUpsertArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereUniqueInputSchema,
+  create: z.union([ EvtTradeLogCreateInputSchema,EvtTradeLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtTradeLogUpdateInputSchema,EvtTradeLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtTradeLogCreateManyArgsSchema: z.ZodType<Prisma.EvtTradeLogCreateManyArgs> = z.object({
+  data: z.union([ EvtTradeLogCreateManyInputSchema,EvtTradeLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTradeLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTradeLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTradeLogCreateManyInputSchema,EvtTradeLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtTradeLogDeleteArgsSchema: z.ZodType<Prisma.EvtTradeLogDeleteArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  where: EvtTradeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTradeLogUpdateArgsSchema: z.ZodType<Prisma.EvtTradeLogUpdateArgs> = z.object({
+  select: EvtTradeLogSelectSchema.optional(),
+  data: z.union([ EvtTradeLogUpdateInputSchema,EvtTradeLogUncheckedUpdateInputSchema ]),
+  where: EvtTradeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtTradeLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtTradeLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtTradeLogUpdateManyMutationInputSchema,EvtTradeLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTradeLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTradeLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtTradeLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtTradeLogUpdateManyMutationInputSchema,EvtTradeLogUncheckedUpdateManyInputSchema ]),
+  where: EvtTradeLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtTradeLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtTradeLogDeleteManyArgs> = z.object({
+  where: EvtTradeLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetLogCreateArgsSchema: z.ZodType<Prisma.EvtAssetLogCreateArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  data: z.union([ EvtAssetLogCreateInputSchema,EvtAssetLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtAssetLogUpsertArgsSchema: z.ZodType<Prisma.EvtAssetLogUpsertArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereUniqueInputSchema,
+  create: z.union([ EvtAssetLogCreateInputSchema,EvtAssetLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtAssetLogUpdateInputSchema,EvtAssetLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtAssetLogCreateManyArgsSchema: z.ZodType<Prisma.EvtAssetLogCreateManyArgs> = z.object({
+  data: z.union([ EvtAssetLogCreateManyInputSchema,EvtAssetLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtAssetLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtAssetLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtAssetLogCreateManyInputSchema,EvtAssetLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtAssetLogDeleteArgsSchema: z.ZodType<Prisma.EvtAssetLogDeleteArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  where: EvtAssetLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetLogUpdateArgsSchema: z.ZodType<Prisma.EvtAssetLogUpdateArgs> = z.object({
+  select: EvtAssetLogSelectSchema.optional(),
+  data: z.union([ EvtAssetLogUpdateInputSchema,EvtAssetLogUncheckedUpdateInputSchema ]),
+  where: EvtAssetLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtAssetLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtAssetLogUpdateManyMutationInputSchema,EvtAssetLogUncheckedUpdateManyInputSchema ]),
+  where: EvtAssetLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtAssetLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtAssetLogUpdateManyMutationInputSchema,EvtAssetLogUncheckedUpdateManyInputSchema ]),
+  where: EvtAssetLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtAssetLogDeleteManyArgs> = z.object({
+  where: EvtAssetLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogCreateArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogCreateArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  data: z.union([ EvtAssetFeeLogCreateInputSchema,EvtAssetFeeLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtAssetFeeLogUpsertArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogUpsertArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereUniqueInputSchema,
+  create: z.union([ EvtAssetFeeLogCreateInputSchema,EvtAssetFeeLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtAssetFeeLogUpdateInputSchema,EvtAssetFeeLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtAssetFeeLogCreateManyArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogCreateManyArgs> = z.object({
+  data: z.union([ EvtAssetFeeLogCreateManyInputSchema,EvtAssetFeeLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtAssetFeeLogCreateManyInputSchema,EvtAssetFeeLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogDeleteArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogDeleteArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  where: EvtAssetFeeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetFeeLogUpdateArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogUpdateArgs> = z.object({
+  select: EvtAssetFeeLogSelectSchema.optional(),
+  data: z.union([ EvtAssetFeeLogUpdateInputSchema,EvtAssetFeeLogUncheckedUpdateInputSchema ]),
+  where: EvtAssetFeeLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtAssetFeeLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtAssetFeeLogUpdateManyMutationInputSchema,EvtAssetFeeLogUncheckedUpdateManyInputSchema ]),
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtAssetFeeLogUpdateManyMutationInputSchema,EvtAssetFeeLogUncheckedUpdateManyInputSchema ]),
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtAssetFeeLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtAssetFeeLogDeleteManyArgs> = z.object({
+  where: EvtAssetFeeLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogCreateArgsSchema: z.ZodType<Prisma.EvtContributionStartLogCreateArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  data: z.union([ EvtContributionStartLogCreateInputSchema,EvtContributionStartLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtContributionStartLogUpsertArgsSchema: z.ZodType<Prisma.EvtContributionStartLogUpsertArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereUniqueInputSchema,
+  create: z.union([ EvtContributionStartLogCreateInputSchema,EvtContributionStartLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtContributionStartLogUpdateInputSchema,EvtContributionStartLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtContributionStartLogCreateManyArgsSchema: z.ZodType<Prisma.EvtContributionStartLogCreateManyArgs> = z.object({
+  data: z.union([ EvtContributionStartLogCreateManyInputSchema,EvtContributionStartLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtContributionStartLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtContributionStartLogCreateManyInputSchema,EvtContributionStartLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogDeleteArgsSchema: z.ZodType<Prisma.EvtContributionStartLogDeleteArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  where: EvtContributionStartLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionStartLogUpdateArgsSchema: z.ZodType<Prisma.EvtContributionStartLogUpdateArgs> = z.object({
+  select: EvtContributionStartLogSelectSchema.optional(),
+  data: z.union([ EvtContributionStartLogUpdateInputSchema,EvtContributionStartLogUncheckedUpdateInputSchema ]),
+  where: EvtContributionStartLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionStartLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtContributionStartLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtContributionStartLogUpdateManyMutationInputSchema,EvtContributionStartLogUncheckedUpdateManyInputSchema ]),
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtContributionStartLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtContributionStartLogUpdateManyMutationInputSchema,EvtContributionStartLogUncheckedUpdateManyInputSchema ]),
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionStartLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtContributionStartLogDeleteManyArgs> = z.object({
+  where: EvtContributionStartLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogCreateArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogCreateArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  data: z.union([ EvtContributionUpdateLogCreateInputSchema,EvtContributionUpdateLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtContributionUpdateLogUpsertArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogUpsertArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereUniqueInputSchema,
+  create: z.union([ EvtContributionUpdateLogCreateInputSchema,EvtContributionUpdateLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtContributionUpdateLogUpdateInputSchema,EvtContributionUpdateLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtContributionUpdateLogCreateManyArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogCreateManyArgs> = z.object({
+  data: z.union([ EvtContributionUpdateLogCreateManyInputSchema,EvtContributionUpdateLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtContributionUpdateLogCreateManyInputSchema,EvtContributionUpdateLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogDeleteArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogDeleteArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  where: EvtContributionUpdateLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionUpdateLogUpdateArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogUpdateArgs> = z.object({
+  select: EvtContributionUpdateLogSelectSchema.optional(),
+  data: z.union([ EvtContributionUpdateLogUpdateInputSchema,EvtContributionUpdateLogUncheckedUpdateInputSchema ]),
+  where: EvtContributionUpdateLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtContributionUpdateLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtContributionUpdateLogUpdateManyMutationInputSchema,EvtContributionUpdateLogUncheckedUpdateManyInputSchema ]),
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtContributionUpdateLogUpdateManyMutationInputSchema,EvtContributionUpdateLogUncheckedUpdateManyInputSchema ]),
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtContributionUpdateLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtContributionUpdateLogDeleteManyArgs> = z.object({
+  where: EvtContributionUpdateLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtClaimLogCreateArgsSchema: z.ZodType<Prisma.EvtClaimLogCreateArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  data: z.union([ EvtClaimLogCreateInputSchema,EvtClaimLogUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const EvtClaimLogUpsertArgsSchema: z.ZodType<Prisma.EvtClaimLogUpsertArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereUniqueInputSchema,
+  create: z.union([ EvtClaimLogCreateInputSchema,EvtClaimLogUncheckedCreateInputSchema ]),
+  update: z.union([ EvtClaimLogUpdateInputSchema,EvtClaimLogUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const EvtClaimLogCreateManyArgsSchema: z.ZodType<Prisma.EvtClaimLogCreateManyArgs> = z.object({
+  data: z.union([ EvtClaimLogCreateManyInputSchema,EvtClaimLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtClaimLogCreateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtClaimLogCreateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtClaimLogCreateManyInputSchema,EvtClaimLogCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const EvtClaimLogDeleteArgsSchema: z.ZodType<Prisma.EvtClaimLogDeleteArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  where: EvtClaimLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtClaimLogUpdateArgsSchema: z.ZodType<Prisma.EvtClaimLogUpdateArgs> = z.object({
+  select: EvtClaimLogSelectSchema.optional(),
+  data: z.union([ EvtClaimLogUpdateInputSchema,EvtClaimLogUncheckedUpdateInputSchema ]),
+  where: EvtClaimLogWhereUniqueInputSchema,
+}).strict() ;
+
+export const EvtClaimLogUpdateManyArgsSchema: z.ZodType<Prisma.EvtClaimLogUpdateManyArgs> = z.object({
+  data: z.union([ EvtClaimLogUpdateManyMutationInputSchema,EvtClaimLogUncheckedUpdateManyInputSchema ]),
+  where: EvtClaimLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtClaimLogUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.EvtClaimLogUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ EvtClaimLogUpdateManyMutationInputSchema,EvtClaimLogUncheckedUpdateManyInputSchema ]),
+  where: EvtClaimLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const EvtClaimLogDeleteManyArgsSchema: z.ZodType<Prisma.EvtClaimLogDeleteManyArgs> = z.object({
+  where: EvtClaimLogWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const KLine5mCreateArgsSchema: z.ZodType<Prisma.KLine5mCreateArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  data: z.union([ KLine5mCreateInputSchema,KLine5mUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const KLine5mUpsertArgsSchema: z.ZodType<Prisma.KLine5mUpsertArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereUniqueInputSchema,
+  create: z.union([ KLine5mCreateInputSchema,KLine5mUncheckedCreateInputSchema ]),
+  update: z.union([ KLine5mUpdateInputSchema,KLine5mUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const KLine5mCreateManyArgsSchema: z.ZodType<Prisma.KLine5mCreateManyArgs> = z.object({
+  data: z.union([ KLine5mCreateManyInputSchema,KLine5mCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const KLine5mCreateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine5mCreateManyAndReturnArgs> = z.object({
+  data: z.union([ KLine5mCreateManyInputSchema,KLine5mCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const KLine5mDeleteArgsSchema: z.ZodType<Prisma.KLine5mDeleteArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  where: KLine5mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine5mUpdateArgsSchema: z.ZodType<Prisma.KLine5mUpdateArgs> = z.object({
+  select: KLine5mSelectSchema.optional(),
+  data: z.union([ KLine5mUpdateInputSchema,KLine5mUncheckedUpdateInputSchema ]),
+  where: KLine5mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine5mUpdateManyArgsSchema: z.ZodType<Prisma.KLine5mUpdateManyArgs> = z.object({
+  data: z.union([ KLine5mUpdateManyMutationInputSchema,KLine5mUncheckedUpdateManyInputSchema ]),
+  where: KLine5mWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const KLine5mUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine5mUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ KLine5mUpdateManyMutationInputSchema,KLine5mUncheckedUpdateManyInputSchema ]),
+  where: KLine5mWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const KLine5mDeleteManyArgsSchema: z.ZodType<Prisma.KLine5mDeleteManyArgs> = z.object({
+  where: KLine5mWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const KLine1mCreateArgsSchema: z.ZodType<Prisma.KLine1mCreateArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  data: z.union([ KLine1mCreateInputSchema,KLine1mUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const KLine1mUpsertArgsSchema: z.ZodType<Prisma.KLine1mUpsertArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereUniqueInputSchema,
+  create: z.union([ KLine1mCreateInputSchema,KLine1mUncheckedCreateInputSchema ]),
+  update: z.union([ KLine1mUpdateInputSchema,KLine1mUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const KLine1mCreateManyArgsSchema: z.ZodType<Prisma.KLine1mCreateManyArgs> = z.object({
+  data: z.union([ KLine1mCreateManyInputSchema,KLine1mCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const KLine1mCreateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine1mCreateManyAndReturnArgs> = z.object({
+  data: z.union([ KLine1mCreateManyInputSchema,KLine1mCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const KLine1mDeleteArgsSchema: z.ZodType<Prisma.KLine1mDeleteArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  where: KLine1mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine1mUpdateArgsSchema: z.ZodType<Prisma.KLine1mUpdateArgs> = z.object({
+  select: KLine1mSelectSchema.optional(),
+  data: z.union([ KLine1mUpdateInputSchema,KLine1mUncheckedUpdateInputSchema ]),
+  where: KLine1mWhereUniqueInputSchema,
+}).strict() ;
+
+export const KLine1mUpdateManyArgsSchema: z.ZodType<Prisma.KLine1mUpdateManyArgs> = z.object({
+  data: z.union([ KLine1mUpdateManyMutationInputSchema,KLine1mUncheckedUpdateManyInputSchema ]),
+  where: KLine1mWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const KLine1mUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.KLine1mUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ KLine1mUpdateManyMutationInputSchema,KLine1mUncheckedUpdateManyInputSchema ]),
+  where: KLine1mWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const KLine1mDeleteManyArgsSchema: z.ZodType<Prisma.KLine1mDeleteManyArgs> = z.object({
+  where: KLine1mWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const ContributionInfoCreateArgsSchema: z.ZodType<Prisma.ContributionInfoCreateArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  data: z.union([ ContributionInfoCreateInputSchema,ContributionInfoUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const ContributionInfoUpsertArgsSchema: z.ZodType<Prisma.ContributionInfoUpsertArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereUniqueInputSchema,
+  create: z.union([ ContributionInfoCreateInputSchema,ContributionInfoUncheckedCreateInputSchema ]),
+  update: z.union([ ContributionInfoUpdateInputSchema,ContributionInfoUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const ContributionInfoCreateManyArgsSchema: z.ZodType<Prisma.ContributionInfoCreateManyArgs> = z.object({
+  data: z.union([ ContributionInfoCreateManyInputSchema,ContributionInfoCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const ContributionInfoCreateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributionInfoCreateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributionInfoCreateManyInputSchema,ContributionInfoCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const ContributionInfoDeleteArgsSchema: z.ZodType<Prisma.ContributionInfoDeleteArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  where: ContributionInfoWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionInfoUpdateArgsSchema: z.ZodType<Prisma.ContributionInfoUpdateArgs> = z.object({
+  select: ContributionInfoSelectSchema.optional(),
+  data: z.union([ ContributionInfoUpdateInputSchema,ContributionInfoUncheckedUpdateInputSchema ]),
+  where: ContributionInfoWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionInfoUpdateManyArgsSchema: z.ZodType<Prisma.ContributionInfoUpdateManyArgs> = z.object({
+  data: z.union([ ContributionInfoUpdateManyMutationInputSchema,ContributionInfoUncheckedUpdateManyInputSchema ]),
+  where: ContributionInfoWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const ContributionInfoUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributionInfoUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributionInfoUpdateManyMutationInputSchema,ContributionInfoUncheckedUpdateManyInputSchema ]),
+  where: ContributionInfoWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const ContributionInfoDeleteManyArgsSchema: z.ZodType<Prisma.ContributionInfoDeleteManyArgs> = z.object({
+  where: ContributionInfoWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const ContributionDetailCreateArgsSchema: z.ZodType<Prisma.ContributionDetailCreateArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  data: z.union([ ContributionDetailCreateInputSchema,ContributionDetailUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const ContributionDetailUpsertArgsSchema: z.ZodType<Prisma.ContributionDetailUpsertArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereUniqueInputSchema,
+  create: z.union([ ContributionDetailCreateInputSchema,ContributionDetailUncheckedCreateInputSchema ]),
+  update: z.union([ ContributionDetailUpdateInputSchema,ContributionDetailUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const ContributionDetailCreateManyArgsSchema: z.ZodType<Prisma.ContributionDetailCreateManyArgs> = z.object({
+  data: z.union([ ContributionDetailCreateManyInputSchema,ContributionDetailCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const ContributionDetailCreateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributionDetailCreateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributionDetailCreateManyInputSchema,ContributionDetailCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const ContributionDetailDeleteArgsSchema: z.ZodType<Prisma.ContributionDetailDeleteArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  where: ContributionDetailWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionDetailUpdateArgsSchema: z.ZodType<Prisma.ContributionDetailUpdateArgs> = z.object({
+  select: ContributionDetailSelectSchema.optional(),
+  data: z.union([ ContributionDetailUpdateInputSchema,ContributionDetailUncheckedUpdateInputSchema ]),
+  where: ContributionDetailWhereUniqueInputSchema,
+}).strict() ;
+
+export const ContributionDetailUpdateManyArgsSchema: z.ZodType<Prisma.ContributionDetailUpdateManyArgs> = z.object({
+  data: z.union([ ContributionDetailUpdateManyMutationInputSchema,ContributionDetailUncheckedUpdateManyInputSchema ]),
+  where: ContributionDetailWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const ContributionDetailUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.ContributionDetailUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ ContributionDetailUpdateManyMutationInputSchema,ContributionDetailUncheckedUpdateManyInputSchema ]),
+  where: ContributionDetailWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const ContributionDetailDeleteManyArgsSchema: z.ZodType<Prisma.ContributionDetailDeleteManyArgs> = z.object({
+  where: ContributionDetailWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const UserClaimHistoryCreateArgsSchema: z.ZodType<Prisma.UserClaimHistoryCreateArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  data: z.union([ UserClaimHistoryCreateInputSchema,UserClaimHistoryUncheckedCreateInputSchema ]),
+}).strict() ;
+
+export const UserClaimHistoryUpsertArgsSchema: z.ZodType<Prisma.UserClaimHistoryUpsertArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereUniqueInputSchema,
+  create: z.union([ UserClaimHistoryCreateInputSchema,UserClaimHistoryUncheckedCreateInputSchema ]),
+  update: z.union([ UserClaimHistoryUpdateInputSchema,UserClaimHistoryUncheckedUpdateInputSchema ]),
+}).strict() ;
+
+export const UserClaimHistoryCreateManyArgsSchema: z.ZodType<Prisma.UserClaimHistoryCreateManyArgs> = z.object({
+  data: z.union([ UserClaimHistoryCreateManyInputSchema,UserClaimHistoryCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const UserClaimHistoryCreateManyAndReturnArgsSchema: z.ZodType<Prisma.UserClaimHistoryCreateManyAndReturnArgs> = z.object({
+  data: z.union([ UserClaimHistoryCreateManyInputSchema,UserClaimHistoryCreateManyInputSchema.array() ]),
+  skipDuplicates: z.boolean().optional(),
+}).strict() ;
+
+export const UserClaimHistoryDeleteArgsSchema: z.ZodType<Prisma.UserClaimHistoryDeleteArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  where: UserClaimHistoryWhereUniqueInputSchema,
+}).strict() ;
+
+export const UserClaimHistoryUpdateArgsSchema: z.ZodType<Prisma.UserClaimHistoryUpdateArgs> = z.object({
+  select: UserClaimHistorySelectSchema.optional(),
+  data: z.union([ UserClaimHistoryUpdateInputSchema,UserClaimHistoryUncheckedUpdateInputSchema ]),
+  where: UserClaimHistoryWhereUniqueInputSchema,
+}).strict() ;
+
+export const UserClaimHistoryUpdateManyArgsSchema: z.ZodType<Prisma.UserClaimHistoryUpdateManyArgs> = z.object({
+  data: z.union([ UserClaimHistoryUpdateManyMutationInputSchema,UserClaimHistoryUncheckedUpdateManyInputSchema ]),
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const UserClaimHistoryUpdateManyAndReturnArgsSchema: z.ZodType<Prisma.UserClaimHistoryUpdateManyAndReturnArgs> = z.object({
+  data: z.union([ UserClaimHistoryUpdateManyMutationInputSchema,UserClaimHistoryUncheckedUpdateManyInputSchema ]),
+  where: UserClaimHistoryWhereInputSchema.optional(),
+  limit: z.number().optional(),
+}).strict() ;
+
+export const UserClaimHistoryDeleteManyArgsSchema: z.ZodType<Prisma.UserClaimHistoryDeleteManyArgs> = z.object({
+  where: UserClaimHistoryWhereInputSchema.optional(),
   limit: z.number().optional(),
 }).strict() ;

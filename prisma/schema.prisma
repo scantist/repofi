@@ -172,38 +172,6 @@ model DaoTokenInfo {
   @@map("t_dao_token_info")
 }
 
-model KLine1m {
-  tokenId BigInt  @map("token_id") @db.BigInt
-  openTs  BigInt  @default(0) @map("open_ts") @db.BigInt
-  closeTs BigInt  @default(0) @map("close_ts") @db.BigInt
-  open    Decimal @default(0) @map("open") @db.Decimal(50, 18)
-  high    Decimal @default(0) @map("high") @db.Decimal(50, 18)
-  low     Decimal @default(0) @map("low") @db.Decimal(50, 18)
-  close   Decimal @default(0) @map("close") @db.Decimal(50, 18)
-  volume  Decimal @default(0) @map("volume") @db.Decimal(50, 18)
-  amount  Decimal @default(0) @map("amount") @db.Decimal(50, 18)
-  txnNum  BigInt  @default(0) @map("txn_num") @db.BigInt
-
-  @@id([tokenId, openTs])
-  @@map("t_kline_1m")
-}
-
-model KLine5m {
-  tokenId BigInt  @map("token_id") @db.BigInt
-  openTs  BigInt  @default(0) @map("open_ts") @db.BigInt
-  closeTs BigInt  @default(0) @map("close_ts") @db.BigInt
-  open    Decimal @default(0) @map("open") @db.Decimal(50, 18)
-  high    Decimal @default(0) @map("high") @db.Decimal(50, 18)
-  low     Decimal @default(0) @map("low") @db.Decimal(50, 18)
-  close   Decimal @default(0) @map("close") @db.Decimal(50, 18)
-  volume  Decimal @default(0) @map("volume") @db.Decimal(50, 18)
-  amount  Decimal @default(0) @map("amount") @db.Decimal(50, 18)
-  txnNum  BigInt  @default(0) @map("txn_num") @db.BigInt
-
-  @@id([tokenId, openTs])
-  @@map("t_kline_5m")
-}
-
 model AssetToken {
   address   String  @id @map("address") @db.VarChar(255)
   name      String  @map("name") @db.VarChar(255)
@@ -266,4 +234,221 @@ model ContributorHistory {
   contributorId String      @map("contributor_id") @db.VarChar(255)
 
   @@map("t_contributor_history")
+}
+
+//------------------------------indexer tables-------------------------------------
+model EvtTxnLog {
+  blockNumber BigInt  @map("block_number")
+  txnIndex    BigInt  @map("txn_index")
+  logIndex    BigInt  @map("log_index")
+  blockTime   BigInt  @map("block_time")
+  txnHash     String  @map("txn_hash") @db.Char(66)
+  address     String  @db.Char(42)
+  topic0      String  @map("topic_0") @db.VarChar(255)
+  topic1      String? @map("topic_1") @db.VarChar(255)
+  topic2      String? @map("topic_2") @db.VarChar(255)
+  topic3      String? @map("topic_3") @db.VarChar(255)
+  data        String? @db.Text
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_txn_log")
+}
+
+model EvtTokenLog {
+  blockNumber  BigInt  @map("block_number")
+  txnIndex     BigInt  @map("txn_index")
+  logIndex     BigInt  @map("log_index")
+  blockTime    BigInt  @map("block_time")
+  txnHash      String  @map("txn_hash") @db.Char(66)
+  tokenId      BigInt  @map("token_id")
+  assetAddress String  @map("asset_address") @db.Char(42)
+  initPrice    Decimal @map("init_price") @db.Decimal(50, 18)
+  userAddress  String  @map("user_address") @db.Char(42)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_token_log")
+}
+
+model EvtGraduatedLog {
+  blockNumber  BigInt @map("block_number")
+  txnIndex     BigInt @map("txn_index")
+  logIndex     BigInt @map("log_index")
+  blockTime    BigInt @map("block_time")
+  txnHash      String @map("txn_hash") @db.Char(66)
+  tokenId      BigInt @map("token_id")
+  tokenAddress String @map("token_address") @db.Char(42)
+  uniswapPool  String @map("uniswap_pool") @db.Char(42)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_graduated_log")
+}
+
+model EvtTokenLockLog {
+  blockNumber  BigInt  @map("block_number")
+  txnIndex     BigInt  @map("txn_index")
+  logIndex     BigInt  @map("log_index")
+  blockTime    BigInt  @map("block_time")
+  txnHash      String  @map("txn_hash") @db.Char(66)
+  tokenAddress String  @map("token_address") @db.Char(42)
+  unlockRatio  Decimal @map("unlock_ratio") @db.Decimal(40, 0)
+  lockPeriod   BigInt  @map("lock_period")
+  lockStart    BigInt  @map("lock_start")
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_token_lock_log")
+}
+
+model EvtTradeLog {
+  blockNumber  BigInt  @map("block_number")
+  txnIndex     BigInt  @map("txn_index")
+  logIndex     BigInt  @map("log_index")
+  blockTime    BigInt  @map("block_time")
+  txnHash      String  @map("txn_hash") @db.Char(66)
+  tokenId      BigInt  @map("token_id")
+  userAddress  String  @map("user_address") @db.Char(42)
+  assetAddress String  @map("asset_address") @db.Char(42)
+  tradeType    Int     @map("trade_type") // 0-buy;1-sell
+  amountIn     Decimal @map("amount_in") @db.Decimal(40, 18)
+  amountOut    Decimal @map("amount_out") @db.Decimal(40, 18)
+  price        Decimal @db.Decimal(40, 18)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_trade_log")
+}
+
+model EvtAssetLog {
+  blockNumber  BigInt   @map("block_number")
+  txnIndex     BigInt   @map("txn_index")
+  logIndex     BigInt   @map("log_index")
+  blockTime    BigInt   @map("block_time")
+  txnHash      String   @map("txn_hash") @db.Char(66)
+  assetAddress String   @map("asset_address") @db.Char(42)
+  decimals     Int
+  isAllowed    Boolean  @default(false) @map("is_allowed")
+  launchFee    Decimal? @map("launch_fee") @db.Decimal(40, 0)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_asset_log")
+}
+
+model EvtAssetFeeLog {
+  blockNumber  BigInt  @map("block_number")
+  txnIndex     BigInt  @map("txn_index")
+  logIndex     BigInt  @map("log_index")
+  blockTime    BigInt  @map("block_time")
+  txnHash      String  @map("txn_hash") @db.Char(66)
+  assetAddress String  @map("asset_address") @db.Char(42)
+  oldLaunchFee Decimal @map("old_launch_fee") @db.Decimal(40, 0)
+  newLaunchFee Decimal @map("new_launch_fee") @db.Decimal(40, 0)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_asset_fee_log")
+}
+
+model EvtContributionStartLog {
+  blockNumber BigInt @map("block_number")
+  txnIndex    BigInt @map("txn_index")
+  logIndex    BigInt @map("log_index")
+  blockTime   BigInt @map("block_time")
+  txnHash     String @map("txn_hash") @db.Char(66)
+  tokenId     BigInt @map("token_id")
+  cycleId     BigInt @map("cycle_id")
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_contribution_start_log")
+}
+
+model EvtContributionUpdateLog {
+  blockNumber   BigInt  @map("block_number")
+  txnIndex      BigInt  @map("txn_index")
+  logIndex      BigInt  @map("log_index")
+  blockTime     BigInt  @map("block_time")
+  txnHash       String  @map("txn_hash") @db.Char(66)
+  tokenId       BigInt  @map("token_id")
+  cycleId       BigInt  @map("cycle_id")
+  contributor   String  @db.Char(42)
+  contributorId String  @map("contributor_id") @db.VarChar(255)
+  score         Decimal @db.Decimal(40, 0)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_contribution_update_log")
+}
+
+model EvtClaimLog {
+  blockNumber  BigInt  @map("block_number")
+  txnIndex     BigInt  @map("txn_index")
+  logIndex     BigInt  @map("log_index")
+  blockTime    BigInt  @map("block_time")
+  txnHash      String  @map("txn_hash") @db.Char(66)
+  tokenAddress String  @map("token_address") @db.Char(42)
+  userAddress  String  @map("user_address") @db.Char(42)
+  amount       Decimal @db.Decimal(50, 18)
+  claimType    Int     @map("claim_type") // 0-Instant;1-Linear;2-Finished
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@map("t_evt_claim_log")
+}
+
+model KLine5m {
+  tokenId BigInt  @map("token_id")
+  openTs  BigInt  @map("open_ts")
+  closeTs BigInt  @map("close_ts")
+  open    Decimal @db.Decimal(50, 18)
+  high    Decimal @db.Decimal(50, 18)
+  low     Decimal @db.Decimal(50, 18)
+  close   Decimal @db.Decimal(50, 18)
+  volume  Decimal @db.Decimal(50, 18)
+  amount  Decimal @db.Decimal(50, 18)
+  txnNum  BigInt  @map("txn_num")
+
+  @@id([tokenId, openTs])
+  @@map("t_kline_5m")
+}
+
+model KLine1m {
+  tokenId BigInt  @map("token_id")
+  openTs  BigInt  @map("open_ts")
+  closeTs BigInt  @map("close_ts")
+  open    Decimal @db.Decimal(50, 18)
+  high    Decimal @db.Decimal(50, 18)
+  low     Decimal @db.Decimal(50, 18)
+  close   Decimal @db.Decimal(50, 18)
+  volume  Decimal @db.Decimal(50, 18)
+  amount  Decimal @db.Decimal(50, 18)
+  txnNum  BigInt  @map("txn_num")
+
+  @@id([tokenId, openTs])
+  @@map("t_kline_1m")
+}
+
+model ContributionInfo {
+  tokenId BigInt @map("token_id")
+  cycleId BigInt @map("cycle_id")
+  startTs BigInt @map("start_ts")
+
+  @@id([tokenId, cycleId])
+  @@map("t_contribution_info")
+}
+
+model ContributionDetail {
+  tokenId       BigInt  @map("token_id")
+  cycleId       BigInt  @map("cycle_id")
+  contributor   String  @db.Char(42)
+  contributorId String  @map("contributor_id") @db.VarChar(255)
+  score         Decimal @db.Decimal(40, 0)
+  updateTs      BigInt  @map("update_ts")
+
+  @@id([tokenId, cycleId, contributor])
+  @@map("t_contribution_detail")
+}
+
+model UserClaimHistory {
+  userAddress  String  @map("user_address") @db.Char(42)
+  tokenAddress String  @map("token_address") @db.Char(42)
+  claimType    Int     @map("claim_type") // 0-Instant;1-Linear;2-Finished
+  claimAmount  Decimal @map("claim_amount") @db.Decimal(50, 18)
+  claimTime    BigInt  @map("claim_time")
+
+  @@id([userAddress, tokenAddress])
+  @@map("t_user_claim_history")
 }

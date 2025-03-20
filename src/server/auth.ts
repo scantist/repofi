@@ -32,7 +32,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       const [, chainId, address] = token.sub.split(":")
       if (chainId && address) {
-        session.address = address
+        session.address = address.toLowerCase()
         session.chainId = parseInt(chainId, 10)
       }
 
