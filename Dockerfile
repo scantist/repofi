@@ -1,7 +1,7 @@
 ##### DEPENDENCIES
 
 FROM node:22-alpine AS deps
-RUN apk add --no-cache libc6-compat openssl
+RUN apk add libc6-compat openssl
 WORKDIR /app
 
 # Install Prisma Client - remove if not using Prisma
