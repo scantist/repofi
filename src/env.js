@@ -13,9 +13,7 @@ export const env = createEnv({
     REDIS_PORT: z.string().regex(/^\d+$/),
     REDIS_DB: z.string().regex(/^\d+$/),
     REDIS_PASSWORD: z.string(),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
+    NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     AUTH_GITHUB_SECRET: z.string(),
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITLAB_SECRET: z.string(),

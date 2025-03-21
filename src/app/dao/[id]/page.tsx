@@ -19,12 +19,11 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (daoDetail === null) {
     return <div>No Data</div>
   }
-  const contributorList: ContributorPage =
-    await api.contributor.getContributors({
-      daoId: id,
-      page: 0,
-      size: 10
-    })
+  const contributorList: ContributorPage = await api.contributor.getContributors({
+    daoId: id,
+    page: 0,
+    size: 10
+  })
   const top10Holders: Top10Holders = await api.holder.getTop10Holders({
     tokenId: daoDetail.tokenId
   })

@@ -7,11 +7,11 @@ import CardWrapper from "~/components/card-wrapper"
 import { Button } from "~/components/ui/button"
 
 interface Dao {
-  name: string;
-  amount: string;
-  vAmount: string;
-  price: string;
-  total: string;
+  name: string
+  amount: string
+  vAmount: string
+  price: string
+  total: string
 }
 const columnHelper = createColumnHelper<Dao>()
 
@@ -121,76 +121,51 @@ const PortfolioTable = () => {
     getCoreRowModel: getCoreRowModel(),
     debugTable: true
   })
-  return <CardWrapper borderClassName={"w-full"}>
-    <div className={"-mt-1 -ml-1 rounded-lg"}>
-      <table
-        className={"overflow-hidden rounded-lg"}
-        style={{
-          width: "calc(100% + 2px)"
-        }}
-      >
-        <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr className={"h-16"} key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th
-                key={header.id}
-                className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"}
-                style={{ textAlign: "left" }}
-              >
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                    header.column.columnDef.header,
-                    header.getContext(),
-                  )}
-              </th>
+  return (
+    <CardWrapper borderClassName={"w-full"}>
+      <div className={"-mt-1 -ml-1 rounded-lg"}>
+        <table
+          className={"overflow-hidden rounded-lg"}
+          style={{
+            width: "calc(100% + 2px)"
+          }}
+        >
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr className={"h-16"} key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"} style={{ textAlign: "left" }}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
+                ))}
+              </tr>
             ))}
-          </tr>
-        ))}
-        </thead>
-        <tbody className={""}>
-        {table.getRowModel().rows.map((row) => (
-          <Fragment key={row.id}>
-            <tr
-              className={cn(
-                "h-16 border-t-1 border-white/20",
-                row.getIsExpanded() && "bg-[#6A21F74D]",
-              )}
-            >
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}
-                >
-                  {flexRender(
-                    cell.column.columnDef.cell,
-                    cell.getContext(),
-                  )}
-                </td>
-              ))}
-            </tr>
-          </Fragment>
-        ))}
-        </tbody>
-        <tfoot>
-        {table.getFooterGroups().map((footerGroup) => (
-          <tr key={footerGroup.id}>
-            {footerGroup.headers.map((header) => (
-              <th key={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                    header.column.columnDef.footer,
-                    header.getContext(),
-                  )}
-              </th>
+          </thead>
+          <tbody className={""}>
+            {table.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
+                <tr className={cn("h-16 border-t-1 border-white/20", row.getIsExpanded() && "bg-[#6A21F74D]")}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              </Fragment>
             ))}
-          </tr>
-        ))}
-        </tfoot>
-      </table>
-    </div>
-  </CardWrapper>
+          </tbody>
+          <tfoot>
+            {table.getFooterGroups().map((footerGroup) => (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <th key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}</th>
+                ))}
+              </tr>
+            ))}
+          </tfoot>
+        </table>
+      </div>
+    </CardWrapper>
+  )
 }
 export default PortfolioTable

@@ -14,11 +14,11 @@ import type { Pageable } from "~/lib/schema"
 import ListPagination from "~/components/list-pagination"
 
 interface MessageListProps {
-  data: DaoDetailResult;
+  data: DaoDetailResult
 }
 
 interface Condition {
-  pageable: Pageable;
+  pageable: Pageable
 }
 
 const MessageList = ({ data }: MessageListProps) => {
@@ -33,34 +33,19 @@ const MessageList = ({ data }: MessageListProps) => {
   })
   const list = useMemo(() => {
     if (isPending) {
-      return (
-        <LoadingSpinner
-          size={64}
-          className="my-8"
-          text="Loading repository..."
-        />
-      )
+      return <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
     }
     if (!messageData || messageData?.list.length === 0) {
       return <div>No Data</div>
     }
     return messageData.list.map((item) => (
-      <div
-        key={`message-${item.id}`}
-        className={"mt-4 flex flex-col rounded-lg bg-[#22272B] p-3"}
-      >
+      <div key={`message-${item.id}`} className={"mt-4 flex flex-col rounded-lg bg-[#22272B] p-3"}>
         <div className={"flex flex-row items-center justify-between"}>
           <div className={"text-sm"}>
             {shortenAddress(item.createdBy)}
-            <span className={"ml-6 text-xs text-gray-400"}>
-              {formatDistanceToNow(item.createdAt)}
-            </span>
+            <span className={"ml-6 text-xs text-gray-400"}>{formatDistanceToNow(item.createdAt)}</span>
           </div>
-          <div
-            className={
-              "text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"
-            }
-          >
+          <div className={"text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"}>
             {address === item.createdBy && <DeleteMessage messageId={item.id} />}
             <CreateMessage daoId={data.id}>
               <div>Reply</div>
@@ -79,30 +64,17 @@ const MessageList = ({ data }: MessageListProps) => {
                   <div className="text-primary-foreground flex items-center justify-between text-xs font-bold">
                     <div>
                       {shortenAddress(reply.createdBy)}
-                      {reply.replyToUser &&
-                        reply.replyToMessage !== item.id && (
-                          <span className="mx-1 text-gray-500">
-                            replied to {shortenAddress(reply.replyToUser)}
-                          </span>
-                        )}
-                      <span className="ml-2 text-gray-500">
-                        {formatDistanceToNow(reply.createdAt)}
-                      </span>
+                      {reply.replyToUser && reply.replyToMessage !== item.id && <span className="mx-1 text-gray-500">replied to {shortenAddress(reply.replyToUser)}</span>}
+                      <span className="ml-2 text-gray-500">{formatDistanceToNow(reply.createdAt)}</span>
                     </div>
-                    <div
-                      className={
-                        "text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"
-                      }
-                    >
+                    <div className={"text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"}>
                       {address === reply.createdBy && <DeleteMessage messageId={reply.id} />}
                       <CreateMessage daoId={data.id} replyMessage={reply}>
                         <div>Reply</div>
                       </CreateMessage>
                     </div>
                   </div>
-                  <div className="text-primary-foreground mt-1 text-sm font-thin">
-                    {reply.message}
-                  </div>
+                  <div className="text-primary-foreground mt-1 text-sm font-thin">{reply.message}</div>
                 </div>
               ))}
             </div>
@@ -114,11 +86,7 @@ const MessageList = ({ data }: MessageListProps) => {
   return (
     <>
       <div className={"flex w-full flex-col gap-4 px-10 py-5 h-full"}>
-        <div
-          className={
-            "flex flex-row items-center justify-between text-2xl font-bold"
-          }
-        >
+        <div className={"flex flex-row items-center justify-between text-2xl font-bold"}>
           <div>Message Board</div>
           <CreateMessage daoId={data.id}>
             <Button variant={"outline"} className={"text-xs"}>
@@ -126,14 +94,8 @@ const MessageList = ({ data }: MessageListProps) => {
             </Button>
           </CreateMessage>
         </div>
-        <div className={"md:min-h-[530px]"}>
-          {list}
-        </div>
-        <ListPagination
-          pageable={condition.pageable}
-          totalPages={messageData?.pages ?? 0}
-          setPageable={pageable => setCondition({ pageable })}
-        />
+        <div className={"md:min-h-[530px]"}>{list}</div>
+        <ListPagination pageable={condition.pageable} totalPages={messageData?.pages ?? 0} setPageable={(pageable) => setCondition({ pageable })} />
       </div>
     </>
   )

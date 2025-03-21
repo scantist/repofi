@@ -2,9 +2,9 @@ import React, { type FC } from "react"
 import { cn } from "~/lib/utils"
 
 type Props = {
-  children: React.ReactNode,
-  className?: string,
-  wrapperClassName?: string,
+  children: React.ReactNode
+  className?: string
+  wrapperClassName?: string
 }
 
 const BannerWrapper: FC<Props> = ({ children, className, wrapperClassName }) => {
@@ -17,13 +17,7 @@ const BannerWrapper: FC<Props> = ({ children, className, wrapperClassName }) => 
         backgroundPosition: "center"
       }}
     >
-      <div
-        className={
-          cn("mx-auto flex min-h-full w-full max-w-7xl gap-10 px-4 pt-10 pb-10", className)
-        }
-      >
-        {children}
-      </div>
+      <div className={cn("mx-auto flex min-h-full w-full max-w-7xl gap-10 px-4 pt-10 pb-10", className)}>{children}</div>
     </div>
   )
 }

@@ -8,9 +8,9 @@ export default function WalletAvatar({
   size,
   className
 }: {
-  account: string;
-  size: number;
-  className?: string;
+  account: string
+  size: number
+  className?: string
 }) {
   const avatarRef = useRef<HTMLDivElement>(null)
 

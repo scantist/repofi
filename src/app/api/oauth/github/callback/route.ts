@@ -10,12 +10,7 @@ export async function GET(request: Request): Promise<Response> {
   const state = url.searchParams.get("state")
   const cookieStore = await cookies()
   const storedState = cookieStore.get("github_oauth_state")?.value ?? null
-  if (
-    code === null ||
-    state === null ||
-    storedState === null ||
-    storedState === undefined
-  ) {
+  if (code === null || state === null || storedState === null || storedState === undefined) {
     return new Response(null, {
       status: 400
     })

@@ -7,30 +7,30 @@ import { cn } from "~/lib/utils"
 import { animate } from "motion/react"
 
 interface GlowingEffectProps {
-  blur?: number;
-  inactiveZone?: number;
-  proximity?: number;
-  spread?: number;
-  variant?: "default" | "white";
-  glow?: boolean;
-  className?: string;
-  disabled?: boolean;
-  movementDuration?: number;
-  borderWidth?: number;
+  blur?: number
+  inactiveZone?: number
+  proximity?: number
+  spread?: number
+  variant?: "default" | "white"
+  glow?: boolean
+  className?: string
+  disabled?: boolean
+  movementDuration?: number
+  borderWidth?: number
 }
 const GlowingEffect = memo(
   ({
-     blur = 0,
-     inactiveZone = 0.7,
-     proximity = 0,
-     spread = 20,
-     variant = "default",
-     glow = false,
-     className,
-     movementDuration = 2,
-     borderWidth = 1,
-     disabled = true
-   }: GlowingEffectProps) => {
+    blur = 0,
+    inactiveZone = 0.7,
+    proximity = 0,
+    spread = 20,
+    variant = "default",
+    glow = false,
+    className,
+    movementDuration = 2,
+    borderWidth = 1,
+    disabled = true
+  }: GlowingEffectProps) => {
     const containerRef = useRef<HTMLDivElement>(null)
     const lastPosition = useRef({ x: 0, y: 0 })
     const animationFrameRef = useRef<number>(0)
@@ -56,10 +56,7 @@ const GlowingEffect = memo(
           }
 
           const center = [left + width * 0.5, top + height * 0.5]
-          const distanceFromCenter = Math.hypot(
-            mouseX - (center[0] ?? 0),
-            mouseY - (center[1] ?? 0)
-          )
+          const distanceFromCenter = Math.hypot(mouseX - (center[0] ?? 0), mouseY - (center[1] ?? 0))
           const inactiveRadius = 0.5 * Math.min(width, height) * inactiveZone
 
           if (distanceFromCenter < inactiveRadius) {
@@ -67,20 +64,14 @@ const GlowingEffect = memo(
             return
           }
 
-          const isActive =
-            mouseX > left - proximity &&
-            mouseX < left + width + proximity &&
-            mouseY > top - proximity &&
-            mouseY < top + height + proximity
+          const isActive = mouseX > left - proximity && mouseX < left + width + proximity && mouseY > top - proximity && mouseY < top + height + proximity
 
           element.style.setProperty("--active", isActive ? "1" : "0")
 
           if (!isActive) return
 
-          const currentAngle =
-            parseFloat(element.style.getPropertyValue("--start")) || 0
-          const targetAngle =
-            (180 * Math.atan2(mouseY - (center[1] ?? 0), mouseX - (center[0] ?? 0))) / Math.PI + 90
+          const currentAngle = parseFloat(element.style.getPropertyValue("--start")) || 0
+          const targetAngle = (180 * Math.atan2(mouseY - (center[1] ?? 0), mouseX - (center[0] ?? 0))) / Math.PI + 90
 
           const angleDiff = ((targetAngle - currentAngle + 180) % 360) - 180
           const newAngle = currentAngle + angleDiff
@@ -170,7 +161,7 @@ const GlowingEffect = memo(
             className={cn(
               "glow",
               "rounded-[inherit]",
-              "after:content-[\"\"] after:rounded-[inherit] after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))]",
+              'after:content-[""] after:rounded-[inherit] after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))]',
               "after:[border:var(--glowingeffect-border-width)_solid_transparent]",
               "after:[background:var(--gradient)] after:[background-attachment:fixed]",
               "after:opacity-[var(--active)] after:transition-opacity after:duration-300",

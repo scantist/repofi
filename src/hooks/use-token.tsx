@@ -1,10 +1,4 @@
-import {
-  useAccount,
-  useReadContract,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract
-} from "wagmi"
+import { useAccount, useReadContract, useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi"
 import { erc20Abi } from "viem"
 import { useCallback } from "react"
 
@@ -13,9 +7,9 @@ export function useAllowance({
   tokenAddress,
   contractAddress
 }: {
-  amount: bigint;
-  tokenAddress: `0x${string}` | undefined;
-  contractAddress: `0x${string}`;
+  amount: bigint
+  tokenAddress: `0x${string}` | undefined
+  contractAddress: `0x${string}`
 }) {
   const { address } = useAccount()
   const {
@@ -31,10 +25,7 @@ export function useAllowance({
       enabled: !!address && !!contractAddress && !!tokenAddress && amount > 0n
     }
   })
-  const allowanceOk =
-    amount === 0n
-      ? true
-      : !isAllowanceLoading && !!allowance && allowance >= amount
+  const allowanceOk = amount === 0n ? true : !isAllowanceLoading && !!allowance && allowance >= amount
 
   const {
     data: simulateResult,
@@ -47,23 +38,11 @@ export function useAllowance({
     functionName: "approve",
     args: [contractAddress, amount],
     query: {
-      enabled:
-        !!contractAddress &&
-        !!tokenAddress &&
-        !!address &&
-        amount > BigInt(0) &&
-        !allowanceOk
+      enabled: !!contractAddress && !!tokenAddress && !!address && amount > BigInt(0) && !allowanceOk
     }
   })
 
-  const {
-    data: hash,
-    writeContract,
-    isPending: isWritingContract,
-    isError: isWritingContractError,
-    error: writingContractError,
-    reset
-  } = useWriteContract()
+  const { data: hash, writeContract, isPending: isWritingContract, isError: isWritingContractError, error: writingContractError, reset } = useWriteContract()
 
   const {
     data: receipt,
@@ -88,7 +67,7 @@ export function useAllowance({
       }
       return false
     },
-    [allowanceOk, simulateResult, isSimulateError, writeContract],
+    [allowanceOk, simulateResult, isSimulateError, writeContract]
   )
 
   if (!allowanceOk && !!receipt) {

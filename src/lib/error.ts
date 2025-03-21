@@ -8,7 +8,7 @@ export const ErrorCode = {
   UNKNOWN: "UNKNOWN"
 } as const
 
-export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];
+export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode]
 
 export class CommonError extends Error {
   code: ErrorCode

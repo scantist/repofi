@@ -10,15 +10,11 @@ export default function SignedIn({
   children:
     | ReactNode
     | ((props: {
-        address: string;
-        openDialog: (options?: OpenOptions) => Promise<void>;
-      }) => ReactNode);
+        address: string
+        openDialog: (options?: OpenOptions) => Promise<void>
+      }) => ReactNode)
 }) {
   const { isAuthenticated, openDialog, address } = useAuth()
 
-  return isAuthenticated
-    ? typeof children === "function"
-      ? children({ address, openDialog })
-      : children
-    : null
+  return isAuthenticated ? (typeof children === "function" ? children({ address, openDialog }) : children) : null
 }

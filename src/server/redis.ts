@@ -18,10 +18,7 @@ export const getRedis = () => {
   return redis
 }
 
-export const getAccessToken = async (
-  provider: "GitHub" | "GitLab",
-  email: string,
-) => {
+export const getAccessToken = async (provider: "GitHub" | "GitLab", email: string) => {
   const redis = getRedis()
   return redis.get(`AC_${provider}_${email}`.toUpperCase())
 }

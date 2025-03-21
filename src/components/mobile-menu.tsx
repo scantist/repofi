@@ -5,21 +5,14 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 import WalletButton from "~/components/auth/wallet-button"
 import { Button } from "~/components/ui/button"
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetClose
-} from "~/components/ui/sheet"
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetFooter, SheetClose } from "~/components/ui/sheet"
 import { cn } from "~/lib/utils"
 import LogoAgentLayerIcon from "./icons/logo-repo-icon"
 
 export const MobileMenu = ({
   navs
 }: {
-  navs: Array<{ name: string; href: string; requiresLogin: boolean }>;
+  navs: Array<{ name: string; href: string; requiresLogin: boolean }>
 }) => {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
@@ -34,10 +27,7 @@ export const MobileMenu = ({
           <Menu className="size-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="top"
-        className="overflow-auto p-0 shadow-lg shadow-primary/20"
-      >
+      <SheetContent side="top" className="overflow-auto p-0 shadow-lg shadow-primary/20">
         <SheetHeader>
           <header className="top-0 z-20 mx-auto flex w-full items-center justify-between border-b border-border bg-background/70 px-4 backdrop-blur">
             <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-4 pr-2">
@@ -64,10 +54,7 @@ export const MobileMenu = ({
                     scroll={true}
                     className={cn(
                       "text-base text-muted-foreground hover:text-foreground",
-                      item.href === "/"
-                        ? pathname === "/" && "font-medium text-primary"
-                        : pathname.startsWith(item.href) &&
-                            "font-medium text-primary",
+                      item.href === "/" ? pathname === "/" && "font-medium text-primary" : pathname.startsWith(item.href) && "font-medium text-primary"
                     )}
                     onClick={() => setIsOpen(false)}
                   >

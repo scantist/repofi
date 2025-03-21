@@ -12,20 +12,17 @@ export const uploadFile = async ({
   file,
   fileName
 }: {
-  file: string; // base64
-  fileName: string;
+  file: string // base64
+  fileName: string
 }) => {
   const buffer = Buffer.from(file, "base64")
-  const stream = storage
-    .bucket(GoogleStorageBucket)
-    .file(fileName)
-    .createWriteStream({
-      resumable: false
-    })
+  const stream = storage.bucket(GoogleStorageBucket).file(fileName).createWriteStream({
+    resumable: false
+  })
 
   try {
     const { url } = await new Promise<{
-      url: string;
+      url: string
     }>((resolve, reject) => {
       stream.on("finish", () => {
         resolve({
@@ -51,15 +48,9 @@ export const uploadFile = async ({
   }
 }
 
-export const getDaoListAction = async (
-  params: HomeSearchParams & { page?: number },
-) => {
+export const getDaoListAction = async (params: HomeSearchParams & { page?: number }) => {
   const session = await auth()
-  const homeSearch = await daoService.search(
-    { ...params },
-    { page: params.page ?? 0, size: 10 },
-    session?.address,
-  )
+  const homeSearch = await daoService.search({ ...params }, { page: params.page ?? 0, size: 10 }, session?.address)
   console.log(homeSearch)
   return homeSearch
 }

@@ -15,7 +15,6 @@ import { auth, getApiKey } from "~/server/auth"
 import { type UserRole } from "@prisma/client"
 import { CommonError } from "~/lib/error"
 
-
 /**
  * 1. CONTEXT
  *
@@ -66,8 +65,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null
       }
     }
   }
@@ -151,7 +149,6 @@ const protectionMiddleware = t.middleware(({ ctx, next }) => {
   })
 })
 
-
 /**
  * Public (unauthenticated) procedure
  *
@@ -161,14 +158,12 @@ const protectionMiddleware = t.middleware(({ ctx, next }) => {
  */
 export const publicProcedure = t.procedure.use(timingMiddleware)
 
-export const protectedProcedure = t.procedure
-  .use(timingMiddleware)
-  .use(async ({ ctx, next }) => {
-    if (!ctx.session?.address) {
-      throw new TRPCError({ code: "UNAUTHORIZED" })
-    }
-    return next({ ctx })
-  })
+export const protectedProcedure = t.procedure.use(timingMiddleware).use(async ({ ctx, next }) => {
+  if (!ctx.session?.address) {
+    throw new TRPCError({ code: "UNAUTHORIZED" })
+  }
+  return next({ ctx })
+})
 export const identifyRole = (roles: UserRole[]) => {
   return t.middleware(async ({ ctx, next }) => {
     for (const role of roles) {

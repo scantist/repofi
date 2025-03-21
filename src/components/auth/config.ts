@@ -4,13 +4,7 @@ import { WagmiAdapter } from "@reown/appkit-adapter-wagmi"
 import { env } from "~/env"
 import { type AppKitNetwork, base, sepolia } from "@reown/appkit/networks"
 import { createAppKit } from "@reown/appkit/react"
-import {
-  type SIWECreateMessageArgs,
-  type SIWESession,
-  type SIWEVerifyMessageArgs,
-  createSIWEConfig,
-  formatMessage
-} from "@reown/appkit-siwe"
+import { type SIWECreateMessageArgs, type SIWESession, type SIWEVerifyMessageArgs, createSIWEConfig, formatMessage } from "@reown/appkit-siwe"
 import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
 const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
   [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
@@ -46,7 +40,6 @@ const normalizeAddress = (address: string): string => {
   }
 }
 
-
 const metadata = {
   name: "SGP",
   description: "SGP",
@@ -57,13 +50,10 @@ const siweConfig = createSIWEConfig({
   getMessageParams: async () => ({
     domain: typeof window !== "undefined" ? window.location.host : "",
     uri: typeof window !== "undefined" ? window.location.origin : "",
-    chains: networks.map((chain: AppKitNetwork) =>
-      parseInt(chain.id.toString()),
-    ),
+    chains: networks.map((chain: AppKitNetwork) => parseInt(chain.id.toString())),
     statement: "Please sign with your account"
   }),
-  createMessage: ({ address, ...args }: SIWECreateMessageArgs) =>
-    formatMessage(args, normalizeAddress(address)),
+  createMessage: ({ address, ...args }: SIWECreateMessageArgs) => formatMessage(args, normalizeAddress(address)),
   getNonce: async () => {
     const nonce = await getCsrfToken()
     if (!nonce) {
@@ -113,7 +103,6 @@ const siweConfig = createSIWEConfig({
   }
 })
 
-
 createAppKit({
   adapters: [wagmiAdapter],
   networks,
@@ -140,4 +129,4 @@ createAppKit({
   // tokens
 })
 
-export { wagmiConfig, defaultChain,defaultWCoinAddress }
+export { wagmiConfig, defaultChain, defaultWCoinAddress }

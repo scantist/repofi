@@ -53,14 +53,9 @@ export const metadata: Metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }]
 }
 
-export default async function RootLayout({
-  children
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth()
-  const wagmiState = cookieToInitialState(
-    wagmiConfig,
-    (await headers()).get("cookie"),
-  )
+  const wagmiState = cookieToInitialState(wagmiConfig, (await headers()).get("cookie"))
   return (
     <html lang="en" className={`dark ${GeistSans.variable}`}>
       <body className={"font-sans dark"}>
@@ -85,14 +80,11 @@ export default async function RootLayout({
                   <div
                     className="from-background pointer-events-none absolute inset-0 -z-10 h-[200%] bg-black/80 bg-gradient-to-b to-transparent backdrop-blur"
                     style={{
-                      maskImage:
-                        "linear-gradient(to bottom, black 0% 50%, transparent 50% 100%)"
+                      maskImage: "linear-gradient(to bottom, black 0% 50%, transparent 50% 100%)"
                     }}
                   ></div>
                 </header>
-                <main className="relative flex grow flex-col overflow-clip">
-                  {children}
-                </main>
+                <main className="relative flex grow flex-col overflow-clip">{children}</main>
                 <footer className="h-24 backdrop-blur bg-black">
                   <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-0 px-8 md:px-4">
                     <div className="flex items-center gap-6">
@@ -100,33 +92,19 @@ export default async function RootLayout({
                         <LogoRepoIcon className="size-12 text-primary transition-all group-hover:-rotate-45 group-hover:text-foreground" />
                       </ToTop>
 
-                      <Badge
-                        variant="outline"
-                        className="font-mono text-xs font-normal text-muted-foreground"
-                      >
+                      <Badge variant="outline" className="font-mono text-xs font-normal text-muted-foreground">
                         dev
                       </Badge>
                     </div>
                     <div className="flex items-center gap-4 sm:gap-8">
                       {socialMedias.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="group flex cursor-pointer items-center gap-2"
-                        >
-                          <Link
-                            href={item.href}
-                            target="_blank"
-                            className="hidden group-hover:text-primary sm:block"
-                          >
+                        <div key={idx} className="group flex cursor-pointer items-center gap-2">
+                          <Link href={item.href} target="_blank" className="hidden group-hover:text-primary sm:block">
                             {item.title}
                           </Link>
                         </div>
                       ))}
-                      <Link
-                        href={""}
-                        target="_blank"
-                        className="flex items-center gap-2 hover:text-primary"
-                      >
+                      <Link href={""} target="_blank" className="flex items-center gap-2 hover:text-primary">
                         <p className="hidden sm:block">AgentLayer</p>
                       </Link>
                     </div>

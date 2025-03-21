@@ -1,6 +1,5 @@
 "use client"
 
-
 const ExpandContent = () => {
   return (
     <div className={"grid grid-cols-3 p-4 gap-4 w-full overflow-hidden"}>
@@ -26,7 +25,8 @@ const ExpandContent = () => {
           <div>Treasury</div>
           <div>$4.08M</div>
         </div>
-      </div><div className={"text-muted-foreground h-full bg-black/30 px-6 py-4"}>
+      </div>
+      <div className={"text-muted-foreground h-full bg-black/30 px-6 py-4"}>
         <div>Market</div>
         <div className={"flex flex-row justify-between"}>
           <div>Market cap</div>
@@ -48,7 +48,8 @@ const ExpandContent = () => {
           <div>Treasury</div>
           <div>$4.08M</div>
         </div>
-      </div><div className={"text-muted-foreground h-full bg-black/30 px-6 py-4"}>
+      </div>
+      <div className={"text-muted-foreground h-full bg-black/30 px-6 py-4"}>
         <div>Market</div>
         <div className={"flex flex-row justify-between"}>
           <div>Market cap</div>

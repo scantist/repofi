@@ -1,22 +1,16 @@
-import {type FC, useEffect} from "react"
+import { type FC, useEffect } from "react"
 import { Input } from "./input"
-import {SearchIcon} from "lucide-react"
+import { SearchIcon } from "lucide-react"
 
 type Props = {
-  input: string;
-  setInput: (value: string) => void;
-  handleSearchChange: (value: string) => void;
-  searchValue: string;
-  placeholder?: string;
-};
+  input: string
+  setInput: (value: string) => void
+  handleSearchChange: (value: string) => void
+  searchValue: string
+  placeholder?: string
+}
 
-const SearchInput: FC<Props> = ({
-  input,
-  setInput,
-  handleSearchChange,
-  searchValue,
-  placeholder = "Search Daos"
-}) => {
+const SearchInput: FC<Props> = ({ input, setInput, handleSearchChange, searchValue, placeholder = "Search Daos" }) => {
   useEffect(() => {
     const handler = setTimeout(() => {
       if (input !== searchValue) {

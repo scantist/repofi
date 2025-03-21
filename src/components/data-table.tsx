@@ -1,12 +1,4 @@
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  type PaginationState,
-  type Row,
-  useReactTable
-} from "@tanstack/react-table"
+import { type ColumnDef, flexRender, getCoreRowModel, getExpandedRowModel, type PaginationState, type Row, useReactTable } from "@tanstack/react-table"
 import { Fragment, type ReactNode, useEffect, useMemo, useState } from "react"
 import { cn } from "~/lib/utils"
 import CardWrapper from "~/components/card-wrapper"
@@ -14,16 +6,16 @@ import { type PageableData } from "~/types/data"
 import NoData from "~/components/no-data"
 
 interface Props<T> {
-  data?: PageableData<T>;
+  data?: PageableData<T>
   // eslint-disable-next-line
-  columns: ColumnDef<T, any>[];
-  loading?: boolean;
-  onPaginationChange: (pagination: PaginationState) => void;
-  outPagination: PaginationState;
-  onRowClick?: (row: Row<T>) => void;
-  getRowCanExpand?: (row: Row<T>) => boolean;
-  expendRow?: (row: Row<T>) => ReactNode;
-  pageSize?: number[];
+  columns: ColumnDef<T, any>[]
+  loading?: boolean
+  onPaginationChange: (pagination: PaginationState) => void
+  outPagination: PaginationState
+  onRowClick?: (row: Row<T>) => void
+  getRowCanExpand?: (row: Row<T>) => boolean
+  expendRow?: (row: Row<T>) => ReactNode
+  pageSize?: number[]
 }
 
 const DataTable = <T,>({
@@ -72,17 +64,8 @@ const DataTable = <T,>({
             {table.getHeaderGroups().map((headerGroup) => (
               <tr className={"h-16"} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"}
-                    style={{ textAlign: "left" }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                  <th key={header.id} className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"} style={{ textAlign: "left" }}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
@@ -99,10 +82,7 @@ const DataTable = <T,>({
               table.getRowModel().rows.map((row) => (
                 <Fragment key={row.id}>
                   <tr
-                    className={cn(
-                      "h-16 border-t-1 border-white/20",
-                      row.getIsExpanded() && "bg-[#6A21F74D]",
-                    )}
+                    className={cn("h-16 border-t-1 border-white/20", row.getIsExpanded() && "bg-[#6A21F74D]")}
                     onClick={() => {
                       onRowClick?.(row)
                       // if (row.getCanExpand()) {
@@ -111,14 +91,8 @@ const DataTable = <T,>({
                     }}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                      <td key={cell.id} className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
                   </tr>
@@ -128,7 +102,7 @@ const DataTable = <T,>({
             ) : (
               <tr>
                 <td className="px-6 py-4" colSpan={columns.length}>
-                  <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"}/>
+                  <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"} />
                 </td>
               </tr>
             )}
@@ -137,14 +111,7 @@ const DataTable = <T,>({
             {table.getFooterGroups().map((footerGroup) => (
               <tr key={footerGroup.id}>
                 {footerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext(),
-                        )}
-                  </th>
+                  <th key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}</th>
                 ))}
               </tr>
             ))}

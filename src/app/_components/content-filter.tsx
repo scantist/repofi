@@ -9,13 +9,7 @@ import Switcher from "~/components/ui/switcher"
 import Sorter from "~/app/_components/content-filter-sort"
 import { cn } from "~/lib/utils"
 
-const ContentFilter: FC<HomeSearchParams & { prefix?: string }> = ({
-  owned,
-  starred,
-  search,
-  orderBy,
-  prefix
-}) => {
+const ContentFilter: FC<HomeSearchParams & { prefix?: string }> = ({ owned, starred, search, orderBy, prefix }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -29,11 +23,7 @@ const ContentFilter: FC<HomeSearchParams & { prefix?: string }> = ({
 
   const { isAuthenticated } = useAuth()
 
-  const updateValue = <T,>(
-    value: T,
-    key: string,
-    set: (action: T | ((pendingState: T) => T)) => void,
-  ) => {
+  const updateValue = <T,>(value: T, key: string, set: (action: T | ((pendingState: T) => T)) => void) => {
     const newSearchParams = new URLSearchParams(searchParams)
     if (!value) {
       newSearchParams.delete(`${prefix ?? ""}${key}`)
@@ -49,9 +39,7 @@ const ContentFilter: FC<HomeSearchParams & { prefix?: string }> = ({
     <div
       className={cn(
         "bg-background/40 top-16 z-10 grid grid-cols-1 items-center gap-8 rounded-lg border p-3.5 backdrop-blur sm:grid-cols-2 md:sticky lg:grid-cols-7",
-        isPending
-          ? "animate-border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]"
-          : "border-primary/30 bg-background"
+        isPending ? "animate-border border-transparent [background:padding-box_var(--bg-color),border-box_var(--border-color)]" : "border-primary/30 bg-background"
       )}
     >
       <div className="lg:col-span-2">

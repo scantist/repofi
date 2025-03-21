@@ -13,14 +13,10 @@ export const messageWithRepliesSchema = ForumMessageSchema.extend({
   replyCount: z.number()
 })
 
-export type MessageWithReplies = z.infer<typeof messageWithRepliesSchema>;
+export type MessageWithReplies = z.infer<typeof messageWithRepliesSchema>
 
 class DaoMessageService {
-  async getMessageList(
-    daoId: string,
-    pageable: Pageable,
-    replyLimit: number,
-  ): Promise<PageableData<MessageWithReplies>> {
+  async getMessageList(daoId: string, pageable: Pageable, replyLimit: number): Promise<PageableData<MessageWithReplies>> {
     const totalCount = await db.forumMessage.count({
       where: {
         daoId,
@@ -59,17 +55,14 @@ class DaoMessageService {
     const redis = getRedis()
     const replyInfos = await Promise.all(
       messageIds.map(async (id) => {
-        const [count, replyIds] = await Promise.all([
-          redis.zcard(`message-replies:${id}`),
-          redis.zrange(`message-replies:${id}`, 0, replyLimit - 1)
-        ])
+        const [count, replyIds] = await Promise.all([redis.zcard(`message-replies:${id}`), redis.zrange(`message-replies:${id}`, 0, replyLimit - 1)])
         return { rootId: id, count, replyIds, replies: [] as ForumMessage[] }
-      }),
+      })
     )
 
     // Get replies from db
-    const replyIds = replyInfos.map((reply) => reply.replyIds).flat();
-    (
+    const replyIds = replyInfos.map((reply) => reply.replyIds).flat()
+    ;(
       await db.forumMessage.findMany({
         where: {
           id: { in: replyIds },
@@ -77,25 +70,15 @@ class DaoMessageService {
         }
       })
     ).forEach((reply) => {
-      const replyInfo = replyInfos.find(
-        (replyInfo) => replyInfo.rootId === reply.rootMessageId,
-      )
+      const replyInfo = replyInfos.find((replyInfo) => replyInfo.rootId === reply.rootMessageId)
       if (replyInfo) {
         replyInfo.replies.push(reply)
       }
     })
 
     const messageWithReplies = messages.map((message) => {
-      const replyInfo = replyInfos.find(
-        (replyInfo) => replyInfo.rootId === message.id,
-      )
-      const replies = replyInfo
-        ? replyInfo.replies.sort(
-            (a, b) =>
-              replyInfo.replyIds.indexOf(a.id) -
-              replyInfo.replyIds.indexOf(b.id),
-          )
-        : []
+      const replyInfo = replyInfos.find((replyInfo) => replyInfo.rootId === message.id)
+      const replies = replyInfo ? replyInfo.replies.sort((a, b) => replyInfo.replyIds.indexOf(a.id) - replyInfo.replyIds.indexOf(b.id)) : []
       const replyCount = replyInfo?.count ?? 0
 
       return {
@@ -124,19 +107,15 @@ class DaoMessageService {
     cursor,
     limit = 10
   }: {
-    messageId: string;
-    cursor: number;
-    limit?: number;
+    messageId: string
+    cursor: number
+    limit?: number
   }) {
     const redis = getRedis()
 
     const totalCount = await redis.zcard(`message-replies:${messageId}`)
 
-    const replyIds = await redis.zrange(
-      `message-replies:${messageId}`,
-      cursor,
-      cursor + limit - 1,
-    )
+    const replyIds = await redis.zrange(`message-replies:${messageId}`, cursor, cursor + limit - 1)
 
     const nextCursor = cursor + limit
     const previousCursor = cursor - limit
@@ -169,16 +148,11 @@ class DaoMessageService {
     })
 
     if (!message) {
-      throw new CommonError(
-        ErrorCode.NOT_FOUND,
-        `Can't found message with id ${id}`,
-      )
+      throw new CommonError(ErrorCode.NOT_FOUND, `Can't found message with id ${id}`)
     }
 
     if (expand) {
-      const messageThread: (ForumMessage & { replyTo?: ForumMessage })[] = [
-        message
-      ]
+      const messageThread: (ForumMessage & { replyTo?: ForumMessage })[] = [message]
       const MAX_DEPTH = 50 // Prevent infinite loops
       let depth = 0
 
@@ -196,9 +170,7 @@ class DaoMessageService {
         if (replyTo) {
           // Check for circular references
           if (messageThread.some((m) => m.id === replyTo.id)) {
-            console.error(
-              `Circular reference detected in message thread: ${message.id}`,
-            )
+            console.error(`Circular reference detected in message thread: ${message.id}`)
             break
           }
           messageThread.push(replyTo)
@@ -207,17 +179,13 @@ class DaoMessageService {
       }
 
       if (depth >= MAX_DEPTH) {
-        console.warn(
-          `Message thread exceeded maximum depth of ${MAX_DEPTH}: ${message.id}`,
-        )
+        console.warn(`Message thread exceeded maximum depth of ${MAX_DEPTH}: ${message.id}`)
       }
 
-      const result = messageThread
-        .reverse()
-        .reduce<ForumMessage | undefined>((acc, message) => {
-          message.replyTo = acc
-          return message
-        }, undefined)
+      const result = messageThread.reverse().reduce<ForumMessage | undefined>((acc, message) => {
+        message.replyTo = acc
+        return message
+      }, undefined)
 
       return result
     }
@@ -231,10 +199,10 @@ class DaoMessageService {
     startTime,
     limit = 50
   }: {
-    daoId: string;
-    userAddress: string;
-    startTime?: Date;
-    limit?: number;
+    daoId: string
+    userAddress: string
+    startTime?: Date
+    limit?: number
   }) {
     startTime = startTime ?? subHours(new Date(), 6)
 
@@ -261,10 +229,10 @@ class DaoMessageService {
     userAddress,
     replyToMessageId
   }: {
-    daoId: string;
-    message: string;
-    userAddress: string;
-    replyToMessageId?: string;
+    daoId: string
+    message: string
+    userAddress: string
+    replyToMessageId?: string
   }) {
     const dao = await db.dao.findUnique({
       where: { id: daoId }
@@ -274,35 +242,23 @@ class DaoMessageService {
       throw new CommonError(ErrorCode.BAD_PARAMS, `Can't found ${daoId} dao`)
     }
 
-    console.log(
-      `Creating message for dao ${daoId} from user ${userAddress} in reply to message ${replyToMessageId}: ${message.slice(0, 10)}...`,
-    )
+    console.log(`Creating message for dao ${daoId} from user ${userAddress} in reply to message ${replyToMessageId}: ${message.slice(0, 10)}...`)
 
-    const replyTo = replyToMessageId
-      ? await this.getMessageById(replyToMessageId)
-      : null
+    const replyTo = replyToMessageId ? await this.getMessageById(replyToMessageId) : null
 
     if (replyToMessageId && !replyTo) {
       throw new CommonError(ErrorCode.NOT_FOUND, "Reply to message not found")
     }
 
     if (message.length === 0 || message.length > 256) {
-      throw new CommonError(
-        ErrorCode.BAD_PARAMS,
-        "Message cannot be empty or longer than 256 characters",
-      )
+      throw new CommonError(ErrorCode.BAD_PARAMS, "Message cannot be empty or longer than 256 characters")
     }
 
     const rootMessageId = replyTo?.rootMessageId ?? replyTo?.id ?? null
 
     if (replyTo && !rootMessageId) {
-      console.error(
-        `Cannot determine root message id while replying to message ${replyTo.id}`,
-      )
-      throw new CommonError(
-        ErrorCode.INTERNAL_ERROR,
-        "Cannot determine root message id while replying to message",
-      )
+      console.error(`Cannot determine root message id while replying to message ${replyTo.id}`)
+      throw new CommonError(ErrorCode.INTERNAL_ERROR, "Cannot determine root message id while replying to message")
     }
 
     return await db.$transaction(async (tx) => {
@@ -317,18 +273,12 @@ class DaoMessageService {
         }
       })
 
-      console.log(
-        `Created message for dao ${daoId}, new message id: ${newMessage.id}`,
-      )
+      console.log(`Created message for dao ${daoId}, new message id: ${newMessage.id}`)
 
       const redis = getRedis()
 
       if (replyTo) {
-        await redis.zadd(
-          `message-replies:${rootMessageId}`,
-          newMessage.createdAt.getTime(),
-          newMessage.id,
-        )
+        await redis.zadd(`message-replies:${rootMessageId}`, newMessage.createdAt.getTime(), newMessage.id)
       }
 
       return newMessage
@@ -386,10 +336,7 @@ class DaoMessageService {
 
       const redis = getRedis()
       await redis.del(`message-replies:${message.id}`)
-      await redis.zadd(
-        `message-replies:${message.id}`,
-        ...replies.map((reply) => [reply.createdAt.getTime(), reply.id]).flat(),
-      )
+      await redis.zadd(`message-replies:${message.id}`, ...replies.map((reply) => [reply.createdAt.getTime(), reply.id]).flat())
     }
   }
 

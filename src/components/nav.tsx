@@ -35,10 +35,7 @@ export default function Nav() {
               key={item.name}
               className={cn(
                 "px-4 py-2 text-muted-foreground hover:text-foreground",
-                item.href === "/"
-                  ? pathname === "/" && "font-medium text-primary"
-                  : pathname.startsWith(item.href) &&
-                      "font-medium text-primary",
+                item.href === "/" ? pathname === "/" && "font-medium text-primary" : pathname.startsWith(item.href) && "font-medium text-primary"
               )}
               href={item.href}
             >

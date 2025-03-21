@@ -10,9 +10,9 @@ import { House } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 type Props = {
-  children?: React.ReactNode;
-  data: DaoPage;
-};
+  children?: React.ReactNode
+  data: DaoPage
+}
 
 const DaoCard: FC<Props> = ({ data }) => {
   const router = useRouter()
@@ -47,12 +47,7 @@ const DaoCard: FC<Props> = ({ data }) => {
   return (
     <CardWrapper>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
-        alt={data.name}
-        src={data.avatar}
-        onClick={toDetail}
-      />
+      <img className={"aspect-square h-60 w-full rounded-t-lg object-cover"} alt={data.name} src={data.avatar} onClick={toDetail} />
       <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
         <div className={"truncate text-3xl leading-10 tracking-tighter cursor-pointer"} onClick={toDetail}>
           {data.name}
@@ -74,54 +69,27 @@ const DaoCard: FC<Props> = ({ data }) => {
             <span className={"text-white/80"}>{data.repoForks}</span>
           </div>
         </div>
-        <div
-          className={
-            "my-4 grid grid-cols-3 justify-evenly gap-1 border-y-1 border-y-gray-400 py-3 font-light"
-          }
-        >
+        <div className={"my-4 grid grid-cols-3 justify-evenly gap-1 border-y-1 border-y-gray-400 py-3 font-light"}>
           <div className={"mr-2 border-r-1 border-r-gray-400"}>
             <div className={"text-muted-foreground text-sm"}>Market cap</div>
-            <div className={"text-primary-foreground text-md mt-2 font-bold"}>
-              {data.tokenInfo.marketCap.length === 0
-                ? "0"
-                : data.tokenInfo.marketCap}
-            </div>
+            <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}</div>
           </div>
           <div className={"pl-3"}>
             <div className={"text-muted-foreground text-sm"}># Holders</div>
-            <div className={"text-primary-foreground text-md mt-2 font-bold"}>
-              {data.tokenInfo.holderCount}
-            </div>
+            <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.holderCount}</div>
           </div>
           <div className={"border-l-1 border-l-gray-400 pl-5"}>
             <div className={"text-muted-foreground text-sm"}>Status</div>
-            <div
-              className={
-                "text-primary-foreground text-md mt-2 font-bold tracking-tighter"
-              }
-            >
-              {data.status}
-            </div>
+            <div className={"text-primary-foreground text-md mt-2 font-bold tracking-tighter"}>{data.status}</div>
           </div>
         </div>
         <div className={"flex flex-row items-center justify-between"}>
           <div className={"flex flex-row gap-2"}>
             {["website", "x", "discord", "telegram"].map((socialType) => (
-              <IconComponent
-                key={socialType}
-                type={socialType}
-                href={
-                  (data.links as DaoLinks).find(
-                    (link) => link.type.toLowerCase() === socialType,
-                  )?.value ?? ""
-                }
-              />
+              <IconComponent key={socialType} type={socialType} href={(data.links as DaoLinks).find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
             ))}{" "}
           </div>
-          <div
-            className={"cursor-pointer text-sm font-bold"}
-            onClick={toDetail}
-          >
+          <div className={"cursor-pointer text-sm font-bold"} onClick={toDetail}>
             {data.ticker}
           </div>
         </div>

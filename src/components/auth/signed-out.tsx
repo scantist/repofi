@@ -10,14 +10,10 @@ export default function SignedOut({
   children:
     | ReactNode
     | ((props: {
-        openDialog: (options?: OpenOptions) => Promise<void>;
-      }) => ReactNode);
+        openDialog: (options?: OpenOptions) => Promise<void>
+      }) => ReactNode)
 }) {
   const { isAuthenticated, openDialog } = useAuth()
 
-  return !isAuthenticated
-    ? typeof children === "function"
-      ? children({ openDialog })
-      : children
-    : null
+  return !isAuthenticated ? (typeof children === "function" ? children({ openDialog }) : children) : null
 }

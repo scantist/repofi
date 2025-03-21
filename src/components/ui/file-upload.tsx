@@ -1,17 +1,10 @@
 "use client"
 import React from "react"
-import {
-  type ChangeEventHandler,
-  type DragEventHandler,
-  type FC,
-  type MouseEventHandler,
-  type ReactNode,
-  useRef
-} from "react"
+import { type ChangeEventHandler, type DragEventHandler, type FC, type MouseEventHandler, type ReactNode, useRef } from "react"
 import { TrashIcon, UploadCloudIcon } from "lucide-react"
 import { cn } from "~/lib/utils"
 
-export type ClassReplacer = string | ((original: string) => string);
+export type ClassReplacer = string | ((original: string) => string)
 
 export function formatFileSize(size: number) {
   if (size < 1024) {
@@ -24,18 +17,16 @@ export function formatFileSize(size: number) {
 }
 
 interface FileUploadProps {
-  value: File | undefined;
-  fileSizeLimit: number;
-  fileTypes: string[];
-  label?: string;
-  description?:
-    | ReactNode
-    | ((fileSizeLimit: number, fileTypes: string[]) => ReactNode);
-  className?: ClassReplacer;
-  labelClass?: ClassReplacer;
-  icon?: ReactNode;
-  onChange: (file: File | undefined) => unknown;
-  onError: (message: string) => unknown;
+  value: File | undefined
+  fileSizeLimit: number
+  fileTypes: string[]
+  label?: string
+  description?: ReactNode | ((fileSizeLimit: number, fileTypes: string[]) => ReactNode)
+  className?: ClassReplacer
+  labelClass?: ClassReplacer
+  icon?: ReactNode
+  onChange: (file: File | undefined) => unknown
+  onError: (message: string) => unknown
 }
 
 const labelBaseCls = "w-full truncate text-center"
@@ -63,10 +54,7 @@ const FileUpload: FC<FileUploadProps> = ({
       if (file?.size ?? 0 < fileSizeLimit) {
         onChange(file)
       } else {
-        onError(
-          "Uploaded file cannot be larger than " +
-            formatFileSize(fileSizeLimit),
-        )
+        onError("Uploaded file cannot be larger than " + formatFileSize(fileSizeLimit))
       }
     }
   }
@@ -84,8 +72,7 @@ const FileUpload: FC<FileUploadProps> = ({
     if (e.dataTransfer.files.length) {
       const file = e.dataTransfer.files[0]
       const fileTypeMatches = file?.type && fileTypes.includes(file.type)
-      const fileSuffixMatches =
-        file?.name && fileTypes.some((x) => file.name.endsWith(x))
+      const fileSuffixMatches = file?.name && fileTypes.some((x) => file.name.endsWith(x))
 
       if (fileTypeMatches ?? fileSuffixMatches) {
         return
@@ -97,12 +84,7 @@ const FileUpload: FC<FileUploadProps> = ({
   }
 
   return (
-    <div
-      className={cn(
-        "relative flex flex-col items-center gap-3 rounded-lg border-2 border-dashed border-border p-6",
-        className,
-      )}
-    >
+    <div className={cn("relative flex flex-col items-center gap-3 rounded-lg border-2 border-dashed border-border p-6", className)}>
       <input
         type="file"
         title=""
@@ -117,25 +99,15 @@ const FileUpload: FC<FileUploadProps> = ({
       {value ? (
         <div className="w-full space-y-0.5">
           <p className={cn(labelBaseCls, labelClass)}>{value.name}</p>
-          <p className="w-full text-center text-sm text-muted-foreground">
-            {formatFileSize(value.size)}
-          </p>
-          <button
-            type="button"
-            className="absolute bottom-2 right-2 text-destructive"
-            onClick={handleFileRemove}
-          >
+          <p className="w-full text-center text-sm text-muted-foreground">{formatFileSize(value.size)}</p>
+          <button type="button" className="absolute bottom-2 right-2 text-destructive" onClick={handleFileRemove}>
             <TrashIcon className="h-5 w-5" />
           </button>
         </div>
       ) : (
         <div className="space-y-0.5">
           <p className={cn(labelBaseCls, labelClass)}>{label}</p>
-          <div className="w-full text-center text-sm text-muted-foreground">
-            {typeof description === "function"
-              ? description(fileSizeLimit, fileTypes)
-              : description}
-          </div>
+          <div className="w-full text-center text-sm text-muted-foreground">{typeof description === "function" ? description(fileSizeLimit, fileTypes) : description}</div>
         </div>
       )}
     </div>

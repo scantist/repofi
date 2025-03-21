@@ -5,7 +5,6 @@ import { type DaoPlatform } from "@prisma/client"
 import { fetchUserInfo } from "~/server/tool/repo"
 
 class ContributorService {
-
   async getContributors(daoId: string, pageable: Pageable) {
     const total = await db.contributor.count({
       where: { daoId }
@@ -27,7 +26,7 @@ class ContributorService {
     } as PageableData<(typeof contributorList)[number]>
   }
 
-  async getTop10Contributor(daoId:string) {
+  async getTop10Contributor(daoId: string) {
     return await db.contributor.findMany({
       where: {
         daoId
@@ -38,8 +37,8 @@ class ContributorService {
       }
     })
   }
-  async bind(accessToken:string,platform:DaoPlatform, userAddress: string){
-    const user = await fetchUserInfo(accessToken,platform)
+  async bind(accessToken: string, platform: DaoPlatform, userAddress: string) {
+    const user = await fetchUserInfo(accessToken, platform)
     await db.contributor.updateMany({
       where: {
         userPlatformId: user.id,

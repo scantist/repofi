@@ -6,9 +6,8 @@ export const daoLinksSchema = z.array(
   z.object({
     type: z.enum(["x", "telegram", "discord", "website"]),
     value: z.string().url()
-  }),
+  })
 )
-
 
 export const pageableSchema = z.object({
   page: z.number().optional().default(0),
@@ -17,49 +16,37 @@ export const pageableSchema = z.object({
 
 export const homeSearchParamsSchema = z.object({
   search: z.string().optional(),
-  orderBy: z
-    .enum(["latest", "marketCap"])
-    .optional()
-    .default("marketCap")
-    .catch("marketCap"),
-  status:z.array(DaoStatusSchema).optional(),
+  orderBy: z.enum(["latest", "marketCap"]).optional().default("marketCap").catch("marketCap"),
+  status: z.array(DaoStatusSchema).optional(),
   owned: z.boolean().optional().default(false),
   starred: z.boolean().optional().default(false)
 })
-export const DaoContentParamsSchema=z.object({
-  title:z.string({ message:"Title is required." })
-    .refine((value) => value.trim() !== "", {
-      message: "Title can not be empty."
-    }),
-  sort:z.number().int().optional().default(0),
-  type:DaoContentTypeSchema,
+export const DaoContentParamsSchema = z.object({
+  title: z.string({ message: "Title is required." }).refine((value) => value.trim() !== "", {
+    message: "Title can not be empty."
+  }),
+  sort: z.number().int().optional().default(0),
+  type: DaoContentTypeSchema,
   data: z.object({})
 })
 
 export const createDaoParamsSchema = z.object({
-  avatar: z
-    .string({ message: "Avatar is required." })
-    .refine((value) => value.trim() !== "", {
-      message: "Avatar can not be empty."
-    }),
+  avatar: z.string({ message: "Avatar is required." }).refine((value) => value.trim() !== "", {
+    message: "Avatar can not be empty."
+  }),
   url: z.string({ message: "repo url is required." }),
   type: DaoTypeSchema,
-  name: z
-    .string({ message: "Name is required." })
-    .min(1, { message: "Name can not be empty." }),
+  name: z.string({ message: "Name is required." }).min(1, { message: "Name can not be empty." }),
   ticker: z
     .string({ message: "Ticker is required." })
     .min(1, { message: "Ticker can not be empty." })
     .regex(/^[A-Za-z]+$/, { message: "Only letters are allowed." })
-    .transform((v) => v.toUpperCase())
-  ,
-  description: z
-    .string({ message: "Description is required." })
-    .min(1, { message: "Description can not be empty." }),
+    .transform((v) => v.toUpperCase()),
+  description: z.string({ message: "Description is required." }).min(1, { message: "Description can not be empty." }),
   x: z.string().url().optional().or(z.literal("")),
   telegram: z.string().url().optional().or(z.literal("")),
   website: z.string().url().optional().or(z.literal("")),
-  tokenId:z.bigint().min(1n, { message: "Token ID is required." })
+  tokenId: z.bigint().min(1n, { message: "Token ID is required." })
 })
 export const launchSchema = z.object({
   totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "Total Supply is required." }),
@@ -87,9 +74,12 @@ export const repoInfoSchema = z.object({
     type: z.string(),
     avatar_url: z.string()
   }),
-  license: z.object({
-    spdx_id: z.string()
-  }).nullable().transform(license => license ?? { spdx_id: "unknown" })
+  license: z
+    .object({
+      spdx_id: z.string()
+    })
+    .nullable()
+    .transform((license) => license ?? { spdx_id: "unknown" })
 })
 
 export const repoMetaSchema = z.object({
@@ -106,7 +96,6 @@ export const repoContributor = z.object({
 })
 export const repoContributors = z.array(repoContributor)
 
-
 export const dexPriceSchema = z.object({
   pairs: z.array(
     z.object({
@@ -119,17 +108,17 @@ export const dexPriceSchema = z.object({
         h24: z.number().optional()
       }),
       marketCap: z.number()
-    }),
+    })
   )
 })
-export type DaoContentParams =z.infer<typeof DaoContentParamsSchema>
-export type DexPrice=z.infer<typeof dexPriceSchema>
+export type DaoContentParams = z.infer<typeof DaoContentParamsSchema>
+export type DexPrice = z.infer<typeof dexPriceSchema>
 export type RepoInfo = z.infer<typeof repoInfoSchema>
 export type RepoMeta = z.infer<typeof repoMetaSchema>
 export type RepoContributors = z.infer<typeof repoContributors>
 export type RepoContributor = z.infer<typeof repoContributor>
-export type HomeSearchParams = z.infer<typeof homeSearchParamsSchema>;
-export type Pageable = z.infer<typeof pageableSchema>;
+export type HomeSearchParams = z.infer<typeof homeSearchParamsSchema>
+export type Pageable = z.infer<typeof pageableSchema>
 export type DaoLinks = z.infer<typeof daoLinksSchema>
 export type CreateDaoParams = z.infer<typeof createDaoParamsSchema>
 export type LaunchParams = z.infer<typeof launchSchema>

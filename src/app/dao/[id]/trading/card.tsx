@@ -6,7 +6,7 @@ import TradingForm from "~/app/dao/[id]/trading/form"
 import { type DaoDetailResult } from "~/server/service/dao"
 
 interface TradingCardProps {
-  data: DaoDetailResult;
+  data: DaoDetailResult
 }
 
 const TradingCard = ({ data }: TradingCardProps) => {
@@ -15,25 +15,11 @@ const TradingCard = ({ data }: TradingCardProps) => {
       <Tabs defaultValue="buy" className={"rounded-lg px-5 py-6"}>
         <div className={"w-full px-6"}>
           <CardWrapper className={"w-full"}>
-            <TabsList
-              className={
-                "text-md flex w-full flex-row items-center justify-around"
-              }
-            >
-              <TabsTrigger
-                value="buy"
-                className={
-                  "dark:data-[state=active]:bg-secondary w-full flex-1 cursor-pointer rounded-lg py-2 text-center"
-                }
-              >
+            <TabsList className={"text-md flex w-full flex-row items-center justify-around"}>
+              <TabsTrigger value="buy" className={"dark:data-[state=active]:bg-secondary w-full flex-1 cursor-pointer rounded-lg py-2 text-center"}>
                 Buy
               </TabsTrigger>
-              <TabsTrigger
-                value="sell"
-                className={
-                  "dark:data-[state=active]:bg-secondary w-full flex-1 cursor-pointer rounded-lg py-2 text-center"
-                }
-              >
+              <TabsTrigger value="sell" className={"dark:data-[state=active]:bg-secondary w-full flex-1 cursor-pointer rounded-lg py-2 text-center"}>
                 Sell
               </TabsTrigger>
             </TabsList>

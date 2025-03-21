@@ -12,9 +12,9 @@ export default function AuthProvider({
   session,
   wagmiState
 }: {
-  children: React.ReactNode;
-  session?: Session | null;
-  wagmiState?: WagmiState;
+  children: React.ReactNode
+  session?: Session | null
+  wagmiState?: WagmiState
 }) {
   return (
     <NextAuthSessionProvider session={session}>

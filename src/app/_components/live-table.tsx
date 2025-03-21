@@ -1,9 +1,6 @@
 "use client"
 
-import {
-  createColumnHelper,
-  type PaginationState
-} from "@tanstack/react-table"
+import { createColumnHelper, type PaginationState } from "@tanstack/react-table"
 import React, { useState } from "react"
 import { type DaoPage } from "~/types/data"
 import DataTable from "~/components/data-table"
@@ -12,11 +9,11 @@ import { api } from "~/trpc/react"
 import { type DaoSearchResult } from "~/server/service/dao"
 
 interface Condition extends HomeSearchParams {
-  pagination: PaginationState;
+  pagination: PaginationState
 }
 
 interface LiveTableProps {
-  initialData: DaoSearchResult;
+  initialData: DaoSearchResult
 }
 
 const LiveTable = ({ initialData }: LiveTableProps) => {
@@ -31,10 +28,13 @@ const LiveTable = ({ initialData }: LiveTableProps) => {
       pageIndex: 0
     }
   })
-  const { data: response, isPending } = api.dao.search.useQuery({
-    ...condition,
-    ...condition.pagination
-  }, { initialData })
+  const { data: response, isPending } = api.dao.search.useQuery(
+    {
+      ...condition,
+      ...condition.pagination
+    },
+    { initialData }
+  )
   const columns = [
     columnHelper.accessor("id", {
       header: () => "#",
@@ -46,27 +46,19 @@ const LiveTable = ({ initialData }: LiveTableProps) => {
     }),
     columnHelper.accessor("type", {
       header: () => "Type",
-      cell: (info) => (
-        <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
-      )
+      cell: (info) => <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
     }),
     columnHelper.accessor("tokenInfo.marketCap", {
       header: () => "Market Cap",
-      cell: (info) => (
-        <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
-      )
+      cell: (info) => <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
     }),
     columnHelper.accessor("tokenInfo.totalSupply", {
       header: () => "Total Supply",
-      cell: (info) => (
-        <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
-      )
+      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     }),
     columnHelper.accessor("tokenInfo.holderCount", {
       header: () => "Holder Count",
-      cell: (info) => (
-        <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
-      )
+      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     })
   ]
   return (

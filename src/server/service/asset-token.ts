@@ -2,9 +2,7 @@ import { db } from "~/server/db"
 import { type AssetToken } from "@prisma/client"
 
 class AssetTokenService {
-  async getAssetTokens(): Promise<
-    Array<Omit<AssetToken, "priceUsd"> & { priceUsd: string }>
-  > {
+  async getAssetTokens(): Promise<Array<Omit<AssetToken, "priceUsd"> & { priceUsd: string }>> {
     const data = await db.assetToken.findMany({
       where: {
         isValid: true,

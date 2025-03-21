@@ -45,8 +45,8 @@ class HolderService {
 
     return {
       list: holders,
-      total:totalItems,
-      pages:totalPages
+      total: totalItems,
+      pages: totalPages
     } as PageableData<(typeof holders)[number]>
   }
 }

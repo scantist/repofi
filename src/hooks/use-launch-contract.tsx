@@ -42,9 +42,9 @@ export function useBalance({
   address,
   enabled = true
 }: {
-  tokenId: bigint;
-  address: `0x${string}` | undefined;
-  enabled?: boolean;
+  tokenId: bigint
+  address: `0x${string}` | undefined
+  enabled?: boolean
 }) {
   const {
     data: balance,
@@ -74,39 +74,39 @@ export function useBalance({
 
 // 添加 TokenFullInfo 类型定义
 export type TokenMetadata = {
-  name: string;
-  symbol: string;
-  creator: `0x${string}`;
-  baseAsset: `0x${string}`;
-  token: `0x${string}`;
-  uniswapV3Pair: `0x${string}`;
-};
+  name: string
+  symbol: string
+  creator: `0x${string}`
+  baseAsset: `0x${string}`
+  token: `0x${string}`
+  uniswapV3Pair: `0x${string}`
+}
 
 export type CurveParameter = {
-  initialX: bigint;
-  initialY: bigint;
-  finalX: bigint;
-  finalY: bigint;
-  totalSupply: bigint;
-  salesRatio: number;
-  reservedRatio: number;
-  liquidityPoolRatio: number;
-  raisedAssetAmount: bigint;
-  totalSalesAmount: bigint;
-};
+  initialX: bigint
+  initialY: bigint
+  finalX: bigint
+  finalY: bigint
+  totalSupply: bigint
+  salesRatio: number
+  reservedRatio: number
+  liquidityPoolRatio: number
+  raisedAssetAmount: bigint
+  totalSalesAmount: bigint
+}
 
 export type TokenFullInfo = {
-  launched: boolean;
-  graduated: boolean;
-  currentX: bigint;
-  currentY: bigint;
-  prevPrice: bigint;
-  price: bigint;
-  soldTokenAmount: bigint;
-  lastUpdated: number;
-  metadata: TokenMetadata;
-  curveParameter: CurveParameter;
-};
+  launched: boolean
+  graduated: boolean
+  currentX: bigint
+  currentY: bigint
+  prevPrice: bigint
+  price: bigint
+  soldTokenAmount: bigint
+  lastUpdated: number
+  metadata: TokenMetadata
+  curveParameter: CurveParameter
+}
 
 export function useTokenFullInfo(tokenId: bigint) {
   const { data, isLoading, refetch } = useReadContract({
@@ -177,28 +177,17 @@ export function useTaxRatio() {
 }
 
 export function useTokenStats(tokenId: bigint) {
-  const { data: tokenInfo, isLoading: isTokenFullInfoLoading } =
-    useTokenFullInfo(tokenId)
+  const { data: tokenInfo, isLoading: isTokenFullInfoLoading } = useTokenFullInfo(tokenId)
   const { buyTaxRatio, isLoading: isBuyTaxRatioLoading } = useTaxRatio()
 
   // 计算最大asset买入量
-  const maxBuyAssetAmount = tokenInfo
-    ? tokenInfo.curveParameter.finalY - tokenInfo.currentY
-    : undefined
+  const maxBuyAssetAmount = tokenInfo ? tokenInfo.curveParameter.finalY - tokenInfo.currentY : undefined
   // 计算含税的最大asset买入量
-  const maxBuyAssetAmountWithTax =
-    maxBuyAssetAmount && buyTaxRatio !== undefined
-      ? (maxBuyAssetAmount * 10000n) / (10000n - buyTaxRatio)
-      : undefined
+  const maxBuyAssetAmountWithTax = maxBuyAssetAmount && buyTaxRatio !== undefined ? (maxBuyAssetAmount * 10000n) / (10000n - buyTaxRatio) : undefined
 
   // 计算当前能买到的token数量
-  const maxBuyTokenAmount = tokenInfo
-    ? tokenInfo.currentX - tokenInfo.curveParameter.finalX
-    : undefined
-  const launchMarketCap = tokenInfo
-    ? (tokenInfo.curveParameter.finalX * tokenInfo.curveParameter.initialY) /
-      tokenInfo.curveParameter.finalY
-    : undefined
+  const maxBuyTokenAmount = tokenInfo ? tokenInfo.currentX - tokenInfo.curveParameter.finalX : undefined
+  const launchMarketCap = tokenInfo ? (tokenInfo.curveParameter.finalX * tokenInfo.curveParameter.initialY) / tokenInfo.curveParameter.finalY : undefined
   return {
     maxBuyAssetAmount,
     maxBuyAssetAmountWithTax,

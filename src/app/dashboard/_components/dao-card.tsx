@@ -1,14 +1,7 @@
 "use client"
 
 import CardWrapper from "~/components/card-wrapper"
-import {
-  createColumnHelper,
-  type ExpandedState,
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  useReactTable
-} from "@tanstack/react-table"
+import { createColumnHelper, type ExpandedState, flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from "@tanstack/react-table"
 
 import React, { Fragment, useState } from "react"
 import ExpandContent from "~/app/dashboard/_components/expand-content"
@@ -16,14 +9,14 @@ import { cn } from "~/lib/utils"
 import { ChevronUp } from "lucide-react"
 
 interface Dao {
-  id: string;
-  name: string;
-  price: string;
-  coefficient: string;
-  deployed: string;
-  tokenized: string;
-  total: string;
-  community: string;
+  id: string
+  name: string
+  price: string
+  coefficient: string
+  deployed: string
+  tokenized: string
+  total: string
+  community: string
 }
 
 const DaoCard = () => {
@@ -169,10 +162,7 @@ const DaoCard = () => {
       cell: ({ row }) => (
         <ChevronUp
           onClick={row.getToggleExpandedHandler()}
-          className={cn(
-            "rotate-0 transform cursor-pointer transition-all duration-150 ease-in-out",
-            row.getIsExpanded() && "rotate-180"
-          )}
+          className={cn("rotate-0 transform cursor-pointer transition-all duration-150 ease-in-out", row.getIsExpanded() && "rotate-180")}
         />
       )
     })
@@ -204,17 +194,8 @@ const DaoCard = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <tr className={"h-16"} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"}
-                    style={{ textAlign: "left" }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                  <th key={header.id} className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"} style={{ textAlign: "left" }}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
@@ -223,21 +204,10 @@ const DaoCard = () => {
           <tbody className={""}>
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
-                <tr
-                  className={cn(
-                    "h-16 border-t-1 border-white/20",
-                    row.getIsExpanded() && "bg-[#6A21F74D]",
-                  )}
-                >
+                <tr className={cn("h-16 border-t-1 border-white/20", row.getIsExpanded() && "bg-[#6A21F74D]")}>
                   {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                    <td key={cell.id} className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
                 </tr>
@@ -255,14 +225,7 @@ const DaoCard = () => {
             {table.getFooterGroups().map((footerGroup) => (
               <tr key={footerGroup.id}>
                 {footerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext(),
-                        )}
-                  </th>
+                  <th key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}</th>
                 ))}
               </tr>
             ))}

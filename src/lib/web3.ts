@@ -10,16 +10,10 @@ export const shortenAddress = (address: string, size = 4) => {
  * @param decimalPlaces - The number of decimal places to round to (default: 2)
  * @returns The human readable amount
  */
-export function toHumanAmount(
-  value: string | bigint,
-  decimal: number,
-  decimalPlaces = 2
-) {
+export function toHumanAmount(value: string | bigint, decimal: number, decimalPlaces = 2) {
   const _value = value.toString()
   console.log("toHumanAmount", value, new Decimal(_value).div(new Decimal(10).pow(decimal)).toFixed(decimalPlaces, Decimal.ROUND_DOWN))
-  return new Decimal(_value)
-    .div(new Decimal(10).pow(decimal))
-    .toFixed(decimalPlaces, Decimal.ROUND_DOWN)
+  return new Decimal(_value).div(new Decimal(10).pow(decimal)).toFixed(decimalPlaces, Decimal.ROUND_DOWN)
 }
 
 /**

@@ -18,12 +18,12 @@ export const appRouter = createTRPCRouter({
   repo: repoRouter,
   assetToken: assetTokenRouter,
   message: messageRouter,
-  contributor:contributorRouter,
-  holder:holderRouter
+  contributor: contributorRouter,
+  holder: holderRouter
 })
 
 // export type definition of API
-export type AppRouter = typeof appRouter;
+export type AppRouter = typeof appRouter
 
 /**
  * Create a server-side caller for the tRPC API.

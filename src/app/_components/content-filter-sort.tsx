@@ -1,4 +1,4 @@
-import {cn} from "~/lib/utils"
+import { cn } from "~/lib/utils"
 
 const SortOptions = [
   {
@@ -12,13 +12,13 @@ const SortOptions = [
 ] as const
 
 const Sorter = ({
-                  sortByValue,
-                  handleOrderChange,
-                  className
-                }: {
-  sortByValue: "marketCap" | "latest";
-  handleOrderChange: (value: "marketCap" | "latest") => void;
-  className?: string;
+  sortByValue,
+  handleOrderChange,
+  className
+}: {
+  sortByValue: "marketCap" | "latest"
+  handleOrderChange: (value: "marketCap" | "latest") => void
+  className?: string
 }) => {
   return (
     <div className={cn("bg-muted flex gap-1 rounded-lg p-1", className)}>
@@ -27,9 +27,7 @@ const Sorter = ({
           key={item.value}
           className={cn(
             "h-9 basis-1/2 rounded text-sm transition-all cursor-pointer",
-            sortByValue === item.value
-              ? "bg-primary text-foreground"
-              : "text-muted-foreground bg-transparent",
+            sortByValue === item.value ? "bg-primary text-foreground" : "text-muted-foreground bg-transparent"
           )}
           onClick={() => {
             handleOrderChange(item.value)
@@ -41,6 +39,5 @@ const Sorter = ({
     </div>
   )
 }
-
 
 export default Sorter

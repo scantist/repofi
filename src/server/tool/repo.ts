@@ -10,7 +10,7 @@ class OctokitPool {
   private readonly pool: Octokit[]
 
   constructor(tokens: string[]) {
-    this.pool = tokens.map(token => new Octokit({ auth: token }))
+    this.pool = tokens.map((token) => new Octokit({ auth: token }))
   }
 
   getClient(): Octokit {
@@ -30,9 +30,7 @@ export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: 
         const response = await client.rest.repos.get({ owner, repo })
         const safeParse = repoInfoSchema.safeParse(response.data)
         if (!safeParse.success) {
-          console.error(
-            `[Tool/Github] Invalid response format from server: ${safeParse.error.toString()}`,
-          )
+          console.error(`[Tool/Github] Invalid response format from server: ${safeParse.error.toString()}`)
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github info server")
         }
         return safeParse.data
@@ -71,9 +69,7 @@ export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: 
           }
         })
         if (!safeParse.success) {
-          console.error(
-            `[Tool/GitLab] Invalid response format from server: ${safeParse.error.toString()}`,
-          )
+          console.error(`[Tool/GitLab] Invalid response format from server: ${safeParse.error.toString()}`)
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from gitlab info server")
         }
         return safeParse.data
@@ -99,7 +95,7 @@ export async function fetchRepoContributors(platform: DaoPlatform, owner: string
           repo
         })
         const safeParse = repoContributors.safeParse(
-          contributors.map(c => ({
+          contributors.map((c) => ({
             id: c.id!.toString(),
             contributions: c.contributions,
             name: c.login,
@@ -107,9 +103,7 @@ export async function fetchRepoContributors(platform: DaoPlatform, owner: string
           }))
         )
         if (!safeParse.success) {
-          console.error(
-            `[Tool/Github] Invalid response format from server: ${safeParse.error.toString()}`,
-          )
+          console.error(`[Tool/Github] Invalid response format from server: ${safeParse.error.toString()}`)
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github contributors server")
         }
         return safeParse.data
@@ -153,10 +147,7 @@ export async function fetchUserInfo(accessToken: string, platform: DaoPlatform) 
   if (platform === DaoPlatform.GITHUB) {
     const client = new Octokit({ auth: accessToken })
     if (!client) {
-      throw new CommonError(
-        ErrorCode.INTERNAL_ERROR,
-        "GitHub client not available",
-      )
+      throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitHub client not available")
     }
     try {
       const { data: user } = await client.rest.users.getAuthenticated()
@@ -167,12 +158,9 @@ export async function fetchUserInfo(accessToken: string, platform: DaoPlatform) 
       }
     } catch (error) {
       console.error("Error fetching GitHub user info:", error)
-      throw new CommonError(
-        ErrorCode.INTERNAL_ERROR,
-        "Failed to fetch GitHub user information",
-      )
+      throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to fetch GitHub user information")
     }
-  }  else {
+  } else {
     throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
   }
 }

@@ -8,8 +8,8 @@ const EditLayout = async ({
   params,
   children
 }: {
-  params: Promise<{ id: string }>;
-  children: React.ReactNode;
+  params: Promise<{ id: string }>
+  children: React.ReactNode
 }) => {
   const { id } = await params
   const daoDetail: DaoDetailResult = await api.dao.detail({ daoId: id })
@@ -19,21 +19,12 @@ const EditLayout = async ({
   return (
     <div className={"mt-20 min-h-full"}>
       <Banner id={id} daoDetail={daoDetail} />
-      <CardWrapper
-        className={"mx-4 flex max-w-7xl md:mx-auto my-10"}
-        contentClassName={"w-full space-y-6 p-10 pb-16 md:block"}
-      >
+      <CardWrapper className={"mx-4 flex max-w-7xl md:mx-auto my-10"} contentClassName={"w-full space-y-6 p-10 pb-16 md:block"}>
         <div className="space-y-0.5">
           <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-          <p className="text-muted-foreground">
-            Manage your DAO settings and config content!
-          </p>
+          <p className="text-muted-foreground">Manage your DAO settings and config content!</p>
         </div>
-        <div
-          className={
-            "flex w-full flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12"
-          }
-        >
+        <div className={"flex w-full flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-12"}>
           <aside className="lg:w-1/5">
             <nav className="flex space-x-2 lg:flex-col lg:space-y-1 lg:space-x-0">
               <a

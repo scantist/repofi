@@ -15,9 +15,9 @@ export default function WalletButton({
   children?:
     | ReactNode
     | ((props: {
-        address: string;
-        openDialog: (options?: OpenOptions) => Promise<void>;
-      }) => ReactNode);
+        address: string
+        openDialog: (options?: OpenOptions) => Promise<void>
+      }) => ReactNode)
 }) {
   return (
     <>
@@ -30,11 +30,7 @@ export default function WalletButton({
               children
             )
           ) : (
-            <Button
-              variant="outline"
-              onClick={() => openDialog({ view: "Account" })}
-              className="gap-2"
-            >
+            <Button variant="outline" onClick={() => openDialog({ view: "Account" })} className="gap-2">
               <WalletAvatar account={address} size={20} className="size-5" />
               <span>{shortenAddress(address)}</span>
             </Button>
@@ -43,11 +39,7 @@ export default function WalletButton({
       </SignedIn>
       <SignedOut>
         {({ openDialog }) => (
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => openDialog()}
-          >
+          <Button variant="outline" className="gap-2" onClick={() => openDialog()}>
             <Wallet2 className="size-5" />
             Connect
           </Button>

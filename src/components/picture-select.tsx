@@ -7,23 +7,13 @@ import { Button } from "./ui/button"
 import FileUpload from "./ui/file-upload"
 
 export type PictureSelectProps = {
-  onSelect: (url: string) => void;
-  onUpload: FileUploader;
-  uploadPath?: string;
-};
+  onSelect: (url: string) => void
+  onUpload: FileUploader
+  uploadPath?: string
+}
 
-const PictureSelect = ({
-  onSelect,
-  onUpload,
-  uploadPath
-}: PictureSelectProps) => {
-  return (
-    <UploadView
-      onSelect={onSelect}
-      uploadPath={uploadPath}
-      onUpload={onUpload}
-    />
-  )
+const PictureSelect = ({ onSelect, onUpload, uploadPath }: PictureSelectProps) => {
+  return <UploadView onSelect={onSelect} uploadPath={uploadPath} onUpload={onUpload} />
 }
 
 const UploadView = ({
@@ -31,9 +21,9 @@ const UploadView = ({
   onUpload,
   uploadPath = UPLOAD_PATH_POST
 }: {
-  onSelect: (url: string) => void;
-  onUpload: FileUploader;
-  uploadPath?: string;
+  onSelect: (url: string) => void
+  onUpload: FileUploader
+  uploadPath?: string
 }) => {
   const [file, setFile] = useState<File>()
   const [imageSrc, setImageSrc] = useState("")
@@ -46,10 +36,7 @@ const UploadView = ({
         startUpload(async () => {
           const { success, url, message } = await onUpload({
             file: fileData,
-            fileName:
-              uploadPath +
-              (uploadPath.endsWith("/") ? "" : "/") +
-              makeFileName(file)
+            fileName: uploadPath + (uploadPath.endsWith("/") ? "" : "/") + makeFileName(file)
           })
           if (success && url) {
             setFile(undefined)
@@ -73,13 +60,7 @@ const UploadView = ({
           value={file}
           className="h-52 py-12"
           fileSizeLimit={1024 * 1024 * 5}
-          fileTypes={[
-            "image/png",
-            "image/jpeg",
-            "image/jpg",
-            "image/gif",
-            "image/*"
-          ]}
+          fileTypes={["image/png", "image/jpeg", "image/jpg", "image/gif", "image/*"]}
           onChange={(file) => {
             setFile(file)
             if (file) {
@@ -96,20 +77,10 @@ const UploadView = ({
             toast.error(message)
           }}
         />
-        {imageSrc && (
-          <div
-            className="pointer-events-none absolute inset-1 bg-background bg-contain bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${imageSrc})` }}
-          ></div>
-        )}
+        {imageSrc && <div className="pointer-events-none absolute inset-1 bg-background bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${imageSrc})` }}></div>}
       </div>
       <div className="flex justify-center">
-        <Button
-          size="sm"
-          type="button"
-          disabled={!file || isUploading}
-          onClick={() => void handleUpload()}
-        >
+        <Button size="sm" type="button" disabled={!file || isUploading} onClick={() => void handleUpload()}>
           {isUploading ? "Uploading ..." : "Upload & Select"}
         </Button>
       </div>

@@ -42,19 +42,11 @@ export function formatNumberWithUnit(num: number) {
   return `${formatMoney(value, false, false)}${unit}`
 }
 
-export const formatMoney = (
-  amount: string | number,
-  grouping = true,
-  shortFormat = true,
-): string => {
+export const formatMoney = (amount: string | number, grouping = true, shortFormat = true): string => {
   const _amount = new Decimal(amount)
   const numberAmount = _amount.toNumber()
 
-  return shortFormat
-    ? formatNumberWithUnit(numberAmount)
-    : grouping
-      ? moneyFormatter.format(numberAmount)
-      : moneyFormatterWithoutGrouping.format(numberAmount)
+  return shortFormat ? formatNumberWithUnit(numberAmount) : grouping ? moneyFormatter.format(numberAmount) : moneyFormatterWithoutGrouping.format(numberAmount)
 }
 
 export async function convertToBase64(file: File) {
@@ -91,11 +83,7 @@ export function* pageGenerator(current: number, total: number) {
       yield current > 4 ? null : i
     } else if (i === total - 1) {
       yield current < total - 3 ? null : i
-    } else if (
-      Math.abs(current - i) < 2 ||
-      (current <= 4 && i <= 5) ||
-      (current >= total - 3 && i >= total - 4)
-    ) {
+    } else if (Math.abs(current - i) < 2 || (current <= 4 && i <= 5) || (current >= total - 3 && i >= total - 4)) {
       yield i
     }
   }
@@ -110,16 +98,7 @@ export function* pageGenerator(current: number, total: number) {
  */
 export const getUTCTime = (hours = 0, minutes = 0, seconds = 0) => {
   const now = new Date()
-  const utcMidnight = new Date(
-    Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(),
-      hours,
-      minutes,
-      seconds,
-    ),
-  )
+  const utcMidnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hours, minutes, seconds))
   return utcMidnight
 }
 
@@ -134,8 +113,7 @@ export function chunkArray<T>(array: T[], size = 2): T[][] {
   }, [] as T[][])
 }
 
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms))
+export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
 /**
  * Prefix the logger with a prefix
@@ -147,17 +125,10 @@ export function prefixLogger(logger: Console, prefix: string): Console {
   return new Proxy(logger, {
     get(target, prop) {
       const originalMethod = target[prop as keyof Console]
-      if (
-        typeof originalMethod === "function" &&
-        ["log", "info", "warn", "error", "debug"].includes(prop as string)
-      ) {
+      if (typeof originalMethod === "function" && ["log", "info", "warn", "error", "debug"].includes(prop as string)) {
         return function (...args: unknown[]) {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-          return (originalMethod as Function).call(
-            target,
-            prefix,
-            ...args,
-          ) as void
+          return (originalMethod as Function).call(target, prefix, ...args) as void
         }
       }
       return originalMethod

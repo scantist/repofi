@@ -9,15 +9,15 @@ import { type ReactNode } from "react"
 
 type AuthContextProps =
   | {
-      isAuthenticated: true;
-      address: string;
-      openDialog: (options?: OpenOptions) => Promise<void>;
+      isAuthenticated: true
+      address: string
+      openDialog: (options?: OpenOptions) => Promise<void>
     }
   | {
-      isAuthenticated: false;
-      address: null;
-      openDialog: (options?: OpenOptions) => Promise<void>;
-    };
+      isAuthenticated: false
+      address: null
+      openDialog: (options?: OpenOptions) => Promise<void>
+    }
 
 export const AuthContext = createContext<AuthContextProps | null>(null)
 
@@ -26,8 +26,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const { address, isConnected } = useAppKitAccount()
   const { open } = useAppKit()
 
-  const isAuthenticated =
-    sessionStatus === "authenticated" && isConnected && !!address
+  const isAuthenticated = sessionStatus === "authenticated" && isConnected && !!address
 
   // 用户行为记录 https://posthog.com/docs/libraries/js
   // if (isAuthenticated) {

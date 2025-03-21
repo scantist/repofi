@@ -9,12 +9,10 @@ export default function CopyButton({
   content,
   className
 }: {
-  content: string;
-  className?: string;
+  content: string
+  className?: string
 }) {
-  const [status, setStatus] = useState<"default" | "success" | "failed">(
-    "default",
-  )
+  const [status, setStatus] = useState<"default" | "success" | "failed">("default")
 
   return (
     <Button
@@ -43,15 +41,9 @@ export default function CopyButton({
         }
       }}
     >
-      {status === "default" && (
-        <Copy className="absolute left-1 top-1 size-4 text-muted-foreground duration-300 animate-in fade-in zoom-in-75" />
-      )}
-      {status === "success" && (
-        <Check className="absolute left-1 top-1 size-4 text-primary duration-300 animate-in fade-in zoom-in-75" />
-      )}
-      {status === "failed" && (
-        <X className="absolute left-1 top-1 size-4 text-destructive duration-300 animate-in fade-in zoom-in-75" />
-      )}
+      {status === "default" && <Copy className="absolute left-1 top-1 size-4 text-muted-foreground duration-300 animate-in fade-in zoom-in-75" />}
+      {status === "success" && <Check className="absolute left-1 top-1 size-4 text-primary duration-300 animate-in fade-in zoom-in-75" />}
+      {status === "failed" && <X className="absolute left-1 top-1 size-4 text-destructive duration-300 animate-in fade-in zoom-in-75" />}
     </Button>
   )
 }

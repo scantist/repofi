@@ -26,10 +26,7 @@ class DaoContentService {
       where: { id: daoContentId }
     })
     if (!daoContent) {
-      throw new CommonError(
-        ErrorCode.BAD_PARAMS,
-        `Can't found ${daoContentId} dao content`,
-      )
+      throw new CommonError(ErrorCode.BAD_PARAMS, `Can't found ${daoContentId} dao content`)
     }
     await db.daoContent.update({
       where: { id: daoContentId },

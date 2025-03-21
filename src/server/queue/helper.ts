@@ -1,11 +1,4 @@
-import {
-  type Job,
-  MetricsTime,
-  Queue,
-  type QueueOptions,
-  Worker,
-  type WorkerOptions
-} from "bullmq"
+import { type Job, MetricsTime, Queue, type QueueOptions, Worker, type WorkerOptions } from "bullmq"
 import { connection } from "~/server/redis"
 
 export const DEFAULT_QUEUE_CONFIG = {
@@ -23,8 +16,8 @@ export const DEFAULT_WORKER_CONFIG = {
 
 export type WorkerFunction<JobInput, JobOutput, JobName extends string> = (
   job: Job<JobInput, JobOutput, JobName>,
-  ctx: { logger: typeof console; queue: Queue<JobInput, JobOutput, JobName> },
-) => Promise<JobOutput>;
+  ctx: { logger: typeof console; queue: Queue<JobInput, JobOutput, JobName> }
+) => Promise<JobOutput>
 
 const registeredQueues = new Map<string, ReturnType<typeof defineQueue>>()
 
@@ -35,11 +28,11 @@ export const defineQueue = <JobInput, JobOutput, JobName extends string>({
   workerConfig = DEFAULT_WORKER_CONFIG,
   workerFunction
 }: {
-  queueName: string;
-  concurrency?: number;
-  queueConfig?: QueueOptions;
-  workerConfig?: WorkerOptions;
-  workerFunction: WorkerFunction<JobInput, JobOutput, JobName>;
+  queueName: string
+  concurrency?: number
+  queueConfig?: QueueOptions
+  workerConfig?: WorkerOptions
+  workerFunction: WorkerFunction<JobInput, JobOutput, JobName>
 }) => {
   const loggerPrefix = `[Queue-${queueName.toUpperCase()}]`
 
@@ -77,20 +70,15 @@ export const defineQueue = <JobInput, JobOutput, JobName extends string>({
         })
         return await workerFunction(job, { logger: proxiedConsole, queue })
       },
-      workerConfig,
+      workerConfig
     )
 
     worker.on("completed", (job) => {
-      console.log(
-        `${loggerPrefix}[${job.id}] Processing of job ${job.name} completed`,
-      )
+      console.log(`${loggerPrefix}[${job.id}] Processing of job ${job.name} completed`)
     })
 
     worker.on("failed", (job, err) => {
-      console.log(
-        `${loggerPrefix}[${job?.id}] Processing of job ${job?.name ?? "n/a"} failed`,
-        err,
-      )
+      console.log(`${loggerPrefix}[${job?.id}] Processing of job ${job?.name ?? "n/a"} failed`, err)
     })
 
     worker.on("error", (err) => {

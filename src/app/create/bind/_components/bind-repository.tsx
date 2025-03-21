@@ -25,13 +25,13 @@ import { useAtom, useStore } from "jotai"
 import { useRouter } from "next/navigation"
 
 type Props = {
-  githubToken?: string;
-};
+  githubToken?: string
+}
 
 type Condition = {
-  name: string;
-  pageable: Pageable;
-};
+  name: string
+  pageable: Pageable
+}
 
 const BindRepository: FC<Props> = ({ githubToken }) => {
   const [active, setActive] = useState<Repository | null>(null)
@@ -53,9 +53,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     }
   })
   const [searchTerm, setSearchTerm] = useState("")
-  useOutsideClick(ref as React.RefObject<HTMLDivElement>, () =>
-    setActive(null),
-  )
+  useOutsideClick(ref as React.RefObject<HTMLDivElement>, () => setActive(null))
 
   const { data: repoResponse, isPending } = api.repo.fetchPublicRepos.useQuery(
     {
@@ -64,7 +62,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       search: condition.name,
       pageable: { ...condition.pageable }
     },
-    { enabled: !!githubToken },
+    { enabled: !!githubToken }
   )
   const { data: info } = api.repo.fetchPlatformInfo.useQuery(
     { accessToken: githubToken, platform: DaoPlatform.GITHUB },
@@ -73,9 +71,9 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       refetchInterval: false,
       refetchIntervalInBackground: false,
       refetchOnMount: false
-    },
+    }
   )
-  const { data: currentDao, isLoading: isLoadingDao  } = api.dao.findByUrl.useQuery(
+  const { data: currentDao, isLoading: isLoadingDao } = api.dao.findByUrl.useQuery(
     { url: current?.url ?? "" },
     {
       enabled: !!current?.url
@@ -84,7 +82,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   // 使用useEffect监听current变化
   useEffect(() => {
     console.log("current changed", currentDao)
-    if(!current){
+    if (!current) {
       return
     }
     if (currentDao) {
@@ -112,15 +110,9 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   }
 
   return (
-    <CardWrapper className={"col-span-1 w-auto md:col-span-2 max-h-fit"} >
-      <div
-        className={
-          "flex flex-col items-center justify-center gap-4 py-8 rounded-lg"
-        }
-      >
-        <div
-          className={"flex w-full flex-row items-center justify-between px-10"}
-        >
+    <CardWrapper className={"col-span-1 w-auto md:col-span-2 max-h-fit"}>
+      <div className={"flex flex-col items-center justify-center gap-4 py-8 rounded-lg"}>
+        <div className={"flex w-full flex-row items-center justify-between px-10"}>
           <div className={"flex flex-row gap-x-3"}>
             <SiGithub />
             <div>
@@ -152,92 +144,56 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
             <Search className="mr-2 h-4 w-4" />
           </Button>
         </div>
-        <RepositoryInformation
-          id={id}
-          repo={active}
-          ref={ref}
-          onClose={() => setActive(null)}
-        />
+        <RepositoryInformation id={id} repo={active} ref={ref} onClose={() => setActive(null)} />
         {isPending ? (
-          <LoadingSpinner
-            size={64}
-            className="my-8"
-            text="Loading repository..."
-          />
+          <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
         ) : (
           <div className={"flex w-full flex-col gap-4"}>
             {repoResponse?.list.map((repo, index) => (
               <motion.div
                 layoutId={`card-${repo.name}-${id}`}
                 key={`card-${repo.name}-${id}`}
-                className={cn(
-                  "mx-10 my-2 flex flex-col gap-2 border-b border-b-neutral-400 px-4 py-2 pb-4 transition",
-                )}
+                className={cn("mx-10 my-2 flex flex-col gap-2 border-b border-b-neutral-400 px-4 py-2 pb-4 transition")}
               >
                 <div className={"flex flex-row items-center justify-between"}>
                   <div className={"flex flex-row gap-x-4"}>
-                    <motion.h3
-                      layoutId={`title-${repo.name}-${id}`}
-                      className="text-2xl font-bold"
-                    >
+                    <motion.h3 layoutId={`title-${repo.name}-${id}`} className="text-2xl font-bold">
                       {repo.name}
                     </motion.h3>
                   </div>
                   <div className={"flex flex-row items-center gap-x-4"}>
-                    <motion.h3
-                      layoutId={`title-star-${repo.name}-${id}`}
-                      className={"flex flex-row items-center gap-x-2 text-sm"}
-                    >
+                    <motion.h3 layoutId={`title-star-${repo.name}-${id}`} className={"flex flex-row items-center gap-x-2 text-sm"}>
                       <Star className={"size-4"} />
                       {repo.star}
                     </motion.h3>
-                    <motion.h3
-                      layoutId={`title-fork-${repo.name}-${id}`}
-                      className={"flex flex-row items-center gap-x-2 text-sm"}
-                    >
+                    <motion.h3 layoutId={`title-fork-${repo.name}-${id}`} className={"flex flex-row items-center gap-x-2 text-sm"}>
                       <GitFork className={"size-4"} />
                       {repo.fork}
                     </motion.h3>
-                    <motion.h3
-                      layoutId={`title-watch-${repo.name}-${id}`}
-                      className={"flex flex-row items-center gap-x-2 text-sm"}
-                    >
+                    <motion.h3 layoutId={`title-watch-${repo.name}-${id}`} className={"flex flex-row items-center gap-x-2 text-sm"}>
                       <Eye className={"size-4"} />
                       {repo.watch}
                     </motion.h3>
                   </div>
                 </div>
                 <div className="mt-2">
-                  <motion.p
-                    layoutId={`description-${repo.description}-${id}`}
-                    className="text-left text-neutral-400"
-                  >
+                  <motion.p layoutId={`description-${repo.description}-${id}`} className="text-left text-neutral-400">
                     {repo.description}
                   </motion.p>
                 </div>
                 <div className={"flex flex-row items-center justify-between"}>
-                  <motion.div
-                    className={
-                      "flex cursor-pointer flex-row items-center gap-x-2 font-thin"
-                    }
-                    onClick={() => setActive(repo)}
-                  >
+                  <motion.div className={"flex cursor-pointer flex-row items-center gap-x-2 font-thin"} onClick={() => setActive(repo)}>
                     <Users className={"size-4"} />
                     Contributors
                   </motion.div>
                   <div className={"flex flex-row gap-4"}>
                     <div
-                      className={cn(
-                        "cursor-pointer overflow-hidden font-bold whitespace-nowrap",
-                        current === repo && "text-primary",
-                      )}
+                      className={cn("cursor-pointer overflow-hidden font-bold whitespace-nowrap", current === repo && "text-primary")}
                       onClick={() => {
                         setCurrent(repo)
                       }}
                     >
-                      {isLoadingDao && current === repo ? (
-                        <LoadingSpinner size={16} className="inline mr-1" textClassName={"hidden"} />
-                      ) : "Bind"}
+                      {isLoadingDao && current === repo ? <LoadingSpinner size={16} className="inline mr-1" textClassName={"hidden"} /> : "Bind"}
                     </div>
                   </div>
                 </div>

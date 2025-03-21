@@ -1,25 +1,12 @@
-import {
-  type CreateDaoParams,
-  type DaoLinks,
-  type HomeSearchParams,
-  type Pageable
-} from "~/lib/schema"
+import { type CreateDaoParams, type DaoLinks, type HomeSearchParams, type Pageable } from "~/lib/schema"
 import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
-import {
-  fetchRepoContributors,
-  fetchRepoInfo,
-  parseRepoUrl
-} from "~/server/tool/repo"
+import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
 import { type PageableData } from "~/types/data"
 import { emitContributorInit } from "~/server/queue/contributor"
 
 class DaoService {
-  async search(
-    params: HomeSearchParams,
-    pageable: Pageable,
-    userAddress: string | undefined,
-  ) {
+  async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
     if (params.status) {
       whereOptions.status = { in: params.status }
@@ -104,10 +91,7 @@ class DaoService {
           : false
       },
       where: whereOptions,
-      orderBy:
-        params.orderBy === "latest"
-          ? { createdAt: "desc" }
-          : { marketCapUsd: "desc" }
+      orderBy: params.orderBy === "latest" ? { createdAt: "desc" } : { marketCapUsd: "desc" }
     })
     const daoList = []
     for (const dao of data) {
@@ -203,19 +187,11 @@ class DaoService {
   }
   async repoInfo(url: string) {
     const repoMeta = parseRepoUrl(url)
-    return await fetchRepoInfo(
-      repoMeta.platform,
-      repoMeta.owner,
-      repoMeta.repo,
-    )
+    return await fetchRepoInfo(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
   async repoContributors(url: string) {
     const repoMeta = parseRepoUrl(url)
-    return await fetchRepoContributors(
-      repoMeta.platform,
-      repoMeta.owner,
-      repoMeta.repo,
-    )
+    return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
   async star(daoId: string, userAddress: string) {
     const daoStar = await db.daoStar.findFirst({
@@ -244,11 +220,11 @@ class DaoService {
       return true
     }
   }
-  async findByUrl(url:string){
-    return await db.dao.findUnique({ where:{ url:url } })
+  async findByUrl(url: string) {
+    return await db.dao.findUnique({ where: { url: url } })
   }
 
-  async chart(tokenId:bigint, to:number, countBack: number, resolution:string) {
+  async chart(tokenId: bigint, to: number, countBack: number, resolution: string) {
     let kineData = []
     if (resolution === "1") {
       kineData = await db.kLine1m.findMany({
@@ -281,12 +257,12 @@ class DaoService {
     }
 
     const data: {
-      time: number;
-      open: number;
-      high: number;
-      low: number;
-      close: number;
-      volume: number;
+      time: number
+      open: number
+      high: number
+      low: number
+      close: number
+      volume: number
     }[] = []
 
     data.push(
@@ -299,24 +275,24 @@ class DaoService {
           close: Number(item.close),
           volume: Number(item.volume)
         }
-      }),
+      })
     )
 
     return { data, noData: kineData.length < countBack }
   }
 
   async contents(daoId: string) {
-    return  await db.daoContent.findMany({
+    return await db.daoContent.findMany({
       where: {
         daoId
       },
       orderBy: {
-        sort:"asc"
+        sort: "asc"
       }
     })
   }
 
-  async detail(daoId:string,userAddress?:string) {
+  async detail(daoId: string, userAddress?: string) {
     const dao = await db.dao.findUnique({
       where: {
         id: daoId
@@ -364,11 +340,11 @@ class DaoService {
         },
         contents: {
           select: {
-            id:true,
-            sort:true,
-            title:true,
-            type:true,
-            data:true
+            id: true,
+            sort: true,
+            title: true,
+            type: true,
+            data: true
           }
         },
         stars: {
@@ -378,7 +354,7 @@ class DaoService {
         }
       }
     })
-    if(!dao){
+    if (!dao) {
       throw new Error("Not found dao!")
     }
     const { platform, owner, repo } = parseRepoUrl(dao.url)
@@ -388,7 +364,7 @@ class DaoService {
       marketCapUsd: dao.marketCapUsd.toString(),
       priceUsd: dao.priceUsd.toString(),
       isStarred: dao.stars?.some((star) => star.userAddress === userAddress),
-      stars:dao.stars?.length,
+      stars: dao.stars?.length,
       repoStar: repoInfo.stargazers_count,
       repoWatch: repoInfo.watchers_count,
       repoIssues: repoInfo.open_issues_count,

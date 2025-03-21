@@ -1,11 +1,7 @@
 import NextAuth, { type DefaultSession, type User } from "next-auth"
 import { db } from "~/server/db"
 import Credentials from "next-auth/providers/credentials"
-import {
-  getAddressFromMessage,
-  getChainIdFromMessage,
-  verifySignature
-} from "@reown/appkit-siwe"
+import { getAddressFromMessage, getChainIdFromMessage, verifySignature } from "@reown/appkit-siwe"
 import { userService } from "~/server/service/user"
 
 declare module "next-auth" {
@@ -13,10 +9,10 @@ declare module "next-auth" {
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session extends DefaultSession {
-    address: string;
-    chainId: number;
-    role: "ADMIN" | "USER";
-    provider?: "GitHub" | "GitLab";
+    address: string
+    chainId: number
+    role: "ADMIN" | "USER"
+    provider?: "GitHub" | "GitLab"
   }
 }
 
@@ -95,9 +91,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
 
           if (isValid) {
-            let currentUser=await userService.getUserByAddress(address)
+            let currentUser = await userService.getUserByAddress(address)
             if (!currentUser) {
-              currentUser=await userService.createUser(address,undefined)
+              currentUser = await userService.createUser(address, undefined)
             }
 
             return {
@@ -115,9 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ]
 })
 
-export async function getApiKey(
-  apiKey: string | null,
-) {
+export async function getApiKey(apiKey: string | null) {
   if (!apiKey) {
     return null
   }
@@ -134,7 +128,6 @@ export async function getApiKey(
     if (user) {
       return { user }
     }
-
   }
 
   return null

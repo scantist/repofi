@@ -1,18 +1,7 @@
-import {
-  readContract,
-  simulateContract,
-  waitForTransactionReceipt,
-  writeContract
-} from "@wagmi/core"
+import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core"
 import { useCallback, useState } from "react"
 import { useAccount, useConfig } from "wagmi"
-import {
-  decodeEventLog,
-  erc20Abi,
-  formatUnits,
-  getAddress,
-  parseEther
-} from "viem"
+import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
@@ -20,7 +9,7 @@ import { api } from "~/trpc/react"
 import { useAtom } from "jotai/index"
 import { daoFormsAtom } from "~/store/create-dao-store"
 import { type AssetToken } from "@prisma/client"
-type AssetTokenWithStringPrice = Omit<AssetToken, "priceUsd"> & { priceUsd: string };
+type AssetTokenWithStringPrice = Omit<AssetToken, "priceUsd"> & { priceUsd: string }
 
 // 假设这是你的 useLaunchStepState 钩子的实现
 export function useLaunchStepState() {
@@ -31,14 +20,14 @@ export function useLaunchStepState() {
     error: -1,
     description: undefined as string | boolean | undefined
   })
-  const exitStep=useCallback(() => {
-    setLaunchStepState(prevState => ({
+  const exitStep = useCallback(() => {
+    setLaunchStepState((prevState) => ({
       ...prevState,
       showSteps: false
     }))
   }, [])
-  const errorStep= useCallback(() => {
-    setLaunchStepState(prevState => ({
+  const errorStep = useCallback(() => {
+    setLaunchStepState((prevState) => ({
       ...prevState,
       error: prevState.now,
       progress: -1
@@ -46,7 +35,7 @@ export function useLaunchStepState() {
   }, [])
 
   const updateDescription = useCallback((description: string | boolean) => {
-    setLaunchStepState(prevState => ({
+    setLaunchStepState((prevState) => ({
       ...prevState,
       description
     }))
@@ -63,7 +52,7 @@ export function useLaunchStepState() {
   }, [])
 
   const nextStep = useCallback(() => {
-    setLaunchStepState(prevState => ({
+    setLaunchStepState((prevState) => ({
       ...prevState,
       now: prevState.now + 1,
       progress: prevState.now + 1
@@ -71,7 +60,7 @@ export function useLaunchStepState() {
   }, [])
 
   const finallyStep = useCallback(() => {
-    setLaunchStepState(prevState => ({
+    setLaunchStepState((prevState) => ({
       ...prevState,
       progress: -1
     }))
@@ -89,22 +78,20 @@ export function useLaunchStepState() {
 }
 
 export function useApprovedTransaction({
-                                         onApproveMessage,
-                                         onApproveError,
+  onApproveMessage,
+  onApproveError,
   targetContractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 }: {
   onApproveMessage: (message: string) => void
-  onApproveError?: (error: unknown) => void,
-  targetContractAddress?: `0x${string}`;
+  onApproveError?: (error: unknown) => void
+  targetContractAddress?: `0x${string}`
 }) {
   const { address } = useAccount()
   const config = useConfig()
   const execute = useCallback(
-    async function <T>(currentAsset?:AssetTokenWithStringPrice): Promise<T | undefined> {
+    async function <T>(currentAsset?: AssetTokenWithStringPrice): Promise<T | undefined> {
       if (!address || !currentAsset) {
-        onApproveError?.(
-          new Error("Wallet not connected or asset not provided"),
-        )
+        onApproveError?.(new Error("Wallet not connected or asset not provided"))
         return
       }
       const tokenAddress = currentAsset.address as `0x${string}`
@@ -117,9 +104,7 @@ export function useApprovedTransaction({
         args: [address, targetContractAddress]
       })
 
-      console.log(
-        `token: ${targetContractAddress}, allowance: ${allowance} , required: ${amount} `,
-      )
+      console.log(`token: ${targetContractAddress}, allowance: ${allowance} , required: ${amount} `)
 
       if (allowance >= amount || amount === 0n) {
         return
@@ -133,9 +118,7 @@ export function useApprovedTransaction({
       })
 
       if (!result) {
-        onApproveError?.(
-          new Error("Fail to approve spending cap (simulation failed)"),
-        )
+        onApproveError?.(new Error("Fail to approve spending cap (simulation failed)"))
         return
       }
 
@@ -148,13 +131,11 @@ export function useApprovedTransaction({
         // If the allowance approval is successful, we call the executor recursively to ensure the allowance is indeed enough. Since user can alter the allowance to any value during the approval process.
         return execute(currentAsset)
       } catch (error) {
-        onApproveError?.(
-          new Error("Fail to approve spending cap", { cause: error }),
-        )
+        onApproveError?.(new Error("Fail to approve spending cap", { cause: error }))
         return
       }
     },
-    [address, config, targetContractAddress,onApproveMessage,onApproveError],
+    [address, config, targetContractAddress, onApproveMessage, onApproveError]
   )
   return {
     execute
@@ -162,35 +143,27 @@ export function useApprovedTransaction({
 }
 
 export function useLaunchTransaction({
-                                       onLaunchMessage,
-                                       onLaunchError,
+  onLaunchMessage,
+  onLaunchError,
   targetContractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 }: {
-  onLaunchMessage: (message: string) => void,
-  onLaunchError?: (error: unknown) => void,
-  targetContractAddress?: `0x${string}`;
+  onLaunchMessage: (message: string) => void
+  onLaunchError?: (error: unknown) => void
+  targetContractAddress?: `0x${string}`
 }) {
   const { address } = useAccount()
   const config = useConfig()
   const [daoForms] = useAtom(daoFormsAtom)
   const execute = useCallback(
-    async function (currentAsset?:AssetTokenWithStringPrice
-    ): Promise<bigint | undefined> {
+    async function (currentAsset?: AssetTokenWithStringPrice): Promise<bigint | undefined> {
       if (!address || !currentAsset) {
-        onLaunchError?.(
-          new Error("Wallet not connected or asset not provided"),
-        )
+        onLaunchError?.(new Error("Wallet not connected or asset not provided"))
         return
       }
 
       let amount = 0n
       if (currentAsset.isNative) {
-        amount = parseEther(
-          formatUnits(
-            BigInt(currentAsset.launchFee.toString()),
-            currentAsset.decimals,
-          ),
-        )
+        amount = parseEther(formatUnits(BigInt(currentAsset.launchFee.toString()), currentAsset.decimals))
       }
 
       try {
@@ -198,11 +171,7 @@ export function useLaunchTransaction({
           abi: launchPadAbi,
           address: targetContractAddress,
           functionName: "launch",
-          args: [
-            daoForms.name,
-            daoForms.ticker,
-            currentAsset.address as `0x${string}`
-          ],
+          args: [daoForms.name, daoForms.ticker, currentAsset.address as `0x${string}`],
           account: address,
           value: amount
         })
@@ -219,9 +188,7 @@ export function useLaunchTransaction({
         console.log("receipt", receipt.logs)
 
         const logs = receipt.logs
-        const item = logs.find(
-          (log) => getAddress(log.address) === targetContractAddress,
-        )
+        const item = logs.find((log) => getAddress(log.address) === targetContractAddress)
 
         if (!item) {
           onLaunchError?.(new Error("Failed to find launch event"))
@@ -232,41 +199,39 @@ export function useLaunchTransaction({
           abi: launchPadAbi
         })
         const {
-          user: userAddress,  // Changed from userAddress:userAddress to user: userAddress
+          user: userAddress, // Changed from userAddress:userAddress to user: userAddress
           asset: eventAsset,
           tokenId: tokenId,
           initialPrice: initialPrice
         } = args as unknown as {
-          user: `0x${string}`;  // Changed from userAddress to user
-          asset: `0x${string}`;
-          tokenId: bigint;
-          initialPrice: bigint;
+          user: `0x${string}` // Changed from userAddress to user
+          asset: `0x${string}`
+          tokenId: bigint
+          initialPrice: bigint
         }
         console.log("Decoded event args:", args)
-        if (!eventAsset || !tokenId || !initialPrice||!userAddress) {
+        if (!eventAsset || !tokenId || !initialPrice || !userAddress) {
           onLaunchError?.(new Error("Failed to parse launch event"))
           return
         }
         return tokenId
       } catch (error) {
-        onLaunchError?.(
-          new Error("Launch transaction failed", { cause: error }),
-        )
+        onLaunchError?.(new Error("Launch transaction failed", { cause: error }))
         return
       }
     },
-    [address, daoForms, config, targetContractAddress,onLaunchMessage,onLaunchError],
+    [address, daoForms, config, targetContractAddress, onLaunchMessage, onLaunchError]
   )
   return {
     execute
   }
 }
 export function useDataPersistence({
-                                     onPersistenceMessage,
-                                     onPersistenceError
-                                   }: {
+  onPersistenceMessage,
+  onPersistenceError
+}: {
   onPersistenceMessage: (message: string) => void
-  onPersistenceError?: (error: unknown) => void,
+  onPersistenceError?: (error: unknown) => void
 }) {
   const { mutateAsync: createMutate } = api.dao.create.useMutation()
   const [daoForms] = useAtom(daoFormsAtom)
@@ -281,12 +246,10 @@ export function useDataPersistence({
         })
         return
       } catch (error) {
-        onPersistenceError?.(
-          new Error("Failed to persist DAO data", { cause: error }),
-        )
+        onPersistenceError?.(new Error("Failed to persist DAO data", { cause: error }))
       }
     },
-    [daoForms, createMutate,onPersistenceMessage,onPersistenceError],
+    [daoForms, createMutate, onPersistenceMessage, onPersistenceError]
   )
   return {
     execute

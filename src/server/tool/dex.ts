@@ -6,13 +6,10 @@ export async function fetchUsdPrice(pairAddress: string, chain = "base") {
     controller.abort()
   }, 10000)
   try {
-    const response = await fetch(
-      `https://api.dexscreener.com/latest/dex/pairs/${chain}/${pairAddress}`,
-      {
-        signal: controller.signal,
-        next: { revalidate: 60 }
-      },
-    )
+    const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/${chain}/${pairAddress}`, {
+      signal: controller.signal,
+      next: { revalidate: 60 }
+    })
     clearTimeout(timeoutId)
     const data = dexPriceSchema.parse(await response.json())
     const price = data.pairs[0]?.priceUsd ?? 0

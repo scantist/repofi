@@ -1,19 +1,9 @@
 "use client"
-import {
-  decodeEventLog,
-  erc20Abi,
-  formatUnits,
-  getAddress,
-  parseEther
-} from "viem"
+import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
 import CardWrapper from "~/components/card-wrapper"
 import { Form } from "~/components/ui/form"
 import { useStore } from "jotai/index"
-import {
-  daoFormsAtom,
-  launchAtom,
-  stepAtom
-} from "~/store/create-dao-store"
+import { daoFormsAtom, launchAtom, stepAtom } from "~/store/create-dao-store"
 import { Controller, useForm } from "react-hook-form"
 import { type LaunchParams, launchSchema } from "~/lib/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -23,24 +13,13 @@ import { Label } from "~/components/ui/label"
 import { Input } from "~/components/ui/input"
 import { cn } from "~/lib/utils"
 import { api } from "~/trpc/react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "~/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Button } from "~/components/ui/button"
 import { Loader2, Rocket } from "lucide-react"
 import { LaunchNativeSteps, LaunchNoNativeSteps } from "~/lib/const"
 import { MultiStepLoader } from "~/components/ui/multi-step-loader"
 
-import {
-  readContract,
-  simulateContract,
-  waitForTransactionReceipt,
-  writeContract
-} from "@wagmi/core"
+import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core"
 import { useAccount, useConfig } from "wagmi"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
@@ -58,8 +37,7 @@ const Launch = () => {
     reValidateMode: "onBlur"
   })
   const router = useRouter()
-  const { data: assetTokenOptions, isPending } =
-    api.assetToken.getAssetTokens.useQuery()
+  const { data: assetTokenOptions, isPending } = api.assetToken.getAssetTokens.useQuery()
 
   const { mutateAsync: createMutate } = api.dao.create.useMutation()
 
@@ -94,8 +72,8 @@ const Launch = () => {
   const [showSteps, setShowSteps] = useState(false)
 
   const [currentStep, setCurrentStep] = useState<{
-    now: number,
-    progress: number,
+    now: number
+    progress: number
     error: number
   }>({
     now: 0,
@@ -143,29 +121,19 @@ const Launch = () => {
     }
   }
 
-  const launchDaoToken = async (data: LaunchParams):Promise<[bigint,boolean]> => {
+  const launchDaoToken = async (data: LaunchParams): Promise<[bigint, boolean]> => {
     const salesRatio = BigInt(data.salesRatio * 100)
     const reservedRatio = BigInt(data.reservedRatio * 100)
     if (address && currentAssetToken) {
       let amount = 0n
       if (currentAssetToken.isNative) {
-        amount = parseEther(
-          formatUnits(BigInt(currentAssetToken.launchFee.toString()), currentAssetToken.decimals),
-        )
+        amount = parseEther(formatUnits(BigInt(currentAssetToken.launchFee.toString()), currentAssetToken.decimals))
       }
       const { request } = await simulateContract(config, {
         abi: launchPadAbi,
         address: contractAddress,
         functionName: "launch",
-        args: [
-          daoInformation.name,
-          daoInformation.ticker,
-          data.totalSupply,
-          data.raisedAssetAmount,
-          salesRatio,
-          reservedRatio,
-          currentAssetToken.address as `0x${string}`
-        ],
+        args: [daoInformation.name, daoInformation.ticker, data.totalSupply, data.raisedAssetAmount, salesRatio, reservedRatio, currentAssetToken.address as `0x${string}`],
         account: address,
         value: amount
       })
@@ -181,9 +149,7 @@ const Launch = () => {
       console.log("receipt", receipt.logs)
 
       const logs = receipt.logs
-      const item = logs.find(
-        (log) => getAddress(log.address) === contractAddress,
-      )
+      const item = logs.find((log) => getAddress(log.address) === contractAddress)
 
       if (!item) {
         console.log("Failed to find launch event")
@@ -198,9 +164,9 @@ const Launch = () => {
         tokenId: tokenId,
         initialPrice: initialPrice
       } = args as unknown as {
-        asset: `0x${string}`;
-        tokenId: bigint;
-        initialPrice: bigint;
+        asset: `0x${string}`
+        tokenId: bigint
+        initialPrice: bigint
       }
 
       if (!asset || !tokenId || !initialPrice) {
@@ -213,7 +179,6 @@ const Launch = () => {
   }
 
   const submit = async (data: LaunchParams) => {
-
     setDescription(false)
     if (address && currentAssetToken) {
       let tempCurrentStep = 0
@@ -222,7 +187,7 @@ const Launch = () => {
       startVerify(async () => {
         try {
           if (!currentAssetToken.isNative) {
-            if (!await approveAssetToken()) {
+            if (!(await approveAssetToken())) {
               throw new Error("Approve asset token failed")
             }
           }
@@ -256,10 +221,7 @@ const Launch = () => {
     }
   }
   return (
-    <CardWrapper
-      className={"col-span-1 w-auto md:col-span-2"}
-      contentClassName={"bg-card "}
-    >
+    <CardWrapper className={"col-span-1 w-auto md:col-span-2"} contentClassName={"bg-card "}>
       <MultiStepLoader
         loadingStates={stepState}
         errorState={currentStep.error}
@@ -304,10 +266,8 @@ const Launch = () => {
                     type={"number"}
                     className={cn(
                       "h-12 bg-transparent text-lg",
-                      errors.totalSupply
-                        ? "border-destructive"
-                        : "border-input",
-                      "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
+                      errors.totalSupply ? "border-destructive" : "border-input",
+                      "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
                     disabled={isVerifying}
                     onChange={(v) => {
@@ -326,10 +286,7 @@ const Launch = () => {
                     }}
                   />
                   <p className="text-destructive mt-2 text-sm">
-                    {errors.totalSupply?.message &&
-                      (errors.totalSupply.message === "Required"
-                        ? "Total supply is required."
-                        : errors.totalSupply.message)}
+                    {errors.totalSupply?.message && (errors.totalSupply.message === "Required" ? "Total supply is required." : errors.totalSupply.message)}
                   </p>
                 </div>
               )}
@@ -349,10 +306,8 @@ const Launch = () => {
                     type={"number"}
                     className={cn(
                       "h-12 bg-transparent text-lg",
-                      errors.raisedAssetAmount
-                        ? "border-destructive"
-                        : "border-input",
-                      "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
+                      errors.raisedAssetAmount ? "border-destructive" : "border-input",
+                      "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
                     disabled={isVerifying}
                     onChange={(v) => {
@@ -371,10 +326,7 @@ const Launch = () => {
                     }}
                   />
                   <p className="text-destructive mt-2 text-sm">
-                    {errors.raisedAssetAmount?.message &&
-                      (errors.raisedAssetAmount.message === "Required"
-                        ? "Raised Asset Amount is required."
-                        : errors.raisedAssetAmount.message)}
+                    {errors.raisedAssetAmount?.message && (errors.raisedAssetAmount.message === "Required" ? "Raised Asset Amount is required." : errors.raisedAssetAmount.message)}
                   </p>
                 </div>
               )}
@@ -398,10 +350,8 @@ const Launch = () => {
                       step={0.01}
                       className={cn(
                         "h-12 bg-transparent pr-8 text-lg",
-                        errors.salesRatio
-                          ? "border-destructive"
-                          : "border-input",
-                        "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
+                        errors.salesRatio ? "border-destructive" : "border-input",
+                        "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                       )}
                       disabled={isVerifying}
                       onChange={(v) => {
@@ -410,9 +360,7 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(
-                              parseFloat(value).toFixed(2),
-                            )
+                            const numberValue = Number(parseFloat(value).toFixed(2))
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -420,15 +368,10 @@ const Launch = () => {
                         }
                       }}
                     />
-                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                      %
-                    </span>
+                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">%</span>
                   </div>
                   <p className="text-destructive mt-2 text-sm">
-                    {errors.salesRatio?.message &&
-                      (errors.salesRatio.message === "Required"
-                        ? "Sales Ratio is required."
-                        : errors.salesRatio.message)}
+                    {errors.salesRatio?.message && (errors.salesRatio.message === "Required" ? "Sales Ratio is required." : errors.salesRatio.message)}
                   </p>
                 </div>
               )}
@@ -452,10 +395,8 @@ const Launch = () => {
                       step={0.01}
                       className={cn(
                         "h-12 bg-transparent pr-8 text-lg",
-                        errors.reservedRatio
-                          ? "border-destructive"
-                          : "border-input",
-                        "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
+                        errors.reservedRatio ? "border-destructive" : "border-input",
+                        "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                       )}
                       disabled={isVerifying}
                       onChange={(v) => {
@@ -464,9 +405,7 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(
-                              parseFloat(value).toFixed(2),
-                            )
+                            const numberValue = Number(parseFloat(value).toFixed(2))
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -474,15 +413,10 @@ const Launch = () => {
                         }
                       }}
                     />
-                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                      %
-                    </span>
+                    <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">%</span>
                   </div>
                   <p className="text-destructive mt-2 text-sm">
-                    {errors.reservedRatio?.message &&
-                      (errors.reservedRatio.message === "Required"
-                        ? "Reserved Ratio is required."
-                        : errors.reservedRatio.message)}
+                    {errors.reservedRatio?.message && (errors.reservedRatio.message === "Required" ? "Reserved Ratio is required." : errors.reservedRatio.message)}
                   </p>
                 </div>
               )}
@@ -493,22 +427,13 @@ const Launch = () => {
               <Label htmlFor="liquidityPoolRatio">Liquidity Pool Ratio</Label>
               <div className="relative">
                 <Input
-                  className={cn(
-                    "border-input h-12 bg-transparent pr-8 text-lg",
-                    "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
-                  )}
-                  value={
-                    liquidityPoolRatio !== undefined
-                      ? liquidityPoolRatio.toFixed(2)
-                      : ""
-                  }
+                  className={cn("border-input h-12 bg-transparent pr-8 text-lg", "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary")}
+                  value={liquidityPoolRatio !== undefined ? liquidityPoolRatio.toFixed(2) : ""}
                   id="liquidityPoolRatio"
                   type="text"
                   disabled={true}
                 />
-                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">
-                  %
-                </span>
+                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500">%</span>
               </div>
             </div>
           </div>
@@ -520,35 +445,24 @@ const Launch = () => {
                 render={({ field }) => (
                   <div className="col-span-3 space-y-2">
                     <Label htmlFor="assetToken">Asset Token</Label>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      disabled={isPending}
-                    >
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
                       <SelectTrigger
                         className={cn(
                           "h-12 bg-transparent text-lg",
-                          errors.assetToken
-                            ? "border-destructive"
-                            : "border-input",
-                          "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary",
+                          errors.assetToken ? "border-destructive" : "border-input",
+                          "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                         )}
                       >
-                        <SelectValue placeholder="Select asset token"/>
+                        <SelectValue placeholder="Select asset token" />
                       </SelectTrigger>
                       <SelectContent>
                         {isPending ? (
                           <div className="flex items-center justify-center p-2">
                             <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
                           </div>
-                        ) : assetTokenOptions &&
-                        assetTokenOptions.length > 0 ? (
+                        ) : assetTokenOptions && assetTokenOptions.length > 0 ? (
                           assetTokenOptions.map((token) => (
-                            <SelectItem
-                              key={`at-${token.name}-${token.symbol}`}
-                              value={`${token.address}`}
-                              className="h-12 text-lg"
-                            >
+                            <SelectItem key={`at-${token.name}-${token.symbol}`} value={`${token.address}`} className="h-12 text-lg">
                               {token.symbol}
                             </SelectItem>
                           ))
@@ -565,25 +479,15 @@ const Launch = () => {
                         {/*className={"font-bold"}>{formatUnits(currentAssetToken.launchFee, currentAssetToken.decimals)} {currentAssetToken.symbol}</span>*/}
                       </p>
                     )}
-                    <p className="text-destructive mt-2 text-sm">
-                      {errors.assetToken?.message}
-                    </p>
+                    <p className="text-destructive mt-2 text-sm">{errors.assetToken?.message}</p>
                   </div>
                 )}
               />
             </div>
           </div>
           <div className="col-span-3 flex items-center justify-center">
-            <Button
-              className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
-              type="submit"
-              disabled={isVerifying}
-            >
-              {isVerifying ? (
-                <Loader2 className="animate-spin"/>
-              ) : (
-                <Rocket className=""/>
-              )}
+            <Button className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isVerifying}>
+              {isVerifying ? <Loader2 className="animate-spin" /> : <Rocket className="" />}
               Launch
             </Button>
           </div>

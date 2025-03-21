@@ -10,10 +10,7 @@ class RepoService {
     if (platform === DaoPlatform.GITHUB) {
       const client = new Octokit({ auth: accessToken })
       if (!client) {
-        throw new CommonError(
-          ErrorCode.INTERNAL_ERROR,
-          "GitHub client not available",
-        )
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitHub client not available")
       }
 
       try {
@@ -27,35 +24,21 @@ class RepoService {
         }
       } catch (error) {
         console.error("Error fetching GitHub user info:", error)
-        throw new CommonError(
-          ErrorCode.INTERNAL_ERROR,
-          "Failed to fetch GitHub user information",
-        )
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to fetch GitHub user information")
       }
     } else if (platform === DaoPlatform.GITLAB) {
       // 实现 GitLab 用户信息获取
-      throw new CommonError(
-        ErrorCode.INTERNAL_ERROR,
-        "GitLab user info fetching not implemented yet",
-      )
+      throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitLab user info fetching not implemented yet")
     } else {
       throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform")
     }
   }
 
-  async fetchPublicRepos(
-    accessToken: string,
-    platform: DaoPlatform,
-    pageable: Pageable,
-    search?: string,
-  ) {
+  async fetchPublicRepos(accessToken: string, platform: DaoPlatform, pageable: Pageable, search?: string) {
     if (platform === DaoPlatform.GITHUB) {
       const client = new Octokit({ auth: accessToken })
       if (!client) {
-        throw new CommonError(
-          ErrorCode.INTERNAL_ERROR,
-          "GitHub client not available",
-        )
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitHub client not available")
       }
       try {
         const { data } = await client.rest.search.repos({
@@ -82,7 +65,7 @@ class RepoService {
               fork: repo.forks_count,
               watch: repo.watchers_count,
               license: repo.license?.spdx_id
-            }) as Repository,
+            }) as Repository
         )
         return {
           list: repositories,
@@ -91,17 +74,11 @@ class RepoService {
         } as PageableData<(typeof repositories)[number]>
       } catch (error) {
         console.error("Error fetching GitHub repos:", error)
-        throw new CommonError(
-          ErrorCode.INTERNAL_ERROR,
-          "Failed to fetch GitHub repositories",
-        )
+        throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to fetch GitHub repositories")
       }
     } else if (platform === DaoPlatform.GITLAB) {
       // Implement GitLab repository fetching here
-      throw new CommonError(
-        ErrorCode.INTERNAL_ERROR,
-        "GitLab repository fetching not implemented yet",
-      )
+      throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitLab repository fetching not implemented yet")
     } else {
       throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform")
     }
@@ -109,11 +86,7 @@ class RepoService {
 
   async fetchRepoContributors(url: string) {
     const repoMeta = parseRepoUrl(url)
-    return await fetchRepoContributors(
-      repoMeta.platform,
-      repoMeta.owner,
-      repoMeta.repo,
-    )
+    return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
 }
 

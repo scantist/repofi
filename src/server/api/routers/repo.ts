@@ -12,25 +12,20 @@ export const repoRouter = createTRPCRouter({
         platform: DaoPlatformSchema,
         pageable: pageableSchema,
         search: z.string().optional()
-      }),
+      })
     )
     .query(({ input }) => {
       if (!input.accessToken) {
         return null
       }
-      return repoService.fetchPublicRepos(
-        input.accessToken,
-        input.platform,
-        input.pageable,
-        input.search
-      )
+      return repoService.fetchPublicRepos(input.accessToken, input.platform, input.pageable, input.search)
     }),
   fetchPlatformInfo: protectedProcedure
     .input(
       z.object({
         accessToken: z.string().optional(),
         platform: DaoPlatformSchema
-      }),
+      })
     )
     .query(({ input }) => {
       if (!input.accessToken) {
@@ -38,13 +33,11 @@ export const repoRouter = createTRPCRouter({
       }
       return repoService.fetchPlatformInfo(input.accessToken, input.platform)
     }),
-  fetchRepoContributors: protectedProcedure
-    .input(z.object({ url: z.string().optional() }))
-    .query(({ input }) => {
-      const { url } = input
-      if (url) {
-        return repoService.fetchRepoContributors(url)
-      }
-      return null
-    })
+  fetchRepoContributors: protectedProcedure.input(z.object({ url: z.string().optional() })).query(({ input }) => {
+    const { url } = input
+    if (url) {
+      return repoService.fetchRepoContributors(url)
+    }
+    return null
+  })
 })

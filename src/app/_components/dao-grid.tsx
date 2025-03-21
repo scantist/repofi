@@ -8,9 +8,9 @@ import { type DaoSearchResult } from "~/server/service/dao"
 import NoData from "~/components/no-data"
 
 type Props = {
-  initParam?: HomeSearchParams;
-  initialData?: DaoSearchResult;
-};
+  initParam?: HomeSearchParams
+  initialData?: DaoSearchResult
+}
 
 const DaoGrid: FC<Props> = ({
   initParam = {
@@ -30,7 +30,7 @@ const DaoGrid: FC<Props> = ({
       ...pageable,
       ...initParam
     },
-    { initialData: initialData },
+    { initialData: initialData }
   )
 
   if (isPending) {
@@ -38,26 +38,18 @@ const DaoGrid: FC<Props> = ({
   }
 
   return (
-    <div
-      className={
-        "grid grid-cols-1 gap-x-2 gap-y-5 sm:grid-cols-2 lg:grid-cols-3"
-      }
-    >
+    <div className={"grid grid-cols-1 gap-x-2 gap-y-5 sm:grid-cols-2 lg:grid-cols-3"}>
       {response && response?.list.length > 0 ? (
         <>
           {response?.list.map((item) => (
             <DaoCard data={item} key={`launching-dao-${item.id}`} />
           ))}
           <div className={"col-span-1 mt-6 sm:col-span-2 lg:col-span-3"}>
-            <ListPagination
-              pageable={pageable}
-              totalPages={response?.pages ?? 0}
-              setPageable={setPageable}
-            />
+            <ListPagination pageable={pageable} totalPages={response?.pages ?? 0} setPageable={setPageable} />
           </div>
         </>
       ) : (
-        <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"}/>
+        <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"} />
       )}
     </div>
   )

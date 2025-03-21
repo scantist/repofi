@@ -17,28 +17,25 @@ const BindRepositoryEmpty: FC<Props> = ({ githubToken }) => {
   const pathname = usePathname()
   let content = <></>
   if (!session) {
-    content = <div className={"align-middle text-xl font-bold text-gray-400"}>
-      Click <WalletButton /> to your Web3 Wallet !
-    </div>
+    content = (
+      <div className={"align-middle text-xl font-bold text-gray-400"}>
+        Click <WalletButton /> to your Web3 Wallet !
+      </div>
+    )
   } else if (!githubToken) {
-    content = <div className={"align-middle text-xl font-bold text-gray-400"}>
-      Connect to your{" "}
-      <Link
-        className={"cursor-pointer text-white"}
-        href={`/api/oauth/github?rollbackUrl=${pathname}`}
-      >
-        <SiGithub className={"mr-2 inline"} />
-        GitHub
-      </Link>{" "}
-      account!
-    </div>
+    content = (
+      <div className={"align-middle text-xl font-bold text-gray-400"}>
+        Connect to your{" "}
+        <Link className={"cursor-pointer text-white"} href={`/api/oauth/github?rollbackUrl=${pathname}`}>
+          <SiGithub className={"mr-2 inline"} />
+          GitHub
+        </Link>{" "}
+        account!
+      </div>
+    )
   }
   return (
-    <div
-      className={
-        "bg-card flex min-h-96 flex-col items-center justify-center gap-10 px-14 py-8 rounded-lg"
-      }
-    >
+    <div className={"bg-card flex min-h-96 flex-col items-center justify-center gap-10 px-14 py-8 rounded-lg"}>
       <Waypoints className={"size-32"} />
       {content}
     </div>

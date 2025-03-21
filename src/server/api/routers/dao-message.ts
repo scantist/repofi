@@ -10,26 +10,22 @@ export const messageRouter = createTRPCRouter({
         daoId: z.string(),
         replyLimit: z.number().optional().default(10).describe("Reply limit"),
         pageable: pageableSchema
-      }),
+      })
     )
     .query(async ({ input }) => {
       const { daoId, replyLimit, pageable } = input
       return await daoMessageService.getMessageList(daoId, pageable, replyLimit)
     }),
-  createMessage: protectedProcedure
-    .input(z.object({ daoId: z.string(), message: z.string(), replyTo: z.string().optional() }))
-    .mutation(async ({ input, ctx }) => {
-      const userAddress = ctx.session!.address
-      return await daoMessageService.createMessage({
-        ...input,
-        replyToMessageId: input.replyTo,
-        userAddress
-      })
-    }),
-  deleteMessage: protectedProcedure
-    .input(z.object({ messageId: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const userAddress = ctx.session!.address
-      return await daoMessageService.deleteMessage(input.messageId, userAddress)
+  createMessage: protectedProcedure.input(z.object({ daoId: z.string(), message: z.string(), replyTo: z.string().optional() })).mutation(async ({ input, ctx }) => {
+    const userAddress = ctx.session!.address
+    return await daoMessageService.createMessage({
+      ...input,
+      replyToMessageId: input.replyTo,
+      userAddress
     })
+  }),
+  deleteMessage: protectedProcedure.input(z.object({ messageId: z.string() })).mutation(async ({ input, ctx }) => {
+    const userAddress = ctx.session!.address
+    return await daoMessageService.deleteMessage(input.messageId, userAddress)
+  })
 })

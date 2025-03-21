@@ -12,17 +12,15 @@ type LockInfo = [
   bigint, // linearClaimedAmount
   bigint, // linearClaimableAmount
   bigint, // linearRemainingAmount
-  bigint  // linearTotalAmount
-];
+  bigint // linearTotalAmount
+]
 
 /**
  * Hook to get the linear claimable amount for a specific token and user
  * @param tokenAddress The address of the token
  * @param userAddress Optional user address (defaults to connected wallet)
  */
-export function useLinearClaimableAmount(
-  tokenAddress?: `0x${string}`,
-) {
+export function useLinearClaimableAmount(tokenAddress?: `0x${string}`) {
   const { address: userAddress } = useAccount()
   const { address: tokenLockerAddress, isLoading: isTokenLockerLoading } = useTokenLockerAddress()
 
@@ -56,14 +54,12 @@ export function useLinearClaimableAmount(
  * Hook to get the lock information for a specific token and user
  * @param tokenAddress The address of the token
  */
-export function useUserLockInfo(
-  tokenAddress?: `0x${string}`,
-) {
+export function useUserLockInfo(tokenAddress?: `0x${string}`) {
   const { address: userAddress } = useAccount()
   const { address: tokenLockerAddress, isLoading: isTokenLockerLoading } = useTokenLockerAddress()
 
   const {
-    data: lockInfo ,
+    data: lockInfo,
     isLoading,
     isError,
     error,
@@ -78,17 +74,19 @@ export function useUserLockInfo(
       enabled: !!tokenAddress && !!userAddress && !!tokenLockerAddress && !isTokenLockerLoading
     }
   })
-  const parsedLockInfo=lockInfo as LockInfo
+  const parsedLockInfo = lockInfo as LockInfo
   // Transform the raw data into a more usable structure
-  const formattedLockInfo = parsedLockInfo ? {
-    hasLockInfo: parsedLockInfo[0],
-    instantClaimed: parsedLockInfo[1],
-    instantAmount: parsedLockInfo[2],
-    linearClaimedAmount: parsedLockInfo[3],
-    linearClaimableAmount: parsedLockInfo[4],
-    linearRemainingAmount: parsedLockInfo[5],
-    linearTotalAmount: parsedLockInfo[6]
-  } : undefined
+  const formattedLockInfo = parsedLockInfo
+    ? {
+        hasLockInfo: parsedLockInfo[0],
+        instantClaimed: parsedLockInfo[1],
+        instantAmount: parsedLockInfo[2],
+        linearClaimedAmount: parsedLockInfo[3],
+        linearClaimableAmount: parsedLockInfo[4],
+        linearRemainingAmount: parsedLockInfo[5],
+        linearTotalAmount: parsedLockInfo[6]
+      }
+    : undefined
 
   return {
     lockInfo: formattedLockInfo,
@@ -101,7 +99,7 @@ export function useUserLockInfo(
 
 export function useClaim(tokenAddress: `0x${string}`) {
   const { address: userAddress } = useAccount()
-  const { address:tokenLockerAddress,isLoading:isTokenLockerLoading }=useTokenLockerAddress()
+  const { address: tokenLockerAddress, isLoading: isTokenLockerLoading } = useTokenLockerAddress()
   const {
     data: claimSimulation,
     isLoading: isClaimSimulating,
@@ -118,14 +116,7 @@ export function useClaim(tokenAddress: `0x${string}`) {
     }
   })
 
-  const {
-    data: hash,
-    writeContract,
-    isPending: isWritingContract,
-    isError: isWritingContractError,
-    error: writingContractError,
-    reset
-  } = useWriteContract()
+  const { data: hash, writeContract, isPending: isWritingContract, isError: isWritingContractError, error: writingContractError, reset } = useWriteContract()
 
   const {
     data: receipt,
@@ -163,15 +154,7 @@ export function useClaim(tokenAddress: `0x${string}`) {
       })
       reset()
     }
-  }, [
-    claimSimulation,
-    isClaimSimulateError,
-    reset,
-    tokenAddress,
-    tokenLockerAddress,
-    userAddress,
-    writeContract
-  ])
+  }, [claimSimulation, isClaimSimulateError, reset, tokenAddress, tokenLockerAddress, userAddress, writeContract])
 
   return {
     isClaimPending: isClaimSimulating || isTokenLockerLoading,

@@ -53,10 +53,7 @@ const Step = () => {
       <div className={"relative mx-6 flex flex-col gap-y-8 py-8"}>
         {stepList.map((item) => (
           <div
-            className={cn(
-              "flex flex-row items-center gap-4",
-              item.level < current && "cursor-pointer",
-            )}
+            className={cn("flex flex-row items-center gap-4", item.level < current && "cursor-pointer")}
             onClick={() => {
               if (item.level < current) {
                 setCurrentStep(item.target)
@@ -65,22 +62,10 @@ const Step = () => {
             }}
             key={`step-${item.title}-${item.level}`}
           >
-            <div
-              className={cn(
-                "h-8 w-8 rounded-full bg-gray-600 p-1 text-center font-bold text-gray-400",
-                item.level <= current && "bg-secondary text-white",
-              )}
-            >
+            <div className={cn("h-8 w-8 rounded-full bg-gray-600 p-1 text-center font-bold text-gray-400", item.level <= current && "bg-secondary text-white")}>
               {item.level + 1}
             </div>
-            <div
-              className={cn(
-                "text-gray-400",
-                item.level <= current && "text-white",
-              )}
-            >
-              {item.title}
-            </div>
+            <div className={cn("text-gray-400", item.level <= current && "text-white")}>{item.title}</div>
           </div>
         ))}
       </div>

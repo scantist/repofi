@@ -15,9 +15,7 @@ const CardWrapper: FC<Props> = ({ children, borderClassName, className, contentC
   return (
     <div className={cn("p-[1px] relative", className)}>
       <div className={cn("absolute inset-0 bg-gradient-to-b from-[#F8D3537F] to-[#6E6DF07F] rounded-lg", borderClassName)} />
-      <div className={cn("bg-card rounded-lg  relative group", contentClassName)}>
-        {children}
-      </div>
+      <div className={cn("bg-card rounded-lg  relative group", contentClassName)}>{children}</div>
     </div>
   )
 }

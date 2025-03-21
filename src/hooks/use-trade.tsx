@@ -1,20 +1,11 @@
 import { keepPreviousData } from "@tanstack/react-query"
 import { useCallback } from "react"
 import { toast } from "sonner"
-import {
-  useAccount,
-  useBalance,
-  useReadContract,
-  useSimulateContract,
-  useWaitForTransactionReceipt,
-  useWriteContract
-} from "wagmi"
+import { useAccount, useBalance, useReadContract, useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi"
 import { defaultChain } from "~/components/auth/config"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
-import {
-  useBalance as useLaunchBalance
-} from "~/hooks/use-launch-contract"
+import { useBalance as useLaunchBalance } from "~/hooks/use-launch-contract"
 import { useAllowance as useTokenAllowance } from "~/hooks/use-token"
 import type Decimal from "decimal.js"
 import { ethAddress } from "viem"
@@ -35,9 +26,9 @@ export function useAmountOut({
   tokenId,
   amountIn
 }: {
-  action: "buy" | "sell";
-  tokenId: bigint;
-  amountIn: bigint;
+  action: "buy" | "sell"
+  tokenId: bigint
+  amountIn: bigint
 }) {
   const { data, isLoading, ...rest } = useReadContract({
     abi: launchPadAbi,
@@ -64,20 +55,21 @@ export function useAmountOutMin({
   amountIn,
   slippagePercent
 }: {
-  action: "buy" | "sell";
-  tokenId: bigint;
-  amountIn: bigint;
-  slippagePercent: number;
+  action: "buy" | "sell"
+  tokenId: bigint
+  amountIn: bigint
+  slippagePercent: number
 }) {
-  const { data: amountOut, isLoading, ...rest } = useAmountOut({
+  const {
+    data: amountOut,
+    isLoading,
+    ...rest
+  } = useAmountOut({
     action,
     tokenId,
     amountIn
   })
-  const amountOutMin = amountOut
-    ? (amountOut * BigInt(Math.floor((100 - slippagePercent) * 100))) /
-      BigInt(10000)
-    : 0n
+  const amountOutMin = amountOut ? (amountOut * BigInt(Math.floor((100 - slippagePercent) * 100))) / BigInt(10000) : 0n
 
   return {
     amountOutMin,
@@ -92,13 +84,13 @@ function isOverLaunchPoint(message: string) {
 }
 
 export function useAllowance({
-          action,
-                                    amount,
-                                    assetAddress
-                                  }: {
-  action: "buy" | "sell";
-  amount: bigint;
-  assetAddress: `0x${string}` | undefined;
+  action,
+  amount,
+  assetAddress
+}: {
+  action: "buy" | "sell"
+  amount: bigint
+  assetAddress: `0x${string}` | undefined
 }) {
   // 使用 useMemo 来返回默认值，而不是条件调用 hooks
   const noneResult = {
@@ -123,7 +115,7 @@ export function useAllowance({
   })
 
   // 根据是否是原生代币返回不同的结果
-  return assetAddress==ethAddress||action=="sell" ? noneResult : nonNativeResult
+  return assetAddress == ethAddress || action == "sell" ? noneResult : nonNativeResult
 }
 
 /**
@@ -143,14 +135,14 @@ export function useTrade({
   amountIn,
   amountOutMin
 }: {
-  action: "buy" | "sell";
-  tokenId: bigint;
-  assetAddress: `0x${string}`;
-  assetLaunchFee:Decimal;
-  amountIn: bigint;
-  amountOutMin: bigint;
+  action: "buy" | "sell"
+  tokenId: bigint
+  assetAddress: `0x${string}`
+  assetLaunchFee: Decimal
+  amountIn: bigint
+  amountOutMin: bigint
 }) {
-  const isNativeAsset=assetAddress==ethAddress
+  const isNativeAsset = assetAddress == ethAddress
   const { address: userAddress } = useAccount()
   const {
     data: inBalance,
@@ -165,15 +157,17 @@ export function useTrade({
     }
   })
 
-  const { data: outBalance, isLoading: isOutBalanceLoading, refetch: refetchOutBalance } =
-    useLaunchBalance({
-      address: userAddress,
-      tokenId: tokenId,
-      enabled: !!userAddress && !!tokenId
-    })
+  const {
+    data: outBalance,
+    isLoading: isOutBalanceLoading,
+    refetch: refetchOutBalance
+  } = useLaunchBalance({
+    address: userAddress,
+    tokenId: tokenId,
+    enabled: !!userAddress && !!tokenId
+  })
 
-  const balanceOk = (!!inBalance && inBalance.value >= amountIn)||
-    (!!outBalance && outBalance.value >= amountIn)
+  const balanceOk = (!!inBalance && inBalance.value >= amountIn) || (!!outBalance && outBalance.value >= amountIn)
 
   const {
     error: approveError,
@@ -200,14 +194,9 @@ export function useTrade({
     address: launchPadAddress,
     functionName: action === "buy" ? "buy" : "sell",
     args: [tokenId, amountIn, amountOutMin],
-    value: isNativeAsset? amountIn :0n,
+    value: isNativeAsset ? amountIn : 0n,
     query: {
-      enabled:
-        isAllowanceOk &&
-        amountIn > BigInt(0) &&
-        amountOutMin >= BigInt(0) &&
-        balanceOk &&
-        !!userAddress
+      enabled: isAllowanceOk && amountIn > BigInt(0) && amountOutMin >= BigInt(0) && balanceOk && !!userAddress
     }
   })
   console.log("amountIn", amountIn)
@@ -221,15 +210,9 @@ export function useTrade({
     address: launchPadAddress,
     functionName: "buyMax",
     args: [tokenId],
-    value: isNativeAsset? BigInt(assetLaunchFee.toString()) :0n,
+    value: isNativeAsset ? BigInt(assetLaunchFee.toString()) : 0n,
     query: {
-      enabled:
-        action === "buy" &&
-        isAllowanceOk &&
-        amountIn > BigInt(0) &&
-        amountOutMin >= BigInt(0) &&
-        balanceOk &&
-        !!userAddress
+      enabled: action === "buy" && isAllowanceOk && amountIn > BigInt(0) && amountOutMin >= BigInt(0) && balanceOk && !!userAddress
     }
   })
 
@@ -241,16 +224,14 @@ export function useTrade({
     reset: resetTrading
   } = useWriteContract()
 
-  const { data: tradeReceipt, isLoading: isTradeWaitingReceipt } =
-    useWaitForTransactionReceipt({
-      hash: tradeWriteContractData,
-      query: {
-        enabled: !!tradeWriteContractData
-      }
-    })
+  const { data: tradeReceipt, isLoading: isTradeWaitingReceipt } = useWaitForTransactionReceipt({
+    hash: tradeWriteContractData,
+    query: {
+      enabled: !!tradeWriteContractData
+    }
+  })
 
-  const shouldBuyMax =
-    !!tradeSimulateError && isOverLaunchPoint(tradeSimulateError.message)
+  const shouldBuyMax = !!tradeSimulateError && isOverLaunchPoint(tradeSimulateError.message)
 
   const startTrading = useCallback(() => {
     if (!launchPadAddress) {
@@ -276,7 +257,7 @@ export function useTrade({
       if (buyMaxSimulation && !isBuyMaxSimulateError) {
         tradeWriteContract(buyMaxSimulation.request)
       } else {
-        console.log("BuyMax: Insufficient balance or insufficient allowance",buyMaxSimulateError)
+        console.log("BuyMax: Insufficient balance or insufficient allowance", buyMaxSimulateError)
         toast.error("Unable to trade", {
           description: "Simulation of contract write failed 1"
         })
@@ -325,21 +306,14 @@ export function useTrade({
     isApproveError,
     hasBeenApproved,
 
-    isTradePending:
-      isInBalanceLoading ||
-      isOutBalanceLoading ||
-      isTradeSimulating ||
-      isBuyMaxSimulating,
+    isTradePending: isInBalanceLoading || isOutBalanceLoading || isTradeSimulating || isBuyMaxSimulating,
     isTrading: isTradeWritingContract || isTradeWaitingReceipt,
-    isTradeError:
-      (shouldBuyMax ? isBuyMaxSimulateError : isTradeSimulateError) ||
-      isTradeWritingContractError,
-    error:
-      approveError ?? (shouldBuyMax ? buyMaxSimulateError : tradeSimulateError),
+    isTradeError: (shouldBuyMax ? isBuyMaxSimulateError : isTradeSimulateError) || isTradeWritingContractError,
+    error: approveError ?? (shouldBuyMax ? buyMaxSimulateError : tradeSimulateError),
 
-    balance: action=="buy" ? inBalance : outBalance,
+    balance: action == "buy" ? inBalance : outBalance,
     isBalanceOk: balanceOk,
-    isBalanceLoading: isInBalanceLoading||isOutBalanceLoading,
+    isBalanceLoading: isInBalanceLoading || isOutBalanceLoading,
     shouldBuyMax,
     tradeReceipt,
     startTrading,
