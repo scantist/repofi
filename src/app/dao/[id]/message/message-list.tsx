@@ -5,25 +5,31 @@ import { type DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
 import { CreateMessage, DeleteMessage } from "~/app/dao/[id]/message/message-action"
 import LoadingSpinner from "~/app/_components/loading-spinner"
-import React, { useMemo } from "react"
+import React, { useMemo, useState } from "react"
 import { shortenAddress } from "~/lib/web3"
 import { formatDistanceToNow } from "date-fns"
 import { Trash } from "lucide-react"
 import { useAuth } from "~/components/auth/auth-context"
+import type { Pageable } from "~/lib/schema"
+import ListPagination from "~/components/list-pagination"
 
 interface MessageListProps {
   data: DaoDetailResult;
 }
 
+interface Condition {
+  pageable: Pageable;
+}
+
 const MessageList = ({ data }: MessageListProps) => {
   const { address } = useAuth()
+  const [condition, setCondition] = useState<Condition>({
+    pageable: { page: 0, size: 10 }
+  })
   const { data: messageData, isPending } = api.message.getMessages.useQuery({
     daoId: data.id,
     replyLimit: 3,
-    pageable: {
-      page: 0,
-      size: 10
-    }
+    pageable: condition.pageable
   })
   const list = useMemo(() => {
     if (isPending) {
@@ -120,9 +126,14 @@ const MessageList = ({ data }: MessageListProps) => {
             </Button>
           </CreateMessage>
         </div>
-        <div className={"md:min-h-[600px]"}>
+        <div className={"md:min-h-[530px]"}>
           {list}
         </div>
+        <ListPagination
+          pageable={condition.pageable}
+          totalPages={messageData?.pages ?? 0}
+          setPageable={pageable => setCondition({ pageable })}
+        />
       </div>
     </>
   )
