@@ -33,7 +33,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   const isBuy = mode === "buy"
   const { address, openDialog, isAuthenticated } = useAuth()
   const { data: assetTokenInfo } = useAssetTokenInfo(
-    data.tokenInfo.assetTokenAddress,
+    data.tokenInfo.assetTokenAddress ?? "",
   )
   const repoToken = {
     ticker: data.ticker,

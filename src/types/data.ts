@@ -50,7 +50,7 @@ export interface DaoPage {
     marketCap: string;
     totalSupply: string;
     holderCount: string;
-    assetTokenAddress: string;
+    assetTokenAddress: string|null;
   };
 }
 
