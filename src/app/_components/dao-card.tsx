@@ -1,23 +1,23 @@
 "use client"
 
-import React, { type FC } from "react"
+import React, {type FC} from "react"
 import Link from "next/link"
-import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
+import {SiDiscord, SiTelegram, SiX} from "@icons-pack/react-simple-icons"
 import CardWrapper from "~/components/card-wrapper"
-import { type DaoPage } from "~/types/data"
-import { type DaoLinks } from "~/lib/schema"
-import { House } from "lucide-react"
-import { useRouter } from "next/navigation"
+import {type DaoPage} from "~/types/data"
+import {type DaoLinks} from "~/lib/schema"
+import {House} from "lucide-react"
+import {useRouter} from "next/navigation"
 
 type Props = {
   children?: React.ReactNode
   data: DaoPage
 }
 
-const DaoCard: FC<Props> = ({ data }) => {
+const DaoCard: FC<Props> = ({data}) => {
   const router = useRouter()
-  const IconComponent = ({ type, href }: { type: string; href: string }) => {
-    let Icon
+  const IconComponent = ({type, href}: { type: string; href: string }) => {
+    let Icon = null
     if (type.toLowerCase() === "website") {
       Icon = House
     } else {
@@ -32,10 +32,10 @@ const DaoCard: FC<Props> = ({ data }) => {
     if (Icon) {
       return href ? (
         <Link href={href} className={"cursor-pointer"} target={"_blank"}>
-          <Icon className="size-4" />
+          <Icon className="size-4"/>
         </Link>
       ) : (
-        <Icon className="size-4 text-foreground/30" />
+        <Icon className="size-4 text-foreground/30"/>
       )
     }
 
@@ -46,8 +46,12 @@ const DaoCard: FC<Props> = ({ data }) => {
   }
   return (
     <CardWrapper>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img className={"aspect-square h-60 w-full rounded-t-lg object-cover"} alt={data.name} src={data.avatar} onClick={toDetail} />
+      <img
+        className={"aspect-square h-60 w-full rounded-t-lg object-cover cursor-pointer"}
+        alt={data.name}
+        src={data.avatar}
+        onClick={toDetail}
+      />
       <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
         <div className={"truncate text-3xl leading-10 tracking-tighter cursor-pointer"} onClick={toDetail}>
           {data.name}
@@ -72,7 +76,8 @@ const DaoCard: FC<Props> = ({ data }) => {
         <div className={"my-4 grid grid-cols-3 justify-evenly gap-1 border-y-1 border-y-gray-400 py-3 font-light"}>
           <div className={"mr-2 border-r-1 border-r-gray-400"}>
             <div className={"text-muted-foreground text-sm"}>Market cap</div>
-            <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}</div>
+            <div
+              className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}</div>
           </div>
           <div className={"pl-3"}>
             <div className={"text-muted-foreground text-sm"}># Holders</div>
@@ -86,7 +91,8 @@ const DaoCard: FC<Props> = ({ data }) => {
         <div className={"flex flex-row items-center justify-between"}>
           <div className={"flex flex-row gap-2"}>
             {["website", "x", "discord", "telegram"].map((socialType) => (
-              <IconComponent key={socialType} type={socialType} href={(data.links as DaoLinks).find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
+              <IconComponent key={socialType} type={socialType}
+                             href={(data.links as DaoLinks).find((link) => link.type.toLowerCase() === socialType)?.value ?? ""}/>
             ))}{" "}
           </div>
           <div className={"cursor-pointer text-sm font-bold"} onClick={toDetail}>

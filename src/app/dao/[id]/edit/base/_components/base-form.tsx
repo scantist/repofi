@@ -1,12 +1,10 @@
 "use client"
 
-import type { DaoDetailResult } from "~/server/service/dao"
-
 interface BaseFormProps {
-  dao: DaoDetailResult
+  id: string
 }
 
-const BaseForm = ({ dao }: BaseFormProps) => {
+const BaseForm = ({ id }: BaseFormProps) => {
   return <div>
     test
   </div>

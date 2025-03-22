@@ -13,7 +13,7 @@ interface Condition extends HomeSearchParams {
 }
 
 interface LiveTableProps {
-  initialData: DaoSearchResult
+  initialData?: DaoSearchResult
 }
 
 const LiveTable = ({ initialData }: LiveTableProps) => {

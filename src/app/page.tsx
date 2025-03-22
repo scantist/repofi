@@ -38,20 +38,6 @@ const LaunchpadPage = async ({
     starred: params.live_starred ?? false
   }
 
-  const launchingDao: DaoSearchResult = await api.dao.search({
-    ...initLaunchingParam,
-    size: 6,
-    page: 0
-  })
-
-  console.log(initLaunchingParam, launchingDao)
-
-  const liveDao: DaoSearchResult = await api.dao.search({
-    ...initLiveParam,
-    size: 6,
-    page: 0
-  })
-  console.log("launchingDao", launchingDao.total, "liveDao", liveDao.total)
   return (
     <div className={"mt-10 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col pb-20"}>
@@ -84,8 +70,8 @@ const LaunchpadPage = async ({
           </div>
         </div>
       </BannerWrapper>
-      <LaunchingDao initialData={launchingDao} daoParam={initLaunchingParam} />
-      <LiveDao initialData={liveDao} />
+      <LaunchingDao daoParam={initLaunchingParam} />
+      <LiveDao />
     </div>
   )
 }

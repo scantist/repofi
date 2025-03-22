@@ -7,7 +7,7 @@ import DaoFilter from "~/app/_components/dao-filter"
 import { type HomeSearchParams } from "~/lib/schema"
 
 interface LaunchingDaoProps {
-  initialData: DaoSearchResult
+  initialData?: DaoSearchResult
   daoParam?: HomeSearchParams
 }
 

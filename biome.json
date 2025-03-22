@@ -24,8 +24,8 @@
       "a11y": {
         "useButtonType": "warn",
         "useAltText": "warn",
-        "useKeyWithClickEvents": "warn",
-        "useKeyWithMouseEvents": "warn"
+        "useKeyWithClickEvents": "off",
+        "useKeyWithMouseEvents": "off"
       },
       "correctness": {
         "noChildrenProp": {
@@ -50,7 +50,8 @@
     "formatter": {
       "quoteStyle": "double",
       "semicolons": "asNeeded",
-      "trailingCommas": "none"
+      "trailingCommas": "none",
+      "bracketSpacing": true
     }
   },
   "json": {
