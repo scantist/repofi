@@ -6,7 +6,7 @@ import TeamCommunity from "~/app/dao/[id]/_components/team-community"
 import DaoContent from "~/app/dao/[id]/main"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
-import type { ListRowContentParams, TeamContentParams } from "~/types/data"
+import type { ListRowContentParams, RoadmapContentParams, TeamContentParams } from "~/types/data"
 
 const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
@@ -24,7 +24,12 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
       tokenId: daoDetail.tokenId
     })
   ])
-  const sortedContents = daoDetail.contents.sort((a, b) => a.sort - b.sort)
+  const sortedContents = daoDetail.contents.sort((a, b) => {
+    if (a.sort !== b.sort) {
+      return a.sort - b.sort
+    }
+    return a.title.localeCompare(b.title)
+  })
   return (
     <div className={"mt-20 min-h-full"}>
       <Banner id={id} daoDetail={daoDetail} />
@@ -37,12 +42,11 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
             case "TEAM_COMMUNITY":
               return <TeamCommunity key={content.id} data={content as TeamContentParams} dao={daoDetail} />
             case "ROADMAP":
-              return <Roadmap key={content.id} />
+              return <Roadmap key={content.id} data={content as RoadmapContentParams} />
             default:
               return <Content key={content.id} />
           }
         })}
-        <Roadmap />
         <Content />
       </div>
     </div>

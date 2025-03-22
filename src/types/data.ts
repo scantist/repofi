@@ -90,10 +90,25 @@ export const TeamDataSchema = z.object({
 
 export const TeamContentParamsSchema = z
   .object({
-    data: z.array(ListRowDataSchema),
+    data: z.array(TeamDataSchema),
     id: z.string()
   })
   .merge(daoContentParamsSchema)
 
 export type TeamData = z.infer<typeof TeamDataSchema>
 export type TeamContentParams = z.infer<typeof TeamContentParamsSchema>
+
+export const RoadmapSchema = z.object({
+  date: z.string().date(),
+  description: z.string().optional()
+})
+
+export const RoadmapParamsSchema = z
+  .object({
+    data: z.array(RoadmapSchema),
+    id: z.string()
+  })
+  .merge(daoContentParamsSchema)
+
+export type RoadmapData = z.infer<typeof RoadmapSchema>
+export type RoadmapContentParams = z.infer<typeof RoadmapParamsSchema>
