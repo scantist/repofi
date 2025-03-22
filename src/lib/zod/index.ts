@@ -1684,21 +1684,11 @@ export const DaoContentOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoConte
   dao: z.lazy(() => DaoOrderByWithRelationInputSchema).optional()
 }).strict();
 
-export const DaoContentWhereUniqueInputSchema: z.ZodType<Prisma.DaoContentWhereUniqueInput> = z.union([
-  z.object({
-    id: z.string(),
-    daoId_sort: z.lazy(() => DaoContentDaoIdSortCompoundUniqueInputSchema)
-  }),
-  z.object({
-    id: z.string(),
-  }),
-  z.object({
-    daoId_sort: z.lazy(() => DaoContentDaoIdSortCompoundUniqueInputSchema),
-  }),
-])
+export const DaoContentWhereUniqueInputSchema: z.ZodType<Prisma.DaoContentWhereUniqueInput> = z.object({
+  id: z.string()
+})
 .and(z.object({
   id: z.string().optional(),
-  daoId_sort: z.lazy(() => DaoContentDaoIdSortCompoundUniqueInputSchema).optional(),
   AND: z.union([ z.lazy(() => DaoContentWhereInputSchema),z.lazy(() => DaoContentWhereInputSchema).array() ]).optional(),
   OR: z.lazy(() => DaoContentWhereInputSchema).array().optional(),
   NOT: z.union([ z.lazy(() => DaoContentWhereInputSchema),z.lazy(() => DaoContentWhereInputSchema).array() ]).optional(),
@@ -6040,11 +6030,6 @@ export const EnumDaoContentTypeFilterSchema: z.ZodType<Prisma.EnumDaoContentType
 export const BoolFilterSchema: z.ZodType<Prisma.BoolFilter> = z.object({
   equals: z.boolean().optional(),
   not: z.union([ z.boolean(),z.lazy(() => NestedBoolFilterSchema) ]).optional(),
-}).strict();
-
-export const DaoContentDaoIdSortCompoundUniqueInputSchema: z.ZodType<Prisma.DaoContentDaoIdSortCompoundUniqueInput> = z.object({
-  daoId: z.string(),
-  sort: z.number()
 }).strict();
 
 export const DaoContentCountOrderByAggregateInputSchema: z.ZodType<Prisma.DaoContentCountOrderByAggregateInput> = z.object({

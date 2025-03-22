@@ -74,3 +74,26 @@ export const ListRowContentParamsSchema = z
 
 export type ListRowData = z.infer<typeof ListRowDataSchema>
 export type ListRowContentParams = z.infer<typeof ListRowContentParamsSchema>
+
+export const TeamDataSchema = z.object({
+  name: z.string(),
+  avatar: z.string(),
+  x: z.string().url().optional(),
+  website: z.string().url().optional(),
+  telegram: z.string().url().optional(),
+  github: z.string().url().optional(),
+  ingress: z.string().url().optional(),
+  description: z.string().optional(),
+  title: z.string().optional(),
+  sort: z.number()
+})
+
+export const TeamContentParamsSchema = z
+  .object({
+    data: z.array(ListRowDataSchema),
+    id: z.string()
+  })
+  .merge(DaoContentParamsSchema)
+
+export type TeamData = z.infer<typeof TeamDataSchema>
+export type TeamContentParams = z.infer<typeof TeamContentParamsSchema>

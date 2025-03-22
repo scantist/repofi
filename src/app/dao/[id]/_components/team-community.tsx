@@ -1,11 +1,11 @@
 import { SiIngress, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import CardWrapper from "~/components/card-wrapper"
 
-const TeamList = () => {
+const TeamCommunity = () => {
   return (
     <div className={"flex flex-col my-10"}>
       <div className={"text-4xl font-bold tracking-tight"}>Team & Community</div>
-      <div className={"grid grid-cols-2 gap-8 mt-8"}>
+      <div className={"grid grid-cols-1 md:grid-cols-2 gap-8 mt-8"}>
         {Array.from({ length: 4 }, (_, i) => i).map((item, index) => (
           <CardWrapper key={`ccc-${item}`}>
             <div className={"flex flex-col p-6 gap-4"}>
@@ -50,4 +50,4 @@ const TeamList = () => {
   )
 }
 
-export default TeamList
+export default TeamCommunity

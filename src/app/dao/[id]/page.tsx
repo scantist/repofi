@@ -2,7 +2,7 @@ import ArticleList from "~/app/dao/[id]/_components/article-list"
 import Banner from "~/app/dao/[id]/_components/banner"
 import Content from "~/app/dao/[id]/_components/content"
 import Roadmap from "~/app/dao/[id]/_components/roadmap"
-import TeamList from "~/app/dao/[id]/_components/team-list"
+import TeamCommunity from "~/app/dao/[id]/_components/team-community"
 import DaoContent from "~/app/dao/[id]/main"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
@@ -35,14 +35,14 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
             case "LIST_ROW":
               return <ArticleList key={content.id} data={content as ListRowContentParams} />
             case "TEAM_COMMUNITY":
-              return <TeamList key={content.id} />
+              return <TeamCommunity key={content.id} />
             case "ROADMAP":
               return <Roadmap key={content.id} />
             default:
               return <Content key={content.id} />
           }
         })}
-        <TeamList />
+        <TeamCommunity />
         <Roadmap />
         <Content />
       </div>

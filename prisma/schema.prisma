@@ -131,7 +131,6 @@ model DaoContent {
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([daoId, sort])
   @@map("t_dao_content")
 }
 

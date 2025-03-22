@@ -1,6 +1,6 @@
-import { type DaoContentParams } from "~/lib/schema"
-import { db } from "~/server/db"
 import { CommonError, ErrorCode } from "~/lib/error"
+import type { DaoContentParams } from "~/lib/schema"
+import { db } from "~/server/db"
 
 class DaoContentService {
   async create(daoId: string, params: DaoContentParams) {
@@ -16,7 +16,8 @@ class DaoContentService {
         title: params.title,
         data: params.data,
         type: params.type,
-        sort: params.sort
+        sort: params.sort,
+        enable: params.enable
       }
     })
   }
