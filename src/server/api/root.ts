@@ -1,11 +1,12 @@
-import { postRouter } from "~/server/api/routers/post"
-import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc"
-import { daoRouter } from "~/server/api/routers/dao"
-import { repoRouter } from "~/server/api/routers/repo"
 import { assetTokenRouter } from "~/server/api/routers/asset-token"
-import { messageRouter } from "~/server/api/routers/dao-message"
 import { contributorRouter } from "~/server/api/routers/contributor"
+import { daoRouter } from "~/server/api/routers/dao"
+import { daoContentRouter } from "~/server/api/routers/dao-content"
+import { messageRouter } from "~/server/api/routers/dao-message"
 import { holderRouter } from "~/server/api/routers/holder"
+import { postRouter } from "~/server/api/routers/post"
+import { repoRouter } from "~/server/api/routers/repo"
+import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc"
 
 /**
  * This is the primary router for your server.
@@ -19,7 +20,8 @@ export const appRouter = createTRPCRouter({
   assetToken: assetTokenRouter,
   message: messageRouter,
   contributor: contributorRouter,
-  holder: holderRouter
+  holder: holderRouter,
+  daoContent: daoContentRouter
 })
 
 // export type definition of API

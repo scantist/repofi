@@ -1,8 +1,8 @@
 import { useState, useTransition } from "react"
 import { toast } from "sonner"
 import { UPLOAD_PATH_POST } from "~/lib/const"
-import { type FileUploader } from "~/types/data"
 import { convertToBase64, makeFileName } from "~/lib/utils"
+import type { FileUploader } from "~/types/data"
 import { Button } from "./ui/button"
 import FileUpload from "./ui/file-upload"
 
@@ -77,7 +77,7 @@ const UploadView = ({
             toast.error(message)
           }}
         />
-        {imageSrc && <div className="pointer-events-none absolute inset-1 bg-background bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${imageSrc})` }}></div>}
+        {imageSrc && <div className="pointer-events-none absolute inset-1 bg-background bg-contain bg-center bg-no-repeat" style={{ backgroundImage: `url(${imageSrc})` }} />}
       </div>
       <div className="flex justify-center">
         <Button size="sm" type="button" disabled={!file || isUploading} onClick={() => void handleUpload()}>

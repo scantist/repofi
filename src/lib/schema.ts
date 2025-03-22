@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { daoService } from "~/server/service/dao"
 import { AssetTokenSchema, DaoContentTypeSchema, DaoPlatformSchema, DaoStatusSchema, DaoTypeSchema } from "~/lib/zod"
+import { daoService } from "~/server/service/dao"
 
 export const daoLinksSchema = z.array(
   z.object({
@@ -27,7 +27,8 @@ export const DaoContentParamsSchema = z.object({
   }),
   sort: z.number().int().optional().default(0),
   type: DaoContentTypeSchema,
-  data: z.object({})
+  data: z.any(),
+  enable: z.boolean().default(true)
 })
 
 export const createDaoParamsSchema = z.object({

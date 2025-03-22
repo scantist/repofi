@@ -1,4 +1,6 @@
-import { type DaoType, type DaoPlatform, type DaoStatus, type Prisma } from "@prisma/client"
+import type { DaoPlatform, DaoStatus, DaoType, Prisma } from "@prisma/client"
+import { z } from "zod"
+import { DaoContentParamsSchema } from "~/lib/schema"
 
 export interface Repository {
   id: number
@@ -54,3 +56,21 @@ export type FileUploader = (data: {
   fileName: string
 }) => Promise<{ success: boolean; url?: string; message?: string }>
 export type CreateDaoStep = "BIND" | "INFORMATION" | "FINISH"
+
+export const ListRowDataSchema = z.object({
+  image: z.string().min(1, { message: "Image URL cannot be empty" }),
+  title: z.string().min(1, { message: "Title cannot be empty" }).max(100, { message: "Title cannot exceed 100 characters" }),
+  sort: z.number().int({ message: "Sort must be an integer" }).nonnegative({ message: "Sort must be a non-negative number" }),
+  description: z.string().max(500, { message: "Description cannot exceed 500 characters" }),
+  link: z.string().url({ message: "Please enter a valid URL" })
+})
+
+export const ListRowContentParamsSchema = z
+  .object({
+    data: z.array(ListRowDataSchema),
+    id: z.string()
+  })
+  .merge(DaoContentParamsSchema)
+
+export type ListRowData = z.infer<typeof ListRowDataSchema>
+export type ListRowContentParams = z.infer<typeof ListRowContentParamsSchema>

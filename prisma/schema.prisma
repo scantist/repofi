@@ -75,6 +75,9 @@ enum DaoPlatform {
 
 enum DaoContentType {
   LIST_ROW
+  TEAM_COMMUNITY
+  ROADMAP
+  INFORMATION
 }
 
 model DaoStar {
@@ -124,6 +127,7 @@ model DaoContent {
   type      DaoContentType @default(LIST_ROW) @map("type")
   data      Json           @db.JsonB
   dao       Dao            @relation(fields: [daoId], references: [id], onDelete: Cascade)
+  enable    Boolean        @default(true) @map("enable")
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
 
