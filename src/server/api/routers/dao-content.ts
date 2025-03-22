@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { DaoContentParamsSchema } from "~/lib/schema"
+import { daoContentParamsSchema } from "~/lib/schema"
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
 import { daoContentService } from "~/server/service/dao-content"
 
@@ -7,7 +7,7 @@ export const daoContentRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        data: DaoContentParamsSchema,
+        data: daoContentParamsSchema,
         daoId: z.string()
       })
     )
@@ -18,7 +18,7 @@ export const daoContentRouter = createTRPCRouter({
   update: protectedProcedure
     .input(
       z.object({
-        data: DaoContentParamsSchema,
+        data: daoContentParamsSchema,
         daoContentId: z.string()
       })
     )

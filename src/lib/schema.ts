@@ -21,7 +21,7 @@ export const homeSearchParamsSchema = z.object({
   owned: z.boolean().optional().default(false),
   starred: z.boolean().optional().default(false)
 })
-export const DaoContentParamsSchema = z.object({
+export const daoContentParamsSchema = z.object({
   title: z.string({ message: "Title is required." }).refine((value) => value.trim() !== "", {
     message: "Title can not be empty."
   }),
@@ -46,8 +46,20 @@ export const createDaoParamsSchema = z.object({
   description: z.string({ message: "Description is required." }).min(1, { message: "Description can not be empty." }),
   x: z.string().url().optional().or(z.literal("")),
   telegram: z.string().url().optional().or(z.literal("")),
+  discord: z.string().url().optional().or(z.literal("")),
   website: z.string().url().optional().or(z.literal("")),
   tokenId: z.bigint().min(1n, { message: "Token ID is required." })
+})
+export const updateDaoParamsSchema = z.object({
+  daoId:z.string({message:"Dao id is required."}),
+  avatar: z.string({ message: "Avatar is required." }).refine((value) => value.trim() !== "", {
+    message: "Avatar can not be empty."
+  }),
+  description: z.string({ message: "Description is required." }).min(1, { message: "Description can not be empty." }),
+  x: z.string().url().optional().or(z.literal("")),
+  telegram: z.string().url().optional().or(z.literal("")),
+  discord: z.string().url().optional().or(z.literal("")),
+  website: z.string().url().optional().or(z.literal(""))
 })
 export const launchSchema = z.object({
   totalSupply: z.bigint({ message: "Total Supply is required." }).min(1n, { message: "Total Supply is required." }),
@@ -112,7 +124,8 @@ export const dexPriceSchema = z.object({
     })
   )
 })
-export type DaoContentParams = z.infer<typeof DaoContentParamsSchema>
+export type UpdateDaoParamsSchema=z.infer<typeof updateDaoParamsSchema>
+export type DaoContentParams = z.infer<typeof daoContentParamsSchema>
 export type DexPrice = z.infer<typeof dexPriceSchema>
 export type RepoInfo = z.infer<typeof repoInfoSchema>
 export type RepoMeta = z.infer<typeof repoMetaSchema>

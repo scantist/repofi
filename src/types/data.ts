@@ -1,6 +1,6 @@
 import type { DaoPlatform, DaoStatus, DaoType, Prisma } from "@prisma/client"
 import { z } from "zod"
-import { DaoContentParamsSchema } from "~/lib/schema"
+import { daoContentParamsSchema } from "~/lib/schema"
 
 export interface Repository {
   id: number
@@ -70,7 +70,7 @@ export const ListRowContentParamsSchema = z
     data: z.array(ListRowDataSchema),
     id: z.string()
   })
-  .merge(DaoContentParamsSchema)
+  .merge(daoContentParamsSchema)
 
 export type ListRowData = z.infer<typeof ListRowDataSchema>
 export type ListRowContentParams = z.infer<typeof ListRowContentParamsSchema>
@@ -93,7 +93,7 @@ export const TeamContentParamsSchema = z
     data: z.array(ListRowDataSchema),
     id: z.string()
   })
-  .merge(DaoContentParamsSchema)
+  .merge(daoContentParamsSchema)
 
 export type TeamData = z.infer<typeof TeamDataSchema>
 export type TeamContentParams = z.infer<typeof TeamContentParamsSchema>

@@ -1,9 +1,16 @@
-import { type CreateDaoParams, type DaoLinks, type HomeSearchParams, type Pageable } from "~/lib/schema"
+import {
+  type CreateDaoParams,
+  type DaoLinks,
+  type HomeSearchParams,
+  type Pageable,
+  UpdateDaoParamsSchema
+} from "~/lib/schema"
 import { DaoStatus, type Prisma } from "@prisma/client"
 import { db } from "~/server/db"
 import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
 import { type PageableData } from "~/types/data"
 import { emitContributorInit } from "~/server/queue/contributor"
+import {z} from "zod";
 
 class DaoService {
   async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
@@ -150,6 +157,9 @@ class DaoService {
     if (params.telegram) {
       links.push({ type: "telegram", value: params.telegram })
     }
+    if (params.discord){
+      links.push({type:"discord",value: params.discord})
+    }
     if (params.website) {
       links.push({ type: "website", value: params.website })
     }
@@ -210,7 +220,7 @@ class DaoService {
         }
       })
       return false
-    } else {
+    }
       await db.daoStar.create({
         data: {
           daoId,
@@ -218,7 +228,6 @@ class DaoService {
         }
       })
       return true
-    }
   }
   async findByUrl(url: string) {
     return await db.dao.findUnique({ where: { url: url } })
@@ -377,6 +386,34 @@ class DaoService {
         holderCount: dao.tokenInfo.holderCount.toString()
       }
     }
+  }
+
+  async update(input: UpdateDaoParamsSchema, address:string) {
+    const links: DaoLinks = []
+    if (input.x) {
+      links.push({ type: "x", value: input.x })
+    }
+    if (input.telegram) {
+      links.push({ type: "telegram", value: input.telegram })
+    }
+    if (input.discord){
+      links.push({type:"discord",value: input.discord})
+    }
+    if (input.website) {
+      links.push({ type: "website", value: input.website })
+    }
+
+    return await db.dao.update({
+      where:{
+        id:input.daoId,
+        createdBy:address
+      },
+      data:{
+        avatar: input.avatar,
+        description: input.description,
+        links:links
+      }
+    })
   }
 }
 
