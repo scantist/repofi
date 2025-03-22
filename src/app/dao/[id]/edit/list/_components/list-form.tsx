@@ -54,6 +54,7 @@ const ListForm = ({ id }: BaseFormProps) => {
   })
   const listRow = useMemo(() => {
     const listRowFind = data?.contents?.find((content) => content.type === "LIST_ROW")
+    console.log("listRowFind", listRowFind, data?.contents)
     if (!listRowFind) {
       return {
         title: "",
@@ -66,6 +67,7 @@ const ListForm = ({ id }: BaseFormProps) => {
     }
     return listRowFind as unknown as ListRowContentParams
   }, [data, isNewData])
+  console.log(listRow)
   const form = useForm<ListRowContentParams>({
     resolver: zodResolver(ListRowContentParamsSchema, { async: true }),
     reValidateMode: "onBlur",
