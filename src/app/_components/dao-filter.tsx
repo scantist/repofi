@@ -125,13 +125,13 @@ const DaoFilter: FC<Props> = ({ title, prefix = "", daoParam }) => {
               <Label htmlFor={"only-owned"} className={"min-w-28"}>
                 Only Owned
               </Label>
-              <Switch id="only-owned" checked={ownedValue === true} onCheckedChange={handleOwnedChange} disabled={isPending} />
+              <Switch id="only-owned" checked={ownedValue} onCheckedChange={handleOwnedChange} disabled={isPending} />
             </div>
             <div className={"flex flex-row items-center"}>
               <Label htmlFor={"only-starred"} className={"min-w-28"}>
                 Only Starred
               </Label>
-              <Switch id="only-starred" checked={starredValue === true} onCheckedChange={handleStarredChange} disabled={isPending} />
+              <Switch id="only-starred" checked={starredValue} onCheckedChange={handleStarredChange} disabled={isPending} />
             </div>
           </PopoverContent>
         </Popover>

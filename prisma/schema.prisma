@@ -134,7 +134,7 @@ model DaoContent {
   @@map("t_dao_content")
 }
 
-model DaoTokenHolder {
+model DaoLaunchHolder {
   userAddress String  @map("user_address") @db.VarChar(255)
   tokenId     BigInt  @map("token_id") @db.BigInt
   balance     Decimal @map("balance") @db.Decimal(50, 18)
@@ -144,7 +144,20 @@ model DaoTokenHolder {
   @@id([userAddress, tokenId])
   @@index([tokenId])
   @@index([userAddress])
-  @@map("t_dao_token_holder")
+  @@map("t_dao_launch_holder")
+}
+
+model DaoGraduationHolder {
+  userAddress  String       @map("user_address") @db.VarChar(255)
+  tokenId      BigInt       @map("token_id")
+  tokenAddress String       @map("token_address") @db.VarChar(255)
+  balance      Decimal      @db.Decimal(50, 18)
+  tokenInfo    DaoTokenInfo @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([userAddress, tokenId])
+  @@index([tokenId])
+  @@index([userAddress])
+  @@map("t_dao_graduation_holder")
 }
 
 model DaoTokenInfo {
@@ -169,9 +182,10 @@ model DaoTokenInfo {
   graduatedAt       DateTime? @map("graduated_at")
   uniswapV3Pair     String?   @map("uniswap_v3_pair") @db.VarChar(255)
 
-  dao        Dao?
-  holders    DaoTokenHolder[]
-  assetToken AssetToken?      @relation(fields: [assetTokenAddress], references: [address])
+  dao               Dao?
+  launchHolders     DaoLaunchHolder[]
+  graduationHolders DaoGraduationHolder[]
+  assetToken        AssetToken?           @relation(fields: [assetTokenAddress], references: [address])
 
   @@map("t_dao_token_info")
 }
@@ -313,6 +327,7 @@ model EvtTradeLog {
   userAddress  String  @map("user_address") @db.Char(42)
   assetAddress String  @map("asset_address") @db.Char(42)
   tradeType    Int     @map("trade_type") // 0-buy;1-sell
+  tax          Decimal @default(0) @map("tax") @db.Decimal(50, 18)
   amountIn     Decimal @map("amount_in") @db.Decimal(40, 18)
   amountOut    Decimal @map("amount_out") @db.Decimal(40, 18)
   price        Decimal @db.Decimal(40, 18)
@@ -456,4 +471,36 @@ model UserClaimHistory {
 
   @@id([userAddress, tokenAddress])
   @@map("t_user_claim_history")
+}
+
+model EvtBalanceLog {
+  blockNumber  BigInt  @default(0) @map("block_number")
+  txnIndex     BigInt  @default(0) @map("txn_index")
+  logIndex     BigInt  @default(0) @map("log_index")
+  userAddress  String  @default("") @map("user_address") @db.Char(42)
+  tokenAddress String  @default("") @map("token_address") @db.Char(42)
+  blockTime    BigInt  @default(0) @map("block_time")
+  txnHash      String  @default("") @map("txn_hash") @db.Char(66)
+  deltaAmount  Decimal @default(0) @map("delta_amount") @db.Decimal(50, 18)
+  totalAmount  Decimal @default(0) @map("total_amount") @db.Decimal(50, 18)
+
+  @@id([blockNumber, txnIndex, logIndex, userAddress])
+  @@index([tokenAddress])
+  @@map("t_evt_balance_log")
+}
+
+model EvtTransferLog {
+  blockNumber  BigInt  @default(0) @map("block_number")
+  txnIndex     BigInt  @default(0) @map("txn_index")
+  logIndex     BigInt  @default(0) @map("log_index")
+  blockTime    BigInt  @default(0) @map("block_time")
+  txnHash      String  @default("") @map("txn_hash") @db.Char(66)
+  tokenAddress String  @default("") @map("token_address") @db.Char(42)
+  fromAddress  String  @default("") @map("from_address") @db.Char(42)
+  toAddress    String  @default("") @map("to_address") @db.VarChar(255)
+  amount       Decimal @default(0) @db.Decimal(50, 18)
+
+  @@id([blockNumber, txnIndex, logIndex])
+  @@index([tokenAddress])
+  @@map("t_evt_transfer_log")
 }

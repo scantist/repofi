@@ -1,4 +1,4 @@
-import { type visibleState } from "~/components/ui/multi-step-loader"
+import type { visibleState } from "~/components/ui/multi-step-loader"
 
 export const UPLOAD_PATH_POST = "launchpad/avatar/"
 

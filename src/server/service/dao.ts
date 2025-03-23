@@ -5,21 +5,21 @@ import {
   type Pageable,
   UpdateDaoParamsSchema
 } from "~/lib/schema"
-import { DaoStatus, type Prisma } from "@prisma/client"
-import { db } from "~/server/db"
-import { fetchRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
-import { type PageableData } from "~/types/data"
-import { emitContributorInit } from "~/server/queue/contributor"
+import {DaoStatus, type Prisma} from "@prisma/client"
+import {db} from "~/server/db"
+import {fetchRepoContributors, fetchRepoInfo, parseRepoUrl} from "~/server/tool/repo"
+import {type PageableData} from "~/types/data"
+import {emitContributorInit} from "~/server/queue/contributor"
 import {z} from "zod";
 
 class DaoService {
   async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
     if (params.status) {
-      whereOptions.status = { in: params.status }
+      whereOptions.status = {in: params.status}
     }
     if (params.starred && userAddress) {
-      whereOptions.stars = { some: { userAddress } }
+      whereOptions.stars = {some: {userAddress}}
     }
     if (params.search) {
       whereOptions.name = {
@@ -29,14 +29,34 @@ class DaoService {
     }
     if (params.owned && userAddress) {
       whereOptions.tokenInfo = {
-        holders: {
-          some: {
-            userAddress: {
-              contains: userAddress,
-              mode: "insensitive"
+        OR: [
+          {
+            launchHolders: {
+              some: {
+                userAddress: {
+                  equals: userAddress,
+                  mode: "insensitive"
+                },
+                balance: {
+                  gt: 0
+                }
+              }
+            }
+          },
+          {
+            graduationHolders: {
+              some: {
+                userAddress: {
+                  equals: userAddress,
+                  mode: "insensitive"
+                },
+                balance: {
+                  gt: 0
+                }
+              }
             }
           }
-        }
+        ]
       }
     }
     const total = await db.dao.count({
@@ -88,21 +108,21 @@ class DaoService {
         },
         stars: userAddress
           ? {
-              where: {
-                userAddress
-              },
-              select: {
-                userAddress: true
-              }
+            where: {
+              userAddress
+            },
+            select: {
+              userAddress: true
             }
+          }
           : false
       },
       where: whereOptions,
-      orderBy: params.orderBy === "latest" ? { createdAt: "desc" } : { marketCapUsd: "desc" }
+      orderBy: params.orderBy === "latest" ? {createdAt: "desc"} : {marketCapUsd: "desc"}
     })
     const daoList = []
     for (const dao of data) {
-      const { platform, owner, repo } = parseRepoUrl(dao.url)
+      const {platform, owner, repo} = parseRepoUrl(dao.url)
       const repoInfo = await fetchRepoInfo(platform, owner, repo)
       daoList.push({
         ...dao,
@@ -139,6 +159,7 @@ class DaoService {
       })) > 0
     )
   }
+
   async checkTickerExists(ticker: string) {
     return (
       (await db.dao.count({
@@ -152,16 +173,16 @@ class DaoService {
   async create(params: CreateDaoParams, userAddress: string) {
     const links: DaoLinks = []
     if (params.x) {
-      links.push({ type: "x", value: params.x })
+      links.push({type: "x", value: params.x})
     }
     if (params.telegram) {
-      links.push({ type: "telegram", value: params.telegram })
+      links.push({type: "telegram", value: params.telegram})
     }
-    if (params.discord){
-      links.push({type:"discord",value: params.discord})
+    if (params.discord) {
+      links.push({type: "discord", value: params.discord})
     }
     if (params.website) {
-      links.push({ type: "website", value: params.website })
+      links.push({type: "website", value: params.website})
     }
     const repoMeta = parseRepoUrl(params.url)
     const tokenInfo = await db.daoTokenInfo.upsert({
@@ -195,14 +216,17 @@ class DaoService {
     return dao
     //TODO 刷新缓存
   }
+
   async repoInfo(url: string) {
     const repoMeta = parseRepoUrl(url)
     return await fetchRepoInfo(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
+
   async repoContributors(url: string) {
     const repoMeta = parseRepoUrl(url)
     return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
+
   async star(daoId: string, userAddress: string) {
     const daoStar = await db.daoStar.findFirst({
       where: {
@@ -221,16 +245,17 @@ class DaoService {
       })
       return false
     }
-      await db.daoStar.create({
-        data: {
-          daoId,
-          userAddress
-        }
-      })
-      return true
+    await db.daoStar.create({
+      data: {
+        daoId,
+        userAddress
+      }
+    })
+    return true
   }
+
   async findByUrl(url: string) {
-    return await db.dao.findUnique({ where: { url: url } })
+    return await db.dao.findUnique({where: {url: url}})
   }
 
   async chart(tokenId: bigint, to: number, countBack: number, resolution: string) {
@@ -287,7 +312,7 @@ class DaoService {
       })
     )
 
-    return { data, noData: kineData.length < countBack }
+    return {data, noData: kineData.length < countBack}
   }
 
   async contents(daoId: string) {
@@ -366,7 +391,7 @@ class DaoService {
     if (!dao) {
       throw new Error("Not found dao!")
     }
-    const { platform, owner, repo } = parseRepoUrl(dao.url)
+    const {platform, owner, repo} = parseRepoUrl(dao.url)
     const repoInfo = await fetchRepoInfo(platform, owner, repo)
     return {
       ...dao,
@@ -388,30 +413,30 @@ class DaoService {
     }
   }
 
-  async update(input: UpdateDaoParamsSchema, address:string) {
+  async update(input: UpdateDaoParamsSchema, address: string) {
     const links: DaoLinks = []
     if (input.x) {
-      links.push({ type: "x", value: input.x })
+      links.push({type: "x", value: input.x})
     }
     if (input.telegram) {
-      links.push({ type: "telegram", value: input.telegram })
+      links.push({type: "telegram", value: input.telegram})
     }
-    if (input.discord){
-      links.push({type:"discord",value: input.discord})
+    if (input.discord) {
+      links.push({type: "discord", value: input.discord})
     }
     if (input.website) {
-      links.push({ type: "website", value: input.website })
+      links.push({type: "website", value: input.website})
     }
 
     return await db.dao.update({
-      where:{
-        id:input.daoId,
-        createdBy:address
+      where: {
+        id: input.daoId,
+        createdBy: address
       },
-      data:{
+      data: {
         avatar: input.avatar,
         description: input.description,
-        links:links
+        links: links
       }
     })
   }

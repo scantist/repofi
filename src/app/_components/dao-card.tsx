@@ -8,6 +8,7 @@ import {type DaoPage} from "~/types/data"
 import {type DaoLinks} from "~/lib/schema"
 import {House} from "lucide-react"
 import {useRouter} from "next/navigation"
+import {Label} from "@radix-ui/react-label";
 
 type Props = {
   children?: React.ReactNode
@@ -31,9 +32,9 @@ const DaoCard: FC<Props> = ({data}) => {
 
     if (Icon) {
       return href ? (
-        <Link href={href} className={"cursor-pointer"} target={"_blank"}>
+        <Label>
           <Icon className="size-4"/>
-        </Link>
+        </Label>
       ) : (
         <Icon className="size-4 text-foreground/30"/>
       )
@@ -41,66 +42,66 @@ const DaoCard: FC<Props> = ({data}) => {
 
     return null
   }
-  const toDetail = () => {
-    router.push(`/dao/${data.id}`)
-  }
   return (
-    <CardWrapper>
-      <img
-        className={"aspect-square h-60 w-full rounded-t-lg object-cover cursor-pointer"}
-        alt={data.name}
-        src={data.avatar}
-        onClick={toDetail}
-      />
-      <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
-        <div className={"truncate text-3xl leading-10 tracking-tighter cursor-pointer"} onClick={toDetail}>
-          {data.name}
+
+    <Link href={`/dao/${data.id}`}
+          className="block cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 rounded-lg">
+      <CardWrapper>
+        <img
+          className={"aspect-square h-60 w-full rounded-t-lg object-cover"}
+          alt={data.name}
+          src={data.avatar}
+        />
+        <div className={"flex flex-col gap-1 rounded-b-lg bg-black p-5"}>
+          <div className={"truncate text-3xl leading-10 tracking-tighter"}>
+            {data.name}
+          </div>
+          <div className={"truncate text-sm text-white/58"}>
+            <p>{data.url}</p>
+          </div>
+          <div className={"mt-2 flex flex-row gap-x-6 text-xs"}>
+            <div>
+              <span className={"mr-1"}>Stars:</span>
+              <span className={"text-white/80"}>{data.repoStar}</span>
+            </div>
+            <div>
+              <span className={"mr-1"}>Watch:</span>
+              <span className={"text-white/80"}>{data.repoWatch}</span>
+            </div>
+            <div>
+              <span className={"mr-1"}>Forks:</span>
+              <span className={"text-white/80"}>{data.repoForks}</span>
+            </div>
+          </div>
+          <div className={"my-4 grid grid-cols-3 justify-evenly gap-1 border-y-1 border-y-gray-400 py-3 font-light"}>
+            <div className={"mr-2 border-r-1 border-r-gray-400"}>
+              <div className={"text-muted-foreground text-sm"}>Market cap</div>
+              <div
+                className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}</div>
+            </div>
+            <div className={"pl-3"}>
+              <div className={"text-muted-foreground text-sm"}># Holders</div>
+              <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.holderCount}</div>
+            </div>
+            <div className={"border-l-1 border-l-gray-400 pl-5"}>
+              <div className={"text-muted-foreground text-sm"}>Status</div>
+              <div className={"text-primary-foreground text-md mt-2 font-bold tracking-tighter"}>{data.status}</div>
+            </div>
+          </div>
+          <div className={"flex flex-row items-center justify-between"}>
+            <div className={"flex flex-row gap-2"}>
+              {["website", "x", "discord", "telegram"].map((socialType) => (
+                <IconComponent key={socialType} type={socialType}
+                               href={(data.links as DaoLinks).find((link) => link.type.toLowerCase() === socialType)?.value ?? ""}/>
+              ))}{" "}
+            </div>
+            <div className={"cursor-pointer text-sm font-bold"}>
+              {data.ticker}
+            </div>
+          </div>
         </div>
-        <div className={"truncate text-sm text-white/58"}>
-          <Link href={data.url}>{data.url}</Link>
-        </div>
-        <div className={"mt-2 flex flex-row gap-x-6 text-xs"}>
-          <div>
-            <span className={"mr-1"}>Stars:</span>
-            <span className={"text-white/80"}>{data.repoStar}</span>
-          </div>
-          <div>
-            <span className={"mr-1"}>Watch:</span>
-            <span className={"text-white/80"}>{data.repoWatch}</span>
-          </div>
-          <div>
-            <span className={"mr-1"}>Forks:</span>
-            <span className={"text-white/80"}>{data.repoForks}</span>
-          </div>
-        </div>
-        <div className={"my-4 grid grid-cols-3 justify-evenly gap-1 border-y-1 border-y-gray-400 py-3 font-light"}>
-          <div className={"mr-2 border-r-1 border-r-gray-400"}>
-            <div className={"text-muted-foreground text-sm"}>Market cap</div>
-            <div
-              className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.marketCap.length === 0 ? "0" : data.tokenInfo.marketCap}</div>
-          </div>
-          <div className={"pl-3"}>
-            <div className={"text-muted-foreground text-sm"}># Holders</div>
-            <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.holderCount}</div>
-          </div>
-          <div className={"border-l-1 border-l-gray-400 pl-5"}>
-            <div className={"text-muted-foreground text-sm"}>Status</div>
-            <div className={"text-primary-foreground text-md mt-2 font-bold tracking-tighter"}>{data.status}</div>
-          </div>
-        </div>
-        <div className={"flex flex-row items-center justify-between"}>
-          <div className={"flex flex-row gap-2"}>
-            {["website", "x", "discord", "telegram"].map((socialType) => (
-              <IconComponent key={socialType} type={socialType}
-                             href={(data.links as DaoLinks).find((link) => link.type.toLowerCase() === socialType)?.value ?? ""}/>
-            ))}{" "}
-          </div>
-          <div className={"cursor-pointer text-sm font-bold"} onClick={toDetail}>
-            {data.ticker}
-          </div>
-        </div>
-      </div>
-    </CardWrapper>
+      </CardWrapper>
+    </Link>
   )
 }
 
