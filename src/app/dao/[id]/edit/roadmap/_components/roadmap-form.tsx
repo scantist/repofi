@@ -74,7 +74,7 @@ const RoadmapForm = ({ id, isNew, data }: BaseFormProps) => {
       })
     } else {
       updateMutate({
-        daoContentId: values.id,
+        daoContentId: daoContentId,
         data: values
       })
     }

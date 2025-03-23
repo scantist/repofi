@@ -14,7 +14,7 @@ const ProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const data = (find ?? {
     title: "",
     sort: 0,
-    type: DaoContentType.INFORMATION,
+    type: DaoContentType.ROADMAP,
     data: [],
     enable: true,
     id: ""

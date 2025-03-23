@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DaoContentType } from "@prisma/client"
-import { Plus } from "lucide-react"
-import React, { useEffect, useMemo } from "react"
+import { Loader2, Plus } from "lucide-react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import TeamItem from "~/app/dao/[id]/_components/team-item"
@@ -13,64 +13,47 @@ import { Button } from "~/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
 import { api } from "~/trpc/react"
-import { type TeamContentParams, TeamContentParamsSchema, type TeamData } from "~/types/data"
+import { type RoadmapContentParams, type TeamContentParams, TeamContentParamsSchema, type TeamData } from "~/types/data"
 
 interface BaseFormProps {
   id: string
+  isNew: boolean
+  data: TeamContentParams
 }
 
-const TeamForm = ({ id }: BaseFormProps) => {
-  const { data, isPending, refetch } = api.dao.detail.useQuery(
-    { daoId: id },
-    {
-      refetchInterval: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchIntervalInBackground: false
-    }
-  )
-  const isNewData = useMemo(() => {
-    return data?.contents?.find((content) => content.type === "TEAM_COMMUNITY") === undefined
-  }, [data])
+const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
+  const [isNewState, setIsNewState] = useState(isNew)
+  const [daoContentId, setDaoContentId] = useState(data.id)
 
   const { mutate: createMutate, isPending: isCreatePending } = api.daoContent.create.useMutation({
     onSuccess: async () => {
-      await refetch()
+      toast.success("Success create to action!")
+      setDaoContentId(data.id)
+      setIsNewState(false)
     },
     onError: (error) => {
       console.error(error)
-      toast.error(`Failed to create action! ${error.message}`)
+      toast.error(`Failed to action! ${error.message}`)
     }
   })
   const { mutate: updateMutate, isPending: isUpdatePending } = api.daoContent.update.useMutation({
     onSuccess: async () => {
-      await refetch()
+      toast.success("Success update to action!")
     },
     onError: (error) => {
       console.error(error)
-      toast.error(`Failed to update action! ${error.message}`)
+      toast.error(`Failed to action! ${error.message}`)
     }
   })
-  const teamCommunityData = useMemo(() => {
-    const listRowFind = data?.contents?.find((content) => content.type === "TEAM_COMMUNITY")
-    if (!listRowFind) {
-      return {
-        title: "Team & Community",
-        sort: 0,
-        type: DaoContentType.TEAM_COMMUNITY,
-        data: [],
-        enable: true,
-        id: ""
-      } as TeamContentParams
-    }
-    return listRowFind as unknown as TeamContentParams
-  }, [data, isNewData])
+
+  const isPending = useMemo(() => {
+    return isCreatePending || isUpdatePending
+  }, [isCreatePending, isUpdatePending])
   const form = useForm<TeamContentParams>({
     resolver: zodResolver(TeamContentParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: {
-      ...teamCommunityData
+      ...data
     }
   })
 
@@ -82,21 +65,15 @@ const TeamForm = ({ id }: BaseFormProps) => {
     setValue,
     getValues
   } = form
-  useEffect(() => {
-    if (!isPending && teamCommunityData) {
-      reset(teamCommunityData)
-    }
-  }, [teamCommunityData, isPending, reset])
-  const submit = (values: TeamContentParams) => {
-    console.log(id, values)
-    if (isNewData || values.id === "") {
+  const submit = (values: RoadmapContentParams) => {
+    if (isNewState) {
       createMutate({
         daoId: id,
         data: values
       })
     } else {
       updateMutate({
-        daoContentId: values.id,
+        daoContentId: daoContentId,
         data: values
       })
     }
@@ -187,10 +164,17 @@ const TeamForm = ({ id }: BaseFormProps) => {
           )}
         />
         <div className={"flex flex-row gap-x-6"}>
-          <Button type="submit" disabled={isPending || isCreatePending || isUpdatePending}>
-            Save Changes
+          <Button type="submit" disabled={isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
-          <Button variant={"outline"} onClick={() => reset()} disabled={isPending || isCreatePending || isUpdatePending}>
+          <Button variant={"outline"} onClick={() => reset()} disabled={isPending}>
             Reset
           </Button>
         </div>
