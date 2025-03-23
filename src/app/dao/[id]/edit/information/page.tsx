@@ -11,19 +11,17 @@ const ProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const detail: DaoDetailResult = await api.dao.detail({ daoId: id })
   const find = detail?.contents?.find((content) => content.type === "INFORMATION")
   const isNew = find === undefined
-  const data =
-    find ??
-    ({
-      title: "",
-      sort: 0,
-      type: DaoContentType.INFORMATION,
-      data: {
-        information: "",
-        image: ""
-      },
-      enable: true,
-      id: ""
-    } as InformationContentParams)
+  const data = (find ?? {
+    title: "",
+    sort: 0,
+    type: DaoContentType.INFORMATION,
+    data: {
+      information: "",
+      image: ""
+    },
+    enable: true,
+    id: ""
+  }) as InformationContentParams
   return (
     <div className={"space-y-6"}>
       <div>
