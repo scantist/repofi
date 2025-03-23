@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DaoContentType } from "@prisma/client"
-import { Plus } from "lucide-react"
-import React, { useEffect, useMemo } from "react"
+import { Loader2, Plus } from "lucide-react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import ListRow from "~/app/dao/[id]/_components/list-row"
@@ -18,60 +18,43 @@ import { type RoadmapContentParams, type RoadmapData, RoadmapParamsSchema } from
 
 interface BaseFormProps {
   id: string
+  isNew: boolean
+  data: RoadmapContentParams
 }
 
-const RoadmapForm = ({ id }: BaseFormProps) => {
-  const { data, isPending, refetch } = api.dao.detail.useQuery(
-    { daoId: id },
-    {
-      refetchInterval: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchIntervalInBackground: false
-    }
-  )
-  const isNewData = useMemo(() => {
-    return data?.contents?.find((content) => content.type === "ROADMAP") === undefined
-  }, [data])
+const RoadmapForm = ({ id, isNew, data }: BaseFormProps) => {
+  const [isNewState, setIsNewState] = useState(isNew)
+  const [daoContentId, setDaoContentId] = useState(data.id)
 
   const { mutate: createMutate, isPending: isCreatePending } = api.daoContent.create.useMutation({
     onSuccess: async () => {
-      await refetch()
+      toast.success("Success create to action!")
+      setDaoContentId(data.id)
+      setIsNewState(false)
     },
     onError: (error) => {
       console.error(error)
-      toast.error(`Failed to create action! ${error.message}`)
+      toast.error(`Failed to action! ${error.message}`)
     }
   })
   const { mutate: updateMutate, isPending: isUpdatePending } = api.daoContent.update.useMutation({
     onSuccess: async () => {
-      await refetch()
+      toast.success("Success update to action!")
     },
     onError: (error) => {
       console.error(error)
-      toast.error(`Failed to update action! ${error.message}`)
+      toast.error(`Failed to action! ${error.message}`)
     }
   })
-  const roadmap = useMemo(() => {
-    const roadmapFind = data?.contents?.find((content) => content.type === "ROADMAP")
-    if (!roadmapFind) {
-      return {
-        title: "",
-        sort: 0,
-        type: DaoContentType.ROADMAP,
-        data: [],
-        enable: true,
-        id: ""
-      } as RoadmapContentParams
-    }
-    return roadmapFind as unknown as RoadmapContentParams
-  }, [data, isNewData])
+
+  const isPending = useMemo(() => {
+    return isCreatePending || isUpdatePending
+  }, [isCreatePending, isUpdatePending])
   const form = useForm<RoadmapContentParams>({
     resolver: zodResolver(RoadmapParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: {
-      ...roadmap
+      ...data
     }
   })
 
@@ -83,13 +66,8 @@ const RoadmapForm = ({ id }: BaseFormProps) => {
     setValue,
     getValues
   } = form
-  useEffect(() => {
-    if (!isPending && roadmap) {
-      reset(roadmap)
-    }
-  }, [roadmap, isPending, reset])
   const submit = (values: RoadmapContentParams) => {
-    if (isNewData) {
+    if (isNewState) {
       createMutate({
         daoId: id,
         data: values
@@ -187,10 +165,17 @@ const RoadmapForm = ({ id }: BaseFormProps) => {
           )}
         />
         <div className={"flex flex-row gap-x-6"}>
-          <Button type="submit" disabled={isPending || isCreatePending || isUpdatePending}>
-            Save Changes
+          <Button type="submit" disabled={isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
-          <Button variant={"outline"} onClick={() => reset()} disabled={isPending || isCreatePending || isUpdatePending}>
+          <Button variant={"outline"} onClick={() => reset()} disabled={isPending}>
             Reset
           </Button>
         </div>

@@ -1,9 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DaoContentType } from "@prisma/client"
 import { Loader2, Plus } from "lucide-react"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import ListRow from "~/app/dao/[id]/_components/list-row"
