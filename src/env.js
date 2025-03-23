@@ -18,6 +18,25 @@ export const env = createEnv({
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITLAB_SECRET: z.string(),
     AUTH_GITLAB_ID: z.string(),
+    CHAIN_RPC_URL: z
+        .preprocess(
+            (val) => {
+              if (typeof val !== "string") {
+                return {};
+              }
+              // val is in the format of "<chainId>:<rpcUrl>;<chainId>:<rpcUrl>;"
+              const chainRpcMap = val.split(";").reduce((acc, curr) => {
+                const [chainId, rpcUrl] = curr.split("|");
+                if (chainId && rpcUrl) {
+                  return Object.assign(acc, { [chainId]: rpcUrl });
+                }
+                return acc;
+              }, {});
+              return chainRpcMap;
+            },
+            z.record(z.string(), z.string().url()),
+        )
+        .optional(),
     TOOL_REPO_GITHUB_ACCESS_TOKENS: z.string(),
     GOOGLE_APPLICATION_CREDENTIALS: z.string(),
     CONTRACT_POC_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid poc address"),
@@ -50,6 +69,7 @@ export const env = createEnv({
     REDIS_DB: process.env.REDIS_DB,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    CHAIN_RPC_URL: process.env.CHAIN_RPC_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
     NEXT_PUBLIC_REOWN_PROJECT_ID: process.env.NEXT_PUBLIC_REOWN_PROJECT_ID,

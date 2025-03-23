@@ -115,7 +115,7 @@ export function useAllowance({
     contractAddress: contractAddress
   })
   // 根据是否是原生代币返回不同的结果
-  return assetAddress == ethAddress ? noneResult : nonNativeResult
+  return assetAddress === ethAddress ? noneResult : nonNativeResult
 }
 
 export function useTrade({

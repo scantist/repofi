@@ -1,25 +1,164 @@
-import { dexPriceSchema } from "~/lib/schema"
-export async function fetchUsdPrice(pairAddress: string, chain = "base") {
+import {defaultChain} from "~/components/auth/config"
+import {z} from "zod"
+import Pool from "~/lib/abi/UniswapV3Pool.json";
+import {readContract} from "viem/actions";
+import {getPublicClient} from "~/lib/web3";
+import {erc20Abi} from "viem";
+
+
+const tokenPriceSchema = z.array(
+  z.object({
+    chainId: z.string(),
+    priceNative: z.string().transform(Number),
+    priceUsd: z.string().transform(Number),
+    priceChange: z.object({
+      h1: z.number().optional(),
+      h6: z.number().optional(),
+      h24: z.number().optional()
+    }),
+    marketCap: z.number()
+  }))
+
+const pairPriceSchema = z.object({
+  pairs: z.array(
+    z.object({
+      chainId: z.string(),
+      priceNative: z.string().transform(Number),
+      priceUsd: z.string().transform(Number),
+      priceChange: z.object({
+        h1: z.number().optional(),
+        h6: z.number().optional(),
+        h24: z.number().optional()
+      }),
+      marketCap: z.number()
+    }),
+  )
+})
+
+export async function fetchTokenSpotPrice(
+  pairAddress: `0x${string}`,
+  tokenAddress: `0x${string}`
+) {
+  const publicClient = getPublicClient();
+
+  try {
+    // 获取池子当前状态
+    const slot0Data = await readContract(publicClient, {
+      abi: Pool,
+      address: pairAddress,
+      functionName: "slot0"
+    }) as [bigint, number, number, number, number, number, boolean];
+
+    // 获取 token0 和 token1
+    const token0 = await readContract(publicClient, {
+      abi: Pool,
+      address: pairAddress,
+      functionName: "token0"
+    }) as `0x${string}`;
+
+    const token1 = await readContract(publicClient, {
+      abi: Pool,
+      address: pairAddress,
+      functionName: "token1"
+    }) as `0x${string}`;
+
+    // 获取 token0 和 token1 的小数位数
+    const getDecimals = async (address: `0x${string}`) => {
+      return await readContract(publicClient, {
+        abi: erc20Abi,
+        address,
+        functionName: "decimals"
+      }) as number;
+    };
+
+    const token0Decimals = await getDecimals(token0);
+    const token1Decimals = await getDecimals(token1);
+
+    const [sqrtPriceX96] = slot0Data;
+
+    if (sqrtPriceX96 === 0n) {
+      return null
+    }
+
+    // 计算原始价格 = (sqrtPriceX96 / 2^96)^2
+    const Q96 = 2n ** 96n;
+    const sqrtPrice = (sqrtPriceX96 * 10n ** 18n) / Q96;
+    let rawPrice = (sqrtPrice * sqrtPrice) / 10n ** 18n;
+
+    // 调整精度 (考虑代币小数位数差异)
+    const decimalAdjustment = 10n ** BigInt(token1Decimals - token0Decimals);
+    rawPrice = rawPrice * decimalAdjustment;
+
+    // 确保我们返回的是指定 tokenAddress 的价格
+    const isTokenAddressToken0 = tokenAddress.toLowerCase() === token0.toLowerCase();
+    if (!isTokenAddressToken0) {
+      // 如果指定的 token 是 token1，我们需要取倒数
+      rawPrice = (10n ** 36n) / rawPrice;
+    }
+
+    return {
+      rawPrice,
+      token0,
+      token1,
+      token0Decimals,
+      token1Decimals
+    };
+  } catch (error) {
+    console.error("Error calculating price:", error);
+    return null;
+  }
+}
+
+export async function fetchTokenPriceUsd(tokenAddress: string, chain = defaultChain.name.toLowerCase()) {
   const controller = new AbortController()
   const timeoutId = setTimeout(() => {
-    console.log(`[Tool|Dex|Price] Timeout fetching price for ${pairAddress}`)
+    console.log(`[Tool|Dex|Token|Price] Timeout fetching price for ${tokenAddress}`)
+    controller.abort()
+  }, 10000)
+  try {
+    const response = await fetch(
+      `https://api.dexscreener.com/tokens/v1/${chain}/${tokenAddress}`,
+      {
+        signal: controller.signal,
+        next: {revalidate: 60}
+      },
+    )
+    clearTimeout(timeoutId)
+    const data = tokenPriceSchema.parse(await response.json())
+    const price = data[0]?.priceUsd ?? 0
+    if (!price) {
+      console.warn(`[Tool|Dex|Price] Invalid price found for ${tokenAddress}`)
+    }
+    return price
+  } catch (e) {
+    clearTimeout(timeoutId)
+    console.error(`[Tool|Dex|Price] Error fetching price for ${tokenAddress}`, e)
+    return 0
+  }
+}
+
+
+export async function fetchPairPriceUsd(pairAddress: string, chain = defaultChain.name.toLowerCase()) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => {
+    console.log(`[Tool|Dex|Pair|Price] Timeout fetching price for ${pairAddress}`)
     controller.abort()
   }, 10000)
   try {
     const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/${chain}/${pairAddress}`, {
       signal: controller.signal,
-      next: { revalidate: 60 }
+      next: {revalidate: 60}
     })
     clearTimeout(timeoutId)
-    const data = dexPriceSchema.parse(await response.json())
+    const data = pairPriceSchema.parse(await response.json())
     const price = data.pairs[0]?.priceUsd ?? 0
     if (!price) {
-      console.warn(`[Tool|Dex|Price] Invalid price found for ${pairAddress}`)
+      console.warn(`[Tool|Dex|Pair|Price] Invalid price found for ${pairAddress}`)
     }
     return price
   } catch (e) {
     clearTimeout(timeoutId)
-    console.error(`[Tool|Dex|Price] Error fetching price for ${pairAddress}`, e)
+    console.error(`[Tool|Dex|Pair|Price] Error fetching price for ${pairAddress}`, e)
     return 0
   }
 }

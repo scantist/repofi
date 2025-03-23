@@ -1,8 +1,8 @@
-import NextAuth, { type DefaultSession, type User } from "next-auth"
-import { db } from "~/server/db"
+import NextAuth, {type DefaultSession} from "next-auth"
+import {db} from "~/server/db"
 import Credentials from "next-auth/providers/credentials"
-import { getAddressFromMessage, getChainIdFromMessage, verifySignature } from "@reown/appkit-siwe"
-import { userService } from "~/server/service/user"
+import {getAddressFromMessage, getChainIdFromMessage, verifySignature} from "@reown/appkit-siwe"
+import {userService} from "~/server/service/user"
 
 declare module "next-auth" {
   /**
@@ -29,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const [, chainId, address] = token.sub.split(":")
       if (chainId && address) {
         session.address = address.toLowerCase()
-        session.chainId = parseInt(chainId, 10)
+        session.chainId = Number.parseInt(chainId, 10)
       }
 
       if (token.role) {

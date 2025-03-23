@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import {clsx, type ClassValue} from "clsx"
+import {twMerge} from "tailwind-merge"
 import Decimal from "decimal.js"
 
 export function cn(...inputs: ClassValue[]) {
@@ -27,18 +27,19 @@ const moneyFormatterWithoutGrouping = new Intl.NumberFormat("en-US", {
 export function getNumberWithUnit(num: number) {
   const absNum = Math.abs(num)
   if (absNum >= 1e9) {
-    return { value: num / 1e9, unit: "B" } // Billion
-  } else if (absNum >= 1e6) {
-    return { value: num / 1e6, unit: "M" } // Million
-  } else if (absNum >= 1e3) {
-    return { value: num / 1e3, unit: "K" } // Thousand
-  } else {
-    return { value: num, unit: "" }
+    return {value: num / 1e9, unit: "B"} // Billion
   }
+  if (absNum >= 1e6) {
+    return {value: num / 1e6, unit: "M"} // A Million
+  }
+  if (absNum >= 1e3) {
+    return {value: num / 1e3, unit: "K"} // A Thousand
+  }
+  return {value: num, unit: ""}
 }
 
 export function formatNumberWithUnit(num: number) {
-  const { value, unit } = getNumberWithUnit(num)
+  const {value, unit} = getNumberWithUnit(num)
   return `${formatMoney(value, false, false)}${unit}`
 }
 
@@ -126,9 +127,10 @@ export function prefixLogger(logger: Console, prefix: string): Console {
     get(target, prop) {
       const originalMethod = target[prop as keyof Console]
       if (typeof originalMethod === "function" && ["log", "info", "warn", "error", "debug"].includes(prop as string)) {
-        return function (...args: unknown[]) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-          return (originalMethod as Function).call(target, prefix, ...args) as void
+        return (...args: unknown[]) => {
+
+          // biome-ignore lint/complexity/noBannedTypes: <explanation>
+          return (originalMethod as Function).call(target, prefix, ...args) as undefined
         }
       }
       return originalMethod
@@ -148,9 +150,9 @@ export function prefixLogger(logger: Console, prefix: string): Console {
  * @returns
  */
 export function formatAdaptiveDecimal(value: number | string): string {
-  const num = typeof value === "string" ? parseFloat(value) : value
+  const num = typeof value === "string" ? Number.parseFloat(value) : value
 
-  if (isNaN(num)) {
+  if (Number.isNaN(num)) {
     return "0.00"
   }
 
@@ -158,15 +160,15 @@ export function formatAdaptiveDecimal(value: number | string): string {
 
   if (absNum >= 0.01) {
     return num.toFixed(2)
-  } else if (absNum === 0) {
+  }if (absNum === 0) {
     return "0.00"
-  } else {
+  }
     const strNum = absNum.toString()
 
     if (strNum.includes("e")) {
       const parts = strNum.split("e")
       const mantissa = parts[0]
-      const exponent = parseInt(parts[1] ?? "0")
+      const exponent = Number.parseInt(parts[1] ?? "0")
 
       if (exponent < 0) {
         const absExponent = Math.abs(exponent)
@@ -195,7 +197,7 @@ export function formatAdaptiveDecimal(value: number | string): string {
           result += significantDigits[0]
         }
 
-        return num < 0 ? "-" + result : result
+        return num < 0 ? `-${result}` : result
       }
     }
 
@@ -236,6 +238,5 @@ export function formatAdaptiveDecimal(value: number | string): string {
       result += decimalPart[firstNonZeroPos + 1]
     }
 
-    return num < 0 ? "-" + result : result
-  }
+    return num < 0 ? `-${result}` : result
 }

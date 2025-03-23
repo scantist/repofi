@@ -1,4 +1,16 @@
 import Decimal from "decimal.js"
+import {createPublicClient, http} from "viem";
+import {defaultChain} from "~/components/auth/config";
+import {env} from "~/env";
+
+export const getPublicClient = () => {
+  return createPublicClient({
+    chain: defaultChain,
+    transport: env.CHAIN_RPC_URL?.[defaultChain.id]
+      ? http(env.CHAIN_RPC_URL[defaultChain.id])
+      : http(),
+  });
+};
 
 export const shortenAddress = (address: string, size = 4) => {
   return `${address.substring(0, size + 2)}...${address.substring(address.length - size, address.length)}`
@@ -22,10 +34,10 @@ export function toHumanAmount(value: string | bigint, decimal: number, decimalPl
  * @returns The token amount
  */
 export function fromHumanAmount(value: string | number, decimal: number) {
-  Decimal.set({ toExpPos: 36 })
+  Decimal.set({toExpPos: 36})
   return new Decimal(value).mul(new Decimal(10).pow(decimal))
 }
 
 export function parseAddressFromTopic(topic: string) {
-  return "0x" + topic.slice(26)
+  return `0x${topic.slice(26)}`
 }

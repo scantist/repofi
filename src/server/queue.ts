@@ -1,3 +1,3 @@
 import { initQueue as initPOCQueue } from "~/server/queue/contributor"
-
-await Promise.all([initPOCQueue()])
+import { initQueue as initDEXQueue } from "~/server/queue/dex"
+await Promise.all([initPOCQueue(),initDEXQueue()])

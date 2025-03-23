@@ -1,8 +1,8 @@
-import { defineQueue, type WorkerFunction } from "./helper"
-import { fetchRepoContributors, parseRepoUrl } from "~/server/tool/repo"
-import { calculateContributorsPercentage } from "~/server/tool/proof"
-import { db } from "~/server/db"
-import { CommonError, ErrorCode } from "~/lib/error"
+import {defineQueue, type WorkerFunction} from "./helper"
+import {fetchRepoContributors, parseRepoUrl} from "~/server/tool/repo"
+import {calculateContributorsPercentage} from "~/server/tool/proof"
+import {db} from "~/server/db"
+import {CommonError, ErrorCode} from "~/lib/error"
 
 const queueName = "contributor"
 
@@ -13,9 +13,9 @@ type JobInput = {
   url: string
 }
 
-type JobOutput = void
+type JobOutput = undefined
 
-const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job, { logger }) => {
+const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job, {logger}) => {
   switch (job.name) {
     case "contributor-init":
       try {
@@ -52,14 +52,14 @@ const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job,
   }
 }
 
-const { getQueue, getMetrics, initQueue, pauseQueue, resumeQueue } = defineQueue<JobInput, JobOutput, JobName>({
+const {getQueue, getMetrics, initQueue, pauseQueue, resumeQueue} = defineQueue<JobInput, JobOutput, JobName>({
   queueName,
   workerFunction
 })
 
-export { getQueue, getMetrics, initQueue, pauseQueue, resumeQueue }
+export {getQueue, getMetrics, initQueue, pauseQueue, resumeQueue}
 
 export const emitContributorInit = async (daoId: string, url: string) => {
   const queue = await getQueue()
-  await queue.add("contributor-init", { daoId, url })
+  await queue.add("contributor-init", {daoId, url})
 }

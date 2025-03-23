@@ -169,23 +169,25 @@ model DaoTokenInfo {
   graduatedAt       DateTime? @map("graduated_at")
   uniswapV3Pair     String?   @map("uniswap_v3_pair") @db.VarChar(255)
 
-  dao     Dao?
-  holders DaoTokenHolder[]
+  dao        Dao?
+  holders    DaoTokenHolder[]
+  assetToken AssetToken?      @relation(fields: [assetTokenAddress], references: [address])
 
   @@map("t_dao_token_info")
 }
 
 model AssetToken {
-  address   String  @id @map("address") @db.VarChar(255)
-  name      String  @map("name") @db.VarChar(255)
-  symbol    String  @map("symbol") @db.VarChar(255)
-  decimals  Int     @map("decimals")
-  logoUrl   String  @map("logo_url") @db.VarChar(255)
-  priceUsd  Decimal @default(0) @map("price_usd") @db.Decimal(50, 18)
-  launchFee Decimal @default(0) @map("launch_fee") @db.Decimal(78, 0)
-  isAllowed Boolean @default(false) @map("is_allowed")
-  isNative  Boolean @default(false) @map("is_native")
-  isValid   Boolean @default(false) @map("is_valid")
+  address      String         @id @map("address") @db.VarChar(255)
+  name         String         @map("name") @db.VarChar(255)
+  symbol       String         @map("symbol") @db.VarChar(255)
+  decimals     Int            @map("decimals")
+  logoUrl      String         @map("logo_url") @db.VarChar(255)
+  priceUsd     Decimal        @default(0) @map("price_usd") @db.Decimal(50, 18)
+  launchFee    Decimal        @default(0) @map("launch_fee") @db.Decimal(78, 0)
+  isAllowed    Boolean        @default(false) @map("is_allowed")
+  isNative     Boolean        @default(false) @map("is_native")
+  isValid      Boolean        @default(false) @map("is_valid")
+  daoTokenInfo DaoTokenInfo[]
 
   @@map("t_asset_token")
 }

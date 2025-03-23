@@ -802,6 +802,7 @@ export const DaoTokenHolderSelectSchema: z.ZodType<Prisma.DaoTokenHolderSelect> 
 export const DaoTokenInfoIncludeSchema: z.ZodType<Prisma.DaoTokenInfoInclude> = z.object({
   dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
   holders: z.union([z.boolean(),z.lazy(() => DaoTokenHolderFindManyArgsSchema)]).optional(),
+  assetToken: z.union([z.boolean(),z.lazy(() => AssetTokenArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => DaoTokenInfoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
@@ -841,11 +842,30 @@ export const DaoTokenInfoSelectSchema: z.ZodType<Prisma.DaoTokenInfoSelect> = z.
   uniswapV3Pair: z.boolean().optional(),
   dao: z.union([z.boolean(),z.lazy(() => DaoArgsSchema)]).optional(),
   holders: z.union([z.boolean(),z.lazy(() => DaoTokenHolderFindManyArgsSchema)]).optional(),
+  assetToken: z.union([z.boolean(),z.lazy(() => AssetTokenArgsSchema)]).optional(),
   _count: z.union([z.boolean(),z.lazy(() => DaoTokenInfoCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 // ASSET TOKEN
 //------------------------------------------------------
+
+export const AssetTokenIncludeSchema: z.ZodType<Prisma.AssetTokenInclude> = z.object({
+  daoTokenInfo: z.union([z.boolean(),z.lazy(() => DaoTokenInfoFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => AssetTokenCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const AssetTokenArgsSchema: z.ZodType<Prisma.AssetTokenDefaultArgs> = z.object({
+  select: z.lazy(() => AssetTokenSelectSchema).optional(),
+  include: z.lazy(() => AssetTokenIncludeSchema).optional(),
+}).strict();
+
+export const AssetTokenCountOutputTypeArgsSchema: z.ZodType<Prisma.AssetTokenCountOutputTypeDefaultArgs> = z.object({
+  select: z.lazy(() => AssetTokenCountOutputTypeSelectSchema).nullish(),
+}).strict();
+
+export const AssetTokenCountOutputTypeSelectSchema: z.ZodType<Prisma.AssetTokenCountOutputTypeSelect> = z.object({
+  daoTokenInfo: z.boolean().optional(),
+}).strict();
 
 export const AssetTokenSelectSchema: z.ZodType<Prisma.AssetTokenSelect> = z.object({
   address: z.boolean().optional(),
@@ -858,6 +878,8 @@ export const AssetTokenSelectSchema: z.ZodType<Prisma.AssetTokenSelect> = z.obje
   isAllowed: z.boolean().optional(),
   isNative: z.boolean().optional(),
   isValid: z.boolean().optional(),
+  daoTokenInfo: z.union([z.boolean(),z.lazy(() => DaoTokenInfoFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => AssetTokenCountOutputTypeArgsSchema)]).optional(),
 }).strict()
 
 // FORUM MESSAGE
@@ -1811,7 +1833,8 @@ export const DaoTokenInfoWhereInputSchema: z.ZodType<Prisma.DaoTokenInfoWhereInp
   graduatedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   uniswapV3Pair: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   dao: z.union([ z.lazy(() => DaoNullableScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional().nullable(),
-  holders: z.lazy(() => DaoTokenHolderListRelationFilterSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderListRelationFilterSchema).optional(),
+  assetToken: z.union([ z.lazy(() => AssetTokenNullableScalarRelationFilterSchema),z.lazy(() => AssetTokenWhereInputSchema) ]).optional().nullable(),
 }).strict();
 
 export const DaoTokenInfoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoTokenInfoOrderByWithRelationInput> = z.object({
@@ -1836,7 +1859,8 @@ export const DaoTokenInfoOrderByWithRelationInputSchema: z.ZodType<Prisma.DaoTok
   graduatedAt: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   uniswapV3Pair: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
   dao: z.lazy(() => DaoOrderByWithRelationInputSchema).optional(),
-  holders: z.lazy(() => DaoTokenHolderOrderByRelationAggregateInputSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderOrderByRelationAggregateInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenOrderByWithRelationInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoWhereUniqueInputSchema: z.ZodType<Prisma.DaoTokenInfoWhereUniqueInput> = z.object({
@@ -1867,7 +1891,8 @@ export const DaoTokenInfoWhereUniqueInputSchema: z.ZodType<Prisma.DaoTokenInfoWh
   graduatedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
   uniswapV3Pair: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
   dao: z.union([ z.lazy(() => DaoNullableScalarRelationFilterSchema),z.lazy(() => DaoWhereInputSchema) ]).optional().nullable(),
-  holders: z.lazy(() => DaoTokenHolderListRelationFilterSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderListRelationFilterSchema).optional(),
+  assetToken: z.union([ z.lazy(() => AssetTokenNullableScalarRelationFilterSchema),z.lazy(() => AssetTokenWhereInputSchema) ]).optional().nullable(),
 }).strict());
 
 export const DaoTokenInfoOrderByWithAggregationInputSchema: z.ZodType<Prisma.DaoTokenInfoOrderByWithAggregationInput> = z.object({
@@ -1938,6 +1963,7 @@ export const AssetTokenWhereInputSchema: z.ZodType<Prisma.AssetTokenWhereInput> 
   isAllowed: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   isNative: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoListRelationFilterSchema).optional()
 }).strict();
 
 export const AssetTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.AssetTokenOrderByWithRelationInput> = z.object({
@@ -1950,7 +1976,8 @@ export const AssetTokenOrderByWithRelationInputSchema: z.ZodType<Prisma.AssetTok
   launchFee: z.lazy(() => SortOrderSchema).optional(),
   isAllowed: z.lazy(() => SortOrderSchema).optional(),
   isNative: z.lazy(() => SortOrderSchema).optional(),
-  isValid: z.lazy(() => SortOrderSchema).optional()
+  isValid: z.lazy(() => SortOrderSchema).optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoOrderByRelationAggregateInputSchema).optional()
 }).strict();
 
 export const AssetTokenWhereUniqueInputSchema: z.ZodType<Prisma.AssetTokenWhereUniqueInput> = z.object({
@@ -1970,6 +1997,7 @@ export const AssetTokenWhereUniqueInputSchema: z.ZodType<Prisma.AssetTokenWhereU
   isAllowed: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   isNative: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
   isValid: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoListRelationFilterSchema).optional()
 }).strict());
 
 export const AssetTokenOrderByWithAggregationInputSchema: z.ZodType<Prisma.AssetTokenOrderByWithAggregationInput> = z.object({
@@ -3832,11 +3860,11 @@ export const DaoTokenInfoCreateInputSchema: z.ZodType<Prisma.DaoTokenInfoCreateI
   reservedRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   holderCount: z.number().int().optional(),
-  assetTokenAddress: z.string().optional().nullable(),
   graduatedAt: z.coerce.date().optional().nullable(),
   uniswapV3Pair: z.string().optional().nullable(),
   dao: z.lazy(() => DaoCreateNestedOneWithoutTokenInfoInputSchema).optional(),
-  holders: z.lazy(() => DaoTokenHolderCreateNestedManyWithoutTokenInfoInputSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderCreateNestedManyWithoutTokenInfoInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenCreateNestedOneWithoutDaoTokenInfoInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUncheckedCreateInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedCreateInput> = z.object({
@@ -3882,11 +3910,11 @@ export const DaoTokenInfoUpdateInputSchema: z.ZodType<Prisma.DaoTokenInfoUpdateI
   reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  assetTokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   dao: z.lazy(() => DaoUpdateOneWithoutTokenInfoNestedInputSchema).optional(),
-  holders: z.lazy(() => DaoTokenHolderUpdateManyWithoutTokenInfoNestedInputSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderUpdateManyWithoutTokenInfoNestedInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenUpdateOneWithoutDaoTokenInfoNestedInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUncheckedUpdateInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedUpdateInput> = z.object({
@@ -3955,7 +3983,6 @@ export const DaoTokenInfoUpdateManyMutationInputSchema: z.ZodType<Prisma.DaoToke
   reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  assetTokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
 }).strict();
@@ -3993,7 +4020,8 @@ export const AssetTokenCreateInputSchema: z.ZodType<Prisma.AssetTokenCreateInput
   launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   isAllowed: z.boolean().optional(),
   isNative: z.boolean().optional(),
-  isValid: z.boolean().optional()
+  isValid: z.boolean().optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoCreateNestedManyWithoutAssetTokenInputSchema).optional()
 }).strict();
 
 export const AssetTokenUncheckedCreateInputSchema: z.ZodType<Prisma.AssetTokenUncheckedCreateInput> = z.object({
@@ -4006,7 +4034,8 @@ export const AssetTokenUncheckedCreateInputSchema: z.ZodType<Prisma.AssetTokenUn
   launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
   isAllowed: z.boolean().optional(),
   isNative: z.boolean().optional(),
-  isValid: z.boolean().optional()
+  isValid: z.boolean().optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoUncheckedCreateNestedManyWithoutAssetTokenInputSchema).optional()
 }).strict();
 
 export const AssetTokenUpdateInputSchema: z.ZodType<Prisma.AssetTokenUpdateInput> = z.object({
@@ -4020,6 +4049,7 @@ export const AssetTokenUpdateInputSchema: z.ZodType<Prisma.AssetTokenUpdateInput
   isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoUpdateManyWithoutAssetTokenNestedInputSchema).optional()
 }).strict();
 
 export const AssetTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.AssetTokenUncheckedUpdateInput> = z.object({
@@ -4033,6 +4063,7 @@ export const AssetTokenUncheckedUpdateInputSchema: z.ZodType<Prisma.AssetTokenUn
   isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
   isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  daoTokenInfo: z.lazy(() => DaoTokenInfoUncheckedUpdateManyWithoutAssetTokenNestedInputSchema).optional()
 }).strict();
 
 export const AssetTokenCreateManyInputSchema: z.ZodType<Prisma.AssetTokenCreateManyInput> = z.object({
@@ -6163,6 +6194,11 @@ export const DaoTokenHolderListRelationFilterSchema: z.ZodType<Prisma.DaoTokenHo
   none: z.lazy(() => DaoTokenHolderWhereInputSchema).optional()
 }).strict();
 
+export const AssetTokenNullableScalarRelationFilterSchema: z.ZodType<Prisma.AssetTokenNullableScalarRelationFilter> = z.object({
+  is: z.lazy(() => AssetTokenWhereInputSchema).optional().nullable(),
+  isNot: z.lazy(() => AssetTokenWhereInputSchema).optional().nullable()
+}).strict();
+
 export const DaoTokenHolderOrderByRelationAggregateInputSchema: z.ZodType<Prisma.DaoTokenHolderOrderByRelationAggregateInput> = z.object({
   _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
@@ -6276,6 +6312,16 @@ export const DecimalNullableWithAggregatesFilterSchema: z.ZodType<Prisma.Decimal
   _sum: z.lazy(() => NestedDecimalNullableFilterSchema).optional(),
   _min: z.lazy(() => NestedDecimalNullableFilterSchema).optional(),
   _max: z.lazy(() => NestedDecimalNullableFilterSchema).optional()
+}).strict();
+
+export const DaoTokenInfoListRelationFilterSchema: z.ZodType<Prisma.DaoTokenInfoListRelationFilter> = z.object({
+  every: z.lazy(() => DaoTokenInfoWhereInputSchema).optional(),
+  some: z.lazy(() => DaoTokenInfoWhereInputSchema).optional(),
+  none: z.lazy(() => DaoTokenInfoWhereInputSchema).optional()
+}).strict();
+
+export const DaoTokenInfoOrderByRelationAggregateInputSchema: z.ZodType<Prisma.DaoTokenInfoOrderByRelationAggregateInput> = z.object({
+  _count: z.lazy(() => SortOrderSchema).optional()
 }).strict();
 
 export const AssetTokenCountOrderByAggregateInputSchema: z.ZodType<Prisma.AssetTokenCountOrderByAggregateInput> = z.object({
@@ -7804,6 +7850,12 @@ export const DaoTokenHolderCreateNestedManyWithoutTokenInfoInputSchema: z.ZodTyp
   connect: z.union([ z.lazy(() => DaoTokenHolderWhereUniqueInputSchema),z.lazy(() => DaoTokenHolderWhereUniqueInputSchema).array() ]).optional(),
 }).strict();
 
+export const AssetTokenCreateNestedOneWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenCreateNestedOneWithoutDaoTokenInfoInput> = z.object({
+  create: z.union([ z.lazy(() => AssetTokenCreateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedCreateWithoutDaoTokenInfoInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => AssetTokenCreateOrConnectWithoutDaoTokenInfoInputSchema).optional(),
+  connect: z.lazy(() => AssetTokenWhereUniqueInputSchema).optional()
+}).strict();
+
 export const DaoUncheckedCreateNestedOneWithoutTokenInfoInputSchema: z.ZodType<Prisma.DaoUncheckedCreateNestedOneWithoutTokenInfoInput> = z.object({
   create: z.union([ z.lazy(() => DaoCreateWithoutTokenInfoInputSchema),z.lazy(() => DaoUncheckedCreateWithoutTokenInfoInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutTokenInfoInputSchema).optional(),
@@ -7849,6 +7901,16 @@ export const DaoTokenHolderUpdateManyWithoutTokenInfoNestedInputSchema: z.ZodTyp
   deleteMany: z.union([ z.lazy(() => DaoTokenHolderScalarWhereInputSchema),z.lazy(() => DaoTokenHolderScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
+export const AssetTokenUpdateOneWithoutDaoTokenInfoNestedInputSchema: z.ZodType<Prisma.AssetTokenUpdateOneWithoutDaoTokenInfoNestedInput> = z.object({
+  create: z.union([ z.lazy(() => AssetTokenCreateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedCreateWithoutDaoTokenInfoInputSchema) ]).optional(),
+  connectOrCreate: z.lazy(() => AssetTokenCreateOrConnectWithoutDaoTokenInfoInputSchema).optional(),
+  upsert: z.lazy(() => AssetTokenUpsertWithoutDaoTokenInfoInputSchema).optional(),
+  disconnect: z.union([ z.boolean(),z.lazy(() => AssetTokenWhereInputSchema) ]).optional(),
+  delete: z.union([ z.boolean(),z.lazy(() => AssetTokenWhereInputSchema) ]).optional(),
+  connect: z.lazy(() => AssetTokenWhereUniqueInputSchema).optional(),
+  update: z.union([ z.lazy(() => AssetTokenUpdateToOneWithWhereWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUpdateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedUpdateWithoutDaoTokenInfoInputSchema) ]).optional(),
+}).strict();
+
 export const DaoUncheckedUpdateOneWithoutTokenInfoNestedInputSchema: z.ZodType<Prisma.DaoUncheckedUpdateOneWithoutTokenInfoNestedInput> = z.object({
   create: z.union([ z.lazy(() => DaoCreateWithoutTokenInfoInputSchema),z.lazy(() => DaoUncheckedCreateWithoutTokenInfoInputSchema) ]).optional(),
   connectOrCreate: z.lazy(() => DaoCreateOrConnectWithoutTokenInfoInputSchema).optional(),
@@ -7871,6 +7933,48 @@ export const DaoTokenHolderUncheckedUpdateManyWithoutTokenInfoNestedInputSchema:
   update: z.union([ z.lazy(() => DaoTokenHolderUpdateWithWhereUniqueWithoutTokenInfoInputSchema),z.lazy(() => DaoTokenHolderUpdateWithWhereUniqueWithoutTokenInfoInputSchema).array() ]).optional(),
   updateMany: z.union([ z.lazy(() => DaoTokenHolderUpdateManyWithWhereWithoutTokenInfoInputSchema),z.lazy(() => DaoTokenHolderUpdateManyWithWhereWithoutTokenInfoInputSchema).array() ]).optional(),
   deleteMany: z.union([ z.lazy(() => DaoTokenHolderScalarWhereInputSchema),z.lazy(() => DaoTokenHolderScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoTokenInfoCreateNestedManyWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoCreateNestedManyWithoutAssetTokenInput> = z.object({
+  create: z.union([ z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema).array(),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoTokenInfoCreateManyAssetTokenInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoTokenInfoUncheckedCreateNestedManyWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedCreateNestedManyWithoutAssetTokenInput> = z.object({
+  create: z.union([ z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema).array(),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoTokenInfoCreateManyAssetTokenInputEnvelopeSchema).optional(),
+  connect: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoTokenInfoUpdateManyWithoutAssetTokenNestedInputSchema: z.ZodType<Prisma.DaoTokenInfoUpdateManyWithoutAssetTokenNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema).array(),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => DaoTokenInfoUpsertWithWhereUniqueWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUpsertWithWhereUniqueWithoutAssetTokenInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoTokenInfoCreateManyAssetTokenInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => DaoTokenInfoUpdateWithWhereUniqueWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUpdateWithWhereUniqueWithoutAssetTokenInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => DaoTokenInfoUpdateManyWithWhereWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUpdateManyWithWhereWithoutAssetTokenInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => DaoTokenInfoScalarWhereInputSchema),z.lazy(() => DaoTokenInfoScalarWhereInputSchema).array() ]).optional(),
+}).strict();
+
+export const DaoTokenInfoUncheckedUpdateManyWithoutAssetTokenNestedInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedUpdateManyWithoutAssetTokenNestedInput> = z.object({
+  create: z.union([ z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema).array(),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema).array() ]).optional(),
+  connectOrCreate: z.union([ z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema).array() ]).optional(),
+  upsert: z.union([ z.lazy(() => DaoTokenInfoUpsertWithWhereUniqueWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUpsertWithWhereUniqueWithoutAssetTokenInputSchema).array() ]).optional(),
+  createMany: z.lazy(() => DaoTokenInfoCreateManyAssetTokenInputEnvelopeSchema).optional(),
+  set: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  disconnect: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  delete: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  connect: z.union([ z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),z.lazy(() => DaoTokenInfoWhereUniqueInputSchema).array() ]).optional(),
+  update: z.union([ z.lazy(() => DaoTokenInfoUpdateWithWhereUniqueWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUpdateWithWhereUniqueWithoutAssetTokenInputSchema).array() ]).optional(),
+  updateMany: z.union([ z.lazy(() => DaoTokenInfoUpdateManyWithWhereWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUpdateManyWithWhereWithoutAssetTokenInputSchema).array() ]).optional(),
+  deleteMany: z.union([ z.lazy(() => DaoTokenInfoScalarWhereInputSchema),z.lazy(() => DaoTokenInfoScalarWhereInputSchema).array() ]).optional(),
 }).strict();
 
 export const DaoCreateNestedOneWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateNestedOneWithoutMessagesInput> = z.object({
@@ -8753,10 +8857,10 @@ export const DaoTokenInfoCreateWithoutDaoInputSchema: z.ZodType<Prisma.DaoTokenI
   reservedRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   holderCount: z.number().int().optional(),
-  assetTokenAddress: z.string().optional().nullable(),
   graduatedAt: z.coerce.date().optional().nullable(),
   uniswapV3Pair: z.string().optional().nullable(),
-  holders: z.lazy(() => DaoTokenHolderCreateNestedManyWithoutTokenInfoInputSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderCreateNestedManyWithoutTokenInfoInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenCreateNestedOneWithoutDaoTokenInfoInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUncheckedCreateWithoutDaoInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedCreateWithoutDaoInput> = z.object({
@@ -8972,10 +9076,10 @@ export const DaoTokenInfoUpdateWithoutDaoInputSchema: z.ZodType<Prisma.DaoTokenI
   reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  assetTokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  holders: z.lazy(() => DaoTokenHolderUpdateManyWithoutTokenInfoNestedInputSchema).optional()
+  holders: z.lazy(() => DaoTokenHolderUpdateManyWithoutTokenInfoNestedInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenUpdateOneWithoutDaoTokenInfoNestedInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUncheckedUpdateWithoutDaoInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedUpdateWithoutDaoInput> = z.object({
@@ -9218,10 +9322,10 @@ export const DaoTokenInfoCreateWithoutHoldersInputSchema: z.ZodType<Prisma.DaoTo
   reservedRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
   holderCount: z.number().int().optional(),
-  assetTokenAddress: z.string().optional().nullable(),
   graduatedAt: z.coerce.date().optional().nullable(),
   uniswapV3Pair: z.string().optional().nullable(),
-  dao: z.lazy(() => DaoCreateNestedOneWithoutTokenInfoInputSchema).optional()
+  dao: z.lazy(() => DaoCreateNestedOneWithoutTokenInfoInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenCreateNestedOneWithoutDaoTokenInfoInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUncheckedCreateWithoutHoldersInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedCreateWithoutHoldersInput> = z.object({
@@ -9282,10 +9386,10 @@ export const DaoTokenInfoUpdateWithoutHoldersInputSchema: z.ZodType<Prisma.DaoTo
   reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  assetTokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
   uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  dao: z.lazy(() => DaoUpdateOneWithoutTokenInfoNestedInputSchema).optional()
+  dao: z.lazy(() => DaoUpdateOneWithoutTokenInfoNestedInputSchema).optional(),
+  assetToken: z.lazy(() => AssetTokenUpdateOneWithoutDaoTokenInfoNestedInputSchema).optional()
 }).strict();
 
 export const DaoTokenInfoUncheckedUpdateWithoutHoldersInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedUpdateWithoutHoldersInput> = z.object({
@@ -9381,6 +9485,37 @@ export const DaoTokenHolderCreateManyTokenInfoInputEnvelopeSchema: z.ZodType<Pri
   skipDuplicates: z.boolean().optional()
 }).strict();
 
+export const AssetTokenCreateWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenCreateWithoutDaoTokenInfoInput> = z.object({
+  address: z.string(),
+  name: z.string(),
+  symbol: z.string(),
+  decimals: z.number().int(),
+  logoUrl: z.string(),
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  isAllowed: z.boolean().optional(),
+  isNative: z.boolean().optional(),
+  isValid: z.boolean().optional()
+}).strict();
+
+export const AssetTokenUncheckedCreateWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenUncheckedCreateWithoutDaoTokenInfoInput> = z.object({
+  address: z.string(),
+  name: z.string(),
+  symbol: z.string(),
+  decimals: z.number().int(),
+  logoUrl: z.string(),
+  priceUsd: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  launchFee: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional(),
+  isAllowed: z.boolean().optional(),
+  isNative: z.boolean().optional(),
+  isValid: z.boolean().optional()
+}).strict();
+
+export const AssetTokenCreateOrConnectWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenCreateOrConnectWithoutDaoTokenInfoInput> = z.object({
+  where: z.lazy(() => AssetTokenWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => AssetTokenCreateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedCreateWithoutDaoTokenInfoInputSchema) ]),
+}).strict();
+
 export const DaoUpsertWithoutTokenInfoInputSchema: z.ZodType<Prisma.DaoUpsertWithoutTokenInfoInput> = z.object({
   update: z.union([ z.lazy(() => DaoUpdateWithoutTokenInfoInputSchema),z.lazy(() => DaoUncheckedUpdateWithoutTokenInfoInputSchema) ]),
   create: z.union([ z.lazy(() => DaoCreateWithoutTokenInfoInputSchema),z.lazy(() => DaoUncheckedCreateWithoutTokenInfoInputSchema) ]),
@@ -9459,6 +9594,143 @@ export const DaoTokenHolderScalarWhereInputSchema: z.ZodType<Prisma.DaoTokenHold
   userAddress: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
   tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
   balance: z.union([ z.lazy(() => DecimalFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional(),
+}).strict();
+
+export const AssetTokenUpsertWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenUpsertWithoutDaoTokenInfoInput> = z.object({
+  update: z.union([ z.lazy(() => AssetTokenUpdateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedUpdateWithoutDaoTokenInfoInputSchema) ]),
+  create: z.union([ z.lazy(() => AssetTokenCreateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedCreateWithoutDaoTokenInfoInputSchema) ]),
+  where: z.lazy(() => AssetTokenWhereInputSchema).optional()
+}).strict();
+
+export const AssetTokenUpdateToOneWithWhereWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenUpdateToOneWithWhereWithoutDaoTokenInfoInput> = z.object({
+  where: z.lazy(() => AssetTokenWhereInputSchema).optional(),
+  data: z.union([ z.lazy(() => AssetTokenUpdateWithoutDaoTokenInfoInputSchema),z.lazy(() => AssetTokenUncheckedUpdateWithoutDaoTokenInfoInputSchema) ]),
+}).strict();
+
+export const AssetTokenUpdateWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenUpdateWithoutDaoTokenInfoInput> = z.object({
+  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  logoUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  launchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const AssetTokenUncheckedUpdateWithoutDaoTokenInfoInputSchema: z.ZodType<Prisma.AssetTokenUncheckedUpdateWithoutDaoTokenInfoInput> = z.object({
+  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  symbol: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  decimals: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  logoUrl: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  priceUsd: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  launchFee: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
+  isAllowed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  isNative: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  isValid: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+}).strict();
+
+export const DaoTokenInfoCreateWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoCreateWithoutAssetTokenInput> = z.object({
+  tokenId: z.bigint(),
+  tokenAddress: z.string().optional().nullable(),
+  name: z.string(),
+  ticker: z.string(),
+  creator: z.string(),
+  isGraduated: z.boolean().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  liquidity: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  price: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  marketCap: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  totalSupply: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  raisedAssetAmount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  salesRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  reservedRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  holderCount: z.number().int().optional(),
+  graduatedAt: z.coerce.date().optional().nullable(),
+  uniswapV3Pair: z.string().optional().nullable(),
+  dao: z.lazy(() => DaoCreateNestedOneWithoutTokenInfoInputSchema).optional(),
+  holders: z.lazy(() => DaoTokenHolderCreateNestedManyWithoutTokenInfoInputSchema).optional()
+}).strict();
+
+export const DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedCreateWithoutAssetTokenInput> = z.object({
+  tokenId: z.bigint(),
+  tokenAddress: z.string().optional().nullable(),
+  name: z.string(),
+  ticker: z.string(),
+  creator: z.string(),
+  isGraduated: z.boolean().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  liquidity: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  price: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  marketCap: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  totalSupply: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  raisedAssetAmount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  salesRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  reservedRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  holderCount: z.number().int().optional(),
+  graduatedAt: z.coerce.date().optional().nullable(),
+  uniswapV3Pair: z.string().optional().nullable(),
+  dao: z.lazy(() => DaoUncheckedCreateNestedOneWithoutTokenInfoInputSchema).optional(),
+  holders: z.lazy(() => DaoTokenHolderUncheckedCreateNestedManyWithoutTokenInfoInputSchema).optional()
+}).strict();
+
+export const DaoTokenInfoCreateOrConnectWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoCreateOrConnectWithoutAssetTokenInput> = z.object({
+  where: z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),
+  create: z.union([ z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema) ]),
+}).strict();
+
+export const DaoTokenInfoCreateManyAssetTokenInputEnvelopeSchema: z.ZodType<Prisma.DaoTokenInfoCreateManyAssetTokenInputEnvelope> = z.object({
+  data: z.union([ z.lazy(() => DaoTokenInfoCreateManyAssetTokenInputSchema),z.lazy(() => DaoTokenInfoCreateManyAssetTokenInputSchema).array() ]),
+  skipDuplicates: z.boolean().optional()
+}).strict();
+
+export const DaoTokenInfoUpsertWithWhereUniqueWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUpsertWithWhereUniqueWithoutAssetTokenInput> = z.object({
+  where: z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => DaoTokenInfoUpdateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedUpdateWithoutAssetTokenInputSchema) ]),
+  create: z.union([ z.lazy(() => DaoTokenInfoCreateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedCreateWithoutAssetTokenInputSchema) ]),
+}).strict();
+
+export const DaoTokenInfoUpdateWithWhereUniqueWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUpdateWithWhereUniqueWithoutAssetTokenInput> = z.object({
+  where: z.lazy(() => DaoTokenInfoWhereUniqueInputSchema),
+  data: z.union([ z.lazy(() => DaoTokenInfoUpdateWithoutAssetTokenInputSchema),z.lazy(() => DaoTokenInfoUncheckedUpdateWithoutAssetTokenInputSchema) ]),
+}).strict();
+
+export const DaoTokenInfoUpdateManyWithWhereWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUpdateManyWithWhereWithoutAssetTokenInput> = z.object({
+  where: z.lazy(() => DaoTokenInfoScalarWhereInputSchema),
+  data: z.union([ z.lazy(() => DaoTokenInfoUpdateManyMutationInputSchema),z.lazy(() => DaoTokenInfoUncheckedUpdateManyWithoutAssetTokenInputSchema) ]),
+}).strict();
+
+export const DaoTokenInfoScalarWhereInputSchema: z.ZodType<Prisma.DaoTokenInfoScalarWhereInput> = z.object({
+  AND: z.union([ z.lazy(() => DaoTokenInfoScalarWhereInputSchema),z.lazy(() => DaoTokenInfoScalarWhereInputSchema).array() ]).optional(),
+  OR: z.lazy(() => DaoTokenInfoScalarWhereInputSchema).array().optional(),
+  NOT: z.union([ z.lazy(() => DaoTokenInfoScalarWhereInputSchema),z.lazy(() => DaoTokenInfoScalarWhereInputSchema).array() ]).optional(),
+  tokenId: z.union([ z.lazy(() => BigIntFilterSchema),z.bigint() ]).optional(),
+  tokenAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  ticker: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  creator: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
+  isGraduated: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
+  createdAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  updatedAt: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
+  liquidity: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  price: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  marketCap: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  totalSupply: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  raisedAssetAmount: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  salesRatio: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  reservedRatio: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  unlockRatio: z.union([ z.lazy(() => DecimalNullableFilterSchema),z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }) ]).optional().nullable(),
+  holderCount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
+  assetTokenAddress: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
+  graduatedAt: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
+  uniswapV3Pair: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
 }).strict();
 
 export const DaoCreateWithoutMessagesInputSchema: z.ZodType<Prisma.DaoCreateWithoutMessagesInput> = z.object({
@@ -10179,6 +10451,98 @@ export const DaoTokenHolderUncheckedUpdateManyWithoutTokenInfoInputSchema: z.Zod
   balance: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => DecimalFieldUpdateOperationsInputSchema) ]).optional(),
 }).strict();
 
+export const DaoTokenInfoCreateManyAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoCreateManyAssetTokenInput> = z.object({
+  tokenId: z.bigint(),
+  tokenAddress: z.string().optional().nullable(),
+  name: z.string(),
+  ticker: z.string(),
+  creator: z.string(),
+  isGraduated: z.boolean().optional(),
+  createdAt: z.coerce.date().optional(),
+  updatedAt: z.coerce.date().optional(),
+  liquidity: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  price: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  marketCap: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  totalSupply: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  raisedAssetAmount: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  salesRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  reservedRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  unlockRatio: z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }).optional().nullable(),
+  holderCount: z.number().int().optional(),
+  graduatedAt: z.coerce.date().optional().nullable(),
+  uniswapV3Pair: z.string().optional().nullable()
+}).strict();
+
+export const DaoTokenInfoUpdateWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUpdateWithoutAssetTokenInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  creator: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isGraduated: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  liquidity: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  marketCap: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  totalSupply: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  raisedAssetAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  salesRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  dao: z.lazy(() => DaoUpdateOneWithoutTokenInfoNestedInputSchema).optional(),
+  holders: z.lazy(() => DaoTokenHolderUpdateManyWithoutTokenInfoNestedInputSchema).optional()
+}).strict();
+
+export const DaoTokenInfoUncheckedUpdateWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedUpdateWithoutAssetTokenInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  creator: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isGraduated: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  liquidity: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  marketCap: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  totalSupply: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  raisedAssetAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  salesRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  dao: z.lazy(() => DaoUncheckedUpdateOneWithoutTokenInfoNestedInputSchema).optional(),
+  holders: z.lazy(() => DaoTokenHolderUncheckedUpdateManyWithoutTokenInfoNestedInputSchema).optional()
+}).strict();
+
+export const DaoTokenInfoUncheckedUpdateManyWithoutAssetTokenInputSchema: z.ZodType<Prisma.DaoTokenInfoUncheckedUpdateManyWithoutAssetTokenInput> = z.object({
+  tokenId: z.union([ z.bigint(),z.lazy(() => BigIntFieldUpdateOperationsInputSchema) ]).optional(),
+  tokenAddress: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  ticker: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  creator: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  isGraduated: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
+  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  liquidity: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  price: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  marketCap: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  totalSupply: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  raisedAssetAmount: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  salesRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  reservedRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  unlockRatio: z.union([ z.union([z.number(),z.string(),z.instanceof(Decimal),z.instanceof(Prisma.Decimal),DecimalJsLikeSchema,]).refine((v) => isValidDecimalInput(v), { message: 'Must be a Decimal' }),z.lazy(() => NullableDecimalFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  holderCount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
+  graduatedAt: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  uniswapV3Pair: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+}).strict();
+
 export const ContributorHistoryCreateManyContributorInputSchema: z.ZodType<Prisma.ContributorHistoryCreateManyContributorInput> = z.object({
   id: z.string().optional(),
   tag: z.string(),
@@ -10646,6 +11010,7 @@ export const DaoTokenInfoFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.DaoTokenI
 
 export const AssetTokenFindFirstArgsSchema: z.ZodType<Prisma.AssetTokenFindFirstArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereInputSchema.optional(),
   orderBy: z.union([ AssetTokenOrderByWithRelationInputSchema.array(),AssetTokenOrderByWithRelationInputSchema ]).optional(),
   cursor: AssetTokenWhereUniqueInputSchema.optional(),
@@ -10656,6 +11021,7 @@ export const AssetTokenFindFirstArgsSchema: z.ZodType<Prisma.AssetTokenFindFirst
 
 export const AssetTokenFindFirstOrThrowArgsSchema: z.ZodType<Prisma.AssetTokenFindFirstOrThrowArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereInputSchema.optional(),
   orderBy: z.union([ AssetTokenOrderByWithRelationInputSchema.array(),AssetTokenOrderByWithRelationInputSchema ]).optional(),
   cursor: AssetTokenWhereUniqueInputSchema.optional(),
@@ -10666,6 +11032,7 @@ export const AssetTokenFindFirstOrThrowArgsSchema: z.ZodType<Prisma.AssetTokenFi
 
 export const AssetTokenFindManyArgsSchema: z.ZodType<Prisma.AssetTokenFindManyArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereInputSchema.optional(),
   orderBy: z.union([ AssetTokenOrderByWithRelationInputSchema.array(),AssetTokenOrderByWithRelationInputSchema ]).optional(),
   cursor: AssetTokenWhereUniqueInputSchema.optional(),
@@ -10693,11 +11060,13 @@ export const AssetTokenGroupByArgsSchema: z.ZodType<Prisma.AssetTokenGroupByArgs
 
 export const AssetTokenFindUniqueArgsSchema: z.ZodType<Prisma.AssetTokenFindUniqueArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereUniqueInputSchema,
 }).strict() ;
 
 export const AssetTokenFindUniqueOrThrowArgsSchema: z.ZodType<Prisma.AssetTokenFindUniqueOrThrowArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereUniqueInputSchema,
 }).strict() ;
 
@@ -12118,11 +12487,13 @@ export const DaoTokenInfoDeleteManyArgsSchema: z.ZodType<Prisma.DaoTokenInfoDele
 
 export const AssetTokenCreateArgsSchema: z.ZodType<Prisma.AssetTokenCreateArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   data: z.union([ AssetTokenCreateInputSchema,AssetTokenUncheckedCreateInputSchema ]),
 }).strict() ;
 
 export const AssetTokenUpsertArgsSchema: z.ZodType<Prisma.AssetTokenUpsertArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereUniqueInputSchema,
   create: z.union([ AssetTokenCreateInputSchema,AssetTokenUncheckedCreateInputSchema ]),
   update: z.union([ AssetTokenUpdateInputSchema,AssetTokenUncheckedUpdateInputSchema ]),
@@ -12140,11 +12511,13 @@ export const AssetTokenCreateManyAndReturnArgsSchema: z.ZodType<Prisma.AssetToke
 
 export const AssetTokenDeleteArgsSchema: z.ZodType<Prisma.AssetTokenDeleteArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   where: AssetTokenWhereUniqueInputSchema,
 }).strict() ;
 
 export const AssetTokenUpdateArgsSchema: z.ZodType<Prisma.AssetTokenUpdateArgs> = z.object({
   select: AssetTokenSelectSchema.optional(),
+  include: AssetTokenIncludeSchema.optional(),
   data: z.union([ AssetTokenUpdateInputSchema,AssetTokenUncheckedUpdateInputSchema ]),
   where: AssetTokenWhereUniqueInputSchema,
 }).strict() ;
