@@ -13,7 +13,7 @@ export const daoContentRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const { data, daoId } = input
-      await daoContentService.create(daoId, data)
+      return await daoContentService.create(daoId, data)
     }),
   update: protectedProcedure
     .input(

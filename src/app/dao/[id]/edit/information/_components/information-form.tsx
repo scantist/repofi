@@ -1,9 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { DaoContentType } from "@prisma/client"
-import { ImagePlus, Plus, TrashIcon } from "lucide-react"
-import React, { useEffect, useMemo } from "react"
+import { ImagePlus, Loader2, TrashIcon } from "lucide-react"
+import React, { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { uploadFile } from "~/app/actions"
@@ -11,6 +10,7 @@ import PictureSelectPopover from "~/components/picture-select-popover"
 import { Button } from "~/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
+import { Textarea } from "~/components/ui/textarea"
 import { UPLOAD_PATH_POST } from "~/lib/const"
 import { cn } from "~/lib/utils"
 import { api } from "~/trpc/react"
@@ -18,26 +18,18 @@ import { type InformationContentParams, InformationContentParamsSchema, type Lis
 
 interface BaseFormProps {
   id: string
+  isNew: boolean
+  data: InformationContentParams
 }
 
-const InformationForm = ({ id }: BaseFormProps) => {
-  const { data, isPending, refetch } = api.dao.detail.useQuery(
-    { daoId: id },
-    {
-      refetchInterval: false,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchIntervalInBackground: false
-    }
-  )
-  const isNewData = useMemo(() => {
-    return data?.contents?.find((content) => content.type === "INFORMATION") === undefined
-  }, [data])
-
+const InformationForm = ({ id, isNew, data }: BaseFormProps) => {
+  const [isNewState, setIsNewState] = useState(isNew)
+  const [daoContentId, setDaoContentId] = useState(data.id)
   const { mutate: createMutate, isPending: isCreatePending } = api.daoContent.create.useMutation({
-    onSuccess: async () => {
-      await refetch()
+    onSuccess: async (data) => {
+      toast.success("Success create to action!")
+      setDaoContentId(data.id)
+      setIsNewState(false)
     },
     onError: (error) => {
       console.error(error)
@@ -46,35 +38,22 @@ const InformationForm = ({ id }: BaseFormProps) => {
   })
   const { mutate: updateMutate, isPending: isUpdatePending } = api.daoContent.update.useMutation({
     onSuccess: async () => {
-      await refetch()
+      toast.success("Success update to action!")
+      setIsNewState(false)
     },
     onError: (error) => {
       console.error(error)
       toast.error(`Failed update to action! ${error.message}`)
     }
   })
-  const information = useMemo(() => {
-    const informationFind = data?.contents?.find((content) => content.type === "INFORMATION")
-    if (!informationFind) {
-      return {
-        title: "",
-        sort: 0,
-        type: DaoContentType.INFORMATION,
-        data: {
-          information: "",
-          image: ""
-        },
-        enable: true,
-        id: ""
-      } as InformationContentParams
-    }
-    return informationFind as unknown as InformationContentParams
-  }, [data, isNewData])
+  const isPending = useMemo(() => {
+    return isCreatePending || isUpdatePending
+  }, [isCreatePending, isUpdatePending])
   const form = useForm<InformationContentParams>({
     resolver: zodResolver(InformationContentParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: {
-      ...information
+      ...data
     }
   })
 
@@ -84,20 +63,15 @@ const InformationForm = ({ id }: BaseFormProps) => {
     reset,
     formState: { errors }
   } = form
-  useEffect(() => {
-    if (!isPending && information) {
-      reset(information)
-    }
-  }, [information, isPending, reset])
   const submit = (values: InformationContentParams) => {
-    if (isNewData) {
+    if (isNewState) {
       createMutate({
         daoId: id,
         data: values
       })
     } else {
       updateMutate({
-        daoContentId: values.id,
+        daoContentId,
         data: values
       })
     }
@@ -201,7 +175,7 @@ const InformationForm = ({ id }: BaseFormProps) => {
               <FormItem>
                 <FormLabel>Information</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter information" {...field} disabled={isPending} />
+                  <Textarea rows={5} placeholder="Enter information" {...field} disabled={isPending} />
                 </FormControl>
                 <FormDescription>Image information</FormDescription>
                 <FormMessage>{errors.data?.information?.message}</FormMessage>
@@ -211,10 +185,17 @@ const InformationForm = ({ id }: BaseFormProps) => {
         </div>
 
         <div className={"flex flex-row gap-x-6"}>
-          <Button type="submit" disabled={isPending || isCreatePending || isUpdatePending}>
-            Save Changes
+          <Button type="submit" disabled={isPending}>
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
-          <Button variant={"outline"} onClick={() => reset()} disabled={isPending || isCreatePending || isUpdatePending}>
+          <Button variant={"outline"} onClick={() => reset()} disabled={isPending}>
             Reset
           </Button>
         </div>

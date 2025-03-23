@@ -10,7 +10,7 @@ class DaoContentService {
     if (!dao) {
       throw new CommonError(ErrorCode.BAD_PARAMS, `Can't found ${daoId} dao`)
     }
-    await db.daoContent.create({
+    return await db.daoContent.create({
       data: {
         daoId,
         title: params.title,
