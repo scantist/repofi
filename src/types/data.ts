@@ -112,3 +112,18 @@ export const RoadmapParamsSchema = z
 
 export type RoadmapData = z.infer<typeof RoadmapSchema>
 export type RoadmapContentParams = z.infer<typeof RoadmapParamsSchema>
+
+export const InformationDataSchema = z.object({
+  information: z.string(),
+  image: z.string()
+})
+
+export const InformationContentParamsSchema = daoContentParamsSchema.merge(
+  z.object({
+    data: InformationDataSchema,
+    id: z.string()
+  })
+)
+
+export type InformationData = z.infer<typeof InformationDataSchema>
+export type InformationContentParams = z.infer<typeof InformationContentParamsSchema>
