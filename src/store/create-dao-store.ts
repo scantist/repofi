@@ -1,12 +1,11 @@
 "use client"
 
-import { atom, createStore } from "jotai"
-import { atomWithStorage } from "jotai/utils"
-import { type LaunchParams } from "~/lib/schema"
 import { DaoType, Prisma } from "@prisma/client"
-import { type CreateDaoStep } from "~/types/data"
+import { atom, createStore } from "jotai"
 import { z } from "zod"
+import type { LaunchParams } from "~/lib/schema"
 import { DaoTypeSchema } from "~/lib/zod"
+import type { CreateDaoStep } from "~/types/data"
 
 const createDaoStore = createStore()
 export const assetTokenSchema = z.object({

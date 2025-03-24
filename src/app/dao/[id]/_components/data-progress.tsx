@@ -1,9 +1,11 @@
 "use client"
 import * as Progress from "@radix-ui/react-progress"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
+import { Button } from "~/components/ui/button"
 import { useTokenFullInfo } from "~/hooks/use-launch-contract"
-import { useTokenLockInfo, useUserLockInfo } from "~/hooks/use-token-locker"
-import { cn } from "~/lib/utils"
+import { useClaim, useTokenLockInfo, useUserLockInfo } from "~/hooks/use-token-locker"
+import { cn, formatMoney, formatNumberWithUnit } from "~/lib/utils"
+import { toHumanAmount } from "~/lib/web3"
 import type { DaoDetailResult } from "~/server/service/dao"
 
 interface DataProgressProps {
@@ -50,40 +52,50 @@ export const PostProgress = ({ dao }: DataProgressProps) => {
     const currentTimestamp = Math.floor(Date.now() / 1000)
     const elapsedTime = currentTimestamp - Number(lockStart)
     const progressRatio = elapsedTime / Number(lockPeriod)
-    return Math.min(Number(progressRatio) / 100, 100)
+    return Math.min(Number(progressRatio), 100)
   }, [tokenLockInfo, dao])
-  const { lockInfo, isLoading: isUserLoading } = useUserLockInfo(dao.tokenInfo.tokenAddress ? (dao.tokenInfo.tokenAddress as `0x${string}`) : undefined)
+  const { lockInfo, refetch } = useUserLockInfo(dao.tokenInfo.tokenAddress ? (dao.tokenInfo.tokenAddress as `0x${string}`) : undefined)
   const canLock = useMemo(() => {
     if (!lockInfo || !lockInfo.hasLockInfo) {
       return false
     }
     return false
   }, [lockInfo])
+  const { isClaimPending, isClaiming, startClaim } = useClaim(dao.tokenInfo.tokenAddress as `0x${string}`)
+  const handleClaim = () => {
+    startClaim()
+  }
+  useEffect(() => {
+    refetch()
+  }, [isClaiming])
   return (
     <div className={"w-full"}>
-      <div className={cn("grid grid-cols-5 mb-4", !lockInfo?.instantAmount && "grid-cols-4", !canLock && "hidden")}>
-        {lockInfo?.instantAmount && (
+      <div className={cn("grid grid-cols-6 mb-4", lockInfo?.instantClaimed && "grid-cols-5", !canLock && "")}>
+        {!lockInfo?.instantClaimed && (
           <div className={"col-span-1 text-sm font-medium text-primary-foreground"}>
             <div>instant</div>
-            <div>{lockInfo?.instantAmount}</div>
+            <div>{formatMoney(toHumanAmount(lockInfo?.instantAmount ?? BigInt(0), 18))}</div>
           </div>
         )}
         <div className={"col-span-1 text-sm font-medium text-primary-foreground"}>
           <div>Claimed</div>
-          <div>{lockInfo?.linearClaimedAmount ?? 0}</div>
+          <div>{formatMoney(toHumanAmount(lockInfo?.linearClaimedAmount ?? BigInt(0), 18))}</div>
         </div>
         <div className={"col-span-1 text-sm font-medium text-primary-foreground"}>
           <div>Claimable</div>
-          <div>{lockInfo?.linearClaimableAmount ?? 0}</div>
+          <div>{formatMoney(toHumanAmount(lockInfo?.linearClaimableAmount ?? BigInt(0), 18))}</div>
         </div>
         <div className={"col-span-1 text-sm font-medium text-primary-foreground"}>
           <div>Remaining</div>
-          <div>{lockInfo?.linearRemainingAmount ?? 0}</div>
+          <div>{formatMoney(toHumanAmount(lockInfo?.linearRemainingAmount ?? BigInt(0), 18))}</div>
         </div>
         <div className={"col-span-1 text-sm font-medium text-primary-foreground"}>
           <div>Total</div>
-          <div>{lockInfo?.linearTotalAmount ?? 0}</div>
+          <div>{formatMoney(toHumanAmount(lockInfo?.linearTotalAmount ?? BigInt(0), 18))}</div>
         </div>
+        <Button onClick={handleClaim} disabled={isClaimPending || isClaiming}>
+          Claim{(isClaimPending || isClaiming) && "ing..."}
+        </Button>
       </div>
       <Progress.Root
         className="relative h-[25px] w-full overflow-hidden rounded-full bg-black border-primary border"
