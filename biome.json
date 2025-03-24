@@ -8,7 +8,8 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
-      "src/lib/zod/index.ts"
+      "src/lib/zod/index.ts",
+      "public"
     ]
   },
   "formatter": {
