@@ -1,16 +1,18 @@
 "use client"
 
 import { SiTelegram, SiX } from "@icons-pack/react-simple-icons"
-import CardWrapper from "~/components/card-wrapper"
-import ContributorCard from "~/app/dashboard/_components/contributor-card"
-import TradingCard from "~/app/dao/[id]/trading/card"
-import { type DaoDetailResult } from "~/server/service/dao"
-import { shortenAddress } from "~/lib/web3"
+import GraduatedChart from "~/app/dao/[id]/_components/graduated-chart"
 import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
-import { type ContributorPage } from "~/server/service/contributor"
-import { type Top10Holders } from "~/server/service/holder"
+import TradingCard from "~/app/dao/[id]/trading/card"
+import ContributorCard from "~/app/dashboard/_components/contributor-card"
+import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
+import TradeView from "~/components/trade-view"
+import { shortenAddress } from "~/lib/web3"
+import type { ContributorPage } from "~/server/service/contributor"
+import type { DaoDetailResult } from "~/server/service/dao"
+import type { Top10Holders } from "~/server/service/holder"
 
 interface DaoContentProps {
   data: DaoDetailResult
@@ -52,7 +54,19 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
             <SiX />
           </div>
         </CardWrapper>
-        <img src={"https://storage.googleapis.com/repofi/launchpad/image/K.png"} alt={"K"} />
+        <CardWrapper contentClassName={"h-[360px]"}>
+          {graduated ? (
+            <GraduatedChart uniswapV3Pair={data.tokenInfo.uniswapV3Pair} />
+          ) : (
+            <TradeView
+              dao={{
+                tokenId: data.tokenId,
+                name: data.name,
+                ticker: data.ticker
+              }}
+            />
+          )}
+        </CardWrapper>
         <CardWrapper>
           <MessageList data={data} />
         </CardWrapper>
