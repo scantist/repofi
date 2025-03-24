@@ -21,6 +21,9 @@ const socialIcons: Record<string, IconType> = {
 }
 
 const IconComponent = ({ type, href }: { type: string; href: string }) => {
+  if (href.trim().length === 0) {
+    return null
+  }
   const IconComponent = socialIcons[type]
   return IconComponent ? (
     <Link href={href} target="_blank" rel="noopener noreferrer">
@@ -39,7 +42,7 @@ const Banner = async ({ daoDetail, id }: BannerProps) => {
         </CardWrapper>
         <div className={"flex flex-1 flex-col"}>
           <div className={"flex flex-row items-center justify-between gap-x-2"}>
-            <div className={"flex flex-row items-center gap-x-4 "}>
+            <div className={"flex flex-row items-end gap-x-4 "}>
               <div className={"text-5xl font-bold tracking-tighter mr-4"}>{daoDetail?.name}</div>
               {["website", "x", "discord", "telegram"].map((socialType) => (
                 <IconComponent key={socialType} type={socialType} href={(daoDetail?.links as DaoLinks)?.find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
