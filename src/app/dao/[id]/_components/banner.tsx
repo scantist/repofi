@@ -4,6 +4,7 @@ import {SiDiscord, SiTelegram, SiX} from "@icons-pack/react-simple-icons"
 import BannerWrapper from "~/components/banner-wrapper"
 import type {DaoDetailResult} from "~/server/service/dao"
 import { auth } from "~/server/auth"
+import Link from "next/link";
 
 interface BannerProps {
   daoDetail?: DaoDetailResult
@@ -32,7 +33,7 @@ const Banner = async ({daoDetail, id}: BannerProps) => {
               <a href={`/dao/${id}/edit`}>EDIT</a>
             }
           </div>
-          <div className={"mt-2 text-gray-500"}>Repository: {daoDetail?.url}</div>
+          <Link href={daoDetail?.url ?? "#"} className={"mt-2 text-gray-500"}>{daoDetail?.url}</Link>
           <div className={"mt-1 flex flex-row gap-4 text-sm"}>
             <div>License: {daoDetail?.license}</div>
             <div className={"border-l border-gray-400 pl-4"}>Stars: {daoDetail?.repoStar}</div>

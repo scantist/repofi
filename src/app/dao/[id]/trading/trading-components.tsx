@@ -105,7 +105,7 @@ export function SuccessOverlay({
         <p className="text pb-2 pt-4 text-center font-medium text-foreground">{successText}</p>
         <p className="flex items-center gap-2 pb-6 text-center text-sm text-muted-foreground">
           Transaction:
-          <a className="font-mono underline underline-offset-4" href={`${defaultChain.blockExplorers.default.url}/tx/${transactionHash}`} target="_blank">
+          <a className="font-mono underline underline-offset-4" href={`${defaultChain.blockExplorers.default.url}/tx/${transactionHash}`} target="_blank" rel="noreferrer">
             {shortenAddress(transactionHash)}
           </a>
           <CopyButton content={transactionHash} />

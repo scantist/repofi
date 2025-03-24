@@ -128,7 +128,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
 
   if (!data.tokenInfo.isGraduated && !showLaunchSuccess) {
     setShowLaunchSuccess(true)
-  } else if (!!tradeReceipt) {
+  } else if (tradeReceipt) {
     resetTrading()
     setTradeTxHash(tradeReceipt.transactionHash)
   }
@@ -235,7 +235,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
       <div className={"mt-4 text-gray-600"}>
         You will receive about
         <NumberFlow
-          value={amountOut ? parseFloat(toHumanAmount(amountOut, isBuy ? leftTokenDecimals : (assetTokenInfo?.decimals ?? leftTokenDecimals), 2)) : 0}
+          value={amountOut ? Number.parseFloat(toHumanAmount(amountOut, isBuy ? leftTokenDecimals : (assetTokenInfo?.decimals ?? leftTokenDecimals), 2)) : 0}
           format={{
             maximumFractionDigits: 2,
             minimumFractionDigits: 2

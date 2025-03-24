@@ -46,7 +46,7 @@ const DaoCard: FC<Props> = ({data}) => {
   return (
 
     <Link href={`/dao/${data.id}`}
-          className="block cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 rounded-lg">
+          className="block cursor-pointer transition-all duration-300 hover:brightness-70 rounded-lg">
       <CardWrapper>
         <img
           className={"aspect-square h-60 w-full rounded-t-lg object-cover"}

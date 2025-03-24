@@ -10,7 +10,7 @@ export function useAssetTokenList() {
 
 export function useAssetTokenInfo(address: string) {
   const { data, isError, error, ...rest } = useAssetTokenList()
-
+  console.log("assetTokenList", data)
   const assetToken = data?.find((token) => getAddress(token.address) === getAddress(address))
 
   const notFound = data !== undefined && assetToken === undefined
