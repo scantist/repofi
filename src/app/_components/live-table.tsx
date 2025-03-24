@@ -1,12 +1,12 @@
 "use client"
 
-import { createColumnHelper, type PaginationState } from "@tanstack/react-table"
-import React, { useState } from "react"
-import { type DaoPage } from "~/types/data"
+import {createColumnHelper, type PaginationState} from "@tanstack/react-table"
+import React, {useState} from "react"
+import {type DaoPage} from "~/types/data"
 import DataTable from "~/components/data-table"
-import type { HomeSearchParams } from "~/lib/schema"
-import { api } from "~/trpc/react"
-import { type DaoSearchResult } from "~/server/service/dao"
+import type {HomeSearchParams} from "~/lib/schema"
+import {api} from "~/trpc/react"
+import {type DaoSearchResult} from "~/server/service/dao"
 
 interface Condition extends HomeSearchParams {
   pagination: PaginationState

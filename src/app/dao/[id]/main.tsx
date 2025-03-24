@@ -13,6 +13,7 @@ import { shortenAddress } from "~/lib/web3"
 import type { ContributorPage } from "~/server/service/contributor"
 import type { DaoDetailResult } from "~/server/service/dao"
 import type { Top10Holders } from "~/server/service/holder"
+import {defaultChain} from "~/components/auth/config";
 
 interface DaoContentProps {
   data: DaoDetailResult
@@ -37,15 +38,31 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
             </div>
             <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Created By</div>
-              <a target="_blank" rel="noreferrer" className="mt-2 block underline hover:no-underline">
+              <a
+                href={`${defaultChain.blockExplorers.default.url}/address/${data?.createdBy}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 block underline hover:no-underline"
+              >
                 {shortenAddress(data?.createdBy ?? "")}
               </a>
             </div>
             <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Token Address</div>
-              <a target="_blank" rel="noreferrer" className="mt-2 block underline hover:no-underline">
-                {shortenAddress(data?.tokenInfo?.tokenAddress ?? "")}
-              </a>
+              {data?.tokenInfo?.tokenAddress ? (
+                <a
+                  href={`${defaultChain.blockExplorers.default.url}/address/${data.tokenInfo.tokenAddress}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 block underline hover:no-underline"
+                >
+                  {shortenAddress(data.tokenInfo.tokenAddress)}
+                </a>
+              ) : (
+                <span className="mt-2 block">
+                  {shortenAddress("")}
+                </span>
+              )}
             </div>
           </div>
           <div className={"bg-secondary flex flex-row gap-4 px-12 py-3"}>

@@ -19,11 +19,17 @@ class ContributorService {
         snapshotValue: "desc"
       }
     })
+    const formattedContributorList=contributorList.map(contributor=>{
+      return {
+        ...contributor,
+        snapshotValue:contributor.snapshotValue.toString()
+      }
+    })
     return {
-      list: contributorList,
+      list: formattedContributorList,
       pages: Math.ceil(total / pageable.size),
       total: total
-    } as PageableData<(typeof contributorList)[number]>
+    } as PageableData<(typeof formattedContributorList)[number]>
   }
 
   async getTop10Contributor(daoId: string) {

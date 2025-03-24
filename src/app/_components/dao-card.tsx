@@ -9,6 +9,7 @@ import {type DaoLinks} from "~/lib/schema"
 import {House} from "lucide-react"
 import {useRouter} from "next/navigation"
 import {Label} from "@radix-ui/react-label";
+import {fromHumanAmount, toHumanAmount} from "~/lib/web3";
 
 type Props = {
   children?: React.ReactNode

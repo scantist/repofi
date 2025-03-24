@@ -402,7 +402,13 @@ class DaoService {
         ...dao.tokenInfo,
         marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
         totalSupply: dao.tokenInfo.totalSupply?.toString() ?? "",
-        holderCount: dao.tokenInfo.holderCount.toString()
+        holderCount: dao.tokenInfo.holderCount.toString(),
+        liquidity: dao.tokenInfo.liquidity?.toString() ?? "",
+        price: dao.tokenInfo.price?.toString() ?? "",
+        unlockRatio: dao.tokenInfo.unlockRatio?.toString() ?? "",
+        salesRatio: dao.tokenInfo.salesRatio?.toString() ?? "",
+        raisedAssetAmount: dao.tokenInfo.raisedAssetAmount?.toString() ?? "",
+
       }
     }
   }
