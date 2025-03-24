@@ -1,11 +1,12 @@
 "use client"
 
-import { SiTelegram, SiX } from "@icons-pack/react-simple-icons"
+import { PostProgress, PreProgress } from "~/app/dao/[id]/_components/data-progress"
 import GraduatedChart from "~/app/dao/[id]/_components/graduated-chart"
 import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 import TradingCard from "~/app/dao/[id]/trading/card"
 import ContributorCard from "~/app/dashboard/_components/contributor-card"
+import { defaultChain } from "~/components/auth/config"
 import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
 import TradeView from "~/components/trade-view"
@@ -13,7 +14,6 @@ import { shortenAddress } from "~/lib/web3"
 import type { ContributorPage } from "~/server/service/contributor"
 import type { DaoDetailResult } from "~/server/service/dao"
 import type { Top10Holders } from "~/server/service/holder"
-import {defaultChain} from "~/components/auth/config";
 
 interface DaoContentProps {
   data: DaoDetailResult
@@ -23,6 +23,7 @@ interface DaoContentProps {
 
 const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps) => {
   const graduated = data.tokenInfo.isGraduated
+  const progress = 20
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
@@ -59,17 +60,11 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
                   {shortenAddress(data.tokenInfo.tokenAddress)}
                 </a>
               ) : (
-                <span className="mt-2 block">
-                  {shortenAddress("")}
-                </span>
+                <span className="mt-2 block">{shortenAddress("")}</span>
               )}
             </div>
           </div>
-          <div className={"bg-secondary flex flex-row gap-4 px-12 py-3"}>
-            <div>Capabilities</div>
-            <SiTelegram />
-            <SiX />
-          </div>
+          <div className={"flex flex-row gap-4 px-12 py-3 border-t-primary border-t"}>{graduated ? <PostProgress dao={data} /> : <PreProgress dao={data} />}</div>
         </CardWrapper>
         <CardWrapper contentClassName={"h-[360px]"}>
           {graduated ? (
