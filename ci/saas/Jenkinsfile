@@ -67,7 +67,7 @@ pipeline {
                             node -v
                             npm -v
                             pnpm -v
-                            pnpm -i
+                            pnpm install
                             '''
                             // Stash the new node_modules for future builds
                             stash name: 'nodeModules', includes: 'node_modules/**'
