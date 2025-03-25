@@ -41,16 +41,16 @@ const normalizeAddress = (address: string): string => {
 }
 
 const metadata = {
-  name: "SGP",
-  description: "SGP",
-  url: "https://sgp.ai",
+  name: "REPO",
+  description: "The Repo Protocol",
+  url: "https://repofi.io/",
   icons: [] // TODO: Add icons
 }
 const siweConfig = createSIWEConfig({
   getMessageParams: async () => ({
     domain: typeof window !== "undefined" ? window.location.host : "",
     uri: typeof window !== "undefined" ? window.location.origin : "",
-    chains: networks.map((chain: AppKitNetwork) => parseInt(chain.id.toString())),
+    chains: networks.map((chain: AppKitNetwork) => Number.parseInt(chain.id.toString())),
     statement: "Please sign with your account"
   }),
   createMessage: ({ address, ...args }: SIWECreateMessageArgs) => formatMessage(args, normalizeAddress(address)),

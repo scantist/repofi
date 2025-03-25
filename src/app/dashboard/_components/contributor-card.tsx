@@ -26,7 +26,7 @@ const ContributorCard = ({ initContributorList, dao }: ContributorCardProps) => 
       <div className={"rounded-lg bg-black/60 p-4"}>
         <div className={"text-2xl font-medium flex flex-row justify-between items-center"}>
           <div>Contributor List</div>
-          <div className={"text-sm cursor-pointer text-muted-foreground"}>BIND</div>
+          <div className={"text-sm cursor-pointer text-muted-foreground"}>Bind</div>
         </div>
         <div className={"mt-3 flex flex-col gap-2"}>
           {data?.list.map((item, index) => (

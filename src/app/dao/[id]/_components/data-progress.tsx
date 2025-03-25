@@ -53,7 +53,7 @@ export const PostProgress = ({ dao }: DataProgressProps) => {
     const { lockPeriod, lockStart } = tokenLockInfo
     const currentTimestamp = Math.floor(Date.now() / 1000)
     const elapsedTime = currentTimestamp - Number(lockStart)
-    const progressRatio = elapsedTime / Number(lockPeriod)
+    const progressRatio = elapsedTime / Number(lockPeriod)*100
     return Math.min(Number(progressRatio), 100)
   }, [tokenLockInfo, dao])
   const { lockInfo, refetch } = useUserLockInfo(dao.tokenInfo.tokenAddress ? (dao.tokenInfo.tokenAddress as `0x${string}`) : undefined)

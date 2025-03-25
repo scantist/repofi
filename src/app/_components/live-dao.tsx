@@ -15,7 +15,7 @@ const LiveDao = ({ initialData }: LiveDaoProps) => {
   const [type, setType] = useState<"DISCOVER" | "ANALYTICS">("DISCOVER")
   return (
     <div className={"mx-auto flex min-h-full w-full max-w-7xl flex-col gap-8 px-4 pt-10 pb-10"}>
-      <div className={"text-4xl font-bold"}>Live DAOs</div>
+      <div className={"text-4xl font-bold"}>Launched DAOs</div>
       <CardWrapper>
         <div className={"p-4 text-sm font-thin"}>
           Join DeSci by participating in the early stage funding of new BioDAOs. Your participation fuels cutting-edge research, open collaboration, and new models of scientific

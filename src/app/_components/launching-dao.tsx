@@ -22,7 +22,7 @@ const LaunchingDao = ({
 }: LaunchingDaoProps) => {
   return (
     <div className={"mx-0 md:mx-auto flex min-h-full w-full max-w-7xl flex-col gap-8 px-4 pt-10 pb-10"}>
-      <DaoFilter title={"Currently Fundraising"} prefix={"launching_"} daoParam={daoParam} />
+      <DaoFilter title={"Currently Launching"} prefix={"launching_"} daoParam={daoParam} />
       <CardWrapper>
         <div className={"p-4 text-sm font-thin"}>
           Join DeSci by participating in the early stage funding of new BioDAOs. Your participation fuels cutting-edge research, open collaboration, and new models of scientific
