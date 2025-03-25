@@ -5,6 +5,7 @@ import type {DaoGraduationHolder, DaoLaunchHolder} from "~/lib/zod";
 
 class HolderService {
   async getTop10Holders(tokenId: bigint) {
+    let holders: DaoGraduationHolder[] | DaoLaunchHolder[]
     const daoTokenInfo = await db.daoTokenInfo.findUnique({
       where: {
         tokenId
@@ -24,9 +25,14 @@ class HolderService {
     }
 
     if (daoTokenInfo.isGraduated) {
-      return await db.daoGraduationHolder.findMany(conditions)
+      holders=await db.daoGraduationHolder.findMany(conditions)
     }
-    return await db.daoLaunchHolder.findMany(conditions)
+    holders=await db.daoLaunchHolder.findMany(conditions)
+    return holders.map(holder => ({
+      tokenId: holder.tokenId,
+      userAddress: holder.userAddress,
+      balance: holder.balance.toString(),
+    }))
   }
 
   async getHolders(tokenId: bigint, pageable: Pageable) {
@@ -64,14 +70,23 @@ class HolderService {
       }
     }
     let totalItems: number
-    let holders: DaoGraduationHolder[] | DaoLaunchHolder[];
+    let holders: DaoGraduationHolder[] | DaoLaunchHolder[]|{
+      userAddress: string;
+      tokenId: bigint;
+      balance: string;
+    }[]
     if (daoTokenInfo.isGraduated) {
-      totalItems = await db.daoGraduationHolder.count(totalConditions);
+      totalItems = await db.daoGraduationHolder.count(totalConditions)
       holders = await db.daoGraduationHolder.findMany(dataConditions)
     } else {
-      totalItems = await db.daoLaunchHolder.count(totalConditions);
+      totalItems = await db.daoLaunchHolder.count(totalConditions)
       holders = await db.daoLaunchHolder.findMany(dataConditions)
     }
+    holders = holders.map(holder => ({
+      tokenId: holder.tokenId,
+      userAddress: holder.userAddress,
+      balance: holder.balance.toString(),
+    }))
     return {
       list: holders,
       total: totalItems,
