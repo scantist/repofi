@@ -83,7 +83,7 @@ pipeline {
             }
         }
 
-        stage('Build the project') {
+        stage('Push branch to SWR'){
             agent {
                 label 'slave'
             }
@@ -93,10 +93,11 @@ pipeline {
                     branch 'PROD-*'
                 }
             }
-            steps {
-                script {
-                    // build the project
-                    sh '''
+            steps{
+              withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
+                sh 'echo "$BRANCH_NAME" > version'
+                sh 'cat version'
+                 sh '''
                     set +x
                     export NVM_DIR="$HOME/.nvm"
                     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"   # Load nvm
@@ -112,24 +113,6 @@ pipeline {
                     export NODE_OPTIONS="--max-old-space-size=3072"
                     pnpm run build
                     '''
-                }
-            }
-        }
-
-        stage('Push branch to SWR'){
-            agent {
-                label 'slave'
-            }
-            when {
-                anyOf {
-                    branch 'fftest-*';
-                    branch 'PROD-*'
-                }
-            }
-            steps{
-              withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
-                sh 'echo "$BRANCH_NAME" > version'
-                sh 'cat version'
                 dockerBuildPush(
                     'HWC',
                     'scantist-images/repofi',
