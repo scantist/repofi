@@ -7,7 +7,6 @@ import WalletButton from "~/components/auth/wallet-button"
 import { Button } from "~/components/ui/button"
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetFooter, SheetClose } from "~/components/ui/sheet"
 import { cn } from "~/lib/utils"
-import LogoAgentLayerIcon from "./icons/logo-repo-icon"
 
 export const MobileMenu = ({
   navs
@@ -31,9 +30,6 @@ export const MobileMenu = ({
         <SheetHeader>
           <header className="top-0 z-20 mx-auto flex w-full items-center justify-between border-b border-border bg-background/70 px-4 backdrop-blur">
             <div className="mx-auto flex w-full max-w-7xl items-center justify-between p-4 pr-2">
-              <Link href="/">
-                <LogoAgentLayerIcon className="size-10" />
-              </Link>
 
               <SheetClose>
                 <XIcon className="size-6" />
