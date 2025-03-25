@@ -6,7 +6,6 @@ import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 import TradingCard from "~/app/dao/[id]/trading/card"
 import ContributorCard from "~/app/dashboard/_components/contributor-card"
-import { defaultChain } from "~/components/auth/config"
 import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
 import TradeView from "~/components/trade-view"
@@ -14,6 +13,7 @@ import { shortenAddress } from "~/lib/web3"
 import type { ContributorPage } from "~/server/service/contributor"
 import type { DaoDetailResult } from "~/server/service/dao"
 import type { Top10Holders } from "~/server/service/holder"
+import {defaultChain} from "~/lib/web3";
 
 interface DaoContentProps {
   data: DaoDetailResult

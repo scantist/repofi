@@ -1,8 +1,8 @@
 import { TriangleAlert } from "lucide-react"
-import { defaultChain } from "~/components/auth/config"
 import { shortenAddress } from "~/lib/web3"
 import { Button } from "~/components/ui/button"
 import CopyButton from "~/components/ui/copy-button"
+import {defaultChain} from "~/lib/web3";
 
 export function LoadingOverlay({
   sendingToken,

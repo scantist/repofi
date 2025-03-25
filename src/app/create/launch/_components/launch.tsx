@@ -1,30 +1,29 @@
 "use client"
-import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
+import {decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther} from "viem"
 import CardWrapper from "~/components/card-wrapper"
-import { Form } from "~/components/ui/form"
-import { useStore } from "jotai/index"
-import { daoFormsAtom, launchAtom, stepAtom } from "~/store/create-dao-store"
-import { Controller, useForm } from "react-hook-form"
-import { type LaunchParams, launchSchema } from "~/lib/schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useState, useTransition } from "react"
-import { Label } from "~/components/ui/label"
-import { Input } from "~/components/ui/input"
-import { cn } from "~/lib/utils"
-import { api } from "~/trpc/react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
-import { Button } from "~/components/ui/button"
-import { Loader2, Rocket } from "lucide-react"
-import { LaunchNativeSteps, LaunchNoNativeSteps } from "~/lib/const"
-import { MultiStepLoader } from "~/components/ui/multi-step-loader"
+import {Form} from "~/components/ui/form"
+import {daoFormsAtom, stepAtom} from "~/store/create-dao-store"
+import {Controller, useForm} from "react-hook-form"
+import {type LaunchParams, launchSchema} from "~/lib/schema"
+import {zodResolver} from "@hookform/resolvers/zod"
+import {useRouter} from "next/navigation"
+import {useEffect, useMemo, useState, useTransition} from "react"
+import {Label} from "~/components/ui/label"
+import {Input} from "~/components/ui/input"
+import {cn} from "~/lib/utils"
+import {api} from "~/trpc/react"
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select"
+import {Button} from "~/components/ui/button"
+import {Loader2, Rocket} from "lucide-react"
+import {LaunchNativeSteps, LaunchNoNativeSteps} from "~/lib/const"
+import {MultiStepLoader} from "~/components/ui/multi-step-loader"
 
-import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core"
-import { useAccount, useConfig } from "wagmi"
-import { defaultChain } from "~/components/auth/config"
-import { env } from "~/env"
+import {readContract, simulateContract, waitForTransactionReceipt, writeContract} from "@wagmi/core"
+import {useAccount, useConfig} from "wagmi"
+import {defaultChain} from "~/lib/web3"
+import {env} from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
-import { useAtom } from "jotai"
+import {useAtom} from "jotai"
 
 const Launch = () => {
   const [daoInformation, setDaoInformation] = useAtom(daoFormsAtom)
@@ -33,18 +32,18 @@ const Launch = () => {
     setLaunchStep("INFORMATION")
   }, [])
   const form = useForm<LaunchParams>({
-    resolver: zodResolver(launchSchema, { async: true }),
+    resolver: zodResolver(launchSchema, {async: true}),
     reValidateMode: "onBlur"
   })
   const router = useRouter()
-  const { data: assetTokenOptions, isPending } = api.assetToken.getAssetTokens.useQuery()
+  const {data: assetTokenOptions, isPending} = api.assetToken.getAssetTokens.useQuery()
 
-  const { mutateAsync: createMutate } = api.dao.create.useMutation()
+  const {mutateAsync: createMutate} = api.dao.create.useMutation()
 
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: {errors},
     watch
   } = form
   const [isVerifying, startVerify] = useTransition()
@@ -80,7 +79,7 @@ const Launch = () => {
     progress: -1,
     error: -1
   })
-  const { address } = useAccount()
+  const {address} = useAccount()
   const config = useConfig()
   const [description, setDescription] = useState<string | boolean>()
   const contractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
@@ -100,7 +99,7 @@ const Launch = () => {
         return true
       }
       setDescription("approving allowance...")
-      const { request, result } = await simulateContract(config, {
+      const {request, result} = await simulateContract(config, {
         abi: erc20Abi,
         address: currentAssetToken.address as `0x${string}`,
         functionName: "approve",
@@ -112,7 +111,7 @@ const Launch = () => {
       }
       try {
         const hash = await writeContract(config, request)
-        await waitForTransactionReceipt(config, { hash })
+        await waitForTransactionReceipt(config, {hash})
         return await approveAssetToken()
       } catch (error) {
         console.error(error)
@@ -129,7 +128,7 @@ const Launch = () => {
       if (currentAssetToken.isNative) {
         amount = parseEther(formatUnits(BigInt(currentAssetToken.launchFee.toString()), currentAssetToken.decimals))
       }
-      const { request } = await simulateContract(config, {
+      const {request} = await simulateContract(config, {
         abi: launchPadAbi,
         address: contractAddress,
         functionName: "launch",
@@ -155,14 +154,14 @@ const Launch = () => {
         console.log("Failed to find launch event")
         return [0n, false]
       }
-      const { args } = decodeEventLog({
+      const {args} = decodeEventLog({
         ...item,
         abi: launchPadAbi
       })
       const {
-        asset: asset,
-        tokenId: tokenId,
-        initialPrice: initialPrice
+        asset,
+        tokenId,
+        initialPrice
       } = args as unknown as {
         asset: `0x${string}`
         tokenId: bigint
@@ -183,7 +182,7 @@ const Launch = () => {
     if (address && currentAssetToken) {
       let tempCurrentStep = 0
       setShowSteps(true)
-      setCurrentStep({ now: tempCurrentStep, error: -1, progress: tempCurrentStep })
+      setCurrentStep({now: tempCurrentStep, error: -1, progress: tempCurrentStep})
       startVerify(async () => {
         try {
           if (!currentAssetToken.isNative) {
@@ -192,14 +191,14 @@ const Launch = () => {
             }
           }
           tempCurrentStep += 1
-          setCurrentStep({ now: tempCurrentStep, error: -1, progress: tempCurrentStep })
+          setCurrentStep({now: tempCurrentStep, error: -1, progress: tempCurrentStep})
 
           const [tokenId, flag] = await launchDaoToken(data)
           if (!flag) {
             throw new Error("Launch DAO token failed")
           }
           tempCurrentStep += 1
-          setCurrentStep({ now: tempCurrentStep, error: -1, progress: tempCurrentStep })
+          setCurrentStep({now: tempCurrentStep, error: -1, progress: tempCurrentStep})
           await createMutate({
             ...daoInformation,
             tokenId
@@ -256,7 +255,7 @@ const Launch = () => {
             <Controller
               control={control}
               name="totalSupply"
-              render={({ field }) => (
+              render={({field}) => (
                 <div className="col-span-2 space-y-2">
                   <Label htmlFor="totalSupply">Total Supply</Label>
                   <Input
@@ -296,7 +295,7 @@ const Launch = () => {
             <Controller
               control={control}
               name="raisedAssetAmount"
-              render={({ field }) => (
+              render={({field}) => (
                 <div className="col-span-2 space-y-2">
                   <Label htmlFor="raisedAssetAmount">Raised Asset Amount</Label>
                   <Input
@@ -336,7 +335,7 @@ const Launch = () => {
             <Controller
               control={control}
               name="salesRatio"
-              render={({ field }) => (
+              render={({field}) => (
                 <div className="col-span-2 space-y-2">
                   <Label htmlFor="salesRatio">Sales Ratio</Label>
                   <div className="relative">
@@ -360,7 +359,7 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(parseFloat(value).toFixed(2))
+                            const numberValue = Number(Number.parseFloat(value).toFixed(2))
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -381,7 +380,7 @@ const Launch = () => {
             <Controller
               control={control}
               name="reservedRatio"
-              render={({ field }) => (
+              render={({field}) => (
                 <div className="col-span-2 space-y-2">
                   <Label htmlFor="reservedRatio">Reserved Ratio</Label>
                   <div className="relative">
@@ -405,7 +404,7 @@ const Launch = () => {
                           field.onChange(undefined)
                         } else {
                           try {
-                            const numberValue = Number(parseFloat(value).toFixed(2))
+                            const numberValue = Number(Number.parseFloat(value).toFixed(2))
                             field.onChange(numberValue)
                           } catch (error) {
                             console.error("Invalid number value:", error)
@@ -442,7 +441,7 @@ const Launch = () => {
               <Controller
                 control={control}
                 name="assetToken"
-                render={({ field }) => (
+                render={({field}) => (
                   <div className="col-span-3 space-y-2">
                     <Label htmlFor="assetToken">Asset Token</Label>
                     <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isPending}>
@@ -453,16 +452,17 @@ const Launch = () => {
                           "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                         )}
                       >
-                        <SelectValue placeholder="Select asset token" />
+                        <SelectValue placeholder="Select asset token"/>
                       </SelectTrigger>
                       <SelectContent>
                         {isPending ? (
                           <div className="flex items-center justify-center p-2">
-                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"></div>
+                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
                           </div>
                         ) : assetTokenOptions && assetTokenOptions.length > 0 ? (
                           assetTokenOptions.map((token) => (
-                            <SelectItem key={`at-${token.name}-${token.symbol}`} value={`${token.address}`} className="h-12 text-lg">
+                            <SelectItem key={`at-${token.name}-${token.symbol}`} value={`${token.address}`}
+                                        className="h-12 text-lg">
                               {token.symbol}
                             </SelectItem>
                           ))
@@ -486,8 +486,9 @@ const Launch = () => {
             </div>
           </div>
           <div className="col-span-3 flex items-center justify-center">
-            <Button className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isVerifying}>
-              {isVerifying ? <Loader2 className="animate-spin" /> : <Rocket className="" />}
+            <Button className="h-16 w-full max-w-80 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit"
+                    disabled={isVerifying}>
+              {isVerifying ? <Loader2 className="animate-spin"/> : <Rocket className=""/>}
               Launch
             </Button>
           </div>

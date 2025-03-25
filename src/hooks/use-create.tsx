@@ -2,13 +2,13 @@ import {readContract, simulateContract, waitForTransactionReceipt, writeContract
 import {useCallback, useState} from "react"
 import {useAccount, useConfig} from "wagmi"
 import {decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther} from "viem"
-import {defaultChain} from "~/components/auth/config"
 import {env} from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
 import {api} from "~/trpc/react"
 import {useAtom} from "jotai/index"
 import {daoFormsAtom} from "~/store/create-dao-store"
-import {type AssetToken} from "@prisma/client"
+import type {AssetToken} from "@prisma/client"
+import { defaultChain } from "~/lib/web3"
 
 type AssetTokenWithStringPrice = Omit<AssetToken, "priceUsd"> & { priceUsd: string }
 
