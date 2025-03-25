@@ -3,6 +3,7 @@ import {z} from "zod"
 import Pool from "~/lib/abi/UniswapV3Pool.json";
 import {readContract} from "viem/actions";
 import {erc20Abi, ethAddress} from "viem";
+import Decimal from "decimal.js";
 
 
 const tokenPriceSchema = z.array(
@@ -33,8 +34,6 @@ const pairPriceSchema = z.object({
     }),
   )
 })
-
-import { formatUnits } from "viem";
 
 export async function fetchTokenSpotPrice(
   pairAddress: `0x${string}`,
@@ -90,24 +89,19 @@ export async function fetchTokenSpotPrice(
       return null;
     }
 
-    // 计算原始价格 = (sqrtPriceX96 / 2^96)^2
-    const Q96 = 2n ** 96n;
-    const price = (sqrtPriceX96 * sqrtPriceX96 * 10n ** BigInt(token0Decimals)) / (Q96 * Q96 * 10n ** BigInt(token1Decimals));
-
-    console.log(`Raw price: ${price}`);
+    // 使用 Decimal 计算价格
+    const sqrtPrice = new Decimal(sqrtPriceX96.toString());
+    const Q96 = new Decimal(2).pow(96);
+    const price = sqrtPrice.div(Q96).pow(2)
+      .mul(Decimal.pow(10, token0Decimals))
+      .div(Decimal.pow(10, token1Decimals));
 
     // 确保我们返回的是指定 tokenAddress 的价格
     const isTokenAddressToken0 = tokenAddress.toLowerCase() === token0.toLowerCase();
-    const finalPrice = isTokenAddressToken0 ? price : (10n ** 36n) / price;
-
-    console.log(`Final raw price: ${finalPrice}`);
-
-    // 转换为更易读的格式
-    const readablePrice = formatUnits(finalPrice, 18);
+    const finalPrice = isTokenAddressToken0 ? price : new Decimal(1).div(price);
 
     return {
       rawPrice: finalPrice,
-      readablePrice,
       token0,
       token1,
       token0Decimals,
