@@ -1,7 +1,9 @@
 library 'jenkins-shared-lib@main'
 
 pipeline {
-    agent any
+    agent {
+        label 'slave'
+    }
     options {
         disableConcurrentBuilds abortPrevious: true
     }
@@ -15,16 +17,54 @@ pipeline {
             }
         }
 
-        stage('Clean workspace before building Docker image') {
+        stage('Install dependencies and build the project') {
             agent {
                 label 'slave'
             }
             steps {
-                sh 'sudo rm -rf ./*'
+                script {
+                    // Get the list of changed files in the current commit
+                    def changedFiles = sh(script: 'git diff --name-only HEAD~1 HEAD', returnStdout: true).trim()
+                    
+                    echo "Changed files: ${changedFiles}"
+                    
+                    // Check if pnpm-lock.yaml is in the list of changed files
+                    if (changedFiles.contains('pnpm-lock.yaml')) {
+                        echo "pnpm-lock.yaml has been updated, reinstalling dependencies."
+                        // Remove node_modules if lock file has changed
+                        sh 'rm -rf node_modules'
+                        // Re-run pnpm install to ensure dependencies are fresh
+                        sh '''
+                        set -x
+                        export NVM_DIR="$HOME/.nvm"
+                        [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"   # Load nvm
+                        nvm use default                                   # Set default Node version (Node 20)
+                        set +x
+                        node -v
+                        npm -v
+                        pnpm -v
+                        pnpm -i
+                        export NEXT_PUBLIC_CHAIN_ID=11155111
+                        export NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0x2A7A16616602Ef92b38CaA39103D004080B64429
+                        export NEXT_PUBLIC_REOWN_PROJECT_ID=d198cf7bba856bb5f9a7ec73cb03235e
+                        export NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS=0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E
+                        export NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS=0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3
+                        export NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS=0x0227628f3F023bb0B980b67D528571c95c6DaC1c
+                        export SKIP_ENV_VALIDATION=1
+                        pnpm run build
+                        '''
+                        // Stash the new node_modules for future builds
+                        stash name: 'nodeModules', includes: 'node_modules/**'
+                    } else {
+                        echo "pnpm-lock.yaml has not changed, using cached node_modules."
+                        // Unstash the node_modules directory if no change in lock file
+                        unstash 'nodeModules'
+                    }
+                }
             }
         }
 
-        stage('Build and Push git branch to SWR'){
+        stage('Push branch to SWR'){
             agent {
                 label 'slave'
             }
@@ -42,12 +82,7 @@ pipeline {
                     'HWC',
                     'scantist-images/repofi',
                     'Dockerfile',
-                    '''--build-arg NEXT_PUBLIC_CHAIN_ID=11155111 \
-                    --build-arg NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0x2A7A16616602Ef92b38CaA39103D004080B64429 \
-                    --build-arg NEXT_PUBLIC_REOWN_PROJECT_ID=d198cf7bba856bb5f9a7ec73cb03235e \
-                    --build-arg NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS=0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E \
-                    --build-arg NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS=0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3 \
-                    --build-arg NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS=0x0227628f3F023bb0B980b67D528571c95c6DaC1c''',
+                    '',
                     '.',
                     "${env.BRANCH_NAME}"
                 )
