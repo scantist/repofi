@@ -1,18 +1,15 @@
+"use client"
+import { useSession } from "next-auth/react"
 import LiveTable from "~/app/_components/live-table"
 import WalletButton from "~/components/auth/wallet-button"
-import { auth } from "~/server/auth"
-import type { DaoSearchResult } from "~/server/service/dao"
-import { api } from "~/trpc/server"
 
-const PortfolioPage = async () => {
-  const session = await auth()
-  const launchedDao: DaoSearchResult = await api.dao.search({
-    status: ["LAUNCHED"]
-  })
+const PortfolioPage = () => {
+  const { data } = useSession()
+  console.log(data)
   return (
     <div className={"mt-20 flex-col max-w-7xl mx-auto flex min-h-full w-full px-4"}>
       <div className={"text-5xl leading-32 font-bold tracking-tight"}>My Portfolio</div>
-      {session ? (
+      {data ? (
         <LiveTable
           initialParams={{
             owned: true,
