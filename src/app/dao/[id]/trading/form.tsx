@@ -18,6 +18,7 @@ import { cn, formatMoney } from "~/lib/utils"
 import { ErrorOverlay, LoadingOverlay, SuccessOverlay } from "./trading-components"
 import { useTokenStats } from "~/hooks/use-launch-contract"
 import Decimal from "decimal.js"
+import AmountInSlider from "../_components/amount-in-slider"
 
 interface TradingFormProps {
   data: DaoDetailResult
@@ -58,7 +59,9 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   }
 
   const updateAmountIn = (value: bigint, decimals?: number) => {
+    console.log("updateAmountIn", value, decimals)
     setAmountIn(value)
+    console.log("updateAmountInRaw", toHumanAmount(value, decimals?? leftTokenDecimals, 2))
     setAmountInRaw(toHumanAmount(value, decimals ?? leftTokenDecimals, 2))
   }
 
@@ -200,15 +203,23 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         <div className={"text-gray-500"}>
           Balance {isAuthenticated ? isBalanceLoading ? "-" : <strong>{toHumanAmount(balance?.value ?? 0n, balance?.decimals ?? leftTokenDecimals, 2)}</strong> : "n/a"}
         </div>
-        <div
-          className={"cursor-pointer font-thin tracking-tighter underline"}
-          onClick={() => {
-            if (balance) {
-              updateAmountIn((balance.value * BigInt(100)) / 100n, balance.decimals)
-            }
-          }}
-        >
-          MAX
+        <div className="flex place-content-center items-center gap-2 place-self-end">
+          {(mode === "buy" ? ["100", "200", "500"] : ["10K", "100K", "1M"]).map(
+            (item) => (
+              <button
+                key={item}
+                type="button"
+                className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+                onClick={() =>
+                  updateAmountInFromRaw(
+                    item.replace("K", "000").replace("M", "000000"),
+                  )
+                }
+              >
+                {item}
+              </button>
+            ),
+          )}
         </div>
       </div>
       <div className={"relative mt-2 w-full"}>
@@ -222,15 +233,12 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         <div className={"absolute top-0 right-4 flex h-full items-center"}>${tokenIn.ticker.toUpperCase()}</div>
       </div>
       <div className={"mt-4 grid grid-cols-3 gap-4"}>
-        {(mode === "buy" ? ["100", "200", "500"] : ["10K", "100K", "1M"]).map((item) => (
-          <button
-            key={item}
-            className="text-muted-foreground hover:text-foreground cursor-pointer rounded-sm bg-[#22272B] py-2 text-center text-xs font-thin"
-            onClick={() => updateAmountInFromRaw(item.replace("K", "000").replace("M", "000000"))}
-          >
-            {item}
-          </button>
-        ))}
+        <AmountInSlider
+          className="col-span-3 py-1"
+          amountIn={amountIn}
+          balance={balance?.value}
+          onAmountInChange={(_balance:bigint)=>{updateAmountIn(_balance,balance?.decimals)}}
+        />
       </div>
       <div className={"mt-4 text-gray-600"}>
         You will receive about
