@@ -45,7 +45,7 @@ const metadata = {
   name: "REPO",
   description: "The Repo Protocol",
   url: "https://repofi.io/",
-  icons: [] // TODO: Add icons
+  icons: ["https://storage.googleapis.com/repofi/launchpad/image/logo.png"] // TODO: Add icons
 }
 const siweConfig = createSIWEConfig({
   getMessageParams: async () => ({

@@ -39,7 +39,7 @@ const ContributorCard = ({ initContributorList, dao }: ContributorCardProps) => 
                 {item.userAddress !== null ? (
                   <div className={"text-muted-foreground text-xs"}>{shortenAddress(item.userAddress)}</div>
                 ) : (
-                  <div className={"text-muted-foreground text-xs cursor-pointer"}></div>
+                  <div className={"text-muted-foreground text-xs cursor-pointer"} />
                 )}
               </div>
               <div className={"bg-primary ml-4 rounded-lg px-2 py-1 text-right text-xs opacity-80"}>{Number(item.snapshotValue).toFixed(2)}%</div>
