@@ -1,24 +1,24 @@
-import BannerWrapper from "~/components/banner-wrapper"
+import Link from "next/link"
 import LaunchingDao from "~/app/_components/launching-dao"
 import LiveDao from "~/app/_components/live-dao"
-import { api } from "~/trpc/server"
-import type { DaoSearchResult } from "~/server/service/dao"
-import type { HomeSearchParams } from "~/lib/schema"
+import BannerWrapper from "~/components/banner-wrapper"
 import { Button } from "~/components/ui/button"
-import Link from "next/link"
+import type { HomeSearchParams } from "~/lib/schema"
 import { formatMoney } from "~/lib/utils"
+import type { DaoSearchResult } from "~/server/service/dao"
+import { api } from "~/trpc/server"
 
 const LaunchpadPage = async ({
   searchParams
 }: {
   searchParams: Promise<{
     launching_orderBy?: "latest" | "marketCap"
-    launching_owned?: boolean
-    launching_starred?: boolean
+    launching_owned?: string
+    launching_starred?: string
     launching_search?: string
     live_orderBy?: "latest" | "marketCap"
-    live_owned?: boolean
-    live_starred?: boolean
+    live_owned?: string
+    live_starred?: string
     live_search?: string
   }>
 }) => {
@@ -28,15 +28,15 @@ const LaunchpadPage = async ({
     status: ["LAUNCHING"],
     search: params.launching_search ?? "",
     orderBy: params.launching_orderBy ?? "latest",
-    owned: params.launching_owned ?? false,
-    starred: params.launching_starred ?? false
+    owned: params.launching_owned === "true",
+    starred: params.launching_starred === "true"
   }
   const initLiveParam: HomeSearchParams = {
     status: ["LAUNCHED"],
     search: params.live_search ?? "",
     orderBy: params.live_orderBy ?? "latest",
-    owned: params.live_owned ?? false,
-    starred: params.live_starred ?? false
+    owned: params.live_owned === "true",
+    starred: params.live_starred === "true"
   }
   const dashboard = await api.dashboard.home()
 
