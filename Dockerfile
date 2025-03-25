@@ -33,7 +33,7 @@ ARG NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN \
     if [ -f yarn.lock ]; then SKIP_ENV_VALIDATION=1 yarn build; \
     elif [ -f package-lock.json ]; then SKIP_ENV_VALIDATION=1 npm run build; \
