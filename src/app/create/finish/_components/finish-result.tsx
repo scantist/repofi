@@ -1,16 +1,20 @@
 "use client"
-import CardWrapper from "~/components/card-wrapper"
-import { Rocket } from "lucide-react"
-import { Button } from "~/components/ui/button"
-import { useSetAtom } from "jotai"
-import { stepAtom } from "~/store/create-dao-store"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
 import confetti from "canvas-confetti"
+import { useSetAtom } from "jotai"
+import { Rocket } from "lucide-react"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useMemo } from "react"
+import CardWrapper from "~/components/card-wrapper"
+import { Button } from "~/components/ui/button"
+import { stepAtom } from "~/store/create-dao-store"
 
 const FinishResult = () => {
   const setAtom = useSetAtom(stepAtom)
   const router = useRouter()
+  const params = useSearchParams()
+  const id = useMemo(() => {
+    return params.get("id")
+  }, [params])
   useEffect(() => {
     setAtom("FINISH")
     const end = Date.now() + 3 * 1000 // 3 seconds
@@ -45,14 +49,18 @@ const FinishResult = () => {
         <div className={"text-muted-foreground text-lg"}>Congratulations, your DAO has been successfully created!</div>
         <div className={"text-muted-foreground text-lg"}>
           Please go to the{" "}
-          <span
-            onClick={() => {
-              router.push("/")
-            }}
-            className={"cursor-pointer font-bold text-white"}
-          >
-            details
-          </span>{" "}
+          {id ? (
+            <span
+              onClick={() => {
+                router.push(`/dao/${id}`)
+              }}
+              className={"cursor-pointer font-bold text-white"}
+            >
+              details
+            </span>
+          ) : (
+            <>details</>
+          )}{" "}
           page to improve the information
         </div>
         <Button

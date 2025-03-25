@@ -1,28 +1,30 @@
 "use client"
 
-import React, { type FC, useEffect, useId, useRef, useState } from "react"
-import CardWrapper from "~/components/card-wrapper"
 import { SiGithub } from "@icons-pack/react-simple-icons"
-import { Eye, GitFork, LogOut, Search, Star, Users } from "lucide-react"
-import { useOutsideClick } from "~/hooks/use-outside-click"
-import { AnimatePresence, motion } from "motion/react"
-import { type Repository } from "~/types/data"
-import RepositoryInformation from "~/app/create/bind/_components/repository-information"
-import { cn } from "~/lib/utils"
-import BindRepositoryEmpty from "./bind-repository-empty"
-import { useSession } from "next-auth/react"
 import { DaoPlatform } from "@prisma/client"
-import { api } from "~/trpc/react"
 import { deleteCookie } from "cookies-next"
-import LoadingSpinner from "~/app/_components/loading-spinner"
-import { Input } from "~/components/ui/input"
-import { Button } from "~/components/ui/button"
-import ListPagination from "~/components/list-pagination"
-import { type Pageable } from "~/lib/schema"
-import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
-import createDaoStore, { daoFormsAtom, stepAtom, stepPath } from "~/store/create-dao-store"
 import { useAtom, useStore } from "jotai"
+import { Eye, GitFork, LogOut, Search, Star, Users } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
+import { useSession } from "next-auth/react"
+import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
 import { useRouter } from "next/navigation"
+import type React from "react"
+import { type FC, useEffect, useId, useRef, useState } from "react"
+import { toast } from "sonner"
+import LoadingSpinner from "~/app/_components/loading-spinner"
+import RepositoryInformation from "~/app/create/bind/_components/repository-information"
+import CardWrapper from "~/components/card-wrapper"
+import ListPagination from "~/components/list-pagination"
+import { Button } from "~/components/ui/button"
+import { Input } from "~/components/ui/input"
+import { useOutsideClick } from "~/hooks/use-outside-click"
+import type { Pageable } from "~/lib/schema"
+import { cn } from "~/lib/utils"
+import createDaoStore, { daoFormsAtom, stepAtom, stepPath } from "~/store/create-dao-store"
+import { api } from "~/trpc/react"
+import type { Repository } from "~/types/data"
+import BindRepositoryEmpty from "./bind-repository-empty"
 
 type Props = {
   githubToken?: string
@@ -87,6 +89,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     }
     if (currentDao) {
       console.log("dao exists")
+      toast.warning("The repository dao already exists! Please select another.")
     } else {
       setStep("INFORMATION")
       setDaoForms({
