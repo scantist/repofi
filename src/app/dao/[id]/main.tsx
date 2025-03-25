@@ -9,7 +9,8 @@ import ContributorCard from "~/app/dashboard/_components/contributor-card"
 import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
 import TradeView from "~/components/trade-view"
-import { shortenAddress } from "~/lib/web3"
+import { useTokenLockerAddress } from "~/hooks/use-launch-contract"
+import { shortenAddress, toHumanAmount } from "~/lib/web3"
 import { defaultChain } from "~/lib/web3"
 import type { ContributorPage } from "~/server/service/contributor"
 import type { DaoDetailResult } from "~/server/service/dao"
@@ -23,7 +24,7 @@ interface DaoContentProps {
 
 const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps) => {
   const graduated = data.tokenInfo.isGraduated
-  const progress = 20
+  const { address } = useTokenLockerAddress()
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
@@ -96,8 +97,14 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
                 <>
                   {top10Holders.map((item, index) => (
                     <div key={`Token-Distribution-${item.userAddress}`} className={"flex flex-row items-center gap-2 font-thin"}>
-                      <div className={"flex-1 truncate"}>{shortenAddress(item.userAddress)}</div>
-                      <div>{Number(item.balance).toFixed(2)}</div>
+                      <div className={"truncate"}>{shortenAddress(item.userAddress)}</div>
+                      {data.tokenInfo.uniswapV3Pair === item.userAddress && (
+                        <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>Uniswap V3</div>
+                      )}
+                      {address?.toLowerCase() === item.userAddress.toLowerCase() && (
+                        <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>LOCKER</div>
+                      )}
+                      <div className={"flex-1 text-right"}>{Number(item.balance).toFixed(2)}</div>
                     </div>
                   ))}
                 </>
