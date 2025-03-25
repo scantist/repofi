@@ -10,10 +10,10 @@ import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
 import TradeView from "~/components/trade-view"
 import { shortenAddress } from "~/lib/web3"
+import { defaultChain } from "~/lib/web3"
 import type { ContributorPage } from "~/server/service/contributor"
 import type { DaoDetailResult } from "~/server/service/dao"
 import type { Top10Holders } from "~/server/service/holder"
-import {defaultChain} from "~/lib/web3";
 
 interface DaoContentProps {
   data: DaoDetailResult
@@ -60,7 +60,7 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
                   {shortenAddress(data.tokenInfo.tokenAddress)}
                 </a>
               ) : (
-                <span className="mt-2 block">{shortenAddress("")}</span>
+                <span className="mt-2 block">UnLaunch</span>
               )}
             </div>
           </div>
