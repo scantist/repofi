@@ -1,3 +1,5 @@
+import { getCookie } from "cookies-next"
+import { cookies } from "next/headers"
 import ArticleList from "~/app/dao/[id]/_components/article-list"
 import Banner from "~/app/dao/[id]/_components/banner"
 import Content from "~/app/dao/[id]/_components/content"
@@ -15,6 +17,8 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (daoDetail === null) {
     return <div>No Data</div>
   }
+  const githubToken = await getCookie("github_token", { cookies })
+
   const [contributorList, top10Holders] = await Promise.all([
     api.contributor.getContributors({
       daoId: id,
@@ -36,7 +40,7 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
       <div className={"mt-20 min-h-full"}>
         <Banner id={id} daoDetail={daoDetail} />
         <div className={"mx-4 max-w-7xl md:mx-auto"}>
-          <DaoContent data={daoDetail} initContributorList={contributorList} top10Holders={top10Holders} />
+          <DaoContent data={daoDetail} initContributorList={contributorList} top10Holders={top10Holders} githubToken={githubToken} />
           {sortedContents.map((content) => {
             switch (content.type) {
               case "LIST_ROW":

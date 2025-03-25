@@ -1,8 +1,7 @@
-import BannerWrapper from "~/components/banner-wrapper"
-import OverviewCard from "~/app/dashboard/_components/overview-card"
-import LineCard from "~/app/dashboard/_components/line-card"
-import ContributorCard from "~/app/dashboard/_components/contributor-card"
 import DaoCard from "~/app/dashboard/_components/dao-card"
+import LineCard from "~/app/dashboard/_components/line-card"
+import OverviewCard from "~/app/dashboard/_components/overview-card"
+import BannerWrapper from "~/components/banner-wrapper"
 
 const DashboardPage = () => {
   return (
