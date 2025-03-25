@@ -146,11 +146,11 @@ const {getQueue, getMetrics, initQueue: _initQueue, pauseQueue, resumeQueue} =
 const initQueue = async () => {
   await _initQueue();
   const queue = await getQueue();
-  if (process.env.NODE_ENV === 'production') {
-    await queue.upsertJobScheduler("dex-sync-asset-price", {
-      every: 300 * 1000, // 5 minutes
-    });
-  }
+  // if (process.env.NODE_ENV === 'production') {
+  //   await queue.upsertJobScheduler("dex-sync-asset-price", {
+  //     every: 300 * 1000, // 5 minutes
+  //   });
+  // }
   await queue.upsertJobScheduler("dex-sync-launching-dao-metrics", {
     every: 300 * 1000, // 5 minutes
   });
