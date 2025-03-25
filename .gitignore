@@ -174,7 +174,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -272,3 +271,4 @@ node_modules
 
 .vscode
 key.json
+!/public/static/datafeeds/udf/dist/bundle.js
