@@ -173,15 +173,6 @@ pipeline {
 
             }
         }
-
-        stage('Clean workspace after building Docker image') {
-            agent {
-                label 'slave'
-            }
-            steps {
-                sh 'sudo rm -rf ./*'
-            }
-        }
     }
     post {
         failure {
