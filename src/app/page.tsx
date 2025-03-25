@@ -6,6 +6,7 @@ import type { DaoSearchResult } from "~/server/service/dao"
 import type { HomeSearchParams } from "~/lib/schema"
 import { Button } from "~/components/ui/button"
 import Link from "next/link"
+import { formatMoney } from "~/lib/utils"
 
 const LaunchpadPage = async ({
   searchParams
@@ -37,6 +38,7 @@ const LaunchpadPage = async ({
     owned: params.live_owned ?? false,
     starred: params.live_starred ?? false
   }
+  const dashboard = await api.dashboard.home()
 
   return (
     <div className={"mt-10 min-h-full"}>
@@ -56,16 +58,16 @@ const LaunchpadPage = async ({
           </Link>
           <div className={"bg-secondary mt-6 flex max-w-3xl flex-col justify-between rounded-lg px-4 py-7 md:flex-row md:px-8"}>
             <div className={"mb-4 flex flex-col gap-2 md:mb-0"}>
-              <div className={"text-2xl font-extrabold md:text-3xl"}>10 DAOs</div>
+              <div className={"text-2xl font-extrabold md:text-3xl"}>{dashboard.total} DAOs</div>
               <div className={"text-sm font-thin text-white/70"}>Launched & Funded</div>
             </div>
             <div className={"mb-4 flex flex-col gap-2 border-t-1 border-white pt-4 md:mb-0 md:border-t-0 md:border-l-1 md:pt-0 md:pl-4"}>
-              <div className={"text-2xl font-extrabold md:text-3xl"}>$33M</div>
-              <div className={"text-sm font-thin text-white/70"}>Raised for Research</div>
+              <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.LAUNCHING ?? "0"))}`}</div>
+              <div className={"text-sm font-thin text-white/70"}>Launching MarketCap</div>
             </div>
             <div className={"flex flex-col gap-2 border-t-1 border-white pt-4 md:border-t-0 md:border-l-1 md:pt-0 md:pl-4"}>
-              <div className={"text-2xl font-extrabold md:text-3xl"}>$7.4M</div>
-              <div className={"text-sm font-thin text-white/70"}>Deployed in Research</div>
+              <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.LAUNCHED ?? "0"))}`}</div>
+              <div className={"text-sm font-thin text-white/70"}>Graduated MarketCap</div>
             </div>
           </div>
         </div>
