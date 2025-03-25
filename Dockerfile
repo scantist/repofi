@@ -59,12 +59,12 @@ ENV NODE_ENV=production
 
 COPY prisma ./
 
-COPY /app/next.config.js ./
-COPY /app/public ./public
-COPY /app/package.json ./package.json
+COPY next.config.js ./
+COPY public ./public
+COPY package.json ./package.json
 
-COPY /app/.next/standalone ./
-COPY /app/.next/static ./.next/static
+COPY .next/standalone ./
+COPY .next/static ./.next/static
 
 EXPOSE 3000
 ENV PORT=3000

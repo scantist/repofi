@@ -109,7 +109,7 @@ pipeline {
                     export NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS=0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3
                     export NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS=0x0227628f3F023bb0B980b67D528571c95c6DaC1c
                     export SKIP_ENV_VALIDATION=1
-                    export NODE_OPTIONS="--max-old-space-size=4096"
+                    export NODE_OPTIONS="--max-old-space-size=3072"
                     pnpm run build
                     '''
                 }
