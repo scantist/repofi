@@ -1,9 +1,9 @@
-import {defaultChain} from "~/components/auth/config"
+import {defaultChain, defaultWCoinAddress} from "~/components/auth/config"
 import {z} from "zod"
 import Pool from "~/lib/abi/UniswapV3Pool.json";
 import {readContract} from "viem/actions";
 import {getPublicClient} from "~/lib/web3";
-import {erc20Abi} from "viem";
+import {erc20Abi, ethAddress} from "viem";
 
 
 const tokenPriceSchema = z.array(
@@ -116,8 +116,12 @@ export async function fetchTokenPriceUsd(tokenAddress: string, chain = defaultCh
     controller.abort()
   }, 10000)
   try {
+    let realTokenAddress = tokenAddress
+    if (realTokenAddress === ethAddress) {
+      realTokenAddress = defaultWCoinAddress as string
+    }
     const response = await fetch(
-      `https://api.dexscreener.com/tokens/v1/${chain}/${tokenAddress}`,
+      `https://api.dexscreener.com/tokens/v1/${chain}/${realTokenAddress}`,
       {
         signal: controller.signal,
         next: {revalidate: 60}

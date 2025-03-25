@@ -4,6 +4,7 @@ import {defaultChain} from "~/components/auth/config";
 import {env} from "~/env";
 
 export const getPublicClient = () => {
+  console.log(defaultChain)
   return createPublicClient({
     chain: defaultChain,
     transport: env.CHAIN_RPC_URL?.[defaultChain.id]

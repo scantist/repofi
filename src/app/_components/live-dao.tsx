@@ -18,8 +18,7 @@ const LiveDao = ({ initialData }: LiveDaoProps) => {
       <div className={"text-4xl font-bold"}>Launched DAOs</div>
       <CardWrapper>
         <div className={"p-4 text-sm font-thin"}>
-          Join DeSci by participating in the early stage funding of new BioDAOs. Your participation fuels cutting-edge research, open collaboration, and new models of scientific
-          funding.
+          Successfully funded projects now building with community support.  Track their progress and get involved in development.
         </div>
       </CardWrapper>
       <div className={"flex w-full flex-row gap-x-8 border-b border-gray-600 text-lg"}>

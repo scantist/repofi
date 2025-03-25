@@ -4,8 +4,8 @@ import { Octokit } from "octokit"
 import { Gitlab } from "@gitbeaker/rest"
 export const connection = {
   host: env.REDIS_HOST,
-  port: parseInt(env.REDIS_PORT),
-  db: parseInt(env.REDIS_DB),
+  port: Number.parseInt(env.REDIS_PORT),
+  db: Number.parseInt(env.REDIS_DB),
   password: env.REDIS_PASSWORD
 }
 

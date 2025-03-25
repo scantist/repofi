@@ -8,7 +8,7 @@ import { type SIWECreateMessageArgs, type SIWESession, type SIWEVerifyMessageArg
 import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
 const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
   [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
-  [sepolia.id]: "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14" // Sepolia WETH
+  [sepolia.id]: "0xfff9976782d46cc05630d1f6ebab18b2324d6b14" // Sepolia WETH
 } as const
 const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
 const defaultChain = isMainNet ? base : sepolia
