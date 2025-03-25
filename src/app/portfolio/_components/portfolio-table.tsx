@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation"
 import React, { Fragment, useState } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import { Button } from "~/components/ui/button"
-import { cn } from "~/lib/utils"
+import { cn, formatMoney } from "~/lib/utils"
+import { toHumanAmount } from "~/lib/web3"
 import type { DaoSearchResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
 
@@ -31,11 +32,12 @@ const PortfolioTable = ({ daoList }: PortfolioTableProps) => {
       initialData: daoList
     }
   )
+  console.log(response)
   const router = useRouter()
   const columns = [
-    columnHelper.accessor("id", {
-      header: () => "#",
-      cell: (info) => info.getValue()
+    columnHelper.accessor("ticker", {
+      header: () => "Ticker",
+      cell: (info) => <div>${info.getValue()}</div>
     }),
     columnHelper.accessor("name", {
       header: () => "Repo DAO",
@@ -43,15 +45,11 @@ const PortfolioTable = ({ daoList }: PortfolioTableProps) => {
     }),
     columnHelper.accessor("type", {
       header: () => "Type",
-      cell: (info) => <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
-    }),
-    columnHelper.accessor("tokenInfo.marketCap", {
-      header: () => "Market Cap",
-      cell: (info) => <div className={"text-sm text-gray-400"}>${info.getValue()}</div>
-    }),
-    columnHelper.accessor("tokenInfo.totalSupply", {
-      header: () => "Total Supply",
       cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
+    }),
+    columnHelper.accessor("marketCapUsd", {
+      header: () => "Market Cap",
+      cell: (info) => <div className={"text-sm text-gray-400"}>${formatMoney(info.getValue().length === 0 ? "0" : info.getValue())}</div>
     }),
     columnHelper.accessor("tokenInfo.holderCount", {
       header: () => "Holder Count",

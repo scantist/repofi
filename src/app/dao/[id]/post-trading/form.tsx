@@ -1,21 +1,21 @@
 "use client"
 
-import { Input } from "~/components/ui/input"
-import { type DaoDetailResult } from "~/server/service/dao"
+import NumberFlow from "@number-flow/react"
+import { Loader2, Rocket } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-import { useAssetTokenInfo } from "~/hooks/use-asset-token"
 import { z } from "zod"
-import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
+import PostSlippagePopover from "~/app/dao/[id]/post-trading/post-slippage-popover"
 import { useAuth } from "~/components/auth/auth-context"
 import { Button } from "~/components/ui/button"
-import { Loader2, Rocket } from "lucide-react"
-import NumberFlow from "@number-flow/react"
-import { cn } from "~/lib/utils"
-import { ErrorOverlay, LoadingOverlay, SuccessOverlay } from "./trading-components"
-import PostTradingFeePopover from "./post-trading-fee-popover"
-import PostSlippagePopover from "~/app/dao/[id]/post-trading/post-slippage-popover"
+import { Input } from "~/components/ui/input"
+import { useAssetTokenInfo } from "~/hooks/use-asset-token"
 import { useAmountOutMin, useTrade } from "~/hooks/use-uniswap"
+import { cn } from "~/lib/utils"
+import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
+import type { DaoDetailResult } from "~/server/service/dao"
+import PostTradingFeePopover from "./post-trading-fee-popover"
+import { ErrorOverlay, LoadingOverlay, SuccessOverlay } from "./trading-components"
 
 interface TradingFormProps {
   data: DaoDetailResult
@@ -179,7 +179,7 @@ const PostTradingForm = ({ data, mode }: TradingFormProps) => {
       <div className={"mt-4 text-gray-600"}>
         You will receive about
         <NumberFlow
-          value={amountOut ? parseFloat(toHumanAmount(amountOut, isBuy ? leftTokenDecimals : (assetTokenInfo?.decimals ?? leftTokenDecimals), 2)) : 0}
+          value={amountOut ? Number.parseFloat(toHumanAmount(amountOut, isBuy ? leftTokenDecimals : (assetTokenInfo?.decimals ?? leftTokenDecimals), 2)) : 0}
           format={{
             maximumFractionDigits: 2,
             minimumFractionDigits: 2
