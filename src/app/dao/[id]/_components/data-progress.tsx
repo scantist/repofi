@@ -19,7 +19,9 @@ export const PreProgress = ({ dao }: DataProgressProps) => {
       return 0
     }
     // 将 currentY 乘以 10000 以提高精度
-    const scaledCurrentY = data.currentY * 10000n
+    const scaledCurrentY = (data.currentY-data.curveParameter.initialY) * 10000n
+    console.log("data", data)
+    console.log("finalY", data.curveParameter.finalY)
     // 执行除法，然后转换为数字，再除以 10000 得到小数
     return Number(scaledCurrentY / data.curveParameter.finalY) / 100
   }, [data])
