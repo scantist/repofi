@@ -34,7 +34,7 @@ export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: 
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github info server")
         }
         return safeParse.data
-      } else if (platform === DaoPlatform.GITLAB) {
+      }if (platform === DaoPlatform.GITLAB) {
         const client = new Gitlab({})
         if (!client) {
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to initialize GitLab client")
@@ -65,7 +65,7 @@ export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: 
             type: response.namespace.kind
           },
           license: {
-            spdx_id: response.license?.key || "unknown"
+            spdx_id: response.license?.key || "Unknown"
           }
         })
         if (!safeParse.success) {
@@ -73,9 +73,8 @@ export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: 
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from gitlab info server")
         }
         return safeParse.data
-      } else {
-        throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
       }
+        throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
     },
     [`tool-repo-info-${platform}-${owner}-${repo}`],
     {
@@ -107,15 +106,14 @@ export async function fetchRepoContributors(platform: DaoPlatform, owner: string
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from github contributors server")
         }
         return safeParse.data
-      } else if (platform === DaoPlatform.GITLAB) {
+      }if (platform === DaoPlatform.GITLAB) {
         const client = new Gitlab({})
         if (!client) {
           throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to initialize GitLab client")
         }
         throw new CommonError(ErrorCode.INTERNAL_ERROR, "Invalid response format from gitlab info server")
-      } else {
-        throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
       }
+        throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
     },
     [`tool-repo-contributors-${platform}-${owner}-${repo}`],
     {
