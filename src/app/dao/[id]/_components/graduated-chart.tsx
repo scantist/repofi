@@ -1,4 +1,4 @@
-import { defaultChain } from "~/components/auth/config"
+import { defaultChain } from "~/lib/web3"
 import DextoolsChart from "~/components/dextools/chart"
 import NoData from "~/components/no-data"
 

@@ -79,7 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           const { message, signature } = credentials
-          const address = getAddressFromMessage(message as string)
+          const address = getAddressFromMessage(message as string).toLowerCase()
           const chainId = getChainIdFromMessage(message as string)
 
           const isValid = await verifySignature({

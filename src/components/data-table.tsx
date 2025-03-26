@@ -1,13 +1,14 @@
-import { type ColumnDef, flexRender, getCoreRowModel, getExpandedRowModel, type PaginationState, type Row, useReactTable } from "@tanstack/react-table"
-import { Fragment, type ReactNode, useEffect, useMemo, useState } from "react"
-import { cn } from "~/lib/utils"
+import { type ColumnDef, type PaginationState, type Row, flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from "@tanstack/react-table"
+import React, { Fragment, type ReactNode, useEffect, useMemo, useState } from "react"
+import LoadingSpinner from "~/app/_components/loading-spinner"
 import CardWrapper from "~/components/card-wrapper"
-import { type PageableData } from "~/types/data"
 import NoData from "~/components/no-data"
+import { cn } from "~/lib/utils"
+import type { PageableData } from "~/types/data"
 
 interface Props<T> {
   data?: PageableData<T>
-  // eslint-disable-next-line
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   columns: ColumnDef<T, any>[]
   loading?: boolean
   onPaginationChange: (pagination: PaginationState) => void
@@ -16,6 +17,7 @@ interface Props<T> {
   getRowCanExpand?: (row: Row<T>) => boolean
   expendRow?: (row: Row<T>) => ReactNode
   pageSize?: number[]
+  children?: ReactNode
 }
 
 const DataTable = <T,>({
@@ -27,7 +29,8 @@ const DataTable = <T,>({
   onPaginationChange,
   getRowCanExpand = () => false,
   expendRow,
-  pageSize = [10, 20, 50, 100]
+  pageSize = [10, 20, 50, 100],
+  children
 }: Props<T>) => {
   const [pagination, setPagination] = useState<PaginationState>(outPagination)
   const table = useReactTable({
@@ -75,14 +78,18 @@ const DataTable = <T,>({
             {loading ? (
               <tr>
                 <td className="px-6 py-4" colSpan={columns.length}>
-                  Data Loading...
+                  <LoadingSpinner size={64} className="my-8" text="Loading dao..." />
                 </td>
               </tr>
             ) : data && data.list.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <Fragment key={row.id}>
                   <tr
-                    className={cn("h-16 border-t-1 border-white/20", row.getIsExpanded() && "bg-[#6A21F74D]")}
+                    className={cn(
+                      "h-16 border-t-1 border-white/20 transition",
+                      row.getIsExpanded() && "bg-[#6A21F74D]",
+                      (row.getCanExpand() || onRowClick) && "cursor-pointer hover:bg-[#6A21F74D]"
+                    )}
                     onClick={() => {
                       onRowClick?.(row)
                       // if (row.getCanExpand()) {
@@ -117,6 +124,7 @@ const DataTable = <T,>({
             ))}
           </tfoot>
         </table>
+        {children}
       </div>
     </CardWrapper>
   )

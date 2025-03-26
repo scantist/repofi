@@ -1,16 +1,18 @@
 "use client"
 
+import { CookieValueTypes } from "cookies-next"
 import { PostProgress, PreProgress } from "~/app/dao/[id]/_components/data-progress"
 import GraduatedChart from "~/app/dao/[id]/_components/graduated-chart"
 import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 import TradingCard from "~/app/dao/[id]/trading/card"
 import ContributorCard from "~/app/dashboard/_components/contributor-card"
-import { defaultChain } from "~/components/auth/config"
 import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
 import TradeView from "~/components/trade-view"
-import { shortenAddress } from "~/lib/web3"
+import { useTokenLockerAddress } from "~/hooks/use-launch-contract"
+import { shortenAddress, toHumanAmount } from "~/lib/web3"
+import { defaultChain } from "~/lib/web3"
 import type { ContributorPage } from "~/server/service/contributor"
 import type { DaoDetailResult } from "~/server/service/dao"
 import type { Top10Holders } from "~/server/service/holder"
@@ -19,11 +21,12 @@ interface DaoContentProps {
   data: DaoDetailResult
   initContributorList: ContributorPage
   top10Holders: Top10Holders
+  githubToken?: string
 }
 
-const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps) => {
+const DaoContent = ({ data, initContributorList, top10Holders, githubToken }: DaoContentProps) => {
   const graduated = data.tokenInfo.isGraduated
-  const progress = 20
+  const { address } = useTokenLockerAddress()
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
@@ -60,7 +63,7 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
                   {shortenAddress(data.tokenInfo.tokenAddress)}
                 </a>
               ) : (
-                <span className="mt-2 block">{shortenAddress("")}</span>
+                <span className="mt-2 block">UnLaunch</span>
               )}
             </div>
           </div>
@@ -85,7 +88,7 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
         {graduated ? <PostTradingCard data={data} /> : <TradingCard data={data} />}
-        <ContributorCard dao={data} initContributorList={initContributorList} />
+        <ContributorCard githubToken={githubToken} dao={data} initContributorList={initContributorList} />
         <CardWrapper>
           <div className={"rounded-lg bg-black/60 p-4"}>
             <div className={"text-2xl font-medium"}>Token Distribution</div>
@@ -96,8 +99,14 @@ const DaoContent = ({ data, initContributorList, top10Holders }: DaoContentProps
                 <>
                   {top10Holders.map((item, index) => (
                     <div key={`Token-Distribution-${item.userAddress}`} className={"flex flex-row items-center gap-2 font-thin"}>
-                      <div className={"flex-1 truncate"}>{shortenAddress(item.userAddress)}</div>
-                      <div>{Number(item.balance).toFixed(2)}</div>
+                      <div className={"truncate"}>{shortenAddress(item.userAddress)}</div>
+                      {data.tokenInfo.uniswapV3Pair === item.userAddress && (
+                        <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>Uniswap V3</div>
+                      )}
+                      {address?.toLowerCase() === item.userAddress.toLowerCase() && (
+                        <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>LOCKER</div>
+                      )}
+                      <div className={"flex-1 text-right"}>{Number(item.balance).toFixed(2)}</div>
                     </div>
                   ))}
                 </>

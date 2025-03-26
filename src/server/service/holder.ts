@@ -16,7 +16,10 @@ class HolderService {
     }
     const conditions = {
       where: {
-        tokenId
+        tokenId,
+        balance: {
+          gt: 0
+        }
       },
       orderBy: {
         balance: "desc" as const
@@ -26,8 +29,9 @@ class HolderService {
 
     if (daoTokenInfo.isGraduated) {
       holders=await db.daoGraduationHolder.findMany(conditions)
+    }else{
+      holders=await db.daoLaunchHolder.findMany(conditions)
     }
-    holders=await db.daoLaunchHolder.findMany(conditions)
     return holders.map(holder => ({
       tokenId: holder.tokenId,
       userAddress: holder.userAddress,

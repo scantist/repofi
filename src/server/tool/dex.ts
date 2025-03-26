@@ -1,9 +1,9 @@
-import {defaultChain} from "~/components/auth/config"
+import {defaultChain, defaultWCoinAddress, getPublicClient} from "~/lib/web3"
 import {z} from "zod"
 import Pool from "~/lib/abi/UniswapV3Pool.json";
 import {readContract} from "viem/actions";
-import {getPublicClient} from "~/lib/web3";
-import {erc20Abi} from "viem";
+import {erc20Abi, ethAddress} from "viem";
+import Decimal from "decimal.js";
 
 
 const tokenPriceSchema = z.array(
@@ -64,40 +64,44 @@ export async function fetchTokenSpotPrice(
 
     // 获取 token0 和 token1 的小数位数
     const getDecimals = async (address: `0x${string}`) => {
-      return await readContract(publicClient, {
-        abi: erc20Abi,
-        address,
-        functionName: "decimals"
-      }) as number;
+      try {
+        return await readContract(publicClient, {
+          abi: erc20Abi,
+          address,
+          functionName: "decimals"
+        }) as number;
+      } catch (error) {
+        console.error(`Error getting decimals for ${address}:`, error);
+        return null;
+      }
     };
 
     const token0Decimals = await getDecimals(token0);
     const token1Decimals = await getDecimals(token1);
 
+    if (token0Decimals === null || token1Decimals === null) {
+      throw new Error(`Unable to get decimals for tokens: ${token0}, ${token1}`);
+    }
+
     const [sqrtPriceX96] = slot0Data;
 
     if (sqrtPriceX96 === 0n) {
-      return null
+      return null;
     }
 
-    // 计算原始价格 = (sqrtPriceX96 / 2^96)^2
-    const Q96 = 2n ** 96n;
-    const sqrtPrice = (sqrtPriceX96 * 10n ** 18n) / Q96;
-    let rawPrice = (sqrtPrice * sqrtPrice) / 10n ** 18n;
-
-    // 调整精度 (考虑代币小数位数差异)
-    const decimalAdjustment = 10n ** BigInt(token1Decimals - token0Decimals);
-    rawPrice = rawPrice * decimalAdjustment;
+    // 使用 Decimal 计算价格
+    const sqrtPrice = new Decimal(sqrtPriceX96.toString());
+    const Q96 = new Decimal(2).pow(96);
+    const price = sqrtPrice.div(Q96).pow(2)
+      .mul(Decimal.pow(10, token0Decimals))
+      .div(Decimal.pow(10, token1Decimals));
 
     // 确保我们返回的是指定 tokenAddress 的价格
     const isTokenAddressToken0 = tokenAddress.toLowerCase() === token0.toLowerCase();
-    if (!isTokenAddressToken0) {
-      // 如果指定的 token 是 token1，我们需要取倒数
-      rawPrice = (10n ** 36n) / rawPrice;
-    }
+    const finalPrice = isTokenAddressToken0 ? price : new Decimal(1).div(price);
 
     return {
-      rawPrice,
+      rawPrice: finalPrice,
       token0,
       token1,
       token0Decimals,
@@ -116,8 +120,12 @@ export async function fetchTokenPriceUsd(tokenAddress: string, chain = defaultCh
     controller.abort()
   }, 10000)
   try {
+    let realTokenAddress = tokenAddress
+    if (realTokenAddress === ethAddress) {
+      realTokenAddress = defaultWCoinAddress as string
+    }
     const response = await fetch(
-      `https://api.dexscreener.com/tokens/v1/${chain}/${tokenAddress}`,
+      `https://api.dexscreener.com/tokens/v1/${chain}/${realTokenAddress}`,
       {
         signal: controller.signal,
         next: {revalidate: 60}

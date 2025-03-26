@@ -1,17 +1,18 @@
 "use client"
 
-import { Button } from "~/components/ui/button"
-import { type DaoDetailResult } from "~/server/service/dao"
-import { api } from "~/trpc/react"
-import { CreateMessage, DeleteMessage } from "~/app/dao/[id]/message/message-action"
-import LoadingSpinner from "~/app/_components/loading-spinner"
-import React, { useMemo, useState } from "react"
-import { shortenAddress } from "~/lib/web3"
 import { formatDistanceToNow } from "date-fns"
 import { Trash } from "lucide-react"
+import React, { useMemo, useState } from "react"
+import LoadingSpinner from "~/app/_components/loading-spinner"
+import { CreateMessage, DeleteMessage } from "~/app/dao/[id]/message/message-action"
 import { useAuth } from "~/components/auth/auth-context"
-import type { Pageable } from "~/lib/schema"
 import ListPagination from "~/components/list-pagination"
+import NoData from "~/components/no-data"
+import { Button } from "~/components/ui/button"
+import type { Pageable } from "~/lib/schema"
+import { shortenAddress } from "~/lib/web3"
+import type { DaoDetailResult } from "~/server/service/dao"
+import { api } from "~/trpc/react"
 
 interface MessageListProps {
   data: DaoDetailResult
@@ -36,7 +37,7 @@ const MessageList = ({ data }: MessageListProps) => {
       return <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
     }
     if (!messageData || messageData?.list.length === 0) {
-      return <div>No Data</div>
+      return <NoData className={"mt-10"} size={65} textClassName={"text-xl"} />
     }
     return messageData.list.map((item) => (
       <div key={`message-${item.id}`} className={"mt-4 flex flex-col rounded-lg bg-[#22272B] p-3"}>
@@ -94,7 +95,7 @@ const MessageList = ({ data }: MessageListProps) => {
             </Button>
           </CreateMessage>
         </div>
-        <div className={"md:min-h-[530px]"}>{list}</div>
+        <div className={"md:min-h-[620px]"}>{list}</div>
         <ListPagination pageable={condition.pageable} totalPages={messageData?.pages ?? 0} setPageable={(pageable) => setCondition({ pageable })} />
       </div>
     </>

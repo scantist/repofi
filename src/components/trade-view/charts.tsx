@@ -50,7 +50,7 @@ export const TVChartContainer = ({
         onReady: (callback) => {
           setTimeout(() =>
             callback({
-              supported_resolutions: ["1", "15"] as ResolutionString[]
+              supported_resolutions: ["1", "5"] as ResolutionString[]
             })
           )
         },
@@ -65,17 +65,17 @@ export const TVChartContainer = ({
               ticker: dao.ticker,
               type: "crypto",
               session: "24x7",
-              supported_resolutions: ["1", "15"] as ResolutionString[],
+              supported_resolutions: ["1", "5"] as ResolutionString[],
               minmov: 1,
               pricescale: 10000000000000,
               has_intraday: true,
-              intraday_multipliers: ["1", "15"],
+              intraday_multipliers: ["1", "5"],
               visible_plots_set: "ohlcv",
               has_weekly_and_monthly: false,
               volume_precision: 2,
               data_status: "streaming",
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as Timezone,
-              exchange: "PumpAgent"
+              exchange: "RepoFi"
             } as LibrarySymbolInfo)
           })
         },

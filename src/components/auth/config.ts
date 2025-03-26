@@ -1,18 +1,19 @@
 "use client"
-import { getAddress } from "viem"
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi"
-import { env } from "~/env"
-import { type AppKitNetwork, base, sepolia } from "@reown/appkit/networks"
-import { createAppKit } from "@reown/appkit/react"
-import { type SIWECreateMessageArgs, type SIWESession, type SIWEVerifyMessageArgs, createSIWEConfig, formatMessage } from "@reown/appkit-siwe"
-import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
-const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
-  [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
-  [sepolia.id]: "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14" // Sepolia WETH
-} as const
-const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
-const defaultChain = isMainNet ? base : sepolia
-const defaultWCoinAddress = W_COIN_ADDRESSES[defaultChain.id]
+import {getAddress} from "viem"
+import {WagmiAdapter} from "@reown/appkit-adapter-wagmi"
+import {env} from "~/env"
+import type {AppKitNetwork} from "@reown/appkit/networks"
+import {createAppKit} from "@reown/appkit/react"
+import {
+  createSIWEConfig,
+  formatMessage,
+  type SIWECreateMessageArgs,
+  type SIWESession,
+  type SIWEVerifyMessageArgs
+} from "@reown/appkit-siwe"
+import {getCsrfToken, getSession, signIn, signOut} from "next-auth/react"
+import {defaultChain} from "~/lib/web3"
+
 const projectId = env.NEXT_PUBLIC_REOWN_PROJECT_ID
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [defaultChain]
 
@@ -44,7 +45,7 @@ const metadata = {
   name: "REPO",
   description: "The Repo Protocol",
   url: "https://repofi.io/",
-  icons: [] // TODO: Add icons
+  icons: ["https://storage.googleapis.com/repofi/launchpad/image/logo.png"] // TODO: Add icons
 }
 const siweConfig = createSIWEConfig({
   getMessageParams: async () => ({
@@ -53,7 +54,7 @@ const siweConfig = createSIWEConfig({
     chains: networks.map((chain: AppKitNetwork) => Number.parseInt(chain.id.toString())),
     statement: "Please sign with your account"
   }),
-  createMessage: ({ address, ...args }: SIWECreateMessageArgs) => formatMessage(args, normalizeAddress(address)),
+  createMessage: ({address, ...args}: SIWECreateMessageArgs) => formatMessage(args, normalizeAddress(address)),
   getNonce: async () => {
     const nonce = await getCsrfToken()
     if (!nonce) {
@@ -77,7 +78,7 @@ const siweConfig = createSIWEConfig({
       chainId: session.chainId
     } satisfies SIWESession
   },
-  verifyMessage: async ({ message, signature }: SIWEVerifyMessageArgs) => {
+  verifyMessage: async ({message, signature}: SIWEVerifyMessageArgs) => {
     try {
       await signIn("credentials", {
         message,
@@ -129,4 +130,4 @@ createAppKit({
   // tokens
 })
 
-export { wagmiConfig, defaultChain, defaultWCoinAddress }
+export {wagmiConfig}

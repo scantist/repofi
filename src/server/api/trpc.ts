@@ -6,14 +6,14 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC, TRPCError } from "@trpc/server"
+import { TRPCError, initTRPC } from "@trpc/server"
 import superjson from "superjson"
-import { z, ZodError } from "zod"
+import { ZodError, z } from "zod"
 
-import { db } from "~/server/db"
-import { auth, getApiKey } from "~/server/auth"
-import { type UserRole } from "@prisma/client"
+import type { UserRole } from "@prisma/client"
 import { CommonError } from "~/lib/error"
+import { auth, getApiKey } from "~/server/auth"
+import { db } from "~/server/db"
 
 /**
  * 1. CONTEXT

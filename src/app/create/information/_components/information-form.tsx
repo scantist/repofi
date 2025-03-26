@@ -1,36 +1,37 @@
 "use client"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { DaoType } from "@prisma/client"
+import { useAtom, useSetAtom } from "jotai"
+import { ImagePlus, Loader2, TrashIcon, Wallet } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useEffect, useMemo, useTransition } from "react"
+import { Controller, useForm } from "react-hook-form"
+import { formatUnits } from "viem"
+import { z } from "zod"
+import { uploadFile } from "~/app/actions"
 import CardWrapper from "~/components/card-wrapper"
-import {useAtom, useSetAtom} from "jotai"
-import {daoFormsAtom, type DaoInformationForms, daoInformationFormsSchema, stepAtom} from "~/store/create-dao-store"
-import {Controller, useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {useMemo, useTransition} from "react"
-import {Form} from "~/components/ui/form"
-import {Button} from "~/components/ui/button"
-import {ImagePlus, Loader2, TrashIcon, Wallet} from "lucide-react"
 import PictureSelectPopover from "~/components/picture-select-popover"
-import {LaunchNativeSteps, LaunchNoNativeSteps, UPLOAD_PATH_POST} from "~/lib/const"
-import {uploadFile} from "~/app/actions"
-import {cn} from "~/lib/utils"
-import {Label} from "~/components/ui/label"
-import {Input} from "~/components/ui/input"
-import {Textarea} from "~/components/ui/textarea"
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "~/components/ui/select"
-import {DaoType} from "@prisma/client"
-import {useRouter} from "next/navigation"
-import {api} from "~/trpc/react"
-import {z} from "zod"
-import {MultiStepLoader} from "~/components/ui/multi-step-loader"
-import {formatUnits} from "viem"
-import {useApprovedTransaction, useDataPersistence, useLaunchStepState, useLaunchTransaction} from "~/hooks/use-create"
+import { Button } from "~/components/ui/button"
+import { Form } from "~/components/ui/form"
+import { Input } from "~/components/ui/input"
+import { Label } from "~/components/ui/label"
+import { MultiStepLoader } from "~/components/ui/multi-step-loader"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
+import { Textarea } from "~/components/ui/textarea"
+import { useApprovedTransaction, useDataPersistence, useLaunchStepState, useLaunchTransaction } from "~/hooks/use-create"
+import { LaunchNativeSteps, LaunchNoNativeSteps, UPLOAD_PATH_POST } from "~/lib/const"
+import { cn } from "~/lib/utils"
+import { type DaoForms, type DaoInformationForms, daoFormsAtom, daoFormsSchema, stepAtom } from "~/store/create-dao-store"
+import { api } from "~/trpc/react"
 
 const InformationForm = () => {
   const setStep = useSetAtom(stepAtom)
-  const {mutateAsync} = api.dao.checkNameAndTickerExists.useMutation()
+  const { mutateAsync } = api.dao.checkNameAndTickerExists.useMutation()
   const [daoForms, setDaoForms] = useAtom(daoFormsAtom)
-  const form = useForm<DaoInformationForms>({
+
+  const form = useForm<DaoForms>({
     resolver: zodResolver(
-      daoInformationFormsSchema.superRefine(async (data, ctx) => {
+      daoFormsSchema.superRefine(async (data, ctx) => {
         const result = await mutateAsync({
           name: data.name,
           ticker: data.ticker
@@ -54,17 +55,24 @@ const InformationForm = () => {
       })
     ),
     reValidateMode: "onBlur",
-    defaultValues: {...daoForms}
+    defaultValues: { ...daoForms }
   })
 
   const router = useRouter()
   const {
     handleSubmit,
     control,
-    formState: {errors},
+    formState: { errors },
     watch
   } = form
-  const {data: assetList = [], isPending} = api.assetToken.getAssetTokens.useQuery()
+  console.log("atom", daoForms)
+  useEffect(() => {
+    if (daoForms.url.trim().length === 0) {
+      setStep("BIND")
+      router.push("/create/bind")
+    }
+  }, [daoForms])
+  const { data: assetList = [], isPending } = api.assetToken.getAssetTokens.useQuery()
   const assetAddress = watch("assetAddress")
   const assetSteps = useMemo(() => {
     if (!assetAddress || assetList.length === 0) {
@@ -82,15 +90,7 @@ const InformationForm = () => {
     }
     return assetList.find((asset) => asset.address === assetAddress)
   }, [assetAddress, assetList])
-  const {
-    launchStepState,
-    updateDescription,
-    initStep,
-    nextStep,
-    errorStep,
-    exitStep,
-    finallyStep
-  } = useLaunchStepState()
+  const { launchStepState, updateDescription, initStep, nextStep, errorStep, exitStep, finallyStep } = useLaunchStepState()
   const [isVerifying, startVerify] = useTransition()
   const onError = (error: unknown) => {
     console.log("error", launchStepState)
@@ -99,19 +99,19 @@ const InformationForm = () => {
     throw error
   }
 
-  const {execute: approvedTransaction} = useApprovedTransaction({
+  const { execute: approvedTransaction } = useApprovedTransaction({
     onApproveMessage: updateDescription,
     onApproveError: onError
   })
-  const {execute: launchTransaction} = useLaunchTransaction({
+  const { execute: launchTransaction } = useLaunchTransaction({
     onLaunchMessage: updateDescription,
     onLaunchError: onError
   })
-  const {execute: dataPersistence} = useDataPersistence({
+  const { execute: dataPersistence } = useDataPersistence({
     onPersistenceMessage: updateDescription,
     onPersistenceError: onError
   })
-  const submit = (data: DaoInformationForms) => {
+  const submit = (data: DaoForms) => {
     console.log("submit", data)
     setDaoForms({
       ...daoForms,
@@ -126,12 +126,15 @@ const InformationForm = () => {
         }
         const tokenId = await launchTransaction(currentAsset)
         nextStep()
-        await dataPersistence(tokenId)
+        const id = await dataPersistence(data, tokenId)
         finallyStep()
         setStep("FINISH")
-        router.push("/create/finish")
-      } catch (e) {
-      }
+        if (id) {
+          router.push(`/create/finish?id=${id}`)
+        } else {
+          router.push("/create/finish")
+        }
+      } catch (e) {}
     })
   }
   return (
@@ -165,7 +168,7 @@ const InformationForm = () => {
             <Controller
               control={control}
               name="avatar"
-              render={({field}) => {
+              render={({ field }) => {
                 return field.value ? (
                   <div className="flex gap-2 lg:flex-col">
                     <div
@@ -184,7 +187,7 @@ const InformationForm = () => {
                         field.onChange("")
                       }}
                     >
-                      <TrashIcon className="mx-auto h-5 w-5"/>
+                      <TrashIcon className="mx-auto h-5 w-5" />
                     </Button>
                   </div>
                 ) : (
@@ -202,20 +205,19 @@ const InformationForm = () => {
                         "border-primary"
                       )}
                     >
-                      <ImagePlus className="text-muted-foreground h-14 w-14"/>
+                      <ImagePlus className="text-muted-foreground h-14 w-14" />
                     </button>
                   </PictureSelectPopover>
                 )
               }}
             />
-            <p
-              className="text-destructive mt-2 text-sm">{!watch("avatar") && errors.avatar?.message && "Avatar is required"}</p>
+            <p className="text-destructive mt-2 text-sm">{!watch("avatar") && errors.avatar?.message && "Avatar is required"}</p>
           </div>
           <div className="col-span-4 grid grid-cols-3 gap-8 lg:col-span-3">
             <Controller
               control={control}
               name="name"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-2 space-y-2">
                   <Label htmlFor="name">Name</Label>
                   <Input
@@ -231,15 +233,14 @@ const InformationForm = () => {
                       field.onChange(v.target.value)
                     }}
                   />
-                  <p
-                    className="text-destructive mt-2 text-sm">{errors.name?.message && (errors.name.message === "Required" ? "Name is required." : errors.name.message)}</p>
+                  <p className="text-destructive mt-2 text-sm">{errors.name?.message && (errors.name.message === "Required" ? "Name is required." : errors.name.message)}</p>
                 </div>
               )}
             />
             <Controller
               control={control}
               name="ticker"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-1 space-y-2">
                   <Label htmlFor="ticker">Ticker</Label>
                   <div className="relative">
@@ -267,7 +268,7 @@ const InformationForm = () => {
             <Controller
               control={control}
               name="type"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-3 space-y-2">
                   <Label htmlFor="type">Type</Label>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -278,7 +279,7 @@ const InformationForm = () => {
                         "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                       )}
                     >
-                      <SelectValue placeholder="Select a verified email to display"/>
+                      <SelectValue placeholder="Select a verified email to display" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem className={"h-12 text-lg"} value={DaoType.CODE}>
@@ -299,7 +300,7 @@ const InformationForm = () => {
             <Controller
               control={control}
               name="assetAddress"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-3 space-y-2">
                   <Label htmlFor="assetAddress">Asset Token</Label>
                   <Select
@@ -325,8 +326,7 @@ const InformationForm = () => {
                         </div>
                       ) : assetList && assetList.length > 0 ? (
                         assetList.map((token) => (
-                          <SelectItem key={`at-${token.name}-${token.symbol}`} value={token.address}
-                                      className="h-12 text-lg">
+                          <SelectItem key={`at-${token.name}-${token.symbol}`} value={token.address} className="h-12 text-lg">
                             {token.symbol}
                           </SelectItem>
                         ))
@@ -350,7 +350,7 @@ const InformationForm = () => {
             <Controller
               control={control}
               name="description"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-3 space-y-2">
                   <Label htmlFor="description">Description</Label>
                   <Textarea
@@ -366,15 +366,14 @@ const InformationForm = () => {
                       field.onChange(v.target.value)
                     }}
                   />
-                  <p
-                    className="text-destructive mt-2 text-sm">{errors.description?.message && "Description is required"}</p>
+                  <p className="text-destructive mt-2 text-sm">{errors.description?.message && "Description is required"}</p>
                 </div>
               )}
             />
             <Controller
               control={control}
               name="x"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-3 space-y-2">
                   <Label htmlFor="x">
                     Twitter / X<span className="text-muted-foreground pl-4 text-xs">(Optional)</span>
@@ -400,7 +399,7 @@ const InformationForm = () => {
             <Controller
               control={control}
               name="telegram"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-3 space-y-4">
                   <Label htmlFor="telegram">
                     Telegram
@@ -427,7 +426,7 @@ const InformationForm = () => {
             <Controller
               control={control}
               name="website"
-              render={({field}) => (
+              render={({ field }) => (
                 <div className="col-span-3 space-y-2">
                   <Label htmlFor="website">
                     Website
@@ -453,9 +452,8 @@ const InformationForm = () => {
             />
           </div>
           <div className="col-span-4 flex items-center justify-center">
-            <Button className="h-16 w-full max-w-48 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit"
-                    disabled={isVerifying}>
-              {isVerifying || isPending ? <Loader2 className="animate-spin"/> : <Wallet className=""/>}
+            <Button className="h-16 w-full max-w-48 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isVerifying}>
+              {isVerifying || isPending ? <Loader2 className="animate-spin" /> : <Wallet className="" />}
               Next
             </Button>
           </div>

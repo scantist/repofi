@@ -1,9 +1,7 @@
 library 'jenkins-shared-lib@main'
 
 pipeline {
-    agent {
-        label 'slave'
-    }
+    agent any
     options {
         disableConcurrentBuilds abortPrevious: true
     }
@@ -17,15 +15,9 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Clean workspace before building Docker image') {
             agent {
                 label 'slave'
-            }
-            when {
-                anyOf {
-                    branch 'fftest-*';
-                    branch 'PROD-*'
-                }
             }
             steps {
                 script {
@@ -90,7 +82,7 @@ pipeline {
             }
         }
 
-        stage('Build Project and Push image to SWR'){
+        stage('Build and Push git branch to SWR'){
             agent {
                 label 'slave'
             }
@@ -104,27 +96,16 @@ pipeline {
               withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
                 sh 'echo "$BRANCH_NAME" > version'
                 sh 'cat version'
-                 sh '''
-                    set +x
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"   # Load nvm
-                    nvm use default                                   # Set default Node version (Node 20)
-                    set -x
-                    export NEXT_PUBLIC_CHAIN_ID=11155111
-                    export NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0x2A7A16616602Ef92b38CaA39103D004080B64429
-                    export NEXT_PUBLIC_REOWN_PROJECT_ID=d198cf7bba856bb5f9a7ec73cb03235e
-                    export NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS=0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E
-                    export NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS=0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3
-                    export NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS=0x0227628f3F023bb0B980b67D528571c95c6DaC1c
-                    export SKIP_ENV_VALIDATION=1
-                    export NODE_OPTIONS="--max-old-space-size=3072"
-                    pnpm run build
-                    '''
                 dockerBuildPush(
                     'HWC',
                     'scantist-images/repofi',
                     'Dockerfile',
-                    '',
+                    '''--build-arg NEXT_PUBLIC_CHAIN_ID=11155111 \
+                    --build-arg NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS=0x2A7A16616602Ef92b38CaA39103D004080B64429 \
+                    --build-arg NEXT_PUBLIC_REOWN_PROJECT_ID=d198cf7bba856bb5f9a7ec73cb03235e \
+                    --build-arg NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS=0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E \
+                    --build-arg NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS=0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3 \
+                    --build-arg NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS=0x0227628f3F023bb0B980b67D528571c95c6DaC1c''',
                     '.',
                     "${env.BRANCH_NAME}"
                 )
@@ -139,30 +120,39 @@ pipeline {
             }
         }
 
-        // stage('Build and Push git tag to SWR'){
-        //     agent {
-        //         label 'slave'
-        //     }
-        //     when {
-        //         tag 'v*'
-        //     }
-        //     steps{
-        //       withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
-        //         // build for stable tag
-        //         dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '--no-cache', '.', 'stable')
-        //         // build for version tag
-        //         dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', 'saas-prod')
-        //         pushHangoutsNotify("Pushed to SWR: Tag ${env.TAG_NAME}")
-        //         sh """
-        //         curl -X POST \
-        //             -H "Content-Type: application/json" \
-        //             -d '{"msg_type": "text","content": {"text": "Push tag: ${env.TAG_NAME} to SWR, commit: ${env.GIT_COMMIT}, refer to JenkinsJob ${env.JOB_NAME}-${env.BUILD_NUMBER} details here: ${env.BUILD_URL}"}}' \
-        //             $WEBHOOK_URL
-        //             """
-        //       }
+        stage('Build and Push git tag to SWR'){
+            agent {
+                label 'slave'
+            }
+            when {
+                tag 'v*'
+            }
+            steps{
+              withCredentials([string(credentialsId: 'metatrust-scantist-webhook', variable: 'WEBHOOK_URL')]) {
+                // build for stable tag
+                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '--no-cache', '.', 'stable')
+                // build for version tag
+                dockerBuildPush('HWC', 'scantist-images/repofi', 'Dockerfile', '', '.', 'saas-prod')
+                pushHangoutsNotify("Pushed to SWR: Tag ${env.TAG_NAME}")
+                sh """
+                curl -X POST \
+                    -H "Content-Type: application/json" \
+                    -d '{"msg_type": "text","content": {"text": "Push tag: ${env.TAG_NAME} to SWR, commit: ${env.GIT_COMMIT}, refer to JenkinsJob ${env.JOB_NAME}-${env.BUILD_NUMBER} details here: ${env.BUILD_URL}"}}' \
+                    $WEBHOOK_URL
+                    """
+              }
 
-        //     }
-        // }
+            }
+        }
+
+        stage('Clean workspace after building Docker image') {
+            agent {
+                label 'slave'
+            }
+            steps {
+                sh 'sudo rm -rf ./*'
+            }
+        }
     }
     post {
         failure {

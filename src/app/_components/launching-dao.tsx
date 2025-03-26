@@ -25,8 +25,7 @@ const LaunchingDao = ({
       <DaoFilter title={"Currently Launching"} prefix={"launching_"} daoParam={daoParam} />
       <CardWrapper>
         <div className={"p-4 text-sm font-thin"}>
-          Join DeSci by participating in the early stage funding of new BioDAOs. Your participation fuels cutting-edge research, open collaboration, and new models of scientific
-          funding.
+          Join early to fuel cutting-edge research, open collaboration, and reinvent scientific funding.
         </div>
       </CardWrapper>
       <DaoGrid initialData={initialData} initParam={daoParam} />

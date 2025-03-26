@@ -1,13 +1,13 @@
 "use client"
 
 import { Wallet2 } from "lucide-react"
-import { type ReactNode } from "react"
+import type { OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client/appkit-base-client"
+import type { ReactNode } from "react"
 import { shortenAddress } from "~/lib/web3"
 import { Button } from "../ui/button"
 import SignedIn from "./signed-in"
 import SignedOut from "./signed-out"
 import WalletAvatar from "./wallet-avatar"
-import { type OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client/appkit-base-client"
 
 export default function WalletButton({
   children

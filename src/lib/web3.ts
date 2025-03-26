@@ -1,7 +1,15 @@
 import Decimal from "decimal.js"
 import {createPublicClient, http} from "viem";
-import {defaultChain} from "~/components/auth/config";
 import {env} from "~/env";
+import {base, sepolia} from "@reown/appkit/networks";
+
+const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
+  [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
+  [sepolia.id]: "0xfff9976782d46cc05630d1f6ebab18b2324d6b14" // Sepolia WETH
+} as const
+export const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
+export const defaultChain = isMainNet ? base : sepolia
+export const defaultWCoinAddress = W_COIN_ADDRESSES[defaultChain.id]
 
 export const getPublicClient = () => {
   return createPublicClient({

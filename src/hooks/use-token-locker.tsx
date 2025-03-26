@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { toast } from "sonner"
 import { useAccount, useReadContract, useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi"
-import { defaultChain } from "~/components/auth/config"
+import { defaultChain } from "~/lib/web3"
 import { useTokenLockerAddress } from "~/hooks/use-launch-contract"
 import tokenLockerAbi from "~/lib/abi/TokenLocker.json"
 
