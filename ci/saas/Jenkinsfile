@@ -34,8 +34,14 @@ pipeline {
                     
                     echo "Changed files: ${changedFiles}"
                     
-                    // Check if pnpm-lock.yaml is in the list of changed files
-                    if (changedFiles.contains('pnpm-lock.yaml')) {
+                    // Condition 1: Check if pnpm-lock.yaml has changed
+                    def isLockFileChanged = changedFiles.contains('pnpm-lock.yaml')
+                    
+                    // Condition 2: Check if node_modules artifact is empty (or not found)
+                    def nodeModulesExists = fileExists('node_modules') && !(sh(script: 'find node_modules -type f | wc -l', returnStdout: true).trim() == '0')
+                    
+                    // If either condition is true, reinstall dependencies
+                    if (isLockFileChanged || !nodeModulesExists) {
                         echo "pnpm-lock.yaml has been updated, reinstalling dependencies."
                         // Remove node_modules if lock file has changed
                         sh 'rm -rf node_modules'
