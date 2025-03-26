@@ -101,7 +101,7 @@ const DaoContent = ({data, initContributorList, top10Holders, githubToken}: DaoC
                     <div key={`Token-Distribution-${item.userAddress}`}
                          className={"flex flex-row items-center gap-2 font-thin"}>
                       <div className={"w-2 text-right"}>{index + 1}.</div>
-                      <div className={"w-28 truncate font-bold"}>{shortenAddress(item.userAddress)}</div>
+                      <div className={"w-35 truncate font-bold"}>{shortenAddress(item.userAddress)}</div>
                       <div className={"flex flex-1 items-center gap-2"}>
                         {data.tokenInfo.uniswapV3Pair === item.userAddress && (
                           <div
