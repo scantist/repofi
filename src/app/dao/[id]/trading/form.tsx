@@ -1,22 +1,22 @@
 "use client"
 
-import { Input } from "~/components/ui/input"
-import { type DaoDetailResult } from "~/server/service/dao"
+import {Input} from "~/components/ui/input"
+import {type DaoDetailResult} from "~/server/service/dao"
 import Image from "next/image"
-import { useState } from "react"
-import { useAssetTokenInfo } from "~/hooks/use-asset-token"
-import { z } from "zod"
-import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
-import { useAmountOutMin, useTrade } from "~/hooks/use-trade"
-import { useAuth } from "~/components/auth/auth-context"
-import { Button } from "~/components/ui/button"
-import { Loader2, Rocket } from "lucide-react"
+import {useEffect, useState} from "react"
+import {useAssetTokenInfo} from "~/hooks/use-asset-token"
+import {z} from "zod"
+import {fromHumanAmount, toHumanAmount} from "~/lib/web3"
+import {useAmountOutMin, useTrade} from "~/hooks/use-trade"
+import {useAuth} from "~/components/auth/auth-context"
+import {Button} from "~/components/ui/button"
+import {Loader2, Rocket} from "lucide-react"
 import NumberFlow from "@number-flow/react"
 import TradingFeePopover from "~/app/dao/[id]/trading/trading-fee-popover"
 import SlippagePopover from "~/app/dao/[id]/trading/slippage-popover"
-import { cn, formatMoney } from "~/lib/utils"
-import { ErrorOverlay, LoadingOverlay, SuccessOverlay } from "./trading-components"
-import { useTokenStats } from "~/hooks/use-launch-contract"
+import {cn, formatMoney} from "~/lib/utils"
+import {ErrorOverlay, LoadingOverlay, SuccessOverlay} from "./trading-components"
+import {useTokenStats} from "~/hooks/use-launch-contract"
 import Decimal from "decimal.js"
 import AmountInSlider from "../_components/amount-in-slider"
 
@@ -26,22 +26,22 @@ interface TradingFormProps {
 }
 
 const leftTokenDecimals = 18
-const TradingForm = ({ data, mode }: TradingFormProps) => {
+const TradingForm = ({data, mode}: TradingFormProps) => {
   const isBuy = mode === "buy"
-  const { address, openDialog, isAuthenticated } = useAuth()
-  const { data: assetTokenInfo } = useAssetTokenInfo(data.tokenInfo.assetTokenAddress ?? "")
+  const {address, openDialog, isAuthenticated} = useAuth()
+  const {data: assetTokenInfo} = useAssetTokenInfo(data.tokenInfo.assetTokenAddress ?? "")
   const repoToken = {
     ticker: data.ticker,
     address: data.tokenInfo.tokenAddress as `0x${string}`,
     decimals: 18,
-    icon: <Image src={data.avatar} alt="Avatar" fill className="object-cover" />
+    icon: <Image src={data.avatar} alt="Avatar" fill className="object-cover"/>
   }
 
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
     address: assetTokenInfo?.address as `0x${string}`,
     decimals: assetTokenInfo?.decimals ?? 0,
-    icon: <Image src={assetTokenInfo?.logoUrl ?? ""} alt="Avatar" fill className="object-cover" />
+    icon: <Image src={assetTokenInfo?.logoUrl ?? ""} alt="Avatar" fill className="object-cover"/>
   }
 
   const tokenOut = isBuy ? repoToken : assetToken
@@ -59,9 +59,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   }
 
   const updateAmountIn = (value: bigint, decimals?: number) => {
-    console.log("updateAmountIn", value, decimals)
     setAmountIn(value)
-    console.log("updateAmountInRaw", toHumanAmount(value, decimals?? leftTokenDecimals, 2))
     setAmountInRaw(toHumanAmount(value, decimals ?? leftTokenDecimals, 2))
   }
 
@@ -107,7 +105,13 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
   })
   const [showBuyMaxTip, setShowBuyMaxTip] = useState(false)
 
-  const { maxBuyAssetAmount, maxBuyAssetAmountWithTax, maxBuyTokenAmount, launchMarketCap, isLoading } = useTokenStats(data.tokenId)
+  const {
+    maxBuyAssetAmount,
+    maxBuyAssetAmountWithTax,
+    maxBuyTokenAmount,
+    launchMarketCap,
+    isLoading
+  } = useTokenStats(data.tokenId)
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
@@ -135,16 +139,16 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
     resetTrading()
     setTradeTxHash(tradeReceipt.transactionHash)
   }
-  console.log("showBuyMaxTip || (hasBeenApproved && shouldBuyMax)", {
-    showBuyMaxTip,
-    hasBeenApproved,
-    shouldBuyMax,
-    "showBuyMaxTip || (hasBeenApproved && shouldBuyMax)": showBuyMaxTip || (hasBeenApproved && shouldBuyMax)
-  })
+  useEffect(() => {
+    if (shouldBuyMax && maxBuyAssetAmountWithTax) {
+      updateAmountIn(maxBuyAssetAmountWithTax, assetTokenInfo?.decimals)
+    }
+  }, [shouldBuyMax, maxBuyAssetAmountWithTax])
 
   return (
     <div className={"relative w-full"}>
-      <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading} approved={hasBeenApproved && !shouldBuyMax} />
+      <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading}
+                      approved={hasBeenApproved && !shouldBuyMax}/>
       <ErrorOverlay
         approvingError={isApproveError}
         tradingError={isTradeError}
@@ -164,9 +168,11 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         }}
       />
       {(showBuyMaxTip || (hasBeenApproved && shouldBuyMax)) && (
-        <div className="bg-background/90 absolute -inset-2 z-30 flex flex-col items-center justify-center gap-4 px-4 backdrop-blur">
-          <Rocket className="text-primary size-12 animate-bounce" />
-          <p className="text-sm">The amount you are about to purchase is greater than shares needed to launch the token.</p>
+        <div
+          className="bg-background/90 absolute -inset-2 z-30 flex flex-col items-center justify-center gap-4 px-4 backdrop-blur">
+          <Rocket className="text-primary size-12 animate-bounce"/>
+          <p className="text-sm">The amount you are about to purchase is greater than shares needed to launch the
+            token.</p>
           <p className="text-sm leading-loose">
             Do you want to purchase{" "}
             <strong>
@@ -201,7 +207,8 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
       )}
       <div className={"text-sn mt-4 flex flex-row justify-between"}>
         <div className={"text-gray-500"}>
-          Balance {isAuthenticated ? isBalanceLoading ? "-" : <strong>{toHumanAmount(balance?.value ?? 0n, balance?.decimals ?? leftTokenDecimals, 2)}</strong> : "n/a"}
+          Balance {isAuthenticated ? isBalanceLoading ? "-" :
+          <strong>{toHumanAmount(balance?.value ?? 0n, balance?.decimals ?? leftTokenDecimals, 2)}</strong> : "n/a"}
         </div>
         <div className="flex place-content-center items-center gap-2 place-self-end">
           {(mode === "buy" ? ["100", "200", "500"] : ["10K", "100K", "1M"]).map(
@@ -237,24 +244,36 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
           className="col-span-3 py-1"
           amountIn={amountIn}
           balance={balance?.value}
-          onAmountInChange={(_balance:bigint)=>{updateAmountIn(_balance,balance?.decimals)}}
+          onAmountInChange={(_balance: bigint) => {
+            updateAmountIn(_balance, balance?.decimals)
+          }}
         />
       </div>
       <div className={"mt-4 text-gray-600"}>
         You will receive about
-        <NumberFlow
-          value={amountOut ? Number.parseFloat(toHumanAmount(amountOut, isBuy ? leftTokenDecimals : (assetTokenInfo?.decimals ?? leftTokenDecimals), 2)) : 0}
-          format={{
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2
-          }}
-          className="text-primary mx-1 font-bold"
-        />
+        {isAmountsOutLoading || isTradePending||isApprovePending ? (
+          <span className="text-primary mx-1 font-bold animate-pulse">---</span>
+        ) : (
+          <NumberFlow
+            value={Number.parseFloat(toHumanAmount(amountOut ?? maxBuyTokenAmount ?? 0n, isBuy ? leftTokenDecimals : (assetTokenInfo?.decimals ?? leftTokenDecimals), 2))}
+            format={{
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2
+            }}
+            className="text-primary mx-1 font-bold"
+          />
+        )}
         <span className={"text-white"}>${tokenOut.ticker.toUpperCase()}</span>
+        {!isAmountsOutLoading && !isTradePending && !isApprovePending && amountOut === undefined && maxBuyTokenAmount !== undefined && (
+          <>
+            <br />
+            <span className="text-primary">And launch the token</span>
+          </>
+        )}
       </div>
       <div className={"mt-8 flex flex-row justify-between text-gray-600"}>
-        <TradingFeePopover />
-        <SlippagePopover slippage={slippage} setSlippage={(value) => setSlippage(value)} />
+        <TradingFeePopover/>
+        <SlippagePopover slippage={slippage} setSlippage={(value) => setSlippage(value)}/>
       </div>
       <Button
         size="lg"
@@ -265,7 +284,7 @@ const TradingForm = ({ data, mode }: TradingFormProps) => {
         {!address ? "Connect" : isBuy ? `Buy $${tokenOut.ticker}` : `Sell $${tokenIn.ticker}`}
         {(isApprovePending || isTradePending) && (
           <span className="absolute top-1/2 right-4 flex -translate-y-1/2 items-center gap-2 text-xs">
-            <Loader2 className="size-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin"/>
             Verifying ...
           </span>
         )}

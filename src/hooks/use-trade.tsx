@@ -115,7 +115,7 @@ export function useAllowance({
   })
 
   // 根据是否是原生代币返回不同的结果
-  return assetAddress == ethAddress || action == "sell" ? noneResult : nonNativeResult
+  return assetAddress === ethAddress || action === "sell" ? noneResult : nonNativeResult
 }
 
 /**
@@ -142,7 +142,7 @@ export function useTrade({
   amountIn: bigint
   amountOutMin: bigint
 }) {
-  const isNativeAsset = assetAddress == ethAddress
+  const isNativeAsset = assetAddress === ethAddress
   const { address: userAddress } = useAccount()
   const {
     data: inBalance,
@@ -166,7 +166,6 @@ export function useTrade({
     tokenId: tokenId,
     enabled: !!userAddress && !!tokenId
   })
-
   const balanceOk = (!!inBalance && inBalance.value >= amountIn) || (!!outBalance && outBalance.value >= amountIn)
 
   const {
@@ -196,7 +195,8 @@ export function useTrade({
     args: [tokenId, amountIn, amountOutMin],
     value: isNativeAsset ? amountIn : 0n,
     query: {
-      enabled: isAllowanceOk && amountIn > BigInt(0) && amountOutMin >= BigInt(0) && balanceOk && !!userAddress
+      enabled: isAllowanceOk && amountIn > BigInt(0) && amountOutMin >= BigInt(0) && balanceOk && !!userAddress,
+      retry: false
     }
   })
   console.log("amountIn", amountIn)
@@ -311,7 +311,7 @@ export function useTrade({
     isTradeError: (shouldBuyMax ? isBuyMaxSimulateError : isTradeSimulateError) || isTradeWritingContractError,
     error: approveError ?? (shouldBuyMax ? buyMaxSimulateError : tradeSimulateError),
 
-    balance: action == "buy" ? inBalance : outBalance,
+    balance: action === "buy" ? inBalance : outBalance,
     isBalanceOk: balanceOk,
     isBalanceLoading: isInBalanceLoading || isOutBalanceLoading,
     shouldBuyMax,
