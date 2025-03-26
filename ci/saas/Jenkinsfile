@@ -42,16 +42,16 @@ pipeline {
                     
                     // If either condition is true, reinstall dependencies
                     if (isLockFileChanged || !nodeModulesExists) {
-                        echo "pnpm-lock.yaml has been updated, reinstalling dependencies."
+                        echo "pnpm-lock.yaml updated or node module is empty, reinstalling dependencies."
                         // Remove node_modules if lock file has changed
                         sh 'rm -rf node_modules'
                         // Re-run pnpm install to ensure dependencies are fresh
                         sh '''
-                        set -x
+                        set +x
                         export NVM_DIR="$HOME/.nvm"
                         [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"   # Load nvm
                         nvm use default                                   # Set default Node version (Node 20)
-                        set +x
+                        set -x
                         node -v
                         npm -v
                         pnpm -v
