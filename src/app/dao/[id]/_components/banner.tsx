@@ -49,7 +49,7 @@ const Banner = async ({ daoDetail, id }: BannerProps) => {
                 <IconComponent key={socialType} type={socialType} href={(daoDetail?.links as DaoLinks)?.find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
               ))}
             </div>
-            {daoDetail?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && <a href={`/dao/${id}/edit`}>EDIT</a>}
+            {daoDetail?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && <a href={`/dao/${id}/edit`}>Settings</a>}
           </div>
           <Link href={daoDetail?.url ?? "#"} className={"mt-2 text-gray-500"}>
             {daoDetail?.url}
