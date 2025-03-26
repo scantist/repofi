@@ -26,8 +26,9 @@ class HolderService {
 
     if (daoTokenInfo.isGraduated) {
       holders=await db.daoGraduationHolder.findMany(conditions)
+    }else{
+      holders=await db.daoLaunchHolder.findMany(conditions)
     }
-    holders=await db.daoLaunchHolder.findMany(conditions)
     return holders.map(holder => ({
       tokenId: holder.tokenId,
       userAddress: holder.userAddress,

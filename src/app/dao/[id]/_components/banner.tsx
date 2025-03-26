@@ -25,6 +25,7 @@ const IconComponent = ({ type, href }: { type: string; href: string }) => {
     return null
   }
   const IconComponent = socialIcons[type]
+  console.log("href: ", href, "type: ", type)
   return IconComponent ? (
     <Link href={href} target="_blank" rel="noopener noreferrer">
       <IconComponent className={"h-6 w-6 text-muted-foreground hover:text-muted-foreground/50"} />

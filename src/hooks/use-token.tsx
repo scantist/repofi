@@ -57,7 +57,7 @@ export function useAllowance({
   })
 
   const checkAllowance = useCallback(
-    function () {
+    () => {
       if (allowanceOk) {
         return true
       }
