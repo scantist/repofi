@@ -94,7 +94,7 @@ const RepositoryInformation: FC<Props> = ({ repo, id, onClose, ref }) => {
                       ) : (
                         response?.map((item) => {
                           return (
-                            <div key={`${repo.name}-${item.id}`}>
+                            <div key={`${repo.name}-${item.id}`} className="flex items-center gap-2">
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Avatar>
@@ -103,9 +103,13 @@ const RepositoryInformation: FC<Props> = ({ repo, id, onClose, ref }) => {
                                   </Avatar>
                                 </TooltipTrigger>
                                 <TooltipContent className="font-semibold">
-                                  {item.name} - {item.contributions}
+                                  {item.name} - {item.contributions} contributions
                                 </TooltipContent>
                               </Tooltip>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium">{item.name}</span>
+                                <span className="text-xs text-neutral-400">{item.contributions} contributions</span>
+                              </div>
                             </div>
                           )
                         })

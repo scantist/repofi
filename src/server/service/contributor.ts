@@ -59,6 +59,15 @@ class ContributorService {
       }
     })
   }
+
+  async owner(daoId:string, userAddress: string) {
+    return await db.contributor.findFirst({
+      where:{
+        daoId,
+        userAddress
+      }
+    })
+  }
 }
 export const contributorService = new ContributorService()
 export type ContributorPage = Awaited<ReturnType<typeof contributorService.getContributors>>
