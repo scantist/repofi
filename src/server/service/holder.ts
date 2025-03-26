@@ -16,7 +16,10 @@ class HolderService {
     }
     const conditions = {
       where: {
-        tokenId
+        tokenId,
+        balance: {
+          gt: 0
+        }
       },
       orderBy: {
         balance: "desc" as const
