@@ -1,29 +1,28 @@
 "use client"
 
-import { SiGithub } from "@icons-pack/react-simple-icons"
-import { DaoPlatform } from "@prisma/client"
-import { deleteCookie } from "cookies-next"
-import { useAtom, useStore } from "jotai"
-import { Eye, GitFork, LogOut, Search, Star, Users } from "lucide-react"
-import { AnimatePresence, motion } from "motion/react"
-import { useSession } from "next-auth/react"
-import { RightArrow } from "next/dist/client/components/react-dev-overlay/ui/icons/right-arrow"
-import { useRouter } from "next/navigation"
+import {SiGithub} from "@icons-pack/react-simple-icons"
+import {DaoPlatform} from "@prisma/client"
+import {deleteCookie} from "cookies-next"
+import {useAtom} from "jotai"
+import {Eye, GitFork, LogOut, Search, Star, Users} from "lucide-react"
+import {motion} from "motion/react"
+import {useSession} from "next-auth/react"
+import {useRouter} from "next/navigation"
 import type React from "react"
-import { type FC, useEffect, useId, useRef, useState } from "react"
-import { toast } from "sonner"
+import {type FC, useEffect, useId, useRef, useState} from "react"
+import {toast} from "sonner"
 import LoadingSpinner from "~/app/_components/loading-spinner"
 import RepositoryInformation from "~/app/create/bind/_components/repository-information"
 import CardWrapper from "~/components/card-wrapper"
 import ListPagination from "~/components/list-pagination"
-import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
-import { useOutsideClick } from "~/hooks/use-outside-click"
-import type { Pageable } from "~/lib/schema"
-import { cn } from "~/lib/utils"
-import createDaoStore, { daoFormsAtom, stepAtom, stepPath } from "~/store/create-dao-store"
-import { api } from "~/trpc/react"
-import type { Repository } from "~/types/data"
+import {Button} from "~/components/ui/button"
+import {Input} from "~/components/ui/input"
+import {useOutsideClick} from "~/hooks/use-outside-click"
+import type {Pageable} from "~/lib/schema"
+import {cn} from "~/lib/utils"
+import {daoFormsAtom, stepAtom, stepPath} from "~/store/create-dao-store"
+import {api} from "~/trpc/react"
+import type {Repository} from "~/types/data"
 import BindRepositoryEmpty from "./bind-repository-empty"
 
 type Props = {
@@ -51,6 +50,9 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       size: 6
     }
   })
+  useEffect(() => {
+    setStep("BIND")
+  }, [setStep]);
   useOutsideClick(ref as React.RefObject<HTMLDivElement>, () => setActive(null))
 
   const { data: repoResponse, isPending } = api.repo.fetchPublicRepos.useQuery(
