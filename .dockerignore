@@ -4,6 +4,6 @@ docker-compose.yaml
 node_modules
 npm-debug.log
 README.md
-.next
+# .next
 .git
 .env
