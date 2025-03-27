@@ -111,7 +111,7 @@ createAppKit({
   metadata,
   themeVariables: {
     "--w3m-font-family": "var(--font-sans)",
-    "--w3m-accent": "#84cc16"
+    "--w3m-accent": "#4930c4"
   },
   // featuredWalletIds: [
   // "c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
