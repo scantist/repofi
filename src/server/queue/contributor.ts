@@ -1,5 +1,5 @@
 import {defineQueue, type WorkerFunction} from "./helper"
-import {fetchRepoContributors, parseRepoUrl} from "~/server/tool/repo"
+import {fetchAllRepoContributors, parseRepoUrl} from "~/server/tool/repo"
 import {calculateContributorsPercentage} from "~/server/tool/proof"
 import {db} from "~/server/db"
 import {CommonError, ErrorCode} from "~/lib/error"
@@ -20,7 +20,7 @@ const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job,
     case "contributor-init":
       try {
         const repoMeta = parseRepoUrl(job.data.url)
-        const contributors = await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
+        const contributors = await fetchAllRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
         const contributorsPercentage = calculateContributorsPercentage(contributors)
         await db.$transaction(async (tx) => {
           for (const contributorPercentage of contributorsPercentage) {

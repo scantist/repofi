@@ -1,8 +1,8 @@
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc"
-import { z } from "zod"
-import { DaoPlatformSchema } from "~/lib/zod"
-import { repoService } from "~/server/service/repo"
-import { pageableSchema } from "~/lib/schema"
+import {createTRPCRouter, protectedProcedure} from "~/server/api/trpc"
+import {z} from "zod"
+import {DaoPlatformSchema} from "~/lib/zod"
+import {repoService} from "~/server/service/repo"
+import {pageableSchema} from "~/lib/schema"
 
 export const repoRouter = createTRPCRouter({
   fetchPublicRepos: protectedProcedure
@@ -14,8 +14,7 @@ export const repoRouter = createTRPCRouter({
         search: z.string().optional()
       })
     )
-    .query(({ input }) => {
-      console.log("input",input)
+    .query(({input}) => {
       if (!input.accessToken) {
         return null
       }
@@ -28,16 +27,19 @@ export const repoRouter = createTRPCRouter({
         platform: DaoPlatformSchema
       })
     )
-    .query(({ input }) => {
+    .query(({input}) => {
       if (!input.accessToken) {
         return null
       }
       return repoService.fetchPlatformInfo(input.accessToken, input.platform)
     }),
-  fetchRepoContributors: protectedProcedure.input(z.object({ url: z.string().optional() })).query(({ input }) => {
-    const { url } = input
+  fetchRepoContributors: protectedProcedure.input(z.object({
+    url: z.string().optional(),
+    pageable: pageableSchema
+  })).query(({input}) => {
+    const {url, pageable} = input
     if (url) {
-      return repoService.fetchRepoContributors(url)
+      return repoService.fetchRepoContributors(url, pageable)
     }
     return null
   })
