@@ -1,7 +1,7 @@
 import type {CreateDaoParams, DaoLinks, HomeSearchParams, Pageable, UpdateDaoParamsSchema} from "~/lib/schema"
 import {DaoStatus, type Prisma} from "@prisma/client"
 import {db} from "~/server/db"
-import {fetchRepoContributors, fetchRepoInfo, parseRepoUrl} from "~/server/tool/repo"
+import {fetchAllRepoContributors, fetchRepoInfo, parseRepoUrl} from "~/server/tool/repo"
 import type {PageableData} from "~/types/data"
 import {emitContributorInit} from "~/server/queue/contributor"
 
@@ -218,7 +218,7 @@ class DaoService {
 
   async repoContributors(url: string) {
     const repoMeta = parseRepoUrl(url)
-    return await fetchRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
+    return await fetchAllRepoContributors(repoMeta.platform, repoMeta.owner, repoMeta.repo)
   }
 
   async star(daoId: string, userAddress: string) {
