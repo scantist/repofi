@@ -141,16 +141,6 @@ pipeline {
                     $WEBHOOK_URL
                     """
               }
-
-            }
-        }
-
-        stage('Clean workspace after building Docker image') {
-            agent {
-                label 'slave'
-            }
-            steps {
-                sh 'sudo rm -rf ./*'
             }
         }
     }
