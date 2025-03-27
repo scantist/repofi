@@ -44,9 +44,6 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   const [daoForms, setDaoForms] = useAtom(daoFormsAtom)
   const [step, setStep] = useAtom(stepAtom)
   const { data: session } = useSession()
-  useEffect(() => {
-    setStep("BIND")
-  }, [setStep])
   const [condition, setCondition] = useState<Condition>({
     name: "",
     pageable: {
@@ -54,7 +51,6 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       size: 6
     }
   })
-  const [searchTerm, setSearchTerm] = useState("")
   useOutsideClick(ref as React.RefObject<HTMLDivElement>, () => setActive(null))
 
   const { data: repoResponse, isPending } = api.repo.fetchPublicRepos.useQuery(
@@ -78,10 +74,9 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   const { data: currentDao, isLoading: isLoadingDao } = api.dao.findByUrl.useQuery(
     { url: current?.url ?? "" },
     {
-      enabled: !!current?.url
-    }
+      enabled: !!current?.url,
+    },
   )
-  // 使用useEffect监听current变化
   useEffect(() => {
     console.log("current changed", currentDao)
     if (!current) {
@@ -89,7 +84,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     }
     if (currentDao) {
       console.log("dao exists")
-      toast.warning("The repository dao already exists! Please select another.")
+      toast.warning(`The ${current.name} dao already exists! Please select another.`)
     } else {
       setStep("INFORMATION")
       setDaoForms({
@@ -109,7 +104,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   }
 
   const handleSearch = () => {
-    setCondition((prev) => ({ ...prev, name: searchTerm, page: 0 }))
+    setCondition((prev) => ({ ...prev, page: 0 }))
   }
 
   return (
@@ -119,7 +114,13 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
           <div className={"flex flex-row gap-x-3"}>
             <SiGithub />
             <div>
-              {info?.username} - {info?.email}
+              {info?.username}
+              {info?.email && (
+                <>
+                  {" - "}
+                  {info.email}
+                </>
+              )}
             </div>
           </div>
           <LogOut
@@ -134,8 +135,8 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
           <Input
             type="text"
             placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={condition.name}
+            onChange={(e) => setCondition(prev=>({...prev, name: e.target.value}))}
             className="border-primary flex-grow"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -191,12 +192,16 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                   </motion.div>
                   <div className={"flex flex-row gap-4"}>
                     <div
-                      className={cn("cursor-pointer overflow-hidden font-bold whitespace-nowrap", current === repo && "text-primary")}
+                      className={cn("cursor-pointer overflow-hidden font-bold whitespace-nowrap flex items-center h-6", current === repo && "text-primary")}
                       onClick={() => {
                         setCurrent(repo)
                       }}
                     >
-                      {isLoadingDao && current === repo ? <LoadingSpinner size={16} className="inline mr-1" textClassName={"hidden"} /> : "Bind"}
+                      {isLoadingDao && current === repo ? (
+                        <LoadingSpinner size={16} className="mr-1" textClassName={"hidden"} />
+                      ) : (
+                        "Bind"
+                      )}
                     </div>
                   </div>
                 </div>

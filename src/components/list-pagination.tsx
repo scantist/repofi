@@ -43,27 +43,31 @@ const ListPagination: FC<Props> = ({ pageable, totalPages, setPageable }) => {
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              if (currentPage > 1) {
+          {currentPage > 1 ? (
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
                 setPageable({ ...pageable, page: currentPage - 2 })
-              }
-            }}
-          />
+              }}
+            />
+          ) : (
+            <PaginationPrevious href="#" className="pointer-events-none opacity-50" />
+          )}
         </PaginationItem>
         {items}
         <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              if (currentPage < totalPages) {
+          {currentPage < totalPages ? (
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
                 setPageable({ ...pageable, page: currentPage })
-              }
-            }}
-          />
+              }}
+            />
+          ) : (
+            <PaginationNext href="#" className="pointer-events-none opacity-50" />
+          )}
         </PaginationItem>
       </PaginationContent>
     </Pagination>

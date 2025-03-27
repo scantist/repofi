@@ -15,6 +15,7 @@ export const repoRouter = createTRPCRouter({
       })
     )
     .query(({ input }) => {
+      console.log("input",input)
       if (!input.accessToken) {
         return null
       }
