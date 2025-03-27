@@ -2,7 +2,7 @@
 import {decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther} from "viem"
 import CardWrapper from "~/components/card-wrapper"
 import {Form} from "~/components/ui/form"
-import {daoFormsAtom, stepAtom} from "~/store/create-dao-store"
+import {daoFormsAtom} from "~/store/create-dao-store"
 import {Controller, useForm} from "react-hook-form"
 import {type LaunchParams, launchSchema} from "~/lib/schema"
 import {zodResolver} from "@hookform/resolvers/zod"
@@ -27,10 +27,6 @@ import {useAtom} from "jotai"
 
 const Launch = () => {
   const [daoInformation, setDaoInformation] = useAtom(daoFormsAtom)
-  const [launchStep, setLaunchStep] = useAtom(stepAtom)
-  useEffect(() => {
-    setLaunchStep("INFORMATION")
-  }, [])
   const form = useForm<LaunchParams>({
     resolver: zodResolver(launchSchema, {async: true}),
     reValidateMode: "onBlur"
@@ -457,7 +453,7 @@ const Launch = () => {
                       <SelectContent>
                         {isPending ? (
                           <div className="flex items-center justify-center p-2">
-                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
+                            <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900"/>
                           </div>
                         ) : assetTokenOptions && assetTokenOptions.length > 0 ? (
                           assetTokenOptions.map((token) => (
