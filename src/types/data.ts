@@ -1,6 +1,6 @@
-import type { DaoPlatform, DaoStatus, DaoType, Prisma } from "@prisma/client"
-import { z } from "zod"
-import { daoContentParamsSchema } from "~/lib/schema"
+import type {DaoPlatform, DaoStatus, DaoType, Prisma} from "@prisma/client"
+import {z} from "zod"
+import {daoContentParamsSchema} from "~/lib/schema"
 
 export interface Repository {
   id: number
@@ -55,14 +55,13 @@ export type FileUploader = (data: {
   file: string
   fileName: string
 }) => Promise<{ success: boolean; url?: string; message?: string }>
-export type CreateDaoStep = "BIND" | "INFORMATION" | "FINISH"
 
 export const ListRowDataSchema = z.object({
-  image: z.string().min(1, { message: "Image URL cannot be empty" }),
-  title: z.string().min(1, { message: "Title cannot be empty" }).max(100, { message: "Title cannot exceed 100 characters" }),
-  sort: z.number().int({ message: "Sort must be an integer" }).nonnegative({ message: "Sort must be a non-negative number" }),
-  description: z.string().max(500, { message: "Description cannot exceed 500 characters" }),
-  link: z.string().url({ message: "Please enter a valid URL" })
+  image: z.string().min(1, {message: "Image URL cannot be empty"}),
+  title: z.string().min(1, {message: "Title cannot be empty"}).max(100, {message: "Title cannot exceed 100 characters"}),
+  sort: z.number().int({message: "Sort must be an integer"}).nonnegative({message: "Sort must be a non-negative number"}),
+  description: z.string().max(500, {message: "Description cannot exceed 500 characters"}),
+  link: z.string().url({message: "Please enter a valid URL"})
 })
 
 export const ListRowContentParamsSchema = z

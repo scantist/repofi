@@ -20,7 +20,7 @@ import {Input} from "~/components/ui/input"
 import {useOutsideClick} from "~/hooks/use-outside-click"
 import type {Pageable} from "~/lib/schema"
 import {cn} from "~/lib/utils"
-import {daoFormsAtom, stepAtom, stepPath} from "~/store/create-dao-store"
+import {daoFormsAtom} from "~/store/create-dao-store"
 import {api} from "~/trpc/react"
 import type {Repository} from "~/types/data"
 import BindRepositoryEmpty from "./bind-repository-empty"
@@ -34,15 +34,14 @@ type Condition = {
   pageable: Pageable
 }
 
-const BindRepository: FC<Props> = ({ githubToken }) => {
+const BindRepository: FC<Props> = ({githubToken}) => {
   const [active, setActive] = useState<Repository | null>(null)
   const [current, setCurrent] = useState<Repository | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   const id = useId()
   const router = useRouter()
   const [daoForms, setDaoForms] = useAtom(daoFormsAtom)
-  const [step, setStep] = useAtom(stepAtom)
-  const { data: session } = useSession()
+  const {data: session} = useSession()
   const [condition, setCondition] = useState<Condition>({
     name: "",
     pageable: {
@@ -50,22 +49,19 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       size: 6
     }
   })
-  useEffect(() => {
-    setStep("BIND")
-  }, [setStep]);
   useOutsideClick(ref as React.RefObject<HTMLDivElement>, () => setActive(null))
 
-  const { data: repoResponse, isPending } = api.repo.fetchPublicRepos.useQuery(
+  const {data: repoResponse, isPending} = api.repo.fetchPublicRepos.useQuery(
     {
       accessToken: githubToken,
       platform: DaoPlatform.GITHUB,
       search: condition.name,
-      pageable: { ...condition.pageable }
+      pageable: {...condition.pageable}
     },
-    { enabled: !!githubToken }
+    {enabled: !!githubToken}
   )
-  const { data: info } = api.repo.fetchPlatformInfo.useQuery(
-    { accessToken: githubToken, platform: DaoPlatform.GITHUB },
+  const {data: info} = api.repo.fetchPlatformInfo.useQuery(
+    {accessToken: githubToken, platform: DaoPlatform.GITHUB},
     {
       enabled: !!githubToken,
       refetchInterval: false,
@@ -73,40 +69,39 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       refetchOnMount: false
     }
   )
-  const { data: currentDao, isLoading: isLoadingDao } = api.dao.findByUrl.useQuery(
-    { url: current?.url ?? "" },
+  const {data: currentDao, isLoading: isLoadingDao} = api.dao.findByUrl.useQuery(
+    {url: current?.url ?? ""},
     {
       enabled: !!current?.url,
-    },
-  )
+    }
+  );
+
   useEffect(() => {
-    console.log("current changed", currentDao)
-    if (!current) {
-      return
+    if (!current || isLoadingDao) {
+      return;
     }
     if (currentDao) {
-      console.log("dao exists")
-      toast.warning(`The ${current.name} dao already exists! Please select another.`)
+      console.log("dao exists");
+      toast.warning(`The ${current.name} dao already exists! Please select another.`);
     } else {
-      setStep("INFORMATION")
       setDaoForms({
         ...daoForms,
         url: current.url
-      })
-      router.push(stepPath.INFORMATION)
+      });
+      router.push("/create/information");
     }
-  }, [currentDao])
+  }, [current, currentDao, isLoadingDao,]);
 
   if (!session || !githubToken) {
     return (
       <CardWrapper className={"col-span-1 w-auto md:col-span-2 max-h-fit"}>
-        <BindRepositoryEmpty githubToken={githubToken} />
+        <BindRepositoryEmpty githubToken={githubToken}/>
       </CardWrapper>
     )
   }
 
   const handleSearch = () => {
-    setCondition((prev) => ({ ...prev, page: 0 }))
+    setCondition((prev) => ({...prev, page: 0}))
   }
 
   return (
@@ -114,7 +109,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
       <div className={"flex flex-col items-center justify-center gap-4 py-8 rounded-lg"}>
         <div className={"flex w-full flex-row items-center justify-between px-10"}>
           <div className={"flex flex-row gap-x-3"}>
-            <SiGithub />
+            <SiGithub/>
             <div>
               {info?.username}
               {info?.email && (
@@ -138,7 +133,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
             type="text"
             placeholder="Search..."
             value={condition.name}
-            onChange={(e) => setCondition(prev=>({...prev, name: e.target.value}))}
+            onChange={(e) => setCondition(prev => ({...prev, name: e.target.value}))}
             className="border-primary flex-grow"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -147,12 +142,12 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
             }}
           />
           <Button onClick={handleSearch}>
-            <Search className="mr-2 h-4 w-4" />
+            <Search className="mr-2 h-4 w-4"/>
           </Button>
         </div>
-        <RepositoryInformation id={id} repo={active} ref={ref} onClose={() => setActive(null)} />
+        <RepositoryInformation id={id} repo={active} ref={ref} onClose={() => setActive(null)}/>
         {isPending ? (
-          <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
+          <LoadingSpinner size={64} className="my-8" text="Loading repository..."/>
         ) : (
           <div className={"flex w-full flex-col gap-4"}>
             {repoResponse?.list.map((repo, index) => (
@@ -168,16 +163,19 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                     </motion.h3>
                   </div>
                   <div className={"flex flex-row items-center gap-x-4"}>
-                    <motion.h3 layoutId={`title-star-${repo.name}-${id}`} className={"flex flex-row items-center gap-x-2 text-sm"}>
-                      <Star className={"size-4"} />
+                    <motion.h3 layoutId={`title-star-${repo.name}-${id}`}
+                               className={"flex flex-row items-center gap-x-2 text-sm"}>
+                      <Star className={"size-4"}/>
                       {repo.star}
                     </motion.h3>
-                    <motion.h3 layoutId={`title-fork-${repo.name}-${id}`} className={"flex flex-row items-center gap-x-2 text-sm"}>
-                      <GitFork className={"size-4"} />
+                    <motion.h3 layoutId={`title-fork-${repo.name}-${id}`}
+                               className={"flex flex-row items-center gap-x-2 text-sm"}>
+                      <GitFork className={"size-4"}/>
                       {repo.fork}
                     </motion.h3>
-                    <motion.h3 layoutId={`title-watch-${repo.name}-${id}`} className={"flex flex-row items-center gap-x-2 text-sm"}>
-                      <Eye className={"size-4"} />
+                    <motion.h3 layoutId={`title-watch-${repo.name}-${id}`}
+                               className={"flex flex-row items-center gap-x-2 text-sm"}>
+                      <Eye className={"size-4"}/>
                       {repo.watch}
                     </motion.h3>
                   </div>
@@ -200,7 +198,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                       }}
                     >
                       {isLoadingDao && current === repo ? (
-                        <LoadingSpinner size={16} className="mr-1" textClassName={"hidden"} />
+                        <LoadingSpinner size={16} className="mr-1" textClassName={"hidden"}/>
                       ) : (
                         "Bind"
                       )}
@@ -217,7 +215,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
               pageable={condition.pageable}
               totalPages={repoResponse?.pages ?? 0}
               setPageable={(pageable) => {
-                setCondition({ ...condition, pageable })
+                setCondition({...condition, pageable})
               }}
             />
           )}
