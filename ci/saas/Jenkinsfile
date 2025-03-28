@@ -15,7 +15,7 @@ pipeline {
             }
         }
 
-        stage('Clean workspace before building Docker image') {
+        stage('Install Dependencies') {
             agent {
                 label 'slave'
             }
@@ -82,7 +82,7 @@ pipeline {
             }
         }
 
-        stage('Build and Push git branch to SWR'){
+        stage('Build and Push docker image to SWR'){
             agent {
                 label 'slave'
             }
@@ -168,5 +168,11 @@ pipeline {
                     """
             }
           }
+        }
+        success {
+            script {
+                echo 'Pipeline succeeded!'
+                build job: 'deploy-repofi', wait: false
+            }
         }
 }
