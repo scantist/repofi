@@ -1,14 +1,21 @@
-import { keepPreviousData } from "@tanstack/react-query"
-import { useCallback } from "react"
-import { toast } from "sonner"
-import { useAccount, useBalance, useReadContract, useSimulateContract, useWaitForTransactionReceipt, useWriteContract } from "wagmi"
-import { defaultChain } from "~/lib/web3"
-import { env } from "~/env"
+import {keepPreviousData} from "@tanstack/react-query"
+import {useCallback} from "react"
+import {toast} from "sonner"
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+  useWriteContract
+} from "wagmi"
+import {defaultChain} from "~/lib/web3"
+import {env} from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
-import { useBalance as useLaunchBalance } from "~/hooks/use-launch-contract"
-import { useAllowance as useTokenAllowance } from "~/hooks/use-token"
+import {useBalance as useLaunchBalance} from "~/hooks/use-launch-contract"
+import {useAllowance as useTokenAllowance} from "~/hooks/use-token"
 import type Decimal from "decimal.js"
-import { ethAddress } from "viem"
+import {ethAddress} from "viem"
 
 const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 
@@ -22,15 +29,15 @@ const launchPadAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
  * @returns
  */
 export function useAmountOut({
-  action,
-  tokenId,
-  amountIn
-}: {
+                               action,
+                               tokenId,
+                               amountIn
+                             }: {
   action: "buy" | "sell"
   tokenId: bigint
   amountIn: bigint
 }) {
-  const { data, isLoading, ...rest } = useReadContract({
+  const {data, isLoading, ...rest} = useReadContract({
     abi: launchPadAbi,
     address: launchPadAddress,
     chainId: defaultChain.id,
@@ -50,11 +57,11 @@ export function useAmountOut({
 }
 
 export function useAmountOutMin({
-  action,
-  tokenId,
-  amountIn,
-  slippagePercent
-}: {
+                                  action,
+                                  tokenId,
+                                  amountIn,
+                                  slippagePercent
+                                }: {
   action: "buy" | "sell"
   tokenId: bigint
   amountIn: bigint
@@ -84,10 +91,10 @@ function isOverLaunchPoint(message: string) {
 }
 
 export function useAllowance({
-  action,
-  amount,
-  assetAddress
-}: {
+                               action,
+                               amount,
+                               assetAddress
+                             }: {
   action: "buy" | "sell"
   amount: bigint
   assetAddress: `0x${string}` | undefined
@@ -128,13 +135,13 @@ export function useAllowance({
  * @returns
  */
 export function useTrade({
-  action,
-  tokenId,
-  assetAddress,
-  assetLaunchFee,
-  amountIn,
-  amountOutMin
-}: {
+                           action,
+                           tokenId,
+                           assetAddress,
+                           assetLaunchFee,
+                           amountIn,
+                           amountOutMin
+                         }: {
   action: "buy" | "sell"
   tokenId: bigint
   assetAddress: `0x${string}`
@@ -143,7 +150,7 @@ export function useTrade({
   amountOutMin: bigint
 }) {
   const isNativeAsset = assetAddress === ethAddress
-  const { address: userAddress } = useAccount()
+  const {address: userAddress} = useAccount()
   const {
     data: inBalance,
     isLoading: isInBalanceLoading,
@@ -151,7 +158,7 @@ export function useTrade({
   } = useBalance({
     address: userAddress,
     chainId: defaultChain.id,
-    ...(isNativeAsset ? {} : { token: assetAddress }),
+    ...(isNativeAsset ? {} : {token: assetAddress}),
     query: {
       enabled: !!userAddress
     }
@@ -182,7 +189,6 @@ export function useTrade({
     amount: amountIn,
     assetAddress
   })
-
   const {
     data: tradeSimulation,
     isLoading: isTradeSimulating,
@@ -193,13 +199,12 @@ export function useTrade({
     address: launchPadAddress,
     functionName: action === "buy" ? "buy" : "sell",
     args: [tokenId, amountIn, amountOutMin],
-    value: isNativeAsset ? amountIn : 0n,
+    value: isNativeAsset && action === "buy" ? amountIn : 0n,
     query: {
       enabled: isAllowanceOk && amountIn > BigInt(0) && amountOutMin >= BigInt(0) && balanceOk && !!userAddress,
       retry: false
     }
   })
-  console.log("amountIn", amountIn)
   const {
     data: buyMaxSimulation,
     isLoading: isBuyMaxSimulating,
@@ -224,7 +229,7 @@ export function useTrade({
     reset: resetTrading
   } = useWriteContract()
 
-  const { data: tradeReceipt, isLoading: isTradeWaitingReceipt } = useWaitForTransactionReceipt({
+  const {data: tradeReceipt, isLoading: isTradeWaitingReceipt} = useWaitForTransactionReceipt({
     hash: tradeWriteContractData,
     query: {
       enabled: !!tradeWriteContractData

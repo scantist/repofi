@@ -5,11 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import TradingForm from "~/app/dao/[id]/trading/form"
 import { type DaoDetailResult } from "~/server/service/dao"
 
-interface TradingCardProps {
-  data: DaoDetailResult
-}
-
-const TradingCard = ({ data }: TradingCardProps) => {
+const TradingCard = () => {
   return (
     <CardWrapper>
       <Tabs defaultValue="buy" className={"rounded-lg px-5 py-6"}>
@@ -27,10 +23,10 @@ const TradingCard = ({ data }: TradingCardProps) => {
         </div>
 
         <TabsContent value="buy" className="w-full">
-          <TradingForm data={data} mode="buy" />
+          <TradingForm mode="buy"/>
         </TabsContent>
         <TabsContent value="sell" className="w-full">
-          <TradingForm data={data} mode="sell" />
+          <TradingForm  mode="sell" />
         </TabsContent>
       </Tabs>
     </CardWrapper>

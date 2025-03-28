@@ -1,7 +1,6 @@
 "use client"
 
 import {Input} from "~/components/ui/input"
-import {type DaoDetailResult} from "~/server/service/dao"
 import Image from "next/image"
 import {useEffect, useState} from "react"
 import {useAssetTokenInfo} from "~/hooks/use-asset-token"
@@ -19,22 +18,19 @@ import {ErrorOverlay, LoadingOverlay, SuccessOverlay} from "./trading-components
 import {useTokenStats} from "~/hooks/use-launch-contract"
 import Decimal from "decimal.js"
 import AmountInSlider from "../_components/amount-in-slider"
-
-interface TradingFormProps {
-  data: DaoDetailResult
-  mode: "buy" | "sell"
-}
+import {useDaoContext} from "~/app/dao/[id]/context";
 
 const leftTokenDecimals = 18
-const TradingForm = ({data, mode}: TradingFormProps) => {
+const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
+  const {detail, triggerRefresh} = useDaoContext()
   const isBuy = mode === "buy"
   const {address, openDialog, isAuthenticated} = useAuth()
-  const {data: assetTokenInfo} = useAssetTokenInfo(data.tokenInfo.assetTokenAddress ?? "")
+  const {data: assetTokenInfo} = useAssetTokenInfo(detail.tokenInfo.assetTokenAddress ?? "")
   const repoToken = {
-    ticker: data.ticker,
-    address: data.tokenInfo.tokenAddress as `0x${string}`,
+    ticker: detail.ticker,
+    address: detail.tokenInfo.tokenAddress as `0x${string}`,
     decimals: 18,
-    icon: <Image src={data.avatar} alt="Avatar" fill className="object-cover"/>
+    icon: <Image src={detail.avatar} alt="Avatar" fill className="object-cover"/>
   }
 
   const assetToken = {
@@ -43,38 +39,33 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
     decimals: assetTokenInfo?.decimals ?? 0,
     icon: <Image src={assetTokenInfo?.logoUrl ?? ""} alt="Avatar" fill className="object-cover"/>
   }
-
   const tokenOut = isBuy ? repoToken : assetToken
   const tokenIn = isBuy ? assetToken : repoToken
-
+  console.log("tokenOut", tokenOut)
+  console.log("tokenIn", tokenIn)
   const [amountInRaw, setAmountInRaw] = useState<string>("0.00")
   const [amountIn, setAmountIn] = useState<bigint>(0n)
   const [slippage, setSlippage] = useState<number>(5)
-
   const updateAmountInFromRaw = (rawValue: string) => {
     if (z.coerce.number().safeParse(rawValue).success) {
       setAmountInRaw(rawValue)
       setAmountIn(BigInt(fromHumanAmount(rawValue, tokenIn?.decimals ?? leftTokenDecimals).toString()))
     }
   }
-
   const updateAmountIn = (value: bigint, decimals?: number) => {
     setAmountIn(value)
     setAmountInRaw(toHumanAmount(value, decimals ?? leftTokenDecimals, 2))
   }
-
   const {
     amountOutMin,
     amountOut,
     isLoading: isAmountsOutLoading
   } = useAmountOutMin({
     action: mode,
-    tokenId: data.tokenId,
+    tokenId: detail.tokenId,
     amountIn,
     slippagePercent: slippage
   })
-  console.log("amountOut", amountOut)
-
   const {
     balance,
     isBalanceOk,
@@ -95,7 +86,7 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
     tradeReceipt,
     shouldBuyMax
   } = useTrade({
-    tokenId: data.tokenId,
+    tokenId: detail.tokenId,
     assetAddress: assetToken.address,
     //TODO 解决decimal
     assetLaunchFee: assetTokenInfo?.launchFee ?? new Decimal(0),
@@ -111,7 +102,7 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
     maxBuyTokenAmount,
     launchMarketCap,
     isLoading
-  } = useTokenStats(data.tokenId)
+  } = useTokenStats(detail.tokenId)
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
@@ -130,13 +121,11 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
   if (error) {
     console.log(error)
   }
-  const [showLaunchSuccess, setShowLaunchSuccess] = useState(false)
   const [tradeTxHash, setTradeTxHash] = useState<`0x${string}` | undefined>(undefined)
 
-  if (!data.tokenInfo.isGraduated && !showLaunchSuccess) {
-    setShowLaunchSuccess(true)
-  } else if (tradeReceipt) {
+  if (tradeReceipt) {
     resetTrading()
+    triggerRefresh()
     setTradeTxHash(tradeReceipt.transactionHash)
   }
   useEffect(() => {
@@ -163,8 +152,12 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
         success={!!tradeTxHash}
         transactionHash={tradeTxHash ?? ""}
         onReset={() => {
-          updateAmountInFromRaw("0.00")
-          setTradeTxHash(undefined)
+          if (shouldBuyMax) {
+            window.location.reload();
+          } else {
+            updateAmountInFromRaw("0.00")
+            setTradeTxHash(undefined)
+          }
         }}
       />
       {(showBuyMaxTip || (hasBeenApproved && shouldBuyMax)) && (
@@ -176,7 +169,7 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
           <p className="text-sm leading-loose">
             Do you want to purchase{" "}
             <strong>
-              {formatMoney(toHumanAmount(maxBuyTokenAmount ?? 0n, leftTokenDecimals, 2))} ${data.ticker}
+              {formatMoney(toHumanAmount(maxBuyTokenAmount ?? 0n, leftTokenDecimals, 2))} ${detail.ticker}
             </strong>{" "}
             using{" "}
             <strong>
@@ -251,7 +244,7 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
       </div>
       <div className={"mt-4 text-gray-600"}>
         You will receive about
-        {isAmountsOutLoading || isTradePending||isApprovePending ? (
+        {isAmountsOutLoading || isTradePending || isApprovePending ? (
           <span className="text-primary mx-1 font-bold animate-pulse">---</span>
         ) : (
           <NumberFlow
@@ -266,7 +259,7 @@ const TradingForm = ({data, mode}: TradingFormProps) => {
         <span className={"text-white"}>${tokenOut.ticker.toUpperCase()}</span>
         {!isAmountsOutLoading && !isTradePending && !isApprovePending && amountOut === undefined && maxBuyTokenAmount !== undefined && (
           <>
-            <br />
+            <br/>
             <span className="text-primary">And launch the token</span>
           </>
         )}
