@@ -168,11 +168,11 @@ pipeline {
                     """
             }
           }
-        }
         success {
             script {
                 echo 'Pipeline succeeded!'
                 build job: 'deploy-repofi', wait: false
             }
         }
+    }
 }
