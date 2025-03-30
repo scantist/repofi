@@ -48,8 +48,10 @@ const BaseForm = ({ dao, name, url, type, ticker }: BaseFormProps) => {
     }
   })
 
+  const useUtils = api.useUtils()
   const submit = (values: UpdateDaoParamsSchema) => {
     updateDao(values)
+    void useUtils.dao.detail.invalidate()
   }
 
   return (
@@ -111,20 +113,20 @@ const BaseForm = ({ dao, name, url, type, ticker }: BaseFormProps) => {
                 <Input disabled value={name} />
               </FormControl>
             </FormItem>
-            <FormItem className={"w-64"}>
+            <FormItem>
               <FormLabel>Ticker</FormLabel>
               <FormControl>
                 <Input disabled value={ticker} />
               </FormControl>
             </FormItem>
           </div>
-          <FormItem className={"w-64"}>
+          <FormItem>
             <FormLabel>Type</FormLabel>
             <FormControl>
               <Input disabled value={type} />
             </FormControl>
           </FormItem>
-          <FormItem className={"w-64"}>
+          <FormItem>
             <FormLabel>Github Repository</FormLabel>
             <FormControl>
               <Input disabled value={url} />

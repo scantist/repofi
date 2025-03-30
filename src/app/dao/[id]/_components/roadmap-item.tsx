@@ -1,4 +1,5 @@
 import { format, parse } from "date-fns/fp"
+import { Trash2 } from "lucide-react"
 import CardWrapper from "~/components/card-wrapper"
 import type { RoadmapData } from "~/types/data"
 
@@ -12,10 +13,15 @@ const RoadmapItem = ({ data, onDelete }: RoadmapItemProps) => {
   const formattedDate = format("d MMMM yyyy")(date)
   return (
     <CardWrapper>
-      <div className={"flex flex-row gap-x-8 px-10 py-4"}>
-        <div className={"text-primary text-3xl font-bold"}>{formattedDate}</div>
-        <div className={"flex-1"}>
-          <div className={"text-sm font-thin"}>{data.description}</div>
+      <div className={"flex flex-col md:flex-row gap-y-4 gap-x-8 px-4 md:px-10 py-4"}>
+        <div className={"text-primary text-xl md:text-3xl w-64 font-bold"}>{formattedDate}</div>
+        <div className={"flex-1 flex flex-row gap-2 items-center"}>
+          <div className={"text-sm font-thin"}>{data.description}</div>{" "}
+          {onDelete && (
+            <button type={"button"} onClick={onDelete} className="text-red-500/70 hover:text-red-700/70 transition-all cursor-pointer">
+              <Trash2 size={18} />
+            </button>
+          )}
         </div>
       </div>
     </CardWrapper>

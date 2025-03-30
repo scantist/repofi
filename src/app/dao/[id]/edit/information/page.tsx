@@ -25,8 +25,8 @@ const ProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <div className={"space-y-6"}>
       <div>
-        <h3 className="text-lg font-medium">Base</h3>
-        <p className="text-muted-foreground text-sm">This is how others will see your DAO on the site.</p>
+        <h3 className="text-lg font-medium">Additional Content</h3>
+        <p className="text-muted-foreground text-sm">Extra information related to your DAO's vision or plans.</p>
       </div>
       <Separator />
       <InformationForm id={id} isNew={isNew} data={data} />

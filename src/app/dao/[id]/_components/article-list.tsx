@@ -20,7 +20,7 @@ const ArticleList = ({ data }: ArticleListProps) => {
   return (
     <div className={"my-20"}>
       <div className={"text-4xl font-bold tracking-tight"}>{data.title}</div>
-      <div className={"grid grid-cols-1 gap-8 pt-10 sm:grid-cols-4 md:grid-cols-3"}>
+      <div className={"grid grid-cols-1 gap-4 pt-10 md:grid-cols-3"}>
         {list.map((item) => (
           <ListRow key={`article-item-${item.title}-${item.link}`} data={item} />
         ))}

@@ -24,7 +24,6 @@ const ProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
       <div>
         <h3 className="text-lg font-medium">Roadmap</h3>
         <p className="text-muted-foreground text-sm">
-          {" "}
           Define and manage your DAO's strategic milestones and future plans. A well-structured roadmap helps align your community's efforts and provides a clear vision for your
           project's development.
         </p>

@@ -38,10 +38,10 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
     }
   })
   const {
-    handleSubmit,
     control,
     formState: { errors },
-    reset
+    reset,
+    trigger
   } = form
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
           <DialogTitle>{isNew ? "Add" : "Edit"} Article</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit(submit)} className="space-y-4">
+          <div className="space-y-4">
             <FormField
               control={control}
               name="image"
@@ -123,7 +123,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter article title" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage>{errors.title?.message}</FormMessage>
                 </FormItem>
@@ -134,10 +134,10 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
               name="sort"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Article sort</FormLabel>
+                  <FormLabel>Display order</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter display order (e.g., 1, 2, 3)"
+                      placeholder=" (e.g., 1, 2, 3)"
                       type="number"
                       {...field}
                       onChange={(e) => {
@@ -160,7 +160,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea rows={5} placeholder="Enter article description" {...field} />
+                    <Textarea rows={5} {...field} />
                   </FormControl>
                   <FormMessage>{errors.description?.message}</FormMessage>
                 </FormItem>
@@ -173,16 +173,26 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                 <FormItem>
                   <FormLabel>Link</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter article link" {...field} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage>{errors.link?.message}</FormMessage>
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button onClick={() => handleSubmit(submit)}>Save</Button>
+              <Button
+                onClick={async () => {
+                  const result = await trigger()
+                  if (result) {
+                    const values = form.getValues()
+                    submit(values)
+                  }
+                }}
+              >
+                Save
+              </Button>
             </DialogFooter>
-          </form>
+          </div>
         </Form>
       </DialogContent>
     </Dialog>

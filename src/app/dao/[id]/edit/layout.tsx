@@ -1,3 +1,4 @@
+import Link from "next/link"
 import type React from "react"
 import Banner from "~/app/dao/[id]/_components/banner"
 import DaoSide from "~/app/dao/[id]/_components/dao-side"
@@ -5,7 +6,6 @@ import CardWrapper from "~/components/card-wrapper"
 import { Separator } from "~/components/ui/separator"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
-import Link from "next/link";
 
 const EditLayout = async ({
   params,
@@ -28,11 +28,8 @@ const EditLayout = async ({
             <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
             <p className="text-muted-foreground">Manage your DAO settings and config content!</p>
           </div>
-          <Link
-            href={`/dao/${id}`}
-            className="px-4 py-2  text-white rounded  transition-colors"
-          >
-            Exit
+          <Link href={`/dao/${id}`} className="px-4 py-2  text-white rounded  transition-colors">
+            Return To DAO
           </Link>
         </div>
         <Separator />

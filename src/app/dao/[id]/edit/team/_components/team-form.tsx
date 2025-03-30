@@ -53,7 +53,8 @@ const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
     resolver: zodResolver(TeamContentParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: {
-      ...data
+      ...data,
+      title: data.title.trim().length === 0 ? "Team & Community" : data.title
     }
   })
 
@@ -66,6 +67,7 @@ const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
     getValues
   } = form
   const submit = (values: RoadmapContentParams) => {
+    console.log("values ---- ", values)
     if (isNewState) {
       createMutate({
         daoId: id,
@@ -79,6 +81,7 @@ const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
     }
   }
   const handleItemSubmit = (data: TeamData, index: number, handleClose: () => void) => {
+    console.log("data, index", data, index)
     const currentValues: TeamData[] = getValues("data") || []
     let updatedValues: TeamData[]
 
@@ -105,7 +108,7 @@ const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Section Heading</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter content block title" {...field} disabled={isPending} />
                 </FormControl>
@@ -120,7 +123,7 @@ const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
             name="sort"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Block sort</FormLabel>
+                <FormLabel>Display Order</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter display order (e.g., 1, 2, 3)"
@@ -149,14 +152,18 @@ const TeamForm = ({ id, isNew, data }: BaseFormProps) => {
               {field.value.map((item: TeamData, index: number) => (
                 <ActionDialog data={item} index={index} key={`TEAM_${item.title}_${item.name}`} handleAddOrUpdate={handleItemSubmit}>
                   <div className={"w-full h-full"}>
-                    <TeamItem data={item} className={"min-h-60"} />
+                    <TeamItem data={item} className={"min-h-60"} onDelete={() => handleItemDelete(index)} />
                   </div>
                 </ActionDialog>
               ))}
               <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
                 <div className={"w-full h-full"}>
-                  <CardWrapper className={"col-span-1 sm:col-span-2 md:col-span-1 "} contentClassName={" min-h-60 h-full cursor-pointer  flex justify-center items-center"}>
+                  <CardWrapper
+                    className={"col-span-1 sm:col-span-2 md:col-span-1"}
+                    contentClassName={"flex-col min-h-60 h-full cursor-pointer  flex justify-center items-center gap-4 text-muted-foreground"}
+                  >
                     <Plus className={"mx-auto"} />
+                    <div>Add new team member.</div>
                   </CardWrapper>
                 </div>
               </ActionDialog>

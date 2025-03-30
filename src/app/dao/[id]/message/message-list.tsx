@@ -1,7 +1,7 @@
 "use client"
 
 import { formatDistanceToNow } from "date-fns"
-import { MessageCircle } from "lucide-react"
+import { MessageCircle, Plus } from "lucide-react"
 import React, { useMemo, useState } from "react"
 import LoadingSpinner from "~/app/_components/loading-spinner"
 import { useDaoContext } from "~/app/dao/[id]/context"
@@ -94,13 +94,18 @@ const MessageList = () => {
   }, [messageData, isPending])
   return (
     <>
-      <div className={"flex w-full flex-col gap-4 px-10 py-5 h-full"}>
+      <div className={"flex w-full flex-col gap-4 px-4 md:px-10 py-4 md:py-5 h-full"}>
         <div className={"flex flex-row items-center justify-between text-2xl font-bold"}>
           <div>Message Board</div>
           <CreateMessage daoId={detail.id}>
-            <Button variant={"outline"} className={"text-xs"}>
-              Post a Message
-            </Button>
+            <>
+              <Button variant={"outline"} className={"text-xs hidden md:block"}>
+                Post a Message
+              </Button>
+              <Button variant={"ghost"} className={"text-xs md:hidden"}>
+                <Plus />
+              </Button>
+            </>
           </CreateMessage>
         </div>
         <div className={"md:min-h-[620px]"}>{list}</div>

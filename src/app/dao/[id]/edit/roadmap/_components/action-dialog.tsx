@@ -35,10 +35,10 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
     }
   })
   const {
-    handleSubmit,
     control,
     formState: { errors },
-    reset
+    reset,
+    trigger
   } = form
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
           <DialogTitle>{isNew ? "Add" : "Edit"} Roadmap</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit(submit)} className="space-y-4">
+          <div className="space-y-4">
             <FormField
               control={control}
               name="date"
@@ -104,16 +104,26 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea rows={5} placeholder="Enter article description" {...field} />
+                    <Textarea rows={5} {...field} />
                   </FormControl>
                   <FormMessage>{errors.description?.message}</FormMessage>
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button onClick={() => handleSubmit(submit)}>Save</Button>
+              <Button
+                onClick={async () => {
+                  const result = await trigger()
+                  if (result) {
+                    const values = form.getValues()
+                    submit(values)
+                  }
+                }}
+              >
+                Save
+              </Button>
             </DialogFooter>
-          </form>
+          </div>
         </Form>
       </DialogContent>
     </Dialog>

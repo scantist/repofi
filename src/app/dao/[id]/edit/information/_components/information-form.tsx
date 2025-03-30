@@ -85,7 +85,7 @@ const InformationForm = ({ id, isNew, data }: BaseFormProps) => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Section Heading</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter content block title" {...field} disabled={isPending} />
                 </FormControl>
@@ -100,7 +100,7 @@ const InformationForm = ({ id, isNew, data }: BaseFormProps) => {
             name="sort"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Block sort</FormLabel>
+                <FormLabel>Display Order</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter display order (e.g., 1, 2, 3)"

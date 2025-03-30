@@ -1,6 +1,6 @@
-import type {DaoPlatform, DaoStatus, DaoType, Prisma} from "@prisma/client"
-import {z} from "zod"
-import {daoContentParamsSchema} from "~/lib/schema"
+import type { DaoPlatform, DaoStatus, DaoType, Prisma } from "@prisma/client"
+import { z } from "zod"
+import { daoContentParamsSchema } from "~/lib/schema"
 
 export interface Repository {
   id: number
@@ -57,11 +57,11 @@ export type FileUploader = (data: {
 }) => Promise<{ success: boolean; url?: string; message?: string }>
 
 export const ListRowDataSchema = z.object({
-  image: z.string().min(1, {message: "Image URL cannot be empty"}),
-  title: z.string().min(1, {message: "Title cannot be empty"}).max(100, {message: "Title cannot exceed 100 characters"}),
-  sort: z.number().int({message: "Sort must be an integer"}).nonnegative({message: "Sort must be a non-negative number"}),
-  description: z.string().max(500, {message: "Description cannot exceed 500 characters"}),
-  link: z.string().url({message: "Please enter a valid URL"})
+  image: z.string().min(1, { message: "Image URL cannot be empty" }),
+  title: z.string().min(1, { message: "Title cannot be empty" }).max(100, { message: "Title cannot exceed 100 characters" }),
+  sort: z.number().int({ message: "Sort must be an integer" }).nonnegative({ message: "Sort must be a non-negative number" }),
+  description: z.string().max(500, { message: "Description cannot exceed 500 characters" }),
+  link: z.string().url({ message: "Please enter a valid URL" })
 })
 
 export const ListRowContentParamsSchema = z
@@ -77,22 +77,22 @@ export type ListRowContentParams = z.infer<typeof ListRowContentParamsSchema>
 export const TeamDataSchema = z.object({
   name: z.string(),
   avatar: z.string(),
-  x: z.string().url().optional(),
-  website: z.string().url().optional(),
-  telegram: z.string().url().optional(),
-  github: z.string().url().optional(),
-  ingress: z.string().url().optional(),
+  x: z.preprocess((val) => (val === "" ? undefined : val), z.string().url().optional()),
+  website: z.preprocess((val) => (val === "" ? undefined : val), z.string().url().optional()),
+  telegram: z.preprocess((val) => (val === "" ? undefined : val), z.string().url().optional()),
+  github: z.preprocess((val) => (val === "" ? undefined : val), z.string().url().optional()),
+  ingress: z.preprocess((val) => (val === "" ? undefined : val), z.string().url().optional()),
   description: z.string().optional(),
   title: z.string().optional(),
   sort: z.number()
 })
 
-export const TeamContentParamsSchema = z
-  .object({
+export const TeamContentParamsSchema = daoContentParamsSchema.merge(
+  z.object({
     data: z.array(TeamDataSchema),
     id: z.string()
   })
-  .merge(daoContentParamsSchema)
+)
 
 export type TeamData = z.infer<typeof TeamDataSchema>
 export type TeamContentParams = z.infer<typeof TeamContentParamsSchema>

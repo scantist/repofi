@@ -23,12 +23,12 @@ const DaoContent = () => {
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
         <CardWrapper>
-          <div className={"flex flex-row justify-between rounded-lg bg-black/50 px-12 py-3"}>
+          <div className={"grid grid-cols-2 sm:grid-cols-4 gap-y-4 justify-between rounded-lg bg-black/50 px-3 sm:px-12 py-3"}>
             <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Token ID</div>
               <div className={"mt-2 text-xl"}>{detail.tokenId}</div>
             </div>
-            <div className={"max-w-max text-center"}>
+            <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Market Cap</div>
               <div className={"mt-2 text-xl"}>{`$${formatMoney(detail.marketCapUsd)}`}</div>
             </div>
@@ -55,8 +55,8 @@ const DaoContent = () => {
                   {shortenAddress(detail.tokenInfo.tokenAddress)}
                 </a>
               ) : (
-                <span className="mt-2 flex flex-row gap-1 items-center">
-                  Pending
+                <div className="mt-2 flex flex-row gap-1 items-center justify-center">
+                  <div>Pending</div>
                   <TooltipProvider delayDuration={100}>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -65,13 +65,13 @@ const DaoContent = () => {
                       <TooltipContent className="font-semibold">Let the progress bar reach 100%! You can activate it！</TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                </span>
+                </div>
               )}
             </div>
           </div>
           <div className={"flex flex-row gap-4 px-12 py-3 border-t-primary border-t"}>{graduated ? <PostProgress /> : <PreProgress />}</div>
         </CardWrapper>
-        <CardWrapper contentClassName={"h-[360px]"}>
+        <CardWrapper className={"flex-1"} contentClassName={"h-full max-h-none"}>
           {graduated ? (
             <GraduatedChart uniswapV3Pair={detail.tokenInfo.uniswapV3Pair} />
           ) : (

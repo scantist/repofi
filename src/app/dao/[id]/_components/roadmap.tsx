@@ -6,7 +6,10 @@ interface RoadmapProps {
 }
 
 const Roadmap = ({ data }: RoadmapProps) => {
-  const list = data.data as RoadmapData[]
+  const list = (data.data as RoadmapData[]).sort((a, b) => {
+    return b.date.localeCompare(a.date) // 交换了 a 和 b 的位置
+  })
+
   if (list.length === 0) {
     return <></>
   }

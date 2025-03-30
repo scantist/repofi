@@ -48,7 +48,8 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
     resolver: zodResolver(ListRowContentParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: {
-      ...data
+      ...data,
+      title: data.title.trim().length === 0 ? "Articles" : data.title
     }
   })
 
@@ -103,7 +104,7 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Section Heading</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter content block title" {...field} disabled={isPending} />
                 </FormControl>
@@ -118,7 +119,7 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
             name="sort"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Block sort</FormLabel>
+                <FormLabel>Display Order</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter display order (e.g., 1, 2, 3)"
@@ -153,8 +154,12 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
               ))}
               <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
                 <div className={"w-full h-full"}>
-                  <CardWrapper className={"col-span-1 sm:col-span-2 md:col-span-1 "} contentClassName={" min-h-76 h-full cursor-pointer  flex justify-center items-center"}>
+                  <CardWrapper
+                    className={"col-span-1 sm:col-span-2 md:col-span-1 "}
+                    contentClassName={"flex-col text-muted-foreground min-h-76 h-full cursor-pointer  flex justify-center items-center"}
+                  >
                     <Plus className={"mx-auto"} />
+                    <div className={"mt-2"}>Add a new article</div>
                   </CardWrapper>
                 </div>
               </ActionDialog>

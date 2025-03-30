@@ -23,7 +23,7 @@ const ProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
     <div className={"space-y-6"}>
       <div>
         <h3 className="text-lg font-medium">Team & Community</h3>
-        <p className="text-muted-foreground text-sm">Show off your team & community, everyone can get to know you better.</p>
+        <p className="text-muted-foreground text-sm">Show off your team & community</p>
       </div>
       <Separator />
       <TeamForm id={id} isNew={isNew} data={data} />

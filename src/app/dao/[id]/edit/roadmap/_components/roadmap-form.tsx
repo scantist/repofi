@@ -54,7 +54,8 @@ const RoadmapForm = ({ id, isNew, data }: BaseFormProps) => {
     resolver: zodResolver(RoadmapParamsSchema, { async: true }),
     reValidateMode: "onBlur",
     defaultValues: {
-      ...data
+      ...data,
+      title: data.title.trim().length === 0 ? "Roadmap" : data.title
     }
   })
 
@@ -106,7 +107,7 @@ const RoadmapForm = ({ id, isNew, data }: BaseFormProps) => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Section Heading</FormLabel>
                 <FormControl>
                   <Input placeholder="Enter content block title" {...field} disabled={isPending} />
                 </FormControl>
@@ -121,7 +122,7 @@ const RoadmapForm = ({ id, isNew, data }: BaseFormProps) => {
             name="sort"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Block sort</FormLabel>
+                <FormLabel>Display Order</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter display order (e.g., 1, 2, 3)"
@@ -149,8 +150,9 @@ const RoadmapForm = ({ id, isNew, data }: BaseFormProps) => {
             <div className={"flex flex-col flex-wrap gap-8"}>
               <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
                 <div className={"w-full h-full"}>
-                  <CardWrapper contentClassName={" min-h-28 h-full cursor-pointer  flex justify-center items-center"}>
+                  <CardWrapper contentClassName={" min-h-28 h-full cursor-pointer  flex flex-col justify-center items-center text-muted-foreground"}>
                     <Plus className={"mx-auto"} />
+                    <div className={"mt-2"}>Add a new Roadmap</div>
                   </CardWrapper>
                 </div>
               </ActionDialog>

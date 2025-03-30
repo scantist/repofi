@@ -42,10 +42,10 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
     }
   })
   const {
-    handleSubmit,
     control,
     formState: { errors },
-    reset
+    reset,
+    trigger
   } = form
 
   useEffect(() => {
@@ -54,6 +54,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
   }, [data])
   const submit = (values: TeamData) => {
     handleAddOrUpdate(values, index, () => setOpen(false))
+    console.log("values", values)
   }
   const isNew = useMemo(() => {
     return index < 0
@@ -70,10 +71,10 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
       <DialogOverlay>
         <DialogContent className="max-w-[425px] md:max-w-[800px]">
           <DialogHeader>
-            <DialogTitle>{isNew ? "Add" : "Edit"} Article</DialogTitle>
+            <DialogTitle>{isNew ? "Add" : "Edit"} Member</DialogTitle>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={handleSubmit(submit)} className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-x-6">
+            <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-x-6">
               <FormField
                 control={control}
                 name="avatar"
@@ -129,7 +130,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's name" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.name?.message}</FormMessage>
                   </FormItem>
@@ -142,7 +143,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's title" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.title?.message}</FormMessage>
                   </FormItem>
@@ -153,10 +154,10 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                 name="sort"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sort Order</FormLabel>
+                    <FormLabel>Display order</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter display order (e.g., 1, 2, 3)"
+                        placeholder="(e.g., 1, 2, 3)"
                         type="number"
                         {...field}
                         onChange={(e) => {
@@ -178,7 +179,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem className={"col-span-1 md:col-span-2"}>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea rows={5} placeholder="Enter member's description" {...field} />
+                      <Textarea rows={5} {...field} />
                     </FormControl>
                     <FormMessage>{errors.description?.message}</FormMessage>
                   </FormItem>
@@ -191,7 +192,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>Website</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's personal website" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.website?.message}</FormMessage>
                   </FormItem>
@@ -204,7 +205,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>X (Twitter)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's X (Twitter) profile" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.x?.message}</FormMessage>
                   </FormItem>
@@ -217,7 +218,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>Telegram</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's Telegram handle" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.telegram?.message}</FormMessage>
                   </FormItem>
@@ -230,7 +231,7 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>GitHub</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's GitHub profile" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.github?.message}</FormMessage>
                   </FormItem>
@@ -243,16 +244,27 @@ const ActionDialog = ({ children, data = defaultValue, index = -1, handleAddOrUp
                   <FormItem>
                     <FormLabel>Ingress</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter member's ingress information" {...field} />
+                      <Input {...field} />
                     </FormControl>
                     <FormMessage>{errors.ingress?.message}</FormMessage>
                   </FormItem>
                 )}
               />
               <DialogFooter className={"col-span-1 md:col-span-2"}>
-                <Button onClick={() => handleSubmit(submit)}>Save</Button>
+                <Button
+                  type={"button"}
+                  onClick={async () => {
+                    const result = await trigger()
+                    if (result) {
+                      const values = form.getValues()
+                      submit(values)
+                    }
+                  }}
+                >
+                  Save
+                </Button>
               </DialogFooter>
-            </form>
+            </div>
           </Form>
         </DialogContent>
       </DialogOverlay>

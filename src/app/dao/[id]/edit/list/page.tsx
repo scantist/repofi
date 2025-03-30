@@ -22,8 +22,8 @@ const ProfilePage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <div className={"space-y-6"}>
       <div>
-        <h3 className="text-lg font-medium">Article</h3>
-        <p className="text-muted-foreground text-sm">Edit your most popular articles for display！</p>
+        <h3 className="text-lg font-medium">Articles</h3>
+        <p className="text-muted-foreground text-sm">Share insights via blog posts or academic publications </p>
       </div>
       <Separator />
       <ListForm id={id} isNew={isNew} data={data} />
