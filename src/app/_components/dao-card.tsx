@@ -10,7 +10,6 @@ import type { FC } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import type { DaoLinks } from "~/lib/schema"
 import { formatMoney } from "~/lib/utils"
-import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
 import type { DaoPage } from "~/types/data"
 
 type Props = {

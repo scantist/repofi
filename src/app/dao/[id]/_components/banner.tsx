@@ -1,5 +1,6 @@
-import { SiDiscord, SiHomepage, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
+import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import type { IconType } from "@icons-pack/react-simple-icons"
+import { House } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import BannerWrapper from "~/components/banner-wrapper"
@@ -14,7 +15,7 @@ interface BannerProps {
 }
 
 const socialIcons: Record<string, IconType> = {
-  website: SiHomepage,
+  website: House,
   x: SiX,
   discord: SiDiscord,
   telegram: SiTelegram
@@ -49,7 +50,7 @@ const Banner = async ({ daoDetail, id }: BannerProps) => {
                 <IconComponent key={socialType} type={socialType} href={(daoDetail?.links as DaoLinks)?.find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
               ))}
             </div>
-            {daoDetail?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && <a href={`/dao/${id}/edit`}>Settings</a>}
+            {daoDetail?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && <a href={`/dao/${id}/edit`}>SETTING</a>}
           </div>
           <Link href={daoDetail?.url ?? "#"} className={"mt-2 text-gray-500"}>
             {daoDetail?.url}
@@ -57,9 +58,9 @@ const Banner = async ({ daoDetail, id }: BannerProps) => {
 
           <div className={"mt-1 flex flex-row gap-4 text-sm"}>
             <div>License: {daoDetail?.license}</div>
-            <div className={"border-l border-gray-400 pl-4"}>Stars: {daoDetail?.repoStar}</div>
+            <div className={"border-l border-gray-400 pl-4"}>Star: {daoDetail?.repoStar}</div>
             <div className={"border-l border-gray-400 pl-4"}>Watch: {daoDetail?.repoWatch}</div>
-            <div className={"border-l border-gray-400 pl-4"}>Forks: {daoDetail?.repoForks}</div>
+            <div className={"border-l border-gray-400 pl-4"}>Fork: {daoDetail?.repoForks}</div>
           </div>
           <div className={"mt-4 text-sm"}>{daoDetail?.description}</div>
         </div>
