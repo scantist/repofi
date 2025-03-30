@@ -1,10 +1,10 @@
 "use client"
 import confetti from "canvas-confetti"
-import {Rocket} from "lucide-react"
-import {useRouter, useSearchParams} from "next/navigation"
-import {useEffect, useMemo} from "react"
+import { Rocket } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useMemo } from "react"
 import CardWrapper from "~/components/card-wrapper"
-import {Button} from "~/components/ui/button"
+import { Button } from "~/components/ui/button"
 
 const FinishResult = () => {
   const router = useRouter()
@@ -21,14 +21,14 @@ const FinishResult = () => {
         angle: 60,
         spread: 55,
         startVelocity: 60,
-        origin: {x: 0, y: 0.5}
+        origin: { x: 0, y: 0.5 }
       })
       void confetti({
         particleCount: 2,
         angle: 120,
         spread: 55,
         startVelocity: 60,
-        origin: {x: 1, y: 0.5}
+        origin: { x: 1, y: 0.5 }
       })
 
       requestAnimationFrame(frame)
@@ -37,34 +37,28 @@ const FinishResult = () => {
     frame()
   }, [])
   return (
-    <CardWrapper className={"col-span-1 w-auto md:col-span-2 max-h-fit"}>
+    <CardWrapper className={"col-span-1 w-auto md:col-span-2"} contentClassName={"h-full max-h-none"}>
       <div className={"flex w-full flex-col items-center justify-center gap-4 py-20"}>
-        <Rocket className={"text-muted-foreground h-52 w-52"}/>
+        <Rocket className={"text-muted-foreground h-52 w-52"} />
         <div className={"text-muted-foreground text-lg"}>Congratulations, your DAO has been successfully created!</div>
-        <div className={"text-muted-foreground text-lg"}>
-          Please go to the{" "}
-          {id ? (
-            <span
-              onClick={() => {
-                router.push(`/dao/${id}`)
-              }}
-              className={"cursor-pointer font-bold text-white"}
-            >
-              details
-            </span>
-          ) : (
-            <>details</>
-          )}{" "}
-          page to improve the information
+        <div className={"flex flex-row gap-6"}>
+          <Button
+            className={"mt-5"}
+            onClick={() => {
+              router.push(`/dao/${id}`)
+            }}
+          >
+            View Details and Trade
+          </Button>
+          <Button
+            className={"mt-5"}
+            onClick={() => {
+              router.push(`/dao/${id}/edit`)
+            }}
+          >
+            Add more Info for the DAO
+          </Button>
         </div>
-        <Button
-          className={"mt-5 w-32 text-xl"}
-          onClick={() => {
-            router.push("/")
-          }}
-        >
-          GO
-        </Button>
       </div>
     </CardWrapper>
   )

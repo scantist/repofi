@@ -1,34 +1,34 @@
 "use client"
 
+import { usePathname, useRouter } from "next/navigation"
+import React, { useMemo } from "react"
 import CardWrapper from "~/components/card-wrapper"
-import React, {useMemo} from "react"
-import {cn} from "~/lib/utils"
-import {usePathname, useRouter} from "next/navigation"
+import { cn } from "~/lib/utils"
 
 const Step = () => {
   const router = useRouter()
   const steps = {
     "/create/bind": {
       level: 0,
-      title: "Bind your open source repository",
-      target: "BIND",
+      title: "Connect your open source repository",
+      target: "BIND"
     },
     "/create/information": {
       level: 1,
-      title: "Configuration basic Information",
+      title: "Fill in basic information"
     },
     "/create/finish": {
       level: 2,
-      title: "Done!",
-      target: "FINISH",
+      title: "Submit and Approve Token Initialization",
+      target: "FINISH"
     }
   } as const
 
   const pathname = usePathname()
   const currentStep = useMemo(() => {
-    console.log("pathname",pathname)
-    const step = steps[pathname as keyof typeof steps];
-    return step || steps["/create/bind"];
+    console.log("pathname", pathname)
+    const step = steps[pathname as keyof typeof steps]
+    return step || steps["/create/bind"]
   }, [pathname])
   return (
     <CardWrapper>
@@ -45,8 +45,7 @@ const Step = () => {
               }}
               key={`step-${item.title}-${item.level}`}
             >
-              <div
-                className={cn("h-8 w-8 rounded-full bg-gray-600 p-1 text-center font-bold text-gray-400", item.level <= currentStep.level && "bg-secondary text-white")}>
+              <div className={cn("h-8 w-8 rounded-full bg-gray-600 p-1 text-center font-bold text-gray-400", item.level <= currentStep.level && "bg-secondary text-white")}>
                 {item.level + 1}
               </div>
               <div className={cn("text-gray-400", item.level <= currentStep.level && "text-white")}>{item.title}</div>

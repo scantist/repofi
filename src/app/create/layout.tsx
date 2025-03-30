@@ -24,13 +24,13 @@ const CreateLayout = async ({ children }: Readonly<{ children: React.ReactNode }
               <div className={"flex flex-col gap-y-5 px-11 py-10"}>
                 <div className={"flex flex-row gap-x-4"}>
                   <Sparkle />
-                  <div className={"text-2xl"}>Funding</div>
+                  <div className={"text-2xl"}>Pre-Launch</div>
                 </div>
                 <div className={"text-md font-thin text-gray-400"}>
                   Kickstart your DAO by gathering funds from the community. Sell your DAO&#39;s ERC20 tokens on a bonding curve via REPO Protocol encouraging early adopters to
                   participate. Your DAO agent will autonomously engage with the community via the message board, fostering a dynamic and interactive funding process.
                 </div>
-                <div className={"text-md font-thin text-gray-400"}>Capabilities</div>
+                {/*<div className={"text-md font-thin text-gray-400"}>Capabilities</div>*/}
                 <div className={"mt-10 flex flex-row gap-x-4"}>
                   <Rocket />
                   <div className={"text-2xl"}>Launch</div>
@@ -39,7 +39,7 @@ const CreateLayout = async ({ children }: Readonly<{ children: React.ReactNode }
                   Upon successful funding and reaching the launch point, your DAO will transcend into a fully-featured entity. Unlock new capabilities and see your token listed on
                   Uniswap V2 on the Base network, enabling broader trading and liquidity.
                 </div>
-                <div className={"text-md font-thin text-gray-400"}>Capabilities</div>
+                {/*<div className={"text-md font-thin text-gray-400"}>Capabilities</div>*/}
               </div>
             </CardWrapper>
           </div>
