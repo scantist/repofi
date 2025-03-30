@@ -1,8 +1,11 @@
+"use client"
 import { type ColumnDef, type PaginationState, type Row, flexRender, getCoreRowModel, getExpandedRowModel, useReactTable } from "@tanstack/react-table"
+import { useRouter } from "next/navigation"
 import React, { Fragment, type ReactNode, useEffect, useMemo, useState } from "react"
 import LoadingSpinner from "~/app/_components/loading-spinner"
 import CardWrapper from "~/components/card-wrapper"
 import NoData from "~/components/no-data"
+import { Button } from "~/components/ui/button"
 import { cn } from "~/lib/utils"
 import type { PageableData } from "~/types/data"
 
@@ -32,6 +35,7 @@ const DataTable = <T,>({
   pageSize = [10, 20, 50, 100],
   children
 }: Props<T>) => {
+  const router = useRouter()
   const [pagination, setPagination] = useState<PaginationState>(outPagination)
   const table = useReactTable({
     data: data?.list ?? [],
@@ -109,7 +113,18 @@ const DataTable = <T,>({
             ) : (
               <tr>
                 <td className="px-6 py-4" colSpan={columns.length}>
-                  <NoData size={96} className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"} />
+                  <NoData
+                    size={96}
+                    className={"col-span-1 my-20 sm:col-span-2 lg:col-span-3"}
+                    text={
+                      <div className={"space-y-4 text-center"}>
+                        <div>There are no DAOs of which you have owned any shares yet. </div>
+                        <Button className={"w-auto"} onClick={() => router.push("/")}>
+                          Explore and invest in DAO
+                        </Button>
+                      </div>
+                    }
+                  />
                 </td>
               </tr>
             )}

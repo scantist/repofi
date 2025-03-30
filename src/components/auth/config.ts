@@ -1,18 +1,12 @@
 "use client"
-import {getAddress} from "viem"
-import {WagmiAdapter} from "@reown/appkit-adapter-wagmi"
-import {env} from "~/env"
-import type {AppKitNetwork} from "@reown/appkit/networks"
-import {createAppKit} from "@reown/appkit/react"
-import {
-  createSIWEConfig,
-  formatMessage,
-  type SIWECreateMessageArgs,
-  type SIWESession,
-  type SIWEVerifyMessageArgs
-} from "@reown/appkit-siwe"
-import {getCsrfToken, getSession, signIn, signOut} from "next-auth/react"
-import {defaultChain} from "~/lib/web3"
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi"
+import { type SIWECreateMessageArgs, type SIWESession, type SIWEVerifyMessageArgs, createSIWEConfig, formatMessage } from "@reown/appkit-siwe"
+import type { AppKitNetwork } from "@reown/appkit/networks"
+import { createAppKit } from "@reown/appkit/react"
+import { getCsrfToken, getSession, signIn, signOut } from "next-auth/react"
+import { getAddress } from "viem"
+import { env } from "~/env"
+import { defaultChain } from "~/lib/web3"
 
 const projectId = env.NEXT_PUBLIC_REOWN_PROJECT_ID
 const networks: [AppKitNetwork, ...AppKitNetwork[]] = [defaultChain]
@@ -54,7 +48,7 @@ const siweConfig = createSIWEConfig({
     chains: networks.map((chain: AppKitNetwork) => Number.parseInt(chain.id.toString())),
     statement: "Please sign with your account"
   }),
-  createMessage: ({address, ...args}: SIWECreateMessageArgs) => formatMessage(args, normalizeAddress(address)),
+  createMessage: ({ address, ...args }: SIWECreateMessageArgs) => formatMessage(args, normalizeAddress(address)),
   getNonce: async () => {
     const nonce = await getCsrfToken()
     if (!nonce) {
@@ -78,7 +72,7 @@ const siweConfig = createSIWEConfig({
       chainId: session.chainId
     } satisfies SIWESession
   },
-  verifyMessage: async ({message, signature}: SIWEVerifyMessageArgs) => {
+  verifyMessage: async ({ message, signature }: SIWEVerifyMessageArgs) => {
     try {
       await signIn("credentials", {
         message,
@@ -111,7 +105,7 @@ createAppKit({
   metadata,
   themeVariables: {
     "--w3m-font-family": "var(--font-sans)",
-    "--w3m-accent": "#4930c4"
+    "--w3m-accent": "#925aff"
   },
   // featuredWalletIds: [
   // "c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96",
@@ -130,4 +124,4 @@ createAppKit({
   // tokens
 })
 
-export {wagmiConfig}
+export { wagmiConfig }

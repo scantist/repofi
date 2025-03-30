@@ -5,7 +5,7 @@ Link to Software Genome Project (SGP).
 # Overview
 ## What is SGP?
 The Software Genome Project (SGP) treats software as assemblies of “genes,” making it easier to trace dependencies, validate code quality, and manage licensing. Our ecosystem combines:
-- Open-source governance via specialized repoDAOs.
+- Open-source governance via specialized repoDAO.
 - Economic incentives using Proof-of-Contribution (PoC) and Proof-of-Merit (PoM).
 - Secure, transparent licensing through dual-tier licensing models and NFT-driven solutions.
 

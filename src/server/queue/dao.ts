@@ -1,18 +1,18 @@
-import {defineQueue, type WorkerFunction} from "./helper"
-import {db} from "~/server/db"
-import {CommonError, ErrorCode} from "~/lib/error"
-import {Prisma} from "@prisma/client"
+import { Prisma } from "@prisma/client"
+import { CommonError, ErrorCode } from "~/lib/error"
+import { db } from "~/server/db"
+import { type WorkerFunction, defineQueue } from "./helper"
 
 const queueName = "dao"
 
-type JobName = "dao-update-token-unlock-ratio" | "dao-update-graduated-holders";
+type JobName = "dao-update-token-unlock-ratio" | "dao-update-graduated-holders"
 
 type JobInput = {
-  daoId: string;
-  url: string;
-};
+  daoId: string
+  url: string
+}
 
-type JobOutput = undefined;
+type JobOutput = undefined
 
 const updateTokenUnlockRatio = async (logger: typeof console) => {
   try {
@@ -23,38 +23,34 @@ const updateTokenUnlockRatio = async (logger: typeof console) => {
           not: null
         }
       }
-    });
-    const updates = tokenInfoList.map(async (tokenInfo) => {
-
-      const evtTokenLockLog = await db.evtTokenLockLog.findFirst({
-        where: {
-          tokenAddress: tokenInfo.tokenAddress!,
-        }
-      });
-      if (evtTokenLockLog && evtTokenLockLog.unlockRatio !== null) {
-        return db.daoTokenInfo.update({
+    })
+    const updates = tokenInfoList
+      .map(async (tokenInfo) => {
+        const evtTokenLockLog = await db.evtTokenLockLog.findFirst({
           where: {
-            tokenId: tokenInfo.tokenId
-          },
-          data: {
-            unlockRatio: Number(evtTokenLockLog.unlockRatio) / 10000
+            tokenAddress: tokenInfo.tokenAddress!
           }
         })
-      }
-      return undefined
-    }).filter((update) => update !== undefined);
+        if (evtTokenLockLog && evtTokenLockLog.unlockRatio !== null) {
+          return db.daoTokenInfo.update({
+            where: {
+              tokenId: tokenInfo.tokenId
+            },
+            data: {
+              unlockRatio: Number(evtTokenLockLog.unlockRatio) / 10000
+            }
+          })
+        }
+        return undefined
+      })
+      .filter((update) => update !== undefined)
     await Promise.all(updates)
     logger.info("Successfully updated unlock ratios for dao token info")
   } catch (error) {
     logger.error("Failed to update unlock ratios:", error)
-    throw new CommonError(
-      ErrorCode.INTERNAL_ERROR,
-      "Failed to update unlock ratios",
-      error,
-    )
+    throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to update unlock ratios", error)
   }
 }
-
 
 const updateTokenGraduatedHolders = async (logger: typeof console) => {
   try {
@@ -90,25 +86,18 @@ const updateTokenGraduatedHolders = async (logger: typeof console) => {
         UPDATE t_dao_token_info
         SET holder_count = hc.holder_count FROM holder_counts hc
         WHERE t_dao_token_info.token_id = hc.token_id
-    `;
+    `
 
-    const result = await db.$executeRaw(query);
+    const result = await db.$executeRaw(query)
 
-    logger.info(`Successfully updated holder counts for graduated DAOs. Rows affected: ${result}`);
+    logger.info(`Successfully updated holder counts for graduated DAO. Rows affected: ${result}`)
   } catch (error) {
-    logger.error("Failed to update holder counts for graduated DAOs:", error);
-    throw new CommonError(
-      ErrorCode.INTERNAL_ERROR,
-      "Failed to update holder counts for graduated DAOs",
-      error,
-    );
+    logger.error("Failed to update holder counts for graduated DAO:", error)
+    throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to update holder counts for graduated DAO", error)
   }
-};
+}
 
-const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (
-  job,
-  {logger},
-) => {
+const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job, { logger }) => {
   switch (job.name) {
     case "dao-update-token-unlock-ratio":
       await updateTokenUnlockRatio(logger)
@@ -120,20 +109,25 @@ const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (
   }
 }
 
-const {getQueue, getMetrics, initQueue: _initQueue, pauseQueue, resumeQueue} =
-  defineQueue<JobInput, JobOutput, JobName>({
-    queueName,
-    workerFunction
-  })
+const {
+  getQueue,
+  getMetrics,
+  initQueue: _initQueue,
+  pauseQueue,
+  resumeQueue
+} = defineQueue<JobInput, JobOutput, JobName>({
+  queueName,
+  workerFunction
+})
 const initQueue = async () => {
-  await _initQueue();
-  const queue = await getQueue();
+  await _initQueue()
+  const queue = await getQueue()
   await queue.upsertJobScheduler("dao-update-token-unlock-ratio", {
-    every: 600 * 1000, // 10 minutes
-  });
+    every: 600 * 1000 // 10 minutes
+  })
   await queue.upsertJobScheduler("dao-update-graduated-holders", {
-    every: 600 * 1000, // 10 minutes
-  });
-  console.log("[Queue-PRICE] Upserted dao scheduler");
-};
-export {getQueue, getMetrics, initQueue, pauseQueue, resumeQueue}
+    every: 600 * 1000 // 10 minutes
+  })
+  console.log("[Queue-PRICE] Upserted dao scheduler")
+}
+export { getQueue, getMetrics, initQueue, pauseQueue, resumeQueue }

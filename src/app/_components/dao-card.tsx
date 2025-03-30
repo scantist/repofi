@@ -57,7 +57,7 @@ const DaoCard: FC<Props> = ({ data }) => {
           <div className={"mt-2 flex flex-row justify-between items-center text-xs"}>
             <div className="flex flex-row gap-x-6">
               <div>
-                <span className={"mr-1"}>Stars:</span>
+                <span className={"mr-1"}>Star:</span>
                 <span className={"text-white/80"}>{data.repoStar}</span>
               </div>
               <div>
@@ -65,13 +65,13 @@ const DaoCard: FC<Props> = ({ data }) => {
                 <span className={"text-white/80"}>{data.repoWatch}</span>
               </div>
               <div>
-                <span className={"mr-1"}>Forks:</span>
+                <span className={"mr-1"}>Fork:</span>
                 <span className={"text-white/80"}>{data.repoForks}</span>
               </div>
             </div>
             <div>
               <span className={"mr-1"}>License:</span>
-              <span className={"text-white/80"}>{data.license || 'N/A'}</span>
+              <span className={"text-white/80"}>{data.license || "N/A"}</span>
             </div>
           </div>
           <div className={"my-4 grid grid-cols-3 justify-evenly gap-1 border-y-1 border-y-gray-400 py-3 font-light"}>

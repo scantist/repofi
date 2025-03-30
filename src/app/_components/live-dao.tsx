@@ -1,33 +1,35 @@
 "use client"
 
-import CardWrapper from "~/components/card-wrapper"
+import { AlignLeft, LayoutGrid } from "lucide-react"
 import { useState } from "react"
-import { cn } from "~/lib/utils"
-import DaoGrid from "./dao-grid"
 import LiveTable from "~/app/_components/live-table"
-import { type DaoSearchResult } from "~/server/service/dao"
+import CardWrapper from "~/components/card-wrapper"
+import { ToggleGroup, ToggleGroupItem } from "~/components/ui/toggle-group"
+import { cn } from "~/lib/utils"
+import type { DaoSearchResult } from "~/server/service/dao"
+import DaoGrid from "./dao-grid"
 
 interface LiveDaoProps {
   initialData?: DaoSearchResult
 }
 
 const LiveDao = ({ initialData }: LiveDaoProps) => {
-  const [type, setType] = useState<"DISCOVER" | "ANALYTICS">("DISCOVER")
+  const [type, setType] = useState<"DISCOVER" | "ANALYTICS">("ANALYTICS")
   return (
-    <div className={"mx-auto flex min-h-full w-full max-w-7xl flex-col gap-8 px-4 pt-10 pb-10"}>
-      <div className={"text-4xl font-bold"}>Launched DAOs</div>
-      <CardWrapper>
-        <div className={"p-4 text-sm font-thin"}>
-          Successfully funded projects now building with community support.  Track their progress and get involved in development.
-        </div>
-      </CardWrapper>
-      <div className={"flex w-full flex-row gap-x-8 border-b border-gray-600 text-lg"}>
-        <div onClick={() => setType("DISCOVER")} className={cn("border-primary cursor-pointer pb-2 font-bold", type === "DISCOVER" && "text-primary border-b-4")}>
-          Discover
-        </div>
-        <div onClick={() => setType("ANALYTICS")} className={cn("border-primary cursor-pointer pb-2 font-bold", type === "ANALYTICS" && "text-primary border-b-4")}>
-          Analytics
-        </div>
+    <div className={"mx-auto flex min-h-full w-full max-w-7xl flex-col gap-4 px-4 pt-10 pb-10"}>
+      <div className={"text-4xl font-bold flex flex-grow items-center justify-between"}>
+        <div>Launched DAO</div>
+        <ToggleGroup type="single" value={type} onValueChange={(e) => setType(e as "ANALYTICS" | "DISCOVER")}>
+          <ToggleGroupItem value="ANALYTICS" className={"p-2 cursor-pointer rounded-md data-[state=on]:border-primary data-[state=on]:border"}>
+            <AlignLeft className="h-4 w-4" />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="DISCOVER" className={"p-2 cursor-pointer rounded-md data-[state=on]:border-primary data-[state=on]:border"}>
+            <LayoutGrid className="h-4 w-4" />
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+      <div className={"text-muted-foreground text-sm font-thin"}>
+        Successfully funded projects now building with community support. Track their progress and get involved in development.
       </div>
       {type === "DISCOVER" ? (
         <DaoGrid
