@@ -98,14 +98,10 @@ const MessageList = () => {
         <div className={"flex flex-row items-center justify-between text-2xl font-bold"}>
           <div>Message Board</div>
           <CreateMessage daoId={detail.id}>
-            <>
-              <Button variant={"outline"} className={"text-xs hidden md:block"}>
-                Post a Message
-              </Button>
-              <Button variant={"ghost"} className={"text-xs md:hidden"}>
-                <Plus />
-              </Button>
-            </>
+            <Button variant={"ghost"} className={"text-xs text-primary"}>
+              <span className={"hidden md:block"}>Post a Message</span>
+              <Plus className={"text-xs md:hidden"} />
+            </Button>
           </CreateMessage>
         </div>
         <div className={"md:min-h-[620px]"}>{list}</div>

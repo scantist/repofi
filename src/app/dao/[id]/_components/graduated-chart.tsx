@@ -1,6 +1,6 @@
-import { defaultChain } from "~/lib/web3"
 import DextoolsChart from "~/components/dextools/chart"
 import NoData from "~/components/no-data"
+import { defaultChain } from "~/lib/web3"
 
 const GraduatedChart = ({ uniswapV3Pair }: { uniswapV3Pair?: string | null }) => {
   if (!uniswapV3Pair) {
@@ -12,7 +12,7 @@ const GraduatedChart = ({ uniswapV3Pair }: { uniswapV3Pair?: string | null }) =>
   }
 
   return (
-    <div className="flex h-full w-full flex-col rounded-xl overflow-clip justify-center items-center">
+    <div className="flex w-full flex-col rounded-xl overflow-clip justify-center items-center h-72">
       <DextoolsChart pair={uniswapV3Pair} chainId={defaultChain.name.toLowerCase()} />
     </div>
   )

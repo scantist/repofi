@@ -2,7 +2,7 @@
 
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import type { IconType } from "@icons-pack/react-simple-icons"
-import { House } from "lucide-react"
+import { House, Settings } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
@@ -77,7 +77,11 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
               </div>
               {linksNode}
             </div>
-            {data?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && <a href={`/dao/${id}/edit`}>SETTING</a>}
+            {data?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && (
+              <a href={`/dao/${id}/edit`}>
+                <Settings className={"text-primary-foreground hover:text-primary transition-all"} />
+              </a>
+            )}
           </div>
           <Link href={data?.url ?? "#"} className={"mt-2 text-gray-500"}>
             {data?.url}
@@ -89,7 +93,15 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
             <div className={"border-l border-gray-400 pl-4"}>Watch: {data?.repoWatch}</div>
             <div className={"border-l border-gray-400 pl-4"}>Fork: {data?.repoForks}</div>
           </div>
-          <div className={"mt-4 text-sm"}>{data?.description}</div>
+          <div
+            className={"mt-4 text-sm line-clamp-6 overflow-auto"}
+            style={{
+              scrollbarWidth: "none", // Firefox
+              msOverflowStyle: "none" // IE 10+
+            }}
+          >
+            {data?.description}
+          </div>
         </div>
       </div>
     </BannerWrapper>

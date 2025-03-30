@@ -39,7 +39,7 @@ const ContributorCard = () => {
     <CardWrapper contentClassName={"min-h-95"}>
       <div className={"rounded-lg bg-black/60 p-4"}>
         <div className={"text-2xl font-medium flex flex-row justify-between items-center"}>
-          <div>Contributor List</div>
+          <div>Contributor Rank</div>
           <div
             className={"text-sm cursor-pointer text-muted-foreground"}
             onClick={() => {

@@ -51,7 +51,7 @@ const BaseForm = ({ dao, name, url, type, ticker }: BaseFormProps) => {
   const useUtils = api.useUtils()
   const submit = (values: UpdateDaoParamsSchema) => {
     updateDao(values)
-    void useUtils.dao.detail.invalidate()
+    void useUtils.dao.detail.refetch()
   }
 
   return (

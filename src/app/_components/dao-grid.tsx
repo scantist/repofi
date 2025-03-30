@@ -1,12 +1,12 @@
 "use client"
 import React, { type FC, useState } from "react"
-import type { HomeSearchParams, Pageable } from "~/lib/schema"
-import { api } from "~/trpc/react"
 import DaoCard from "~/app/_components/dao-card"
+import LoadingSpinner from "~/app/_components/loading-spinner"
 import ListPagination from "~/components/list-pagination"
-import { type DaoSearchResult } from "~/server/service/dao"
 import NoData from "~/components/no-data"
-import LoadingSpinner from "~/app/_components/loading-spinner";
+import type { HomeSearchParams, Pageable } from "~/lib/schema"
+import type { DaoSearchResult } from "~/server/service/dao"
+import { api } from "~/trpc/react"
 
 type Props = {
   initParam?: HomeSearchParams
@@ -33,11 +33,13 @@ const DaoGrid: FC<Props> = ({
     },
     { initialData: initialData }
   )
-
+  console.log("response", response, pageable)
   if (isPending) {
-    return <div className={"col-span-1 mt-6 sm:col-span-2 lg:col-span-3"}>
-      <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
-    </div>
+    return (
+      <div className={"col-span-1 mt-6 sm:col-span-2 lg:col-span-3"}>
+        <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
+      </div>
+    )
   }
 
   return (
