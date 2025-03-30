@@ -2,12 +2,13 @@
 
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import type { IconType } from "@icons-pack/react-simple-icons"
-import { House, Settings } from "lucide-react"
+import { useTour } from "@reactour/tour"
+import { Footprints, House, Settings } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import BannerWrapper from "~/components/banner-wrapper"
 import CardWrapper from "~/components/card-wrapper"
 import type { DaoLinks } from "~/lib/schema"
@@ -56,6 +57,12 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
       <IconComponent key={socialType} type={socialType} href={(data?.links as DaoLinks)?.find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
     ))
   }, [data])
+  const { setIsOpen } = useTour()
+
+  const handleClickStart = () => {
+    setIsOpen(true)
+  }
+
   return (
     <BannerWrapper className={"flex w-full flex-col"}>
       <div className={"my-10 flex w-full flex-col gap-8 md:flex-row"}>
@@ -77,13 +84,16 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
               </div>
               {linksNode}
             </div>
-            {data?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && (
-              <a href={`/dao/${id}/edit`}>
-                <Settings className={"text-primary-foreground hover:text-primary transition-all"} />
-              </a>
-            )}
+            <div className={"flex flex-row items-end gap-x-4 "}>
+              <Footprints className={"cursor-pointer text-primary-foreground hover:text-primary transition-all"} onClick={handleClickStart} aria-label={"Dao Tour"} />
+              {data?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && (
+                <a href={`/dao/${id}/edit`}>
+                  <Settings className={"text-primary-foreground hover:text-primary transition-all"} />
+                </a>
+              )}
+            </div>
           </div>
-          <Link href={data?.url ?? "#"} className={"mt-2 text-gray-500"}>
+          <Link href={data?.url ?? "#"} className={"mt-2 text-gray-500 w-auto max-w-fit"}>
             {data?.url}
           </Link>
 

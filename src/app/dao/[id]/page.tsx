@@ -5,6 +5,7 @@ import Roadmap from "~/app/dao/[id]/_components/roadmap"
 import TeamCommunity from "~/app/dao/[id]/_components/team-community"
 import { DaoProvider } from "~/app/dao/[id]/context"
 import DaoContent from "~/app/dao/[id]/main"
+import { TourWrapper } from "~/components/tour-wrapper"
 import { TradingViewProvider } from "~/components/trade-view/provider"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
@@ -25,26 +26,28 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <DaoProvider initialDetail={daoDetail}>
       <TradingViewProvider>
-        <div className={"mt-20 min-h-full"}>
-          <Banner id={id} daoDetail={daoDetail} />
-          <div className={"mx-4 max-w-7xl xl:mx-auto"}>
-            <DaoContent />
-            {sortedContents.map((content) => {
-              switch (content.type) {
-                case "LIST_ROW":
-                  return <ArticleList key={content.id} data={content as ListRowContentParams} />
-                case "TEAM_COMMUNITY":
-                  return <TeamCommunity key={content.id} data={content as TeamContentParams} dao={daoDetail} />
-                case "ROADMAP":
-                  return <Roadmap key={content.id} data={content as RoadmapContentParams} />
-                case "INFORMATION":
-                  return <Content key={content.id} data={content as InformationContentParams} />
-                default:
-                  return <></>
-              }
-            })}
+        <TourWrapper>
+          <div className={"mt-20 min-h-full"}>
+            <Banner id={id} daoDetail={daoDetail} />
+            <div className={"mx-4 max-w-7xl xl:mx-auto"}>
+              <DaoContent />
+              {sortedContents.map((content) => {
+                switch (content.type) {
+                  case "LIST_ROW":
+                    return <ArticleList key={content.id} data={content as ListRowContentParams} />
+                  case "TEAM_COMMUNITY":
+                    return <TeamCommunity key={content.id} data={content as TeamContentParams} dao={daoDetail} />
+                  case "ROADMAP":
+                    return <Roadmap key={content.id} data={content as RoadmapContentParams} />
+                  case "INFORMATION":
+                    return <Content key={content.id} data={content as InformationContentParams} />
+                  default:
+                    return <></>
+                }
+              })}
+            </div>
           </div>
-        </div>
+        </TourWrapper>
       </TradingViewProvider>
     </DaoProvider>
   )

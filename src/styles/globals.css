@@ -99,10 +99,23 @@
 }
 
 @theme {
-  --animation-stroke-dash: stroke-dash 3s linear;
-  --animation-stroke-appear: appear 3s ease-out;
-  --animation-swap-in: swap-in 4s ease-in-out infinite;
-  --animation-swap-out: swap-out 4s ease-in-out infinite;
+  --animate-stroke-dash: stroke-dash 3s linear;
+  --animate-stroke-appear: appear 3s ease-out;
+  --animate-swap-in: swap-in 4s ease-in-out infinite;
+  --animate-swap-out: swap-out 4s ease-in-out infinite;
+  --animate-sparkle: sparkle 2s ease-in-out infinite;
+
+  @keyframes sparkle {
+    0%,
+    100% {
+      opacity: 0;
+      scale: 0.9;
+    }
+    50% {
+      opacity: 1;
+      scale: 1;
+    }
+  }
 
   @keyframes stroke-dash {
     0% {

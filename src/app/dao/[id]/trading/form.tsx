@@ -1,43 +1,43 @@
 "use client"
 
-import {Input} from "~/components/ui/input"
-import Image from "next/image"
-import {useEffect, useState} from "react"
-import {useAssetTokenInfo} from "~/hooks/use-asset-token"
-import {z} from "zod"
-import {fromHumanAmount, toHumanAmount} from "~/lib/web3"
-import {useAmountOutMin, useTrade} from "~/hooks/use-trade"
-import {useAuth} from "~/components/auth/auth-context"
-import {Button} from "~/components/ui/button"
-import {Loader2, Rocket} from "lucide-react"
 import NumberFlow from "@number-flow/react"
-import TradingFeePopover from "~/app/dao/[id]/trading/trading-fee-popover"
-import SlippagePopover from "~/app/dao/[id]/trading/slippage-popover"
-import {cn, formatMoney} from "~/lib/utils"
-import {ErrorOverlay, LoadingOverlay, SuccessOverlay} from "./trading-components"
-import {useTokenStats} from "~/hooks/use-launch-contract"
 import Decimal from "decimal.js"
+import { Loader2, Rocket } from "lucide-react"
+import Image from "next/image"
+import { useEffect, useState } from "react"
+import { z } from "zod"
+import { useDaoContext } from "~/app/dao/[id]/context"
+import SlippagePopover from "~/app/dao/[id]/trading/slippage-popover"
+import TradingFeePopover from "~/app/dao/[id]/trading/trading-fee-popover"
+import { useAuth } from "~/components/auth/auth-context"
+import { Button } from "~/components/ui/button"
+import { Input } from "~/components/ui/input"
+import { useAssetTokenInfo } from "~/hooks/use-asset-token"
+import { useTokenStats } from "~/hooks/use-launch-contract"
+import { useAmountOutMin, useTrade } from "~/hooks/use-trade"
+import { cn, formatMoney } from "~/lib/utils"
+import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
 import AmountInSlider from "../_components/amount-in-slider"
-import {useDaoContext} from "~/app/dao/[id]/context";
+import { ErrorOverlay, LoadingOverlay, SuccessOverlay } from "./trading-components"
 
 const leftTokenDecimals = 18
-const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
-  const {detail, triggerRefresh} = useDaoContext()
+const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
+  const { detail, triggerRefresh } = useDaoContext()
   const isBuy = mode === "buy"
-  const {address, openDialog, isAuthenticated} = useAuth()
-  const {data: assetTokenInfo} = useAssetTokenInfo(detail.tokenInfo.assetTokenAddress ?? "")
+  const { address, openDialog, isAuthenticated } = useAuth()
+  const { data: assetTokenInfo } = useAssetTokenInfo(detail.tokenInfo.assetTokenAddress ?? "")
   const repoToken = {
     ticker: detail.ticker,
     address: detail.tokenInfo.tokenAddress as `0x${string}`,
     decimals: 18,
-    icon: <Image src={detail.avatar} alt="Avatar" fill className="object-cover"/>
+    icon: <Image src={detail.avatar} alt="Avatar" fill className="object-cover" />
   }
 
   const assetToken = {
     ticker: assetTokenInfo?.symbol ?? "NONE",
     address: assetTokenInfo?.address as `0x${string}`,
     decimals: assetTokenInfo?.decimals ?? 0,
-    icon: <Image src={assetTokenInfo?.logoUrl ?? ""} alt="Avatar" fill className="object-cover"/>
+    icon: <Image src={assetTokenInfo?.logoUrl ?? ""} alt="Avatar" fill className="object-cover" />
   }
   const tokenOut = isBuy ? repoToken : assetToken
   const tokenIn = isBuy ? assetToken : repoToken
@@ -96,13 +96,7 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
   })
   const [showBuyMaxTip, setShowBuyMaxTip] = useState(false)
 
-  const {
-    maxBuyAssetAmount,
-    maxBuyAssetAmountWithTax,
-    maxBuyTokenAmount,
-    launchMarketCap,
-    isLoading
-  } = useTokenStats(detail.tokenId)
+  const { maxBuyAssetAmount, maxBuyAssetAmountWithTax, maxBuyTokenAmount, launchMarketCap, isLoading } = useTokenStats(detail.tokenId)
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
@@ -136,8 +130,7 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
 
   return (
     <div className={"relative w-full"}>
-      <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading}
-                      approved={hasBeenApproved && !shouldBuyMax}/>
+      <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading} approved={hasBeenApproved && !shouldBuyMax} />
       <ErrorOverlay
         approvingError={isApproveError}
         tradingError={isTradeError}
@@ -153,7 +146,7 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
         transactionHash={tradeTxHash ?? ""}
         onReset={() => {
           if (shouldBuyMax) {
-            window.location.reload();
+            window.location.reload()
           } else {
             updateAmountInFromRaw("0.00")
             setTradeTxHash(undefined)
@@ -161,11 +154,9 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
         }}
       />
       {(showBuyMaxTip || (hasBeenApproved && shouldBuyMax)) && (
-        <div
-          className="bg-background/90 absolute -inset-2 z-30 flex flex-col items-center justify-center gap-4 px-4 backdrop-blur">
-          <Rocket className="text-primary size-12 animate-bounce"/>
-          <p className="text-sm">The amount you are about to purchase is greater than shares needed to launch the
-            token.</p>
+        <div className="bg-background/90 absolute -inset-2 z-30 flex flex-col items-center justify-center gap-4 px-4 backdrop-blur">
+          <Rocket className="text-primary size-12 animate-bounce" />
+          <p className="text-sm">The amount you are about to purchase is greater than shares needed to launch the token.</p>
           <p className="text-sm leading-loose">
             Do you want to purchase{" "}
             <strong>
@@ -200,26 +191,19 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
       )}
       <div className={"text-sn mt-4 flex flex-row justify-between"}>
         <div className={"text-gray-500"}>
-          Balance {isAuthenticated ? isBalanceLoading ? "-" :
-          <strong>{toHumanAmount(balance?.value ?? 0n, balance?.decimals ?? leftTokenDecimals, 2)}</strong> : "n/a"}
+          Balance {isAuthenticated ? isBalanceLoading ? "-" : <strong>{toHumanAmount(balance?.value ?? 0n, balance?.decimals ?? leftTokenDecimals, 2)}</strong> : "n/a"}
         </div>
         <div className="flex place-content-center items-center gap-2 place-self-end">
-          {(mode === "buy" ? ["100", "200", "500"] : ["10K", "100K", "1M"]).map(
-            (item) => (
-              <button
-                key={item}
-                type="button"
-                className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
-                onClick={() =>
-                  updateAmountInFromRaw(
-                    item.replace("K", "000").replace("M", "000000"),
-                  )
-                }
-              >
-                {item}
-              </button>
-            ),
-          )}
+          {(mode === "buy" ? ["100", "200", "500"] : ["10K", "100K", "1M"]).map((item) => (
+            <button
+              key={item}
+              type="button"
+              className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+              onClick={() => updateAmountInFromRaw(item.replace("K", "000").replace("M", "000000"))}
+            >
+              {item}
+            </button>
+          ))}
         </div>
       </div>
       <div className={"relative mt-2 w-full"}>
@@ -259,14 +243,14 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
         <span className={"text-white"}>${tokenOut.ticker.toUpperCase()}</span>
         {!isAmountsOutLoading && !isTradePending && !isApprovePending && amountOut === undefined && maxBuyTokenAmount !== undefined && (
           <>
-            <br/>
+            <br />
             <span className="text-primary">And launch the token</span>
           </>
         )}
       </div>
       <div className={"mt-8 flex flex-row justify-between text-gray-600"}>
-        <TradingFeePopover/>
-        <SlippagePopover slippage={slippage} setSlippage={(value) => setSlippage(value)}/>
+        <TradingFeePopover />
+        <SlippagePopover slippage={slippage} setSlippage={(value) => setSlippage(value)} />
       </div>
       <Button
         size="lg"
@@ -277,7 +261,7 @@ const TradingForm = ({mode}: { mode: "buy" | "sell" }) => {
         {!address ? "Connect" : isBuy ? `Buy $${tokenOut.ticker}` : `Sell $${tokenIn.ticker}`}
         {(isApprovePending || isTradePending) && (
           <span className="absolute top-1/2 right-4 flex -translate-y-1/2 items-center gap-2 text-xs">
-            <Loader2 className="size-4 animate-spin"/>
+            <Loader2 className="size-4 animate-spin" />
             Verifying ...
           </span>
         )}

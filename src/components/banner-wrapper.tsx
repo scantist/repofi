@@ -1,4 +1,5 @@
-import React, { type FC } from "react"
+import type React from "react"
+import type { FC } from "react"
 import { cn } from "~/lib/utils"
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
 const BannerWrapper: FC<Props> = ({ children, className, wrapperClassName }) => {
   return (
     <div
-      className={wrapperClassName}
+      className={cn("banner", wrapperClassName)}
       style={{
         background: "url('https://storage.googleapis.com/repofi/launchpad/image/bg.png')",
         backgroundSize: "cover",

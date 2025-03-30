@@ -1,6 +1,7 @@
 "use client"
 
 import type { IChartingLibraryWidget } from "public/static/charting_library/charting_library"
+import type React from "react"
 import { createContext, useContext, useState } from "react"
 
 // This context and provider is used to offer a way to store:

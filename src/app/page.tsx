@@ -2,10 +2,9 @@ import Link from "next/link"
 import LaunchingDao from "~/app/_components/launching-dao"
 import LiveDao from "~/app/_components/live-dao"
 import BannerWrapper from "~/components/banner-wrapper"
-import { Button } from "~/components/ui/button"
+import AiButton from "~/components/ui/ai-button"
 import type { HomeSearchParams } from "~/lib/schema"
 import { formatMoney } from "~/lib/utils"
-import type { DaoSearchResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
 
 const LaunchpadPage = async ({
@@ -52,9 +51,11 @@ const LaunchpadPage = async ({
             ensuring fair rewards, and promoting decentralized governance within the ecosystem.
           </div>
           <Link href="/create/bind">
-            <Button variant={"outline"} className={"max-w-52 bg-transparent text-xl h-14"}>
-              Create
-            </Button>
+            {/*<button className="p-[3px] relative" type={"button"}>*/}
+            {/*  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg" />*/}
+            {/*  <div className="px-8 py-2  bg-black/80 rounded-[6px]  relative group transition duration-200 text-white hover:bg-transparent">Lit up borders</div>*/}
+            {/*</button>*/}
+            <AiButton>Create New DAO To Start</AiButton>
           </Link>
           <div className={"bg-secondary mt-6 flex max-w-3xl flex-col justify-between rounded-lg px-4 py-7 md:flex-row md:px-8"}>
             <div className={"mb-4 flex flex-col gap-2 md:mb-0"}>
