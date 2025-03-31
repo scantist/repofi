@@ -3,10 +3,11 @@ import {fetchAllRepoContributors, parseRepoUrl} from "~/server/tool/repo"
 import {calculateContributorsPercentage} from "~/server/tool/proof"
 import {db} from "~/server/db"
 import {CommonError, ErrorCode} from "~/lib/error"
+import {Prisma} from "@prisma/client";
 
 const queueName = "contributor"
 
-type JobName = "contributor-init" | "contributor-update"
+type JobName = "contributor-init" | "contributor-update" | "contributor-update-wallet"
 
 type JobInput = {
   daoId: string
@@ -14,6 +15,25 @@ type JobInput = {
 }
 
 type JobOutput = undefined
+
+const updateContributorWallet = async (logger: typeof console) => {
+  try {
+    const query = Prisma.sql`
+        UPDATE t_contributor tc
+        SET user_address = tup.user_address
+        FROM t_user_platform tup
+        WHERE tc.user_platform = tup.platform
+          AND tc.user_platform_id = tup.platform_id
+    `
+
+    const result = await db.$executeRaw(query)
+
+    logger.info(`Successfully updated contributor wallets. Rows affected: ${result}`)
+  } catch (error) {
+    logger.error("Failed to update contributor wallets:", error)
+    throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to update contributor wallets", error)
+  }
+}
 
 const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job, {logger}) => {
   switch (job.name) {
@@ -27,6 +47,7 @@ const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job,
             const contributor = await tx.contributor.create({
               data: {
                 daoId: job.data.daoId,
+                userPlatform: repoMeta.platform,
                 userPlatformId: contributorPercentage.id,
                 userPlatformName: contributorPercentage.name,
                 userPlatformAvatar: contributorPercentage.avatar,
@@ -49,15 +70,36 @@ const workerFunction: WorkerFunction<JobInput, JobOutput, JobName> = async (job,
       }
       break
     case "contributor-update":
+      break
+    case "contributor-update-wallet":
+      await updateContributorWallet(logger)
+      break
+
   }
 }
 
-const {getQueue, getMetrics, initQueue, pauseQueue, resumeQueue} = defineQueue<JobInput, JobOutput, JobName>({
+const {
+  getQueue,
+  getMetrics,
+  initQueue: _initQueue,
+  pauseQueue,
+  resumeQueue
+} = defineQueue<JobInput, JobOutput, JobName>({
   queueName,
   workerFunction
 })
 
+const initQueue = async () => {
+  await _initQueue()
+  const queue = await getQueue()
+  await queue.upsertJobScheduler("contributor-update-wallet", {
+    every: 600 * 1000 // 10 minutes
+  })
+  console.log("[Queue-Contributor] Upstarted contributor scheduler")
+}
+
 export {getQueue, getMetrics, initQueue, pauseQueue, resumeQueue}
+
 
 export const emitContributorInit = async (daoId: string, url: string) => {
   const queue = await getQueue()

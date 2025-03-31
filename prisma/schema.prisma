@@ -41,17 +41,18 @@ enum UserRole {
 }
 
 model User {
-  address       String        @id @db.VarChar(255)
-  name          String?       @db.VarChar(255)
-  email         String?       @unique @db.VarChar(255)
-  referralCode  String        @unique @map("referral_code")
-  role          UserRole      @default(USER) @map("role")
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
-  invitedBy     String[]      @default([]) @map("invited_by")
+  address       String         @id @db.VarChar(255)
+  name          String?        @db.VarChar(255)
+  email         String?        @unique @db.VarChar(255)
+  referralCode  String         @unique @map("referral_code")
+  role          UserRole       @default(USER) @map("role")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at")
+  invitedBy     String[]       @default([]) @map("invited_by")
   stars         DaoStar[]
   daos          Dao[]
   contributions Contributor[]
+  userPlatforms UserPlatform[]
 
   @@map("t_user")
 }
@@ -78,6 +79,20 @@ enum DaoContentType {
   TEAM_COMMUNITY
   ROADMAP
   INFORMATION
+}
+
+model UserPlatform {
+  id             String      @id @default(dbgenerated("gen_random_uuid()")) @map("id")
+  platform       DaoPlatform @default(GITHUB) @map("platform")
+  platformId     String      @map("platform_id") @db.VarChar(255)
+  platformName   String      @map("platform_name") @db.VarChar(255)
+  platformAvatar String      @map("platform_avatar") @db.VarChar(255)
+  user           User        @relation(fields: [userAddress], references: [address])
+  userAddress    String      @map("user_address") @db.VarChar(255)
+
+  @@unique([userAddress, platform])
+  @@index([platform, platformId])
+  @@map("t_user_platform")
 }
 
 model DaoStar {
@@ -230,6 +245,7 @@ model Contributor {
   daoId              String               @map("dao_id")
   userAddress        String?              @map("user_address")
   isValid            Boolean              @default(false) @map("is_valid")
+  userPlatform       DaoPlatform          @default(GITHUB) @map("user_platform")
   userPlatformId     String               @map("user_platform_id") @db.VarChar(255)
   userPlatformName   String               @map("user_platform_name") @db.VarChar(255)
   userPlatformAvatar String               @map("user_platform_avatar") @db.VarChar(255)
@@ -240,6 +256,7 @@ model Contributor {
   histories          ContributorHistory[]
   snapshotValue      Decimal              @default(0) @db.Decimal(50, 18)
 
+  @@index([userPlatform, userPlatformId])
   @@map("t_contributor")
 }
 
