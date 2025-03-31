@@ -1,8 +1,8 @@
-import NextAuth, {type DefaultSession} from "next-auth"
-import {db} from "~/server/db"
+import { getAddressFromMessage, getChainIdFromMessage, verifySignature } from "@reown/appkit-siwe"
+import NextAuth, { type DefaultSession } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import {getAddressFromMessage, getChainIdFromMessage, verifySignature} from "@reown/appkit-siwe"
-import {userService} from "~/server/service/user"
+import { db } from "~/server/db"
+import { type UserWithPlatforms, userService } from "~/server/service/user"
 
 declare module "next-auth" {
   /**
@@ -91,9 +91,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
 
           if (isValid) {
-            let currentUser = await userService.getUserByAddress(address)
+            const currentUser: UserWithPlatforms | null = await userService.getUserByAddress(address)
             if (!currentUser) {
-              currentUser = await userService.createUser(address, undefined)
+              await userService.createUser(address, undefined)
             }
 
             return {

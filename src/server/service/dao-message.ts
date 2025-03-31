@@ -1,12 +1,12 @@
-import { type ForumMessage } from "@prisma/client"
+import type { ForumMessage } from "@prisma/client"
 import { subDays, subHours } from "date-fns"
 import { z } from "zod"
+import { CommonError, ErrorCode } from "~/lib/error"
+import type { Pageable } from "~/lib/schema"
 import { ForumMessageSchema } from "~/lib/zod"
+import type { PageableData } from "~/types/data"
 import { db } from "../db"
 import { getRedis } from "../redis"
-import { CommonError, ErrorCode } from "~/lib/error"
-import type { PageableData } from "~/types/data"
-import { type Pageable } from "~/lib/schema"
 
 export const messageWithRepliesSchema = ForumMessageSchema.extend({
   replies: ForumMessageSchema.array(),
@@ -61,7 +61,8 @@ class DaoMessageService {
     )
 
     // Get replies from db
-    const replyIds = replyInfos.map((reply) => reply.replyIds).flat()
+    const replyIds = replyInfos.flatMap((reply) => reply.replyIds)
+    // biome-ignore lint/complexity/noForEach: <explanation>
     ;(
       await db.forumMessage.findMany({
         where: {
@@ -336,7 +337,7 @@ class DaoMessageService {
 
       const redis = getRedis()
       await redis.del(`message-replies:${message.id}`)
-      await redis.zadd(`message-replies:${message.id}`, ...replies.map((reply) => [reply.createdAt.getTime(), reply.id]).flat())
+      await redis.zadd(`message-replies:${message.id}`, ...replies.flatMap((reply) => [reply.createdAt.getTime(), reply.id]))
     }
   }
 

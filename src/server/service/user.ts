@@ -1,7 +1,7 @@
-import {db} from "~/server/db"
-import {type User} from "~/lib/zod"
-import type {DaoPlatform} from "@prisma/client";
-import {fetchUserInfo} from "~/server/tool/repo";
+import { type DaoPlatform, Prisma } from "@prisma/client"
+import type { User } from "~/lib/zod"
+import { db } from "~/server/db"
+import { fetchUserInfo } from "~/server/tool/repo"
 
 const generateReferralCode = (): string => {
   const timestamp = Date.now().toString(36)
@@ -53,17 +53,18 @@ class UserService {
       update: {
         platformAvatar: user.avatar,
         platformName: user.name,
-        platformId: user.id,
+        platformId: user.id
       },
       create: {
         userAddress: userAddress,
         platform: platform,
         platformAvatar: user.avatar,
         platformName: user.name,
-        platformId: user.id,
+        platformId: user.id
       }
     })
   }
 }
-
+const userWithPlatforms = Prisma.validator<Prisma.UserDefaultArgs>()({ include: { userPlatforms: true } })
+export type UserWithPlatforms = Prisma.UserGetPayload<typeof userWithPlatforms>
 export const userService = new UserService()

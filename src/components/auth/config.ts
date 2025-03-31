@@ -103,6 +103,7 @@ createAppKit({
   networks,
   projectId,
   metadata,
+  themeMode: "dark",
   themeVariables: {
     "--w3m-font-family": "var(--font-sans)",
     "--w3m-accent": "#925aff"
@@ -120,7 +121,8 @@ createAppKit({
     email: false,
     socials: false
   },
-  siweConfig
+  siweConfig,
+  defaultNetwork: defaultChain
   // tokens
 })
 

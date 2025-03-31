@@ -3,6 +3,7 @@ import LaunchingDao from "~/app/_components/launching-dao"
 import LiveDao from "~/app/_components/live-dao"
 import BannerWrapper from "~/components/banner-wrapper"
 import AiButton from "~/components/ui/ai-button"
+import { ContainerTextFlip } from "~/components/ui/container-text-flip"
 import type { HomeSearchParams } from "~/lib/schema"
 import { formatMoney } from "~/lib/utils"
 import { api } from "~/trpc/server"
@@ -43,8 +44,10 @@ const LaunchpadPage = async ({
     <div className={"mt-10 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col pb-20"}>
         <div className={"items-left mt-10 flex w-full flex-col justify-between gap-5 font-bold md:text-left"}>
-          <div className={"text-5xl tracking-tight"}>Curate & Fund</div>
-          <div className={"text-5xl tracking-tight"}>Decentralized Science</div>
+          <div className={"text-3xl md:text-5xl tracking-tight"}>
+            <ContainerTextFlip words={["Curate", "Fund", "Launch"]} /> Your DAO
+          </div>
+          <div className={"text-3xl md:text-5xl tracking-tight"}>with REPO Protocol</div>
           <div className={"text-md max-w-4xl font-thin text-white/70 space-y-2"}>
             The REPO Protocol serves as a decentralized financial layer designed to support open science and open source software. It operates on a dual-token system that includes
             $REPO, which is used for governance, alongside project tokens that provide incentives. Additionally, RepoDAO play a crucial role in facilitating sustainable funding,

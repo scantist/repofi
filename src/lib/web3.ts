@@ -1,7 +1,7 @@
+import { base, sepolia } from "@reown/appkit/networks"
 import Decimal from "decimal.js"
-import {createPublicClient, http} from "viem";
-import {env} from "~/env";
-import {base, sepolia} from "@reown/appkit/networks";
+import { http, createPublicClient } from "viem"
+import { env } from "~/env"
 
 const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
   [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
@@ -14,11 +14,9 @@ export const defaultWCoinAddress = W_COIN_ADDRESSES[defaultChain.id]
 export const getPublicClient = () => {
   return createPublicClient({
     chain: defaultChain,
-    transport: env.CHAIN_RPC_URL?.[defaultChain.id]
-      ? http(env.CHAIN_RPC_URL[defaultChain.id])
-      : http(),
-  });
-};
+    transport: env.CHAIN_RPC_URL?.[defaultChain.id] ? http(env.CHAIN_RPC_URL[defaultChain.id]) : http()
+  })
+}
 
 export const shortenAddress = (address: string, size = 4) => {
   return `${address.substring(0, size + 2)}...${address.substring(address.length - size, address.length)}`
@@ -42,7 +40,7 @@ export function toHumanAmount(value: string | bigint, decimal: number, decimalPl
  * @returns The token amount
  */
 export function fromHumanAmount(value: string | number, decimal: number) {
-  Decimal.set({toExpPos: 36})
+  Decimal.set({ toExpPos: 36 })
   return new Decimal(value).mul(new Decimal(10).pow(decimal))
 }
 
