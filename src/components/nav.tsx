@@ -1,8 +1,8 @@
 "use client"
 
-import { useSession } from "next-auth/react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useAuth } from "~/components/auth/auth-context"
 import { cn } from "~/lib/utils"
 import { MobileMenu } from "./mobile-menu"
 export const navItems = [
@@ -20,14 +20,13 @@ export const navItems = [
 
 export default function Nav() {
   const pathname = usePathname()
-  const { data: session } = useSession()
-  const isLoggedIn = !!session?.address
+  const { isAuthenticated } = useAuth()
 
   return (
     <>
       <nav className="hidden items-center justify-center gap-4 text-sm md:flex">
         {navItems.map((item) => {
-          if (item.requiresLogin && !isLoggedIn) {
+          if (item.requiresLogin && !isAuthenticated) {
             return null
           }
           return (

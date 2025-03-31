@@ -1,10 +1,12 @@
 "use client"
 import confetti from "canvas-confetti"
-import { Rocket } from "lucide-react"
+import dynamic from "next/dynamic"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo } from "react"
 import CardWrapper from "~/components/card-wrapper"
 import { Button } from "~/components/ui/button"
+import successIcon from "~/public/lottie/success.json"
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false })
 
 const FinishResult = () => {
   const router = useRouter()
@@ -39,7 +41,7 @@ const FinishResult = () => {
   return (
     <CardWrapper className={"col-span-1 w-auto md:col-span-2"} contentClassName={"h-full max-h-none"}>
       <div className={"flex w-full flex-col items-center justify-center gap-4 py-20"}>
-        <Rocket className={"text-muted-foreground h-52 w-52"} />
+        <Lottie animationData={successIcon} className="flex h-52 w-52 justify-center items-center" loop={2} autoplay={true} />
         <div className={"text-muted-foreground text-lg"}>Congratulations, your DAO has been successfully created!</div>
         <div className={"flex flex-row gap-6"}>
           <Button

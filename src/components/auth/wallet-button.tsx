@@ -10,7 +10,9 @@ import SignedOut from "./signed-out"
 import WalletAvatar from "./wallet-avatar"
 
 export default function WalletButton({
-  children
+  children,
+  connectChildren,
+  variant = "outline"
 }: {
   children?:
     | ReactNode
@@ -18,6 +20,12 @@ export default function WalletButton({
         address: string
         openDialog: (options?: OpenOptions) => Promise<void>
       }) => ReactNode)
+  connectChildren?:
+    | ReactNode
+    | ((props: {
+        openDialog: (options?: OpenOptions) => Promise<void>
+      }) => ReactNode)
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
 }) {
   return (
     <>
@@ -30,7 +38,7 @@ export default function WalletButton({
               children
             )
           ) : (
-            <Button variant="outline" onClick={() => openDialog({ view: "Account" })} className="gap-2">
+            <Button variant={variant} onClick={() => openDialog({ view: "Account" })} className="gap-2">
               <WalletAvatar account={address} size={20} className="size-5" />
               <span>{shortenAddress(address)}</span>
             </Button>
@@ -38,12 +46,20 @@ export default function WalletButton({
         }
       </SignedIn>
       <SignedOut>
-        {({ openDialog }) => (
-          <Button variant="outline" className="gap-2" onClick={() => openDialog()}>
-            <Wallet2 className="size-5" />
-            Connect
-          </Button>
-        )}
+        {({ openDialog }) =>
+          connectChildren !== undefined ? (
+            typeof connectChildren === "function" ? (
+              connectChildren({ openDialog })
+            ) : (
+              connectChildren
+            )
+          ) : (
+            <Button variant={variant} className="gap-2" onClick={() => openDialog()}>
+              <Wallet2 className="size-5" />
+              Connect
+            </Button>
+          )
+        }
       </SignedOut>
     </>
   )

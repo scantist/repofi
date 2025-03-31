@@ -13,6 +13,7 @@ import { type FC, useEffect, useId, useRef, useState } from "react"
 import { toast } from "sonner"
 import LoadingSpinner from "~/app/_components/loading-spinner"
 import RepositoryInformation from "~/app/create/bind/_components/repository-information"
+import { useAuth } from "~/components/auth/auth-context"
 import CardWrapper from "~/components/card-wrapper"
 import ListPagination from "~/components/list-pagination"
 import { Button } from "~/components/ui/button"
@@ -41,7 +42,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
   const id = useId()
   const router = useRouter()
   const [daoForms, setDaoForms] = useAtom(daoFormsAtom)
-  const { data: session } = useSession()
+  const { isAuthenticated } = useAuth()
   const [condition, setCondition] = useState<Condition>({
     name: "",
     pageable: {
@@ -92,7 +93,7 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
     }
   }, [current, currentDao, isLoadingDao])
 
-  if (!session || !githubToken) {
+  if (!isAuthenticated || !githubToken) {
     return (
       <CardWrapper className={"col-span-1 w-auto md:col-span-2"} contentClassName={"h-full max-h-none"}>
         <BindRepositoryEmpty githubToken={githubToken} />

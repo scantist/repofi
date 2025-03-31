@@ -71,6 +71,7 @@
     "geist": "^1.3.0",
     "ioredis": "^5.5.0",
     "jotai": "^2.12.1",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.475.0",
     "motion": "^12.4.10",
     "next": "^15.0.1",

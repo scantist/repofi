@@ -12,7 +12,7 @@ const CreateLayout = async ({ children }: Readonly<{ children: React.ReactNode }
       <div className={"mt-10 min-h-full"}>
         <BannerWrapper className={"flex w-full flex-col pb-20"}>
           <div className={"items-left mt-10 flex w-full flex-col justify-between text-4xl font-bold tracking-tight md:text-left"}>Create Dao</div>
-          <div className={"max-w-2xl text-sm"}>
+          <div className={"text-md max-w-4xl font-thin text-white/70 space-y-2"}>
             Utilize our platform to establish your own decentralized autonomous organization. Define your DAO&#39;s purpose, set up governance structures, and engage with your
             community. Leverage our tools to create smart contracts, initialize your DAO&#39;s ERC20 token, and foster a vibrant ecosystem.
           </div>
@@ -37,7 +37,7 @@ const CreateLayout = async ({ children }: Readonly<{ children: React.ReactNode }
                 </div>
                 <div className={"text-md font-thin text-gray-400"}>
                   Upon successful funding and reaching the launch point, your DAO will transcend into a fully-featured entity. Unlock new capabilities and see your token listed on
-                  Uniswap V2 on the Base network, enabling broader trading and liquidity.
+                  Uniswap V3 on the Base network, enabling broader trading and liquidity.
                 </div>
                 {/*<div className={"text-md font-thin text-gray-400"}>Capabilities</div>*/}
               </div>
