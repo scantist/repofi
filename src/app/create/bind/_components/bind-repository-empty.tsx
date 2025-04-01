@@ -3,7 +3,7 @@
 import { SiGithub } from "@icons-pack/react-simple-icons"
 import dynamic from "next/dynamic"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 import type { FC } from "react"
 import { useAuth } from "~/components/auth/auth-context"
 import TextBorderAnimation from "~/components/ui/text-border-animation"
@@ -18,13 +18,21 @@ type Props = {
 
 const BindRepositoryEmpty: FC<Props> = ({ githubToken }) => {
   const { isAuthenticated, openDialog } = useAuth()
-
+  const searchParams = useSearchParams()
+  const error = searchParams.get("error")
+  const errorDescription = searchParams.get("error_description")
   const pathname = usePathname()
   let content = <></>
   if (!isAuthenticated) {
     content = (
       <>
         <Lottie animationData={connectWalletIcon} className="size-64" loop={false} autoplay={true} />
+        {error && (
+          <div className={"text-center font-bold text-destructive z-30"}>
+            Error: {error.toUpperCase()}. <br />
+            {errorDescription}
+          </div>
+        )}
         <div className={"align-middle text-md md:text-xl text-center font-bold text-gray-400 flex flex-row gap-2"}>
           Click{" "}
           <div onClick={() => openDialog()}>
@@ -38,6 +46,12 @@ const BindRepositoryEmpty: FC<Props> = ({ githubToken }) => {
     content = (
       <>
         <Lottie className={"md:-mt-32"} animationData={connectGithubIcon} size={80} loop={false} autoplay={true} />
+        {error && (
+          <div className={"text-center font-bold text-destructive z-30"}>
+            Error: {error.toUpperCase()}. <br />
+            {errorDescription}
+          </div>
+        )}
         <div className={"align-middle  md:text-xl font-bold text-gray-400 md:-mt-32 z-30"}>
           Connect to your{" "}
           <Link className={"cursor-pointer text-white"} href={`/api/oauth/github?rollbackUrl=${pathname}`}>

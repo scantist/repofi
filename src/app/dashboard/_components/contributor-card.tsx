@@ -1,8 +1,8 @@
 "use client"
 import { getCookie } from "cookies-next"
 import { useSession } from "next-auth/react"
-import { usePathname, useRouter } from "next/navigation"
-import type React from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import React, { useEffect } from "react"
 import { toast } from "sonner"
 import LoadingSpinner from "~/app/_components/loading-spinner"
 import { useDaoContext } from "~/app/dao/[id]/context"
@@ -39,6 +39,15 @@ const ContributorCard = () => {
       toast.error("Bind failed!")
     }
   })
+
+  const searchParams = useSearchParams()
+  const error = searchParams.get("error")
+  const errorDescription = searchParams.get("error_description")
+  useEffect(() => {
+    if (error) {
+      toast.error(`Authorization Error: ${error}, ${errorDescription}`, { duration: 10000, closeButton: true })
+    }
+  }, [error, errorDescription])
   return (
     <CardWrapper contentClassName={"min-h-95"}>
       <div className={"rounded-lg bg-black/60 p-4 flex flex-col h-full"} style={{ minHeight: "inherit" }}>
