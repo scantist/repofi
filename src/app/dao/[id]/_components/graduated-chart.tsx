@@ -12,7 +12,7 @@ const GraduatedChart = ({ uniswapV3Pair }: { uniswapV3Pair?: string | null }) =>
   }
 
   return (
-    <div className="flex w-full flex-col rounded-xl overflow-clip justify-center items-center h-72">
+    <div className="flex w-full flex-col rounded-xl overflow-clip justify-center items-center h-[370]">
       <DextoolsChart pair={uniswapV3Pair} chainId={defaultChain.name.toLowerCase()} />
     </div>
   )

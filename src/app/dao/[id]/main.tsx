@@ -69,7 +69,9 @@ const DaoContent = () => {
               )}
             </div>
           </div>
-          <div className={"flex flex-row gap-4 px-12 py-3 border-t-primary border-t"}>{graduated ? <PostProgress /> : <PreProgress />}</div>
+        </CardWrapper>
+        <CardWrapper>
+          <div className={"flex flex-row gap-4 px-4 md:px-12 py-3"}>{graduated ? <PostProgress /> : <PreProgress />}</div>
         </CardWrapper>
         <CardWrapper className={"flex-1"} contentClassName={"min-h-[370px] h-full max-h-none"}>
           {graduated ? (
