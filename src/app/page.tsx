@@ -66,7 +66,7 @@ const LaunchpadPage = async ({
               <div className={"text-sm font-thin text-white/70"}>Launched & Pre-Launch</div>
             </div>
             <div className={"mb-4 flex flex-col gap-2 border-t-1 border-white pt-4 md:mb-0 md:border-t-0 md:border-l-1 md:pt-0 md:pl-4"}>
-              <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.LAUNCHING ?? "0"))}`}</div>
+              <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.PRE_LAUNCH ?? "0"))}`}</div>
               <div className={"text-sm font-thin text-white/70"}>Pre-Launch MarketCap</div>
             </div>
             <div className={"flex flex-col gap-2 border-t-1 border-white pt-4 md:border-t-0 md:border-l-1 md:pt-0 md:pl-4"}>
