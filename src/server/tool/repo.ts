@@ -4,8 +4,9 @@ import {env} from "~/env"
 import {CommonError, ErrorCode} from "~/lib/error"
 import {unstable_cache as cache} from "next/cache"
 import {DaoPlatform} from "@prisma/client"
-import {repoContributors, repoMetaSchema, repoInfoSchema, Pageable} from "~/lib/schema"
+import {repoContributors, repoMetaSchema, repoInfoSchema, Pageable, RepoInfo} from "~/lib/schema"
 import {type RepoMeta} from "~/lib/schema"
+import type {Repository} from "~/types/data";
 
 class OctokitPool {
   private readonly pool: Octokit[]
@@ -23,6 +24,7 @@ class OctokitPool {
 }
 
 const octokitPool = new OctokitPool((env.TOOL_REPO_GITHUB_ACCESS_TOKENS ?? "").split(";"))
+
 
 export async function fetchRepoInfo(platform: DaoPlatform, owner: string, repo: string) {
   return cache(
@@ -241,4 +243,49 @@ export async function fetchUserInfo(accessToken: string, platform: DaoPlatform) 
   } else {
     throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github' or 'gitlab'.")
   }
+}
+
+export async function fetchUserRepos(accessToken: string, platform: DaoPlatform) {
+  return cache(
+    async () => {
+      if (platform === DaoPlatform.GITHUB) {
+        const client = new Octokit({auth: accessToken})
+        if (!client) {
+          throw new CommonError(ErrorCode.INTERNAL_ERROR, "GitHub client not available")
+        }
+
+        try {
+          // 获取用户的个人仓库
+          const userRepos = await client.paginate(client.rest.repos.listForAuthenticatedUser, {
+            visibility: 'public',
+            affiliation: 'owner,organization_member',
+            per_page: 100
+          });
+          const adminRepos = userRepos.filter(repo => repo.permissions?.admin === true && !repo.fork && !repo.mirror_url);
+          return adminRepos.map(repo => {
+              return ({
+                id: repo.id,
+                name: repo.name,
+                description: repo.description,
+                url: repo.html_url,
+                star: repo.stargazers_count,
+                fork: repo.forks_count,
+                watch: repo.watchers_count,
+                license: repo.license?.spdx_id
+              }) as Repository
+            }
+          )
+        } catch (error) {
+          console.error("Error fetching GitHub repos:", error);
+          throw new CommonError(ErrorCode.INTERNAL_ERROR, "Failed to fetch GitHub repositories");
+        }
+      }
+      // 处理其他平台...
+      throw new CommonError(ErrorCode.BAD_PARAMS, "Unsupported platform. Must be 'github'.");
+    },
+    [`tool-repo-user-repos-${platform}-${accessToken}`],
+    {
+      revalidate: 60 * 60 * 1, // 1 hours
+      tags: ["tool-repo-user-repos"]
+    })()
 }
