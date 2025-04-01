@@ -95,7 +95,7 @@ const MessageList = () => {
   return (
     <>
       <div className={"flex w-full flex-col gap-4 px-4 md:px-10 py-4 md:py-5 h-full"}>
-        <div className={"flex flex-row items-center justify-between text-2xl font-bold"}>
+        <div className={"flex flex-row items-center justify-between text-xl font-bold"}>
           <div>Message Board</div>
           <CreateMessage daoId={detail.id}>
             <Button variant={"ghost"} className={"text-xs text-primary"}>
