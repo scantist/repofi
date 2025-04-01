@@ -25,7 +25,7 @@ const LaunchpadPage = async ({
   const params = await searchParams
 
   const initLaunchingParam: HomeSearchParams = {
-    status: ["LAUNCHING"],
+    status: ["PRE_LAUNCH"],
     search: params.launching_search ?? "",
     orderBy: params.launching_orderBy ?? "latest",
     owned: params.launching_owned === "true",

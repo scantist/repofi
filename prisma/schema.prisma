@@ -65,7 +65,7 @@ enum DaoType {
 
 enum DaoStatus {
   INACTIVE
-  LAUNCHING
+  PRE_LAUNCH
   LAUNCHED
 }
 
@@ -119,7 +119,7 @@ model Dao {
   createdBy    String      @map("created_by") @db.VarChar(255)
   tokenId      BigInt      @unique @map("token_id") @db.BigInt
   links        Json        @default("[]")
-  status       DaoStatus   @default(LAUNCHING) @map("status")
+  status       DaoStatus   @default(PRE_LAUNCH) @map("status")
   platform     DaoPlatform @default(GITHUB) @map("platform")
   marketCapUsd Decimal     @default(0) @map("market_cap_usd") @db.Decimal(50, 18)
   priceUsd     Decimal     @default(0) @map("price_usd") @db.Decimal(50, 18)

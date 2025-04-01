@@ -156,7 +156,7 @@ export const DaoTypeSchema = z.enum(['CODE','MODEL','DATASET']);
 
 export type DaoTypeType = `${z.infer<typeof DaoTypeSchema>}`
 
-export const DaoStatusSchema = z.enum(['INACTIVE','LAUNCHING','LAUNCHED']);
+export const DaoStatusSchema = z.enum(['INACTIVE','PRE_LAUNCH','LAUNCHED']);
 
 export type DaoStatusType = `${z.infer<typeof DaoStatusSchema>}`
 

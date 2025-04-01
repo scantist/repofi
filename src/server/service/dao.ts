@@ -202,7 +202,7 @@ class DaoService {
         createdBy: userAddress,
         tokenId: tokenInfo.tokenId,
         links,
-        status: DaoStatus.LAUNCHING,
+        status: DaoStatus.PRE_LAUNCH,
         platform: repoMeta.platform
       }
     })
