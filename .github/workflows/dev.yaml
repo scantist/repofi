@@ -30,6 +30,7 @@ jobs:
           else
             TAG="${GITHUB_REF##*/}"
           fi
+          TAG=$(echo $TAG | tr '[:lower:]' '[:upper:]')
           echo "TAG=${TAG}" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
