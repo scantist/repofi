@@ -41,6 +41,7 @@ const LiveTable = ({ initialData, initialParams }: LiveTableProps) => {
     },
     { initialData }
   )
+  console.log(response)
   const router = useRouter()
   const columns = [
     columnHelper.accessor("avatar", {
@@ -79,7 +80,7 @@ const LiveTable = ({ initialData, initialParams }: LiveTableProps) => {
     columnHelper.accessor("priceUsd", {
       header: () => "Price",
       cell: (info) => <div className={"text-sm text-gray-400"}>${formatSignificantDigits(info.getValue())}</div>
-    }),
+    })
   ]
   return (
     <>
