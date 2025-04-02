@@ -36,6 +36,14 @@ jobs:
         with:
           version: 9.14.2
 
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22.10.0
@@ -45,7 +53,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-
       - name: Build
         run: pnpm build
 
@@ -79,7 +86,7 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: ${{ secrets.CREDENTIALS_JSON }}
+          credentials_json: ${{ secrets.V4_STAGING_GKE_JSON }}
 
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v2'
