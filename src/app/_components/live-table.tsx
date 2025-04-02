@@ -37,11 +37,12 @@ const LiveTable = ({ initialData, initialParams }: LiveTableProps) => {
   const { data: response, isPending } = api.dao.search.useQuery(
     {
       ...condition,
-      ...condition.pagination
+      page: condition.pagination.pageIndex,
+      size: condition.pagination.pageSize
     },
     { initialData }
   )
-  console.log(response)
+  console.log(condition, response)
   const router = useRouter()
   const columns = [
     columnHelper.accessor("avatar", {
