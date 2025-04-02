@@ -2,9 +2,6 @@ name: dev
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - PROD-DEV
 
 jobs:
   build:
@@ -38,15 +35,6 @@ jobs:
         with:
           version: 9.14.2
 
-      - uses: actions/cache@v3
-        name: Setup pnpm cache
-        id: cache-next-restore
-        with:
-          path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22.10.0
@@ -73,45 +61,7 @@ jobs:
           name: scantist-images/${{ env.APP_NAME }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          tags: "${{ env.TAG }},PROD-DEV"
+          tags: "${{ env.TAG }},latest"
     outputs:
       tag: ${{ env.TAG }}
       app_name: ${{ env.APP_NAME }}
-
-  update:
-    runs-on: ubuntu-latest
-    env:
-      GKE_CLUSTER_NAME: v4-staging-gke
-      GKE_CLUSTER_ZONE: asia-southeast1-b
-      GKE_PROJECT_ID: scantist-v4-staging
-      GKE_CLUSTER_NAMESPACE: repofi
-      IMAGE_REPO: swr.ap-southeast-3.myhuaweicloud.com/scantist-images
-    needs: build
-    steps:
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: ${{ secrets.V4_STAGING_GKE_JSON }}
-
-      - name: 'Set up Cloud SDK'
-        uses: 'google-github-actions/setup-gcloud@v2'
-        with:
-          version: '>= 513.0.0'
-      - name: 'Use gcloud CLI'
-        run: 'gcloud info'
-      - id: 'get-credentials'
-        uses: 'google-github-actions/get-gke-credentials@v2'
-        with:
-          cluster_name: ${{ env.GKE_CLUSTER_NAME }}
-          location: ${{ env.GKE_CLUSTER_ZONE }}
-          namespace: ${{ env.GKE_CLUSTER_NAMESPACE }}
-          project_id: ${{ env.GKE_PROJECT_ID }}
-      - name: 'Set Image and Restart Deployment'
-        run: |
-          APP_NAME="${{ needs.build.outputs.app_name }}"
-          IMAGE_TAG="${{ needs.build.outputs.tag }}"
-          IMAGE_NAME="${{ env.IMAGE_REPO }}/${APP_NAME}:${IMAGE_TAG}"
-
-          kubectl set image deployment/${APP_NAME} ${APP_NAME}=${IMAGE_NAME} -n ${{ env.GKE_CLUSTER_NAMESPACE }} --record=true
-          kubectl rollout restart deployment/${APP_NAME} -n ${{ env.GKE_CLUSTER_NAMESPACE }}
-
