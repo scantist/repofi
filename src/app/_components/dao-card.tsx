@@ -59,8 +59,8 @@ const DaoCard: FC<Props> = ({data}) => {
     if (!tokenFullInfo) {
       return 0
     }
-    const scaledCurrentY = tokenFullInfo.currentY * 10000n
-    return Number(scaledCurrentY / tokenFullInfo.curveParameter.finalY) / 100
+    const scaledCurrentY = (data.currentY - data.curveParameter.initialY) * 10000n
+    return Number(scaledCurrentY / (data.curveParameter.finalY- data.curveParameter.initialY)) / 100
   }, [tokenFullInfo])
   return (
     <CardWrapper className="block cursor-pointer transition-all duration-300 hover:brightness-70 rounded-lg"

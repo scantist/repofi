@@ -20,8 +20,8 @@ export const PreProgress = () => {
     if (!data) {
       return 0
     }
-    const scaledCurrentY = data.currentY  * 10000n
-    return Number(scaledCurrentY / data.curveParameter.finalY) / 100
+    const scaledCurrentY = (data.currentY - data.curveParameter.initialY) * 10000n
+    return Number(scaledCurrentY / (data.curveParameter.finalY- data.curveParameter.initialY)) / 100
   }, [data])
   useEffect(() => {
     refetchTokenFullInfo()
