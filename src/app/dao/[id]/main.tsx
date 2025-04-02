@@ -9,6 +9,7 @@ import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 import TradingCard from "~/app/dao/[id]/trading/card"
 import ContributorCard from "~/app/dashboard/_components/contributor-card"
+import { useAuth } from "~/components/auth/auth-context"
 import CardWrapper from "~/components/card-wrapper"
 import TradeView from "~/components/trade-view"
 import { Tooltip, TooltipContent, TooltipProvider } from "~/components/ui/tooltip"
@@ -18,6 +19,7 @@ import TokenDistribution from "./token-distribution/token-distrubution"
 
 const DaoContent = () => {
   const { detail } = useDaoContext()
+  const { isAuthenticated } = useAuth()
   const graduated = detail.tokenInfo.isGraduated
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>

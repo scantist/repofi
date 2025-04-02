@@ -7,7 +7,6 @@ import { useDaoContext } from "~/app/dao/[id]/context"
 import { useAuth } from "~/components/auth/auth-context"
 import ProgressStatus, { type ProgressItem } from "~/components/progress-status"
 import { BoxReveal } from "~/components/ui/box-reveal"
-import { Button } from "~/components/ui/button"
 import { Skeleton } from "~/components/ui/skeleton"
 import { TextGenerateEffect } from "~/components/ui/text-generate-effect"
 import { useTokenFullInfo } from "~/hooks/use-launch-contract"
@@ -61,7 +60,7 @@ export const PreProgress = () => {
 
 export const PostProgress = () => {
   const { detail, triggerRefresh } = useDaoContext()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, openDialog } = useAuth()
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const { tokenLockInfo, isLoading } = useTokenLockInfo(detail!.tokenInfo.tokenAddress ? (detail!.tokenInfo.tokenAddress as `0x${string}`) : undefined)
   useMemo(() => {
@@ -147,17 +146,25 @@ export const PostProgress = () => {
   return (
     <div className={"w-full flex flex-col"}>
       <div className={"text-center relative"}>
-        <div className="text-md font-bold">Token Locker</div>
-        <div className="text-md text-right text-muted-foreground text-sm sm:hidden">
-          Total{" "}
-          <span className={"text-primary font-bold"}>{formatMoney(toHumanAmount((lockInfo?.linearTotalAmount ?? BigInt(0)) + (lockInfo?.instantAmount ?? BigInt(0)), 18))}</span> $
-          {detail.ticker}
-        </div>
-        <div className={"absolute hidden sm:block top-0 right-0 text-muted-foreground text-sm mt-1"}>
-          Total{" "}
-          <span className={"text-primary font-bold"}>{formatMoney(toHumanAmount((lockInfo?.linearTotalAmount ?? BigInt(0)) + (lockInfo?.instantAmount ?? BigInt(0)), 18))}</span> $
-          {detail.ticker}
-        </div>
+        <div className="text-md font-bold">- Token Locker -</div>
+        {isAuthenticated && (
+          <>
+            <div className="text-md text-right text-muted-foreground text-sm sm:hidden">
+              Total{" "}
+              <span className={"text-primary font-bold"}>
+                {formatMoney(toHumanAmount((lockInfo?.linearTotalAmount ?? BigInt(0)) + (lockInfo?.instantAmount ?? BigInt(0)), 18))}
+              </span>{" "}
+              ${detail.ticker}
+            </div>
+            <div className={"absolute hidden sm:block top-0 right-0 text-muted-foreground text-sm mt-1"}>
+              Total{" "}
+              <span className={"text-primary font-bold"}>
+                {formatMoney(toHumanAmount((lockInfo?.linearTotalAmount ?? BigInt(0)) + (lockInfo?.instantAmount ?? BigInt(0)), 18))}
+              </span>{" "}
+              ${detail.ticker}
+            </div>
+          </>
+        )}
       </div>
       {isLoading && <Skeleton className={"w-full rounded-md h-[20px] mt-4"} />}
       {!isLoading && isAuthenticated && (
@@ -184,6 +191,19 @@ export const PostProgress = () => {
             </div>
           )}
         </>
+      )}
+      {!isLoading && !isAuthenticated && (
+        <div className={"flex items-center justify-center mt-2 w-full"}>
+          <BoxReveal duration={0.5}>
+            <p className="text-sm md:text-md font-bold">
+              <span>✨</span>Please{" "}
+              <span onClick={() => openDialog()} className={"text-primary cursor-pointer underline-offset-2 underline"}>
+                connect
+              </span>{" "}
+              your wallet to start!<span>✨</span>
+            </p>
+          </BoxReveal>
+        </div>
       )}
     </div>
   )
