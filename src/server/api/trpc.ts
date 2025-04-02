@@ -204,6 +204,6 @@ export const protectedUserDaoProcedure = t.procedure
 
     throw new TRPCError({
       code: "BAD_REQUEST",
-      message: "Missing dao info or dao not found"
+      message: "Missing DAO info or DAO not found"
     })
   })

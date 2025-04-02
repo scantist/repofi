@@ -11,7 +11,7 @@ const CreateLayout = async ({ children }: Readonly<{ children: React.ReactNode }
     <Provider store={createDaoStore}>
       <div className={"mt-10 min-h-full"}>
         <BannerWrapper className={"flex w-full flex-col pb-20"}>
-          <div className={"items-left mt-10 flex w-full flex-col justify-between text-4xl font-bold tracking-tight md:text-left"}>Create Dao</div>
+          <div className={"items-left mt-10 flex w-full flex-col justify-between text-4xl font-bold tracking-tight md:text-left"}>Create DAO</div>
           <div className={"text-md max-w-4xl font-thin text-white/70 space-y-2"}>
             Utilize our platform to establish your own decentralized autonomous organization. Define your DAO&#39;s purpose, set up governance structures, and engage with your
             community. Leverage our tools to create smart contracts, initialize your DAO&#39;s ERC20 token, and foster a vibrant ecosystem.

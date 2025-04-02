@@ -51,7 +51,7 @@ export const createDaoParamsSchema = z.object({
   tokenId: z.bigint().min(1n, { message: "Token ID is required." })
 })
 export const updateDaoParamsSchema = z.object({
-  daoId:z.string({message:"Dao id is required."}),
+  daoId:z.string({message:"DAO id is required."}),
   avatar: z.string({ message: "Avatar is required." }).refine((value) => value.trim() !== "", {
     message: "Avatar can not be empty."
   }),

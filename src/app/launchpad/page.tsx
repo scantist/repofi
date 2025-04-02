@@ -30,7 +30,7 @@ const RootPage = async ({
           </div>
           <div className={"bg-primary flex h-16 min-w-64 cursor-pointer flex-row items-center justify-center gap-3 rounded-md text-lg font-bold text-nowrap whitespace-nowrap"}>
             <Sparkles />
-            <div>Create Your Dao</div>
+            <div>Create Your DAO</div>
           </div>
         </div>
         <ContentFilter {...params} />
