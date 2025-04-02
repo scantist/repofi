@@ -37,7 +37,7 @@ const DaoGrid: FC<Props> = ({
   if (isPending) {
     return (
       <div className={"col-span-1 mt-6 sm:col-span-2 lg:col-span-3"}>
-        <LoadingSpinner size={64} className="my-8" text="Loading repository..." />
+        <LoadingSpinner size={64} className="my-8" text="Loading dao..." />
       </div>
     )
   }
