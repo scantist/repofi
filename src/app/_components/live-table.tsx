@@ -7,7 +7,7 @@ import DataTable from "~/components/data-table"
 import ListPagination from "~/components/list-pagination"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import type { HomeSearchParams } from "~/lib/schema"
-import { formatMoney } from "~/lib/utils"
+import { formatMoney, formatSignificantDigits } from "~/lib/utils"
 import type { DaoSearchResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
 import type { DaoPage } from "~/types/data"
@@ -68,18 +68,18 @@ const LiveTable = ({ initialData, initialParams }: LiveTableProps) => {
       header: () => "Status",
       cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     }),
-    columnHelper.accessor("priceUsd", {
-      header: () => "Price",
-      cell: (info) => <div className={"text-sm text-gray-400"}>${formatMoney(info.getValue())}</div>
+    columnHelper.accessor("tokenInfo.holderCount", {
+      header: () => "Holders",
+      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     }),
     columnHelper.accessor("marketCapUsd", {
       header: () => "Market Cap",
       cell: (info) => <div className={"text-sm text-gray-400"}>${formatMoney(info.getValue().length === 0 ? "0" : info.getValue())}</div>
     }),
-    columnHelper.accessor("tokenInfo.holderCount", {
-      header: () => "Holder Count",
-      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
-    })
+    columnHelper.accessor("priceUsd", {
+      header: () => "Price",
+      cell: (info) => <div className={"text-sm text-gray-400"}>${formatSignificantDigits(info.getValue())}</div>
+    }),
   ]
   return (
     <>

@@ -50,6 +50,14 @@ export const formatMoney = (amount: string | number, grouping = true, shortForma
   return shortFormat ? formatNumberWithUnit(numberAmount) : grouping ? moneyFormatter.format(numberAmount) : moneyFormatterWithoutGrouping.format(numberAmount)
 }
 
+export const formatSignificantDigits = (value: string | number, sigDigits: number = 4): string => {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(num)) return '0';
+  
+  const formatted = num.toPrecision(sigDigits);
+  return parseFloat(formatted).toString(); // Remove trailing zeros
+};
+
 export async function convertToBase64(file: File) {
   return new Promise<string | undefined>((resolve, reject) => {
     const reader = new FileReader()
