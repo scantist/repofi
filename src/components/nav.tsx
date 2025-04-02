@@ -12,8 +12,8 @@ export const navItems = [
     requiresLogin: false
   },
   {
-    name: "Portfolio",
-    href: "/portfolio",
+    name: "Profile",
+    href: "/profile",
     requiresLogin: false
   }
 ]

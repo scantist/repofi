@@ -11,8 +11,8 @@ import { api } from "~/trpc/react"
 
 export const ContributorItem = ({
   item,
-  ownerData
-}: { item: { userPlatformAvatar: string; userPlatformName: string; userAddress: string | null; snapshotValue: string }; ownerData?: { userAddress: string | null } | null }) => {
+  userAddress,
+}: { item: { userPlatformAvatar: string; userPlatformName: string; userAddress: string | null; snapshotValue: string }; userAddress?: string }) => {
   return (
     <div className={"flex flex-row items-center justify-between gap-2 font-thin"}>
       <div className={"flex flex-row items-center gap-2"}>
@@ -32,14 +32,14 @@ export const ContributorItem = ({
         ) : (
           <div className={"text-muted-foreground text-xs cursor-pointer"} />
         )}
-        {ownerData && item.userAddress === ownerData.userAddress && <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>You</div>}
+        {userAddress && item.userAddress === userAddress && <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>You</div>}
       </div>
       <div className={"bg-primary ml-4 rounded-lg px-2 py-1 text-right text-xs opacity-80"}>{Number(item.snapshotValue).toFixed(2)}%</div>
     </div>
   )
 }
 
-const ContributorDrawer = ({ daoId, children, ownerData }: { daoId: string; children: React.ReactNode; ownerData?: { userAddress: string | null } | null }) => {
+const ContributorDrawer = ({ daoId, children, userAddress }: { daoId: string; children: React.ReactNode; userAddress?: string }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)")
   const pageSize = isDesktop ? 15 : 10
 
@@ -68,7 +68,7 @@ const ContributorDrawer = ({ daoId, children, ownerData }: { daoId: string; chil
           {isPending && <LoadingSpinner size={64} className="my-8" text="Loading contributor..." />}
           {!isPending &&
             (contributorsResponse?.list?.length ?? 0) > 0 &&
-            contributorsResponse?.list.map((item, index) => <ContributorItem key={`Contributor-list-${item.id}-${index}`} item={item} ownerData={ownerData} />)}
+            contributorsResponse?.list.map((item, index) => <ContributorItem key={`Contributor-list-${item.id}-${index}`} item={item} userAddress={userAddress} />)}
         </div>
         <DrawerFooter>
           <Pagination className="mb-4">

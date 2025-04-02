@@ -14,10 +14,6 @@ export const contributorRouter = createTRPCRouter({
       size: input.size
     })
   }),
-  bind: protectedProcedure.input(z.object({ accessToken: z.string(), platform: DaoPlatformSchema })).mutation(async ({ input, ctx }) => {
-    const userAddress = ctx.session!.address
-    return await contributorService.bind(input.accessToken, input.platform, userAddress)
-  }),
   owner:protectedProcedure.input(z.object({daoId:z.string()})).query(async ({input,ctx})=>{
     const userAddress=ctx.session!.address
     return await contributorService.owner(input.daoId,userAddress)

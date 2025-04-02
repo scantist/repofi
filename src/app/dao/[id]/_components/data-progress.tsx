@@ -93,15 +93,6 @@ export const PostProgress = () => {
     const claimed = lockInfo.linearClaimedAmount + (lockInfo.instantClaimed ? instantAmount : BigInt(0))
     const claimable = lockInfo.linearClaimableAmount + (lockInfo.instantClaimed ? BigInt(0) : instantAmount)
     const locked = total - claimed - claimable
-    console.log("instantAmount", {
-      lockInfo,
-      instantAmount,
-      total,
-      claimed,
-      claimable,
-      locked
-    })
-
     return [
       {
         value: Number(new Decimal(claimed.toString()).div(new Decimal(total.toString()))) * 100,
