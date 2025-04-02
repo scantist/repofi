@@ -59,7 +59,8 @@ jobs:
       - name: Publish to Docker Repository
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
-          name:  swr.ap-southeast-3.myhuaweicloud.com/scantist-images/${{ env.APP_NAME }}:${{ env.TAG }}
+          registry: swr.ap-southeast-3.myhuaweicloud.com
+          name: scantist-images/${{ env.APP_NAME }}:${{ env.TAG }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
     outputs:
