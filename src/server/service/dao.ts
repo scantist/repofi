@@ -4,6 +4,7 @@ import {db} from "~/server/db"
 import {fetchAllRepoContributors, fetchRepoInfo, parseRepoUrl} from "~/server/tool/repo"
 import type {PageableData} from "~/types/data"
 import {emitContributorInit} from "~/server/queue/contributor"
+import { CommonError, ErrorCode } from "~/lib/error"
 
 
 class DaoService {
@@ -439,6 +440,18 @@ class DaoService {
         links: links
       }
     })
+  }
+  async lockInfo(daoId:string){
+    const dao=await db.dao.findUnique({
+      where:{
+        id:daoId
+      },
+      
+    })
+    if(!dao){
+      throw new CommonError(ErrorCode.BAD_PARAMS,"")
+    }
+    dao.tokenId
   }
 }
 

@@ -20,7 +20,7 @@ export const PreProgress = () => {
     if (!data) {
       return 0
     }
-    const scaledCurrentY = (data.currentY - data.curveParameter.initialY) * 10000n
+    const scaledCurrentY = data.currentY  * 10000n
     return Number(scaledCurrentY / data.curveParameter.finalY) / 100
   }, [data])
   useEffect(() => {
@@ -91,7 +91,7 @@ export const PostProgress = () => {
     const instantAmount = lockInfo.instantAmount
     const total = lockInfo.linearTotalAmount + instantAmount
     const claimed = lockInfo.linearClaimedAmount + (lockInfo.instantClaimed ? instantAmount : BigInt(0))
-    const claimable = lockInfo.linearClaimableAmount + (lockInfo.instantClaimed ? BigInt(0) : instantAmount)
+    const claimable = lockInfo.instantClaimed ? lockInfo.linearClaimableAmount : lockInfo.linearRemainingAmount + instantAmount
     const locked = total - claimed - claimable
     return [
       {
