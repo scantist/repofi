@@ -88,6 +88,7 @@ jobs:
       GKE_CLUSTER_ZONE: asia-southeast1-b
       GKE_PROJECT_ID: scantist-v4-staging
       GKE_CLUSTER_NAMESPACE: repofi
+      IMAGE_REPO: swr.ap-southeast-3.myhuaweicloud.com/scantist-images
     needs: build
     steps:
       - id: 'auth'
@@ -108,9 +109,12 @@ jobs:
           location: ${{ env.GKE_CLUSTER_ZONE }}
           namespace: ${{ env.GKE_CLUSTER_NAMESPACE }}
           project_id: ${{ env.GKE_PROJECT_ID }}
-      - id: 'Get pods'
-        run: "kubectl get pods"
-      - id: 'Set Deployments'
-        run: "kubectl set image deployment/${{ needs.build.outputs.app_name }} ${{ needs.build.outputs.app_name }}=swr.ap-southeast-3.myhuaweicloud.com/scantist-images/${{ needs.build.outputs.app_name }}:${{ needs.build.outputs.tag }}  -n ${{ env.GKE_CLUSTER_NAMESPACE }} --record=true"
-      - id: 'Restart Deployments'
-        run: "kubectl rollout restart deployment/${{ needs.build.outputs.app_name }} -n ${{ env.GKE_CLUSTER_NAMESPACE }}"
+      - name: 'Set Image and Restart Deployment'
+        run: |
+          APP_NAME="${{ needs.build.outputs.app_name }}"
+          IMAGE_TAG="${{ needs.build.outputs.tag }}"
+          IMAGE_NAME="${{ env.IMAGE_REPO }}/${APP_NAME}:${IMAGE_TAG}"
+
+          kubectl set image deployment/${APP_NAME} ${APP_NAME}=${IMAGE_NAME} -n ${{ env.GKE_CLUSTER_NAMESPACE }} --record=true
+          kubectl rollout restart deployment/${APP_NAME} -n ${{ env.GKE_CLUSTER_NAMESPACE }}
+
