@@ -18,11 +18,15 @@ const TradingFeePopover = () => {
         <div className="text-muted-foreground grid grid-cols-2 gap-3 py-2 text-xs">
           <div className="flex gap-3">
             <div>Buy</div>
-            <div className="text-foreground font-bold">{isLoading ? "-" : `${buyTaxRatio / 100n}%`}</div>
+            <div className="text-foreground font-bold">
+              {isLoading ? "-" : `${(Number(buyTaxRatio) / 100).toFixed(2)}%`}
+            </div>
           </div>
           <div className="flex gap-2">
             <div>Sell</div>
-            <div className="text-foreground font-bold">{isLoading ? "-" : `${sellTaxRatio / 100n}%`}</div>
+            <div className="text-foreground font-bold">
+              {isLoading ? "-" : `${(Number(sellTaxRatio) / 100).toFixed(2)}%`}
+            </div>
           </div>
         </div>
       </PopoverContent>
