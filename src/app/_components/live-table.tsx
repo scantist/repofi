@@ -66,10 +66,6 @@ const LiveTable = ({ initialData, initialParams }: LiveTableProps) => {
       header: () => "Type",
       cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     }),
-    columnHelper.accessor("status", {
-      header: () => "Status",
-      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
-    }),
     columnHelper.accessor("tokenInfo.holderCount", {
       header: () => "Holders",
       cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>

@@ -1,40 +1,50 @@
 "use client"
 
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+import { createColumnHelper, PaginationState } from "@tanstack/react-table"
 import { useRouter } from "next/navigation"
-import React, { Fragment, useState } from "react"
-import CardWrapper from "~/components/card-wrapper"
-import { Button } from "~/components/ui/button"
-import { cn, formatMoney } from "~/lib/utils"
-import { toHumanAmount } from "~/lib/web3"
-import type { DaoSearchResult } from "~/server/service/dao"
+import { useState } from "react"
+import DataTable from "~/components/data-table"
+import ListPagination from "~/components/list-pagination"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { HomeSearchParams } from "~/lib/schema"
+import { formatMoney, formatSignificantDigits } from "~/lib/utils"
 import { api } from "~/trpc/react"
+import { DaoPage } from "~/types/data"
 
-interface Dao {
-  name: string
-  amount: string
-  vAmount: string
-  price: string
-  total: string
-}
-const columnHelper = createColumnHelper<DaoSearchResult["list"][number]>()
-
-interface PortfolioTableProps {
-  daoList: DaoSearchResult
+interface Condition extends HomeSearchParams {
+  pagination: PaginationState
 }
 
-const PortfolioTable = ({ daoList }: PortfolioTableProps) => {
+const PortfolioTable = () => {
+  const columnHelper = createColumnHelper<DaoPage>()
+  const [condition, setCondition] = useState<Condition>({
+    orderBy: "marketCap",
+    owned: true,
+    starred: false,
+    pagination: {
+      pageSize: 10,
+      pageIndex: 0
+    }
+  })
   const { data: response, isPending } = api.dao.search.useQuery(
     {
-      status: ["LAUNCHED"]
-    },
-    {
-      initialData: daoList
+      ...condition,
+      page: condition.pagination.pageIndex,
+      size: condition.pagination.pageSize
     }
   )
-  console.log(response)
+  console.log(condition, response)
   const router = useRouter()
   const columns = [
+    columnHelper.accessor("avatar", {
+      header: () => "Avatar",
+      cell: (info) => (
+        <Avatar>
+          <AvatarImage src={info.getValue()} />
+          <AvatarFallback>{info.row.original.name}</AvatarFallback>
+        </Avatar>
+      )
+    }),
     columnHelper.accessor("ticker", {
       header: () => "Ticker",
       cell: (info) => <div>${info.getValue()}</div>
@@ -47,80 +57,60 @@ const PortfolioTable = ({ daoList }: PortfolioTableProps) => {
       header: () => "Type",
       cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     }),
+    columnHelper.accessor("status", {
+      header: () => "Status",
+      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
+    }),
+    columnHelper.accessor("tokenInfo.holderCount", {
+      header: () => "Holders",
+      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
+    }),
     columnHelper.accessor("marketCapUsd", {
       header: () => "Market Cap",
       cell: (info) => <div className={"text-sm text-gray-400"}>${formatMoney(info.getValue().length === 0 ? "0" : info.getValue())}</div>
     }),
-    columnHelper.accessor("tokenInfo.holderCount", {
-      header: () => "Holder Count",
-      cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
-    }),
-    columnHelper.accessor("id", {
-      id: "action",
-      header: () => "Action",
-      cell: (info) => (
-        <Button
-          variant={"outline"}
-          onClick={() => {
-            router.push(`/dao/${info.getValue()}`)
-          }}
-        >
-          Buy
-        </Button>
-      )
+    columnHelper.accessor("priceUsd", {
+      header: () => "Price",
+      cell: (info) => <div className={"text-sm text-gray-400"}>${formatSignificantDigits(info.getValue())}</div>
     })
   ]
-  const table = useReactTable({
-    data: response?.list ?? [],
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    debugTable: true
-  })
   return (
-    <CardWrapper borderClassName={"w-full"}>
-      <div className={"-mt-1 -ml-1 rounded-lg"}>
-        <table
-          className={"overflow-hidden rounded-lg"}
-          style={{
-            width: "calc(100% + 2px)"
-          }}
-        >
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr className={"h-16"} key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} className={"bg-secondary nth-[1]:pl-4 nth-last-[1]:pr-4"} style={{ textAlign: "left" }}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody className={""}>
-            {table.getRowModel().rows.map((row) => (
-              <Fragment key={row.id}>
-                <tr className={cn("h-16 border-t-1 border-white/20", row.getIsExpanded() && "bg-[#6A21F74D]")}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className={"nth-[1]:pl-4 nth-last-[1]:pr-4"}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              </Fragment>
-            ))}
-          </tbody>
-          <tfoot>
-            {table.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <th key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}</th>
-                ))}
-              </tr>
-            ))}
-          </tfoot>
-        </table>
-      </div>
-    </CardWrapper>
+    <>
+      <DataTable<DaoPage>
+        data={response}
+        loading={isPending}
+        columns={columns}
+        onPaginationChange={(pagination) => {
+          setCondition({
+            ...condition,
+            pagination
+          })
+        }}
+        outPagination={condition.pagination}
+        onRowClick={(row) => {
+          router.push(`/dao/${row.original.id}`)
+        }}
+      >
+        <div className={"py-4"}>
+          <ListPagination
+            pageable={{
+              page: condition.pagination.pageIndex,
+              size: condition.pagination.pageSize
+            }}
+            totalPages={response?.pages ?? 0}
+            setPageable={(pageable) => {
+              setCondition({
+                ...condition,
+                pagination: {
+                  pageIndex: pageable.page,
+                  pageSize: pageable.size
+                }
+              })
+            }}
+          />
+        </div>
+      </DataTable>
+    </>
   )
 }
 export default PortfolioTable

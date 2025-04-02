@@ -1,19 +1,13 @@
 "use client"
 import { getCookie } from "cookies-next/client"
-import { useSession } from "next-auth/react"
-import { usePathname, useRouter } from "next/navigation"
-import React, { useMemo } from "react"
-import { toast } from "sonner"
-import LiveTable from "~/app/_components/live-table"
+import { useMemo } from "react"
 import Authorization from "~/app/profile/_components/authorization"
 import { useAuth } from "~/components/auth/auth-context"
-import WalletButton from "~/components/auth/wallet-button"
 import CardWrapper from "~/components/card-wrapper"
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { Avatar, AvatarImage } from "~/components/ui/avatar"
 import { BoxReveal } from "~/components/ui/box-reveal"
-import { Button } from "~/components/ui/button"
-import { cn } from "~/lib/utils"
 import { api } from "~/trpc/react"
+import PortfolioTable from "./_components/portfolio-table"
 const ProfilPage = () => {
   const { isAuthenticated, address } = useAuth()
   const { data: user, isLoading } = api.user.me.useQuery(undefined, {
@@ -52,13 +46,8 @@ const ProfilPage = () => {
             </div>
           </CardWrapper>
           <div className={"my-8"}>
-            <LiveTable
-              initialParams={{
-                owned: true,
-                orderBy: "latest",
-                starred: false
-              }}
-            />
+            <div className={"text-5xl leading-32 font-bold tracking-tight"}>My Portfolio</div>
+            <PortfolioTable />
           </div>
         </>
       )}
