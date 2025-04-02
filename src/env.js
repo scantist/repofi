@@ -55,7 +55,8 @@ export const env = createEnv({
     NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid launchpad address"),
     NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid quoter address"),
     NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid factory address"),
-    NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid swap router address")
+    NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid swap router address"),
+    NEXT_PUBLIC_GIT_SHA: z.string().optional()
   },
 
   /**
@@ -83,7 +84,8 @@ export const env = createEnv({
     AUTH_GITLAB_ID: process.env.AUTH_GITLAB_ID,
     TOOL_REPO_GITHUB_ACCESS_TOKENS: process.env.TOOL_REPO_GITHUB_ACCESS_TOKENS,
     CONTRACT_POC_ADDRESS: process.env.CONTRACT_POC_ADDRESS,
-    CONTRACT_TOKENLOCKER_ADDRESS: process.env.CONTRACT_TOKENLOCKER_ADDRESS
+    CONTRACT_TOKENLOCKER_ADDRESS: process.env.CONTRACT_TOKENLOCKER_ADDRESS,
+    NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

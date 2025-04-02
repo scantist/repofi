@@ -17,6 +17,7 @@ import { QueryClientReactProvider } from "~/components/query-client/query-client
 import { Badge } from "~/components/ui/badge"
 import { auth } from "~/server/auth"
 import { TRPCReactProvider } from "~/trpc/react"
+import { env } from "~/env"
 
 // const sans = Space_Grotesk({
 //   subsets: ["latin"],
@@ -55,6 +56,8 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth()
   const wagmiState = cookieToInitialState(wagmiConfig, (await headers()).get("cookie"))
+  const version = env.NEXT_PUBLIC_GIT_SHA?.slice(0, 7) ?? "dev";
+
   return (
     <html lang="en" className={`dark ${GeistSans.variable}`}>
       <body className={"font-sans dark"}>
@@ -92,7 +95,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                       </ToTop>
 
                       <Badge variant="outline" className="font-mono text-xs font-normal text-muted-foreground">
-                        dev
+                        {version}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-4 sm:gap-8">
