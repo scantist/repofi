@@ -178,23 +178,27 @@ const BindRepository: FC<Props> = ({ githubToken }) => {
                     </motion.h3>
                   </div>
                 </div>
-                <div className={"flex mt-2 flex-row items-center justify-between"}>
-                  <div>
-                    <motion.p layoutId={`description-${repo.description}-${id}`} className="text-left text-neutral-400">
-                      {repo.description}
-                    </motion.p>
-                    <motion.div className={"flex mt-2 cursor-pointer flex-row items-center gap-x-2 font-thin"} onClick={() => setActive(repo)}>
-                      <Users className={"size-4"} />
+
+                <div className="flex flex-col w-full mt-2">
+                  <motion.p 
+                    layoutId={`description-${repo.description}-${id}`} 
+                    className="text-left text-neutral-400 min-h-[3em] max-h-[3em] overflow-hidden text-ellipsis line-clamp-2"
+                  >
+                    {repo.description}
+                  </motion.p>
+                  <div className="flex flex-row justify-between w-full mt-2">
+                    <motion.div className="cursor-pointer flex-row items-center gap-x-2 font-thin flex" onClick={() => setActive(repo)}>
+                      <Users className="size-4" />
                       Contributors
                     </motion.div>
-                  </div>
-                  <div
-                    className={cn("cursor-pointer overflow-hidden font-bold whitespace-nowrap flex items-center", current === repo && "text-primary")}
-                    onClick={() => {
-                      setCurrent(repo)
-                    }}
-                  >
-                    {isLoadingDao && current === repo ? <LoadingSpinner size={16} className="mr-1" textClassName={"hidden"} /> : "Connect"}
+                    <div
+                      className={cn("cursor-pointer overflow-hidden font-bold whitespace-nowrap flex items-center", current === repo && "text-primary")}
+                      onClick={() => {
+                        setCurrent(repo)
+                      }}
+                    >
+                      {isLoadingDao && current === repo ? <LoadingSpinner size={16} className="mr-1" textClassName="hidden" /> : "Connect"}
+                    </div>
                   </div>
                 </div>
               </motion.div>
