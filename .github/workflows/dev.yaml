@@ -106,5 +106,10 @@ jobs:
         with:
           cluster_name: ${{ env.GKE_CLUSTER_NAME }}
           location: ${{ env.GKE_CLUSTER_ZONE }}
-      - id: 'get-pods'
-        run: 'kubectl get pods'
+          namespace: ${{ env.GKE_CLUSTER_NAMESPACE }}
+          project_id: ${{ env.GKE_PROJECT_ID }}
+      - id: 'Restart pods'
+        run: |
+          kubectl get pods
+          kubectl set image deployment/${{ needs.build.outputs.app_name }} ${{ needs.build.outputs.app_name }}=swr.ap-southeast-3.myhuaweicloud.com/scantist-images/${{ needs.build.outputs.app_name }}:${{ needs.build.outputs.tag }}  -n ${{ env.GKE_CLUSTER_NAMESPACE }} --record=true
+          kubectl rollout restart deployment/${{ needs.build.outputs.app_name }} -n ${{ env.GKE_CLUSTER_NAMESPACE }}
