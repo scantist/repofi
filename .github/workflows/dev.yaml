@@ -20,8 +20,18 @@ jobs:
       NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS: '0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3'
       NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS: '0x0227628f3F023bb0B980b67D528571c95c6DaC1c'
       NEXT_PUBLIC_GIT_SHA: ${{ github.sha }}
-      TAG: PRO-DEV
     steps:
+      - name: "Get branch name and save to env"
+        env:
+          IS_PR: ${{ github.EVENT_NAME == 'pull_request' }}
+        run: |
+          if ${IS_PR}; then
+            TAG="${GITHUB_HEAD_REF}"
+          else
+            TAG="${GITHUB_REF##*/}"
+          fi
+          echo "TAG=${TAG}" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         name: Install pnpm
@@ -60,9 +70,10 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           registry: swr.ap-southeast-3.myhuaweicloud.com
-          name: scantist-images/${{ env.APP_NAME }}:${{ env.TAG }}
+          name: scantist-images/${{ env.APP_NAME }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "${{ env.TAG }},PROD-DEV,DEV,prod-dev,dev"
     outputs:
       tag: ${{ env.TAG }}
       app_name: ${{ env.APP_NAME }}
