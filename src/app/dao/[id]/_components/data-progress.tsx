@@ -21,7 +21,7 @@ export const PreProgress = () => {
       return 0
     }
     const scaledCurrentY = (data.currentY - data.curveParameter.initialY) * 10000n
-    return Number(scaledCurrentY / (data.curveParameter.finalY- data.curveParameter.initialY)) / 100
+    return Number(scaledCurrentY / (data.curveParameter.finalY - data.curveParameter.initialY)) / 100
   }, [data])
   useEffect(() => {
     refetchTokenFullInfo()
@@ -91,8 +91,17 @@ export const PostProgress = () => {
     const instantAmount = lockInfo.instantAmount
     const total = lockInfo.linearTotalAmount + instantAmount
     const claimed = lockInfo.linearClaimedAmount + (lockInfo.instantClaimed ? instantAmount : BigInt(0))
-    const claimable = lockInfo.instantClaimed ? lockInfo.linearClaimableAmount : lockInfo.linearRemainingAmount + instantAmount
+    const claimable = lockInfo.linearClaimableAmount + (lockInfo.instantClaimed ? BigInt(0) : instantAmount)
     const locked = total - claimed - claimable
+    console.log("instantAmount", {
+      lockInfo,
+      instantAmount,
+      total,
+      claimed,
+      claimable,
+      locked
+    })
+
     return [
       {
         value: Number(new Decimal(claimed.toString()).div(new Decimal(total.toString()))) * 100,
