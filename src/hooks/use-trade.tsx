@@ -215,7 +215,7 @@ export function useTrade({
     address: launchPadAddress,
     functionName: "buyMax",
     args: [tokenId],
-    value: isNativeAsset ? BigInt(assetLaunchFee.toString()) : 0n,
+    value: isNativeAsset && action === "buy" ? amountIn : 0n,
     query: {
       enabled: action === "buy" && isAllowanceOk && amountIn > BigInt(0) && amountOutMin >= BigInt(0) && balanceOk && !!userAddress
     }
