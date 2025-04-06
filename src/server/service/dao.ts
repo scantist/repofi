@@ -154,6 +154,8 @@ class DaoService {
     userAddress: string,
     pageable: Pageable,
     params?: {
+      status?: DaoStatus[]
+      starred?: boolean
       search?: string
       orderBy?: "marketCap" | "latest"
     }
@@ -212,6 +214,27 @@ class DaoService {
                 ]
               }
             ]
+          }
+        }
+      ]
+    }
+
+    // 添加 status 过滤条件
+    if (params?.status) {
+      whereOptions.status = { in: params.status }
+    }
+
+    // 如果只看 starred，移除 tokenInfo 条件
+    if (params?.starred) {
+      whereOptions.OR = [
+        {
+          stars: {
+            some: {
+              userAddress: {
+                equals: userAddress,
+                mode: "insensitive"
+              }
+            }
           }
         }
       ]

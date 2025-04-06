@@ -1,3 +1,4 @@
+import { DaoStatus } from "@prisma/client"
 import { z } from "zod"
 import { createDaoParamsSchema, homeSearchParamsSchema, pageableSchema, updateDaoParamsSchema } from "~/lib/schema"
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc"
@@ -57,6 +58,8 @@ export const daoRouter = createTRPCRouter({
       z.object({
         page: z.number(),
         size: z.number(),
+        status: z.array(z.nativeEnum(DaoStatus)).optional(),
+        starred: z.boolean().optional().default(false),
         search: z.string().optional(),
         orderBy: z.enum(['marketCap', 'latest']).optional()
       })
