@@ -1,11 +1,10 @@
-import type { CreateDaoParams, DaoLinks, HomeSearchParams, Pageable, UpdateDaoParamsSchema } from "~/lib/schema"
 import { DaoStatus, type Prisma } from "@prisma/client"
+import { CommonError, ErrorCode } from "~/lib/error"
+import type { CreateDaoParams, DaoLinks, HomeSearchParams, Pageable, UpdateDaoParamsSchema } from "~/lib/schema"
 import { db } from "~/server/db"
+import { emitContributorInit } from "~/server/queue/contributor"
 import { fetchAllRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
 import type { PageableData } from "~/types/data"
-import { emitContributorInit } from "~/server/queue/contributor"
-import { CommonError, ErrorCode } from "~/lib/error"
-
 
 class DaoService {
   async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
@@ -103,13 +102,13 @@ class DaoService {
         },
         stars: userAddress
           ? {
-            where: {
-              userAddress
-            },
-            select: {
-              userAddress: true
+              where: {
+                userAddress
+              },
+              select: {
+                userAddress: true
+              }
             }
-          }
           : false
       },
       where: whereOptions,
@@ -145,20 +144,20 @@ class DaoService {
     } as PageableData<(typeof daoList)[number]>
   }
   /**
- * Get user's DAO token portfolio with pagination
- * @param userAddress - The wallet address of the user
- * @param pageable - Pagination parameters
- * @param params - Search parameters
- * @returns Paginated list of DAOs with token holdings
- */
+   * Get user's DAO token portfolio with pagination
+   * @param userAddress - The wallet address of the user
+   * @param pageable - Pagination parameters
+   * @param params - Search parameters
+   * @returns Paginated list of DAOs with token holdings
+   */
   async portfolio(
     userAddress: string,
     pageable: Pageable,
     params?: {
       search?: string
-      orderBy?: 'marketCap' | 'latest'
+      orderBy?: "marketCap" | "latest"
     }
-  ): Promise<PageableData<any>> {
+  ) {
     const whereOptions: Prisma.DaoWhereInput = {
       OR: [
         {
@@ -239,9 +238,7 @@ class DaoService {
       where: whereOptions,
       take: pageable.size,
       skip: actualPage * pageable.size,
-      orderBy: params?.orderBy === 'marketCap'
-        ? { marketCapUsd: 'desc' }
-        : { createdAt: 'desc' },
+      orderBy: params?.orderBy === "marketCap" ? { marketCapUsd: "desc" } : { createdAt: "desc" },
       select: {
         id: true,
         name: true,
@@ -250,6 +247,8 @@ class DaoService {
         marketCapUsd: true,
         priceUsd: true,
         createdAt: true,
+        type: true,
+        status: true,
         tokenInfo: {
           select: {
             tokenId: true,
@@ -257,6 +256,7 @@ class DaoService {
             isGraduated: true,
             marketCap: true,
             price: true,
+            holderCount: true,
             // 根据毕业状态选择对应的持仓表
             launchHolders: {
               where: {
@@ -297,20 +297,18 @@ class DaoService {
     })
 
     // 处理返回数据
-    const portfolioList = data.map(dao => {
-      const balance = dao.tokenInfo.isGraduated
-        ? dao.tokenInfo.graduationHolders[0]?.balance
-        : dao.tokenInfo.launchHolders[0]?.balance
+    const portfolioList = data.map((dao) => {
+      const balance = dao.tokenInfo.isGraduated ? dao.tokenInfo.graduationHolders[0]?.balance : dao.tokenInfo.launchHolders[0]?.balance
 
-      const balanceUsd = balance
-        ? (Number(dao.priceUsd) * Number(balance)).toString()
-        : "0"
+      const balanceUsd = balance ? (Number(dao.priceUsd) * Number(balance)).toString() : "0"
 
       return {
         id: dao.id,
         name: dao.name,
         ticker: dao.ticker,
         avatar: dao.avatar,
+        type: dao.type,
+        status: dao.status,
         marketCapUsd: dao.marketCapUsd.toString(),
         priceUsd: dao.priceUsd.toString(),
         balanceUsd,
@@ -321,7 +319,8 @@ class DaoService {
           isGraduated: dao.tokenInfo.isGraduated,
           marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
           price: dao.tokenInfo.price?.toString() ?? "",
-          balance: balance?.toString() ?? "0"
+          balance: balance?.toString() ?? "0",
+          holderCount: dao.tokenInfo.holderCount.toString()
         }
       }
     })
@@ -595,8 +594,7 @@ class DaoService {
         price: dao.tokenInfo.price?.toString() ?? "",
         unlockRatio: dao.tokenInfo.unlockRatio?.toString() ?? "",
         salesRatio: dao.tokenInfo.salesRatio?.toString() ?? "",
-        raisedAssetAmount: dao.tokenInfo.raisedAssetAmount?.toString() ?? "",
-
+        raisedAssetAmount: dao.tokenInfo.raisedAssetAmount?.toString() ?? ""
       }
     }
   }
@@ -632,8 +630,7 @@ class DaoService {
     const dao = await db.dao.findUnique({
       where: {
         id: daoId
-      },
-
+      }
     })
     if (!dao) {
       throw new CommonError(ErrorCode.BAD_PARAMS, "")
@@ -642,19 +639,20 @@ class DaoService {
   }
   async toggleStar(daoId: string, userAddress: string) {
     const star = await db.daoStar.findUnique({
-      where: { daoId_userAddress: { daoId, userAddress } },
-    });
+      where: { daoId_userAddress: { daoId, userAddress } }
+    })
 
     if (star) {
       await db.daoStar.delete({
-        where: { daoId_userAddress: { daoId, userAddress } },
-      });
+        where: { daoId_userAddress: { daoId, userAddress } }
+      })
     } else {
-      await db.daoStar.create({ data: { daoId, userAddress } });
+      await db.daoStar.create({ data: { daoId, userAddress } })
     }
-  };
+  }
 }
 
 export type DaoSearchResult = Awaited<ReturnType<typeof daoService.search>>
 export type DaoDetailResult = Awaited<ReturnType<typeof daoService.detail>>
+export type DaoPortfolioResult = Awaited<ReturnType<typeof daoService.portfolio>>
 export const daoService = new DaoService()

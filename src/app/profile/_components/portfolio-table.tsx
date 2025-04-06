@@ -1,39 +1,39 @@
 "use client"
 
-import { createColumnHelper, PaginationState } from "@tanstack/react-table"
+import { type PaginationState, createColumnHelper } from "@tanstack/react-table"
+import { Star } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import React, { useState } from "react"
 import DataTable from "~/components/data-table"
 import ListPagination from "~/components/list-pagination"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { HomeSearchParams } from "~/lib/schema"
-import { formatMoney, formatSignificantDigits } from "~/lib/utils"
+import { cn, formatMoney, formatSignificantDigits } from "~/lib/utils"
+import type { DaoPortfolioResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
-import { DaoPage } from "~/types/data"
+import type { DaoPage } from "~/types/data"
 
-interface Condition extends HomeSearchParams {
+interface Condition {
+  search: string
+  orderBy: "marketCap" | "latest"
   pagination: PaginationState
 }
 
 const PortfolioTable = () => {
-  const columnHelper = createColumnHelper<DaoPage>()
+  const columnHelper = createColumnHelper<DaoPortfolioResult["list"][number]>()
   const [condition, setCondition] = useState<Condition>({
     orderBy: "marketCap",
-    owned: true,
-    starred: false,
+    search: "",
     pagination: {
       pageSize: 10,
       pageIndex: 0
     }
   })
-  const { data: response, isPending } = api.dao.search.useQuery(
-    {
-      ...condition,
-      page: condition.pagination.pageIndex,
-      size: condition.pagination.pageSize
-    }
-  )
-  console.log(condition, response)
+  const { data: response, isPending } = api.dao.portfolio.useQuery({
+    ...condition,
+    page: condition.pagination.pageIndex,
+    size: condition.pagination.pageSize
+  })
   const router = useRouter()
   const columns = [
     columnHelper.accessor("avatar", {
@@ -51,7 +51,12 @@ const PortfolioTable = () => {
     }),
     columnHelper.accessor("name", {
       header: () => "Repo DAO",
-      cell: (info) => info.getValue()
+      cell: (info) => (
+        <div className={"flex flex-row gap-2 items-center"}>
+          <div>{info.getValue()}</div>
+          {info.row.original.isStarred && <Star className={cn("w-4 h-4 hover:scale-125 fill-yellow-400 text-yellow-400  transition")} />}
+        </div>
+      )
     }),
     columnHelper.accessor("type", {
       header: () => "Type",
@@ -65,6 +70,10 @@ const PortfolioTable = () => {
       header: () => "Holders",
       cell: (info) => <div className={"text-sm text-gray-400"}>{info.getValue()}</div>
     }),
+    columnHelper.accessor("balanceUsd", {
+      header: () => "Blance",
+      cell: (info) => <div className={"text-sm text-gray-400"}>${formatSignificantDigits(info.getValue())}</div>
+    }),
     columnHelper.accessor("marketCapUsd", {
       header: () => "Market Cap",
       cell: (info) => <div className={"text-sm text-gray-400"}>${formatMoney(info.getValue().length === 0 ? "0" : info.getValue())}</div>
@@ -76,7 +85,7 @@ const PortfolioTable = () => {
   ]
   return (
     <>
-      <DataTable<DaoPage>
+      <DataTable<DaoPortfolioResult["list"][number]>
         data={response}
         loading={isPending}
         columns={columns}

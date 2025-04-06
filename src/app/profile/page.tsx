@@ -6,6 +6,9 @@ import { useAuth } from "~/components/auth/auth-context"
 import CardWrapper from "~/components/card-wrapper"
 import { Avatar, AvatarImage } from "~/components/ui/avatar"
 import { BoxReveal } from "~/components/ui/box-reveal"
+import { Checkbox } from "~/components/ui/checkbox"
+import { Label } from "~/components/ui/label"
+import { Switch } from "~/components/ui/switch"
 import { api } from "~/trpc/react"
 import PortfolioTable from "./_components/portfolio-table"
 const ProfilPage = () => {
@@ -46,7 +49,15 @@ const ProfilPage = () => {
             </div>
           </CardWrapper>
           <div className={"my-8"}>
-            <div className={"text-5xl leading-32 font-bold tracking-tight"}>My Portfolio</div>
+            <div className={"text-5xl leading-32 font-bold tracking-tight flex justify-between flex-row items-center"}>
+              <div>My Portfolio</div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="only-stared" />
+                <label htmlFor="only-stared" className="text-lg font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Only Starred
+                </label>
+              </div>
+            </div>
             <PortfolioTable />
           </div>
         </>

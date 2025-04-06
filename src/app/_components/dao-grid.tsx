@@ -34,7 +34,6 @@ const DaoGrid: FC<Props> = ({
     },
     { initialData: initialData }
   )
-  console.log("response", response, pageable)
   if (isPending) {
     return (
       <div className={"grid grid-cols-1 gap-x-2 gap-y-5 sm:grid-cols-2 lg:grid-cols-3"}>

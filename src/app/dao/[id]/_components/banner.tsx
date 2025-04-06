@@ -3,15 +3,16 @@
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import type { IconType } from "@icons-pack/react-simple-icons"
 import { useTour } from "@reactour/tour"
-import { Footprints, House, Settings } from "lucide-react"
+import { Footprints, House, Settings, Star } from "lucide-react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useMemo, useState } from "react"
+import React, { useMemo } from "react"
 import BannerWrapper from "~/components/banner-wrapper"
 import CardWrapper from "~/components/card-wrapper"
 import type { DaoLinks } from "~/lib/schema"
+import { cn } from "~/lib/utils"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
 
@@ -57,7 +58,12 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
     ))
   }, [data])
   const { setIsOpen } = useTour()
-
+  const useUtils = api.useUtils()
+  const { mutate } = api.dao.toggleStar.useMutation({
+    onSuccess: () => {
+      void useUtils.dao.detail.refetch()
+    }
+  })
   const handleClickStart = () => {
     setIsOpen(true)
   }
@@ -90,6 +96,18 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
                   <Settings className={"text-primary-foreground hover:text-primary transition-all"} />
                 </a>
               )}
+              <Star
+                className={cn(
+                  "text-white/40 hover:scale-125 cursor-pointer hover:fill-yellow-400 hover:text-yellow-400 z-20 transition",
+                  data?.isStarred && "text-yellow-400 fill-yellow-400"
+                )}
+                onClick={(event) => {
+                  if (data) {
+                    mutate({ daoId: data.id })
+                  }
+                  event.stopPropagation()
+                }}
+              />
             </div>
           </div>
           <Link href={data?.url ?? "#"} className={"mt-2 text-gray-500 w-auto max-w-fit"}>
