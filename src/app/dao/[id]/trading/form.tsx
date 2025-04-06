@@ -88,8 +88,6 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
   } = useTrade({
     tokenId: detail.tokenId,
     assetAddress: assetToken.address,
-    //TODO 解决decimal
-    assetLaunchFee: assetTokenInfo?.launchFee ?? new Decimal(0),
     amountIn,
     amountOutMin,
     action: mode

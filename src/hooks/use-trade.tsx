@@ -138,14 +138,12 @@ export function useTrade({
                            action,
                            tokenId,
                            assetAddress,
-                           assetLaunchFee,
                            amountIn,
                            amountOutMin
                          }: {
   action: "buy" | "sell"
   tokenId: bigint
   assetAddress: `0x${string}`
-  assetLaunchFee: Decimal
   amountIn: bigint
   amountOutMin: bigint
 }) {
