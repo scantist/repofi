@@ -56,7 +56,7 @@ const MessageList = () => {
           </div>
           <div className={"text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"}>
             {address === item.createdBy && <DeleteMessage messageId={item.id} />}
-            <CreateMessage daoId={detail.id}>
+            <CreateMessage daoId={detail.id} replyMessage={item}>
               <div>Reply</div>
             </CreateMessage>
           </div>
