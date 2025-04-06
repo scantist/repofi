@@ -72,7 +72,7 @@ const PortfolioTable = () => {
     }),
     columnHelper.accessor("balanceUsd", {
       header: () => "Blance",
-      cell: (info) => <div className={"text-sm text-gray-400"}>${formatSignificantDigits(info.getValue())}</div>
+      cell: (info) => <div className={"text-sm text-gray-400"}>${formatMoney(info.getValue().length === 0 ? "0" : info.getValue())}</div>
     }),
     columnHelper.accessor("marketCapUsd", {
       header: () => "Market Cap",
