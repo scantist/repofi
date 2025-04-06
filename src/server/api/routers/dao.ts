@@ -51,5 +51,31 @@ export const daoRouter = createTRPCRouter({
     )
     .query(async ({ input }): Promise<DaoDetailResult> => {
       return await daoService.detail(input.daoId)
+    }),
+  portfolio: protectedProcedure
+    .input(
+      z.object({
+        page: z.number(),
+        size: z.number(),
+        search: z.string().optional(),
+        orderBy: z.enum(['marketCap', 'latest']).optional()
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { page, size, ...params } = input
+      return daoService.portfolio(
+        ctx.session!.address,
+        { page, size },
+        params
+      )
+    }),
+  toggleStar: protectedProcedure
+    .input(
+      z.object({
+        daoId: z.string()
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return daoService.toggleStar(input.daoId, ctx.session!.address)
     })
 })

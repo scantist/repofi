@@ -1,9 +1,9 @@
-import type {CreateDaoParams, DaoLinks, HomeSearchParams, Pageable, UpdateDaoParamsSchema} from "~/lib/schema"
-import {DaoStatus, type Prisma} from "@prisma/client"
-import {db} from "~/server/db"
-import {fetchAllRepoContributors, fetchRepoInfo, parseRepoUrl} from "~/server/tool/repo"
-import type {PageableData} from "~/types/data"
-import {emitContributorInit} from "~/server/queue/contributor"
+import type { CreateDaoParams, DaoLinks, HomeSearchParams, Pageable, UpdateDaoParamsSchema } from "~/lib/schema"
+import { DaoStatus, type Prisma } from "@prisma/client"
+import { db } from "~/server/db"
+import { fetchAllRepoContributors, fetchRepoInfo, parseRepoUrl } from "~/server/tool/repo"
+import type { PageableData } from "~/types/data"
+import { emitContributorInit } from "~/server/queue/contributor"
 import { CommonError, ErrorCode } from "~/lib/error"
 
 
@@ -11,10 +11,10 @@ class DaoService {
   async search(params: HomeSearchParams, pageable: Pageable, userAddress: string | undefined) {
     const whereOptions: Prisma.DaoWhereInput = {}
     if (params.status) {
-      whereOptions.status = {in: params.status}
+      whereOptions.status = { in: params.status }
     }
     if (params.starred && userAddress) {
-      whereOptions.stars = {some: {userAddress}}
+      whereOptions.stars = { some: { userAddress } }
     }
     if (params.search) {
       whereOptions.name = {
@@ -113,11 +113,11 @@ class DaoService {
           : false
       },
       where: whereOptions,
-      orderBy: params.orderBy === "latest" ? {createdAt: "desc"} : {marketCapUsd: "desc"}
+      orderBy: params.orderBy === "latest" ? { createdAt: "desc" } : { marketCapUsd: "desc" }
     })
     const daoList = []
     for (const dao of data) {
-      const {platform, owner, repo} = parseRepoUrl(dao.url)
+      const { platform, owner, repo } = parseRepoUrl(dao.url)
       const repoInfo = await fetchRepoInfo(platform, owner, repo)
       daoList.push({
         ...dao,
@@ -144,7 +144,194 @@ class DaoService {
       total: total
     } as PageableData<(typeof daoList)[number]>
   }
+  /**
+ * Get user's DAO token portfolio with pagination
+ * @param userAddress - The wallet address of the user
+ * @param pageable - Pagination parameters
+ * @param params - Search parameters
+ * @returns Paginated list of DAOs with token holdings
+ */
+  async portfolio(
+    userAddress: string,
+    pageable: Pageable,
+    params?: {
+      search?: string
+      orderBy?: 'marketCap' | 'latest'
+    }
+  ): Promise<PageableData<any>> {
+    const whereOptions: Prisma.DaoWhereInput = {
+      OR: [
+        {
+          // Star的情况
+          stars: {
+            some: {
+              userAddress: {
+                equals: userAddress,
+                mode: "insensitive"
+              }
+            }
+          }
+        },
+        {
+          // 持有Token的情况
+          tokenInfo: {
+            OR: [
+              {
+                AND: [
+                  { isGraduated: false },
+                  {
+                    launchHolders: {
+                      some: {
+                        userAddress: {
+                          equals: userAddress,
+                          mode: "insensitive"
+                        },
+                        balance: {
+                          gt: 0
+                        }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                AND: [
+                  { isGraduated: true },
+                  {
+                    graduationHolders: {
+                      some: {
+                        userAddress: {
+                          equals: userAddress,
+                          mode: "insensitive"
+                        },
+                        balance: {
+                          gt: 0
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
 
+    // 添加搜索条件
+    if (params?.search) {
+      whereOptions.name = {
+        contains: params.search,
+        mode: "insensitive"
+      }
+    }
+
+    // 获取总数
+    const total = await db.dao.count({
+      where: whereOptions
+    })
+
+    const totalPages = Math.ceil(total / pageable.size)
+    const actualPage = Math.max(0, Math.min(pageable.page, totalPages - 1))
+
+    // 查询数据
+    const data = await db.dao.findMany({
+      where: whereOptions,
+      take: pageable.size,
+      skip: actualPage * pageable.size,
+      orderBy: params?.orderBy === 'marketCap'
+        ? { marketCapUsd: 'desc' }
+        : { createdAt: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        ticker: true,
+        avatar: true,
+        marketCapUsd: true,
+        priceUsd: true,
+        createdAt: true,
+        tokenInfo: {
+          select: {
+            tokenId: true,
+            tokenAddress: true,
+            isGraduated: true,
+            marketCap: true,
+            price: true,
+            // 根据毕业状态选择对应的持仓表
+            launchHolders: {
+              where: {
+                userAddress: {
+                  equals: userAddress,
+                  mode: "insensitive"
+                }
+              },
+              select: {
+                balance: true
+              }
+            },
+            graduationHolders: {
+              where: {
+                userAddress: {
+                  equals: userAddress,
+                  mode: "insensitive"
+                }
+              },
+              select: {
+                balance: true
+              }
+            }
+          }
+        },
+        stars: {
+          where: {
+            userAddress: {
+              equals: userAddress,
+              mode: "insensitive"
+            }
+          },
+          select: {
+            userAddress: true
+          }
+        }
+      }
+    })
+
+    // 处理返回数据
+    const portfolioList = data.map(dao => {
+      const balance = dao.tokenInfo.isGraduated
+        ? dao.tokenInfo.graduationHolders[0]?.balance
+        : dao.tokenInfo.launchHolders[0]?.balance
+
+      const balanceUsd = balance
+        ? (Number(dao.priceUsd) * Number(balance)).toString()
+        : "0"
+
+      return {
+        id: dao.id,
+        name: dao.name,
+        ticker: dao.ticker,
+        avatar: dao.avatar,
+        marketCapUsd: dao.marketCapUsd.toString(),
+        priceUsd: dao.priceUsd.toString(),
+        balanceUsd,
+        isStarred: dao.stars.length > 0,
+        tokenInfo: {
+          tokenId: dao.tokenInfo.tokenId,
+          tokenAddress: dao.tokenInfo.tokenAddress,
+          isGraduated: dao.tokenInfo.isGraduated,
+          marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
+          price: dao.tokenInfo.price?.toString() ?? "",
+          balance: balance?.toString() ?? "0"
+        }
+      }
+    })
+
+    return {
+      list: portfolioList,
+      total,
+      pages: totalPages
+    }
+  }
   async checkNameExists(name: string) {
     return (
       (await db.dao.count({
@@ -168,16 +355,16 @@ class DaoService {
   async create(params: CreateDaoParams, userAddress: string) {
     const links: DaoLinks = []
     if (params.x) {
-      links.push({type: "x", value: params.x})
+      links.push({ type: "x", value: params.x })
     }
     if (params.telegram) {
-      links.push({type: "telegram", value: params.telegram})
+      links.push({ type: "telegram", value: params.telegram })
     }
     if (params.discord) {
-      links.push({type: "discord", value: params.discord})
+      links.push({ type: "discord", value: params.discord })
     }
     if (params.website) {
-      links.push({type: "website", value: params.website})
+      links.push({ type: "website", value: params.website })
     }
     const repoMeta = parseRepoUrl(params.url)
     const tokenInfo = await db.daoTokenInfo.upsert({
@@ -250,7 +437,7 @@ class DaoService {
   }
 
   async findByUrl(url: string) {
-    return await db.dao.findUnique({where: {url: url}})
+    return await db.dao.findUnique({ where: { url: url } })
   }
 
   async chart(tokenId: bigint, to: number, countBack: number, resolution: string) {
@@ -307,7 +494,7 @@ class DaoService {
       })
     )
 
-    return {data, noData: kineData.length < countBack}
+    return { data, noData: kineData.length < countBack }
   }
 
   async contents(daoId: string) {
@@ -386,7 +573,7 @@ class DaoService {
     if (!dao) {
       throw new Error("Not found dao!")
     }
-    const {platform, owner, repo} = parseRepoUrl(dao.url)
+    const { platform, owner, repo } = parseRepoUrl(dao.url)
     const repoInfo = await fetchRepoInfo(platform, owner, repo)
     return {
       ...dao,
@@ -417,16 +604,16 @@ class DaoService {
   async update(input: UpdateDaoParamsSchema, address: string) {
     const links: DaoLinks = []
     if (input.x) {
-      links.push({type: "x", value: input.x})
+      links.push({ type: "x", value: input.x })
     }
     if (input.telegram) {
-      links.push({type: "telegram", value: input.telegram})
+      links.push({ type: "telegram", value: input.telegram })
     }
     if (input.discord) {
-      links.push({type: "discord", value: input.discord})
+      links.push({ type: "discord", value: input.discord })
     }
     if (input.website) {
-      links.push({type: "website", value: input.website})
+      links.push({ type: "website", value: input.website })
     }
 
     return await db.dao.update({
@@ -441,18 +628,31 @@ class DaoService {
       }
     })
   }
-  async lockInfo(daoId:string){
-    const dao=await db.dao.findUnique({
-      where:{
-        id:daoId
+  async lockInfo(daoId: string) {
+    const dao = await db.dao.findUnique({
+      where: {
+        id: daoId
       },
-      
+
     })
-    if(!dao){
-      throw new CommonError(ErrorCode.BAD_PARAMS,"")
+    if (!dao) {
+      throw new CommonError(ErrorCode.BAD_PARAMS, "")
     }
     dao.tokenId
   }
+  async toggleStar(daoId: string, userAddress: string) {
+    const star = await db.daoStar.findUnique({
+      where: { daoId_userAddress: { daoId, userAddress } },
+    });
+
+    if (star) {
+      await db.daoStar.delete({
+        where: { daoId_userAddress: { daoId, userAddress } },
+      });
+    } else {
+      await db.daoStar.create({ data: { daoId, userAddress } });
+    }
+  };
 }
 
 export type DaoSearchResult = Awaited<ReturnType<typeof daoService.search>>
