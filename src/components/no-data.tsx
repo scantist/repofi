@@ -13,7 +13,7 @@ const NoData: React.FC<NoDataProps> = ({ size = 24, className = "", textClassNam
   return (
     <div className={cn("flex flex-col items-center justify-center", className)}>
       <SquareDashedMousePointer size={size} className=" text-primary mb-2" />
-      <p className={cn("text-sm text-gray-500", textClassName)}>{text}</p>
+      <div className={cn("text-sm text-gray-500", textClassName)}>{text}</div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import { DaoStatus } from "@prisma/client"
 import { type PaginationState, createColumnHelper } from "@tanstack/react-table"
 import { Star } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -17,9 +18,16 @@ interface Condition {
   search: string
   orderBy: "marketCap" | "latest"
   pagination: PaginationState
+  status: DaoStatus[]
+  starred: boolean
 }
 
-const PortfolioTable = () => {
+interface PortfolioTableProps {
+  onlyStarred: boolean
+  onlyLaunched: boolean
+}
+
+const PortfolioTable = ({ onlyStarred, onlyLaunched }: PortfolioTableProps) => {
   const columnHelper = createColumnHelper<DaoPortfolioResult["list"][number]>()
   const [condition, setCondition] = useState<Condition>({
     orderBy: "marketCap",
@@ -27,12 +35,16 @@ const PortfolioTable = () => {
     pagination: {
       pageSize: 10,
       pageIndex: 0
-    }
+    },
+    status: onlyLaunched ? [DaoStatus.LAUNCHED] : [DaoStatus.LAUNCHED, DaoStatus.PRE_LAUNCH, DaoStatus.INACTIVE],
+    starred: onlyStarred
   })
   const { data: response, isPending } = api.dao.portfolio.useQuery({
     ...condition,
     page: condition.pagination.pageIndex,
-    size: condition.pagination.pageSize
+    size: condition.pagination.pageSize,
+    status: onlyLaunched ? [DaoStatus.LAUNCHED] : [DaoStatus.LAUNCHED, DaoStatus.PRE_LAUNCH, DaoStatus.INACTIVE],
+    starred: onlyStarred
   })
   const router = useRouter()
   const columns = [
@@ -54,7 +66,7 @@ const PortfolioTable = () => {
       cell: (info) => (
         <div className={"flex flex-row gap-2 items-center"}>
           <div>{info.getValue()}</div>
-          {info.row.original.isStarred && <Star className={cn("w-4 h-4 hover:scale-125 fill-yellow-400 text-yellow-400  transition")} />}
+          <Star className={cn("w-4 h-4 transition", info.row.original.isStarred && "fill-yellow-400 text-yellow-400 ")} />
         </div>
       )
     }),
