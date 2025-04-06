@@ -54,10 +54,6 @@ const LaunchpadPage = async ({
             ensuring fair rewards, and promoting decentralized governance within the ecosystem.
           </div>
           <Link href="/create/bind">
-            {/*<button className="p-[3px] relative" type={"button"}>*/}
-            {/*  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg" />*/}
-            {/*  <div className="px-8 py-2  bg-black/80 rounded-[6px]  relative group transition duration-200 text-white hover:bg-transparent">Lit up borders</div>*/}
-            {/*</button>*/}
             <AiButton>Create New DAO To Start</AiButton>
           </Link>
           <div className={"bg-secondary mt-6 flex max-w-3xl flex-col justify-between rounded-lg px-4 py-7 md:flex-row md:px-8"}>

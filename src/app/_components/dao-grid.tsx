@@ -1,6 +1,7 @@
 "use client"
 import React, { type FC, useState } from "react"
 import DaoCard from "~/app/_components/dao-card"
+import DaoCardSkeleton from "~/app/_components/dao-card-skeleton"
 import LoadingSpinner from "~/app/_components/loading-spinner"
 import ListPagination from "~/components/list-pagination"
 import NoData from "~/components/no-data"
@@ -36,8 +37,12 @@ const DaoGrid: FC<Props> = ({
   console.log("response", response, pageable)
   if (isPending) {
     return (
-      <div className={"col-span-1 mt-6 sm:col-span-2 lg:col-span-3"}>
-        <LoadingSpinner size={64} className="my-8" text="Loading dao..." />
+      <div className={"grid grid-cols-1 gap-x-2 gap-y-5 sm:grid-cols-2 lg:grid-cols-3"}>
+        {Array(6)
+          .fill(null)
+          .map((_, index) => (
+            <DaoCardSkeleton key={`dao-skeleton-${index}`} />
+          ))}
       </div>
     )
   }
