@@ -33,7 +33,7 @@ const ContributorCard = () => {
     }
   }, [error, errorDescription])
   return (
-    <CardWrapper contentClassName={"min-h-95"}>
+    <CardWrapper contentClassName={"min-h-95 contributor"}>
       <div className={"rounded-lg bg-black/60 p-4 flex flex-col h-full"} style={{ minHeight: "inherit" }}>
         <div className={"text-xl font-medium flex flex-row justify-between items-center"}>
           <div className={"font-bold"}>Contributor Rank</div>

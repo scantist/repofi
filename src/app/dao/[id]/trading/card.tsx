@@ -1,14 +1,14 @@
 "use client"
 
+import TradingForm from "~/app/dao/[id]/trading/form"
 import CardWrapper from "~/components/card-wrapper"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
-import TradingForm from "~/app/dao/[id]/trading/form"
-import { type DaoDetailResult } from "~/server/service/dao"
+import type { DaoDetailResult } from "~/server/service/dao"
 
 const TradingCard = () => {
   return (
-    <CardWrapper>
-      <Tabs defaultValue="buy" className={"rounded-lg px-5 py-6"}>
+    <CardWrapper contentClassName={"trading"}>
+      <Tabs defaultValue="buy" className={"rounded-lg px-5 py-6 "}>
         <div className={"w-full px-6"}>
           <CardWrapper className={"w-full"}>
             <TabsList className={"text-md flex w-full flex-row items-center justify-around"}>
@@ -23,10 +23,10 @@ const TradingCard = () => {
         </div>
 
         <TabsContent value="buy" className="w-full">
-          <TradingForm mode="buy"/>
+          <TradingForm mode="buy" />
         </TabsContent>
         <TabsContent value="sell" className="w-full">
-          <TradingForm  mode="sell" />
+          <TradingForm mode="sell" />
         </TabsContent>
       </Tabs>
     </CardWrapper>

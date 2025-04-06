@@ -33,7 +33,7 @@ const TokenDistribution: React.FC = () => {
   }, [refresh, refetchTop10Holders])
 
   return (
-    <div className={"rounded-lg bg-black/60 p-4"}>
+    <div className={"rounded-lg bg-black/60 p-4 distribution"}>
       <div className={"text-xl font-bold"}>Token Distribution</div>
       <div className={"mt-3 flex flex-col gap-2 min-h-95"}>
         {isPending ? (

@@ -32,7 +32,6 @@ const IconComponent = ({ type, href }: { type: string; href: string }) => {
     return null
   }
   const IconComponent = socialIcons[type]
-  console.log("href: ", href, "type: ", type)
   return IconComponent ? (
     <Link href={href} target="_blank" rel="noopener noreferrer">
       <IconComponent className={"h-6 w-6 text-muted-foreground hover:text-muted-foreground/50"} />
@@ -84,8 +83,8 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
               </div>
               {linksNode}
             </div>
-            <div className={"flex flex-row items-end gap-x-4 "}>
-              <Footprints className={"cursor-pointer text-primary-foreground hover:text-primary transition-all"} onClick={handleClickStart} aria-label={"Dao Tour"} />
+            <div className={"flex flex-row items-end gap-x-4 action"}>
+              <Footprints className={"cursor-pointer text-primary-foreground hover:text-primary transition-all "} onClick={handleClickStart} aria-label={"Dao Tour"} />
               {data?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && (
                 <a href={`/dao/${id}/edit`}>
                   <Settings className={"text-primary-foreground hover:text-primary transition-all"} />

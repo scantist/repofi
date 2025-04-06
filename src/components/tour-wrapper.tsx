@@ -9,6 +9,51 @@ export const TourWrapper = ({ children }: { children: React.ReactNode }) => {
       selector: ".banner",
       content: "This is your DAO basic information.",
       position: "center"
+    },
+    {
+      selector: ".action",
+      content: "You can get actions for the DAO.",
+      position: "center"
+    },
+    {
+      selector: ".token-info",
+      content: "The block is your DAO token information.",
+      position: "center"
+    },
+    {
+      selector: ".progress",
+      content: "The block is your DAO current progress.",
+      position: "bottom"
+    },
+    {
+      selector: ".progress",
+      content: "The block is your DAO current progress.",
+      position: "bottom"
+    },
+    {
+      selector: ".trade-view",
+      content: "The block is your DAO trade view.",
+      position: "bottom"
+    },
+    {
+      selector: ".trading",
+      content: "You can trade the DAO token.",
+      position: "bottom"
+    },
+    {
+      selector: ".contributor",
+      content: "The block is your repo contributor rank.",
+      position: "top"
+    },
+    {
+      selector: ".distribution",
+      content: "The block is your DAO token distribution.",
+      position: "top"
+    },
+    {
+      selector: ".message-board",
+      content: "You can communicate with your DAO members.",
+      position: "top"
     }
   ]
 

@@ -25,7 +25,7 @@ const DaoContent = () => {
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
         <CardWrapper>
-          <div className={"grid grid-cols-2 sm:grid-cols-4 gap-y-4 justify-between rounded-lg bg-black/50 px-3 sm:px-12 py-3"}>
+          <div className={"grid grid-cols-2 sm:grid-cols-4 gap-y-4 justify-between rounded-lg bg-black/50 px-3 sm:px-12 py-3 token-info"}>
             <div className={"text-center"}>
               <div className={"text-sm font-thin"}>Token ID</div>
               <div className={"mt-2 text-xl"}>{detail.tokenId}</div>
@@ -73,9 +73,9 @@ const DaoContent = () => {
           </div>
         </CardWrapper>
         <CardWrapper>
-          <div className={"flex flex-row gap-4 px-4 md:px-12 py-3"}>{graduated ? <PostProgress /> : <PreProgress />}</div>
+          <div className={"flex flex-row gap-4 px-4 md:px-12 py-3 progress"}>{graduated ? <PostProgress /> : <PreProgress />}</div>
         </CardWrapper>
-        <CardWrapper className={"flex-1"} contentClassName={"min-h-[370px] h-full max-h-none"}>
+        <CardWrapper className={"flex-1"} contentClassName={"min-h-[370px] h-full max-h-none trade-view"}>
           {graduated ? (
             <GraduatedChart uniswapV3Pair={detail.tokenInfo.uniswapV3Pair} />
           ) : (
