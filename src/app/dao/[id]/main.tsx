@@ -1,7 +1,8 @@
 "use client"
 
 import { TooltipTrigger } from "@radix-ui/react-tooltip"
-import { CircleHelp, Info } from "lucide-react"
+import { Info } from "lucide-react"
+import dynamic from "next/dynamic"
 import { PostProgress, PreProgress } from "~/app/dao/[id]/_components/data-progress"
 import GraduatedChart from "~/app/dao/[id]/_components/graduated-chart"
 import { useDaoContext } from "~/app/dao/[id]/context"
@@ -9,18 +10,46 @@ import MessageList from "~/app/dao/[id]/message/message-list"
 import PostTradingCard from "~/app/dao/[id]/post-trading/card"
 import TradingCard from "~/app/dao/[id]/trading/card"
 import ContributorCard from "~/app/dashboard/_components/contributor-card"
-import { useAuth } from "~/components/auth/auth-context"
 import CardWrapper from "~/components/card-wrapper"
 import TradeView from "~/components/trade-view"
+import { BoxReveal } from "~/components/ui/box-reveal"
+import { Button } from "~/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider } from "~/components/ui/tooltip"
 import { formatMoney } from "~/lib/utils" // 确保路径正确
 import { defaultChain, shortenAddress } from "~/lib/web3"
+import waitingIcon from "~/public/lottie/waiting.json"
 import TokenDistribution from "./token-distribution/token-distrubution"
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false })
 
 const DaoContent = () => {
   const { detail } = useDaoContext()
-  const { isAuthenticated } = useAuth()
   const graduated = detail.tokenInfo.isGraduated
+  if ((detail?.tokenInfo?.assetTokenAddress?.length ?? 0) === 0) {
+    return (
+      <CardWrapper className={"my-10 "} contentClassName={""}>
+        <div className={"px-3 sm:px-12 py-10 flex flex-col justify-center items-center"}>
+          <Lottie animationData={waitingIcon} className="h-72 w-72" loop={true} autoplay={true} />
+          <BoxReveal duration={0.5}>
+            <p className="text-lg md:text-xl text-center mt-6 md:text-md font-bold">
+              This DAO is being initialized,
+              <br />
+              please check later.
+            </p>
+          </BoxReveal>
+          <Button
+            className={"mt-5"}
+            onClick={() => {
+              window.location.reload()
+            }}
+          >
+            Refresh
+          </Button>
+        </div>
+      </CardWrapper>
+    )
+  }
+
   return (
     <div className={"my-10 grid w-full grid-cols-1 gap-8 md:grid-cols-3"}>
       <div className={"col-span-1 flex flex-col gap-4 md:col-span-2"}>
