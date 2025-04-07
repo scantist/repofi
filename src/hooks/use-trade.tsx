@@ -235,7 +235,6 @@ export function useTrade({
   })
 
   const shouldBuyMax = !!tradeSimulateError && isOverLaunchPoint(tradeSimulateError.message)
-
   const startTrading = useCallback(() => {
     if (!launchPadAddress) {
       toast.error("Launch pad not available")

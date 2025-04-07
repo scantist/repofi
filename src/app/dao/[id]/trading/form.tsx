@@ -121,11 +121,10 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
     setTradeTxHash(tradeReceipt.transactionHash)
   }
   useEffect(() => {
-    if (shouldBuyMax && maxBuyAssetAmountWithTax) {
+    if (maxBuyAssetAmountWithTax&&amountOut=== undefined) {
       updateAmountIn(maxBuyAssetAmountWithTax, assetTokenInfo?.decimals)
     }
-  }, [shouldBuyMax, maxBuyAssetAmountWithTax])
-
+  }, [maxBuyAssetAmountWithTax,amountOut])
   return (
     <div className={"relative w-full"}>
       <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading} approved={hasBeenApproved && !shouldBuyMax} />
