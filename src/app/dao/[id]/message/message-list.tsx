@@ -11,7 +11,7 @@ import ListPagination from "~/components/list-pagination"
 import NoData from "~/components/no-data"
 import { Button } from "~/components/ui/button"
 import type { Pageable } from "~/lib/schema"
-import { cn } from "~/lib/utils"
+import { cn, compareStringToUpperCase } from "~/lib/utils"
 import { shortenAddress } from "~/lib/web3"
 import { api } from "~/trpc/react"
 
@@ -55,7 +55,7 @@ const MessageList = () => {
             <span className={"ml-6 text-xs text-gray-400"}>{formatDistanceToNow(item.createdAt)}</span>
           </div>
           <div className={"text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"}>
-            {address === item.createdBy && <DeleteMessage messageId={item.id} />}
+            {compareStringToUpperCase(address, item.createdBy) && <DeleteMessage messageId={item.id} />}
             <CreateMessage daoId={detail.id} replyMessage={item}>
               <div>Reply</div>
             </CreateMessage>
@@ -77,7 +77,7 @@ const MessageList = () => {
                       <span className="ml-2 text-gray-500">{formatDistanceToNow(reply.createdAt)}</span>
                     </div>
                     <div className={"text-primary-foreground flex cursor-pointer flex-row items-center gap-4 text-xs"}>
-                      {address === reply.createdBy && <DeleteMessage messageId={reply.id} />}
+                      {compareStringToUpperCase(address, reply.createdBy) && <DeleteMessage messageId={reply.id} />}
                       <CreateMessage daoId={detail.id} replyMessage={reply}>
                         <div>Reply</div>
                       </CreateMessage>

@@ -1,6 +1,6 @@
-import {clsx, type ClassValue} from "clsx"
-import {twMerge} from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx"
 import Decimal from "decimal.js"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -27,19 +27,19 @@ const moneyFormatterWithoutGrouping = new Intl.NumberFormat("en-US", {
 export function getNumberWithUnit(num: number) {
   const absNum = Math.abs(num)
   if (absNum >= 1e9) {
-    return {value: num / 1e9, unit: "B"} // Billion
+    return { value: num / 1e9, unit: "B" } // Billion
   }
   if (absNum >= 1e6) {
-    return {value: num / 1e6, unit: "M"} // A Million
+    return { value: num / 1e6, unit: "M" } // A Million
   }
   if (absNum >= 1e3) {
-    return {value: num / 1e3, unit: "K"} // A Thousand
+    return { value: num / 1e3, unit: "K" } // A Thousand
   }
-  return {value: num, unit: ""}
+  return { value: num, unit: "" }
 }
 
 export function formatNumberWithUnit(num: number) {
-  const {value, unit} = getNumberWithUnit(num)
+  const { value, unit } = getNumberWithUnit(num)
   return `${formatMoney(value, false, false)}${unit}`
 }
 
@@ -50,13 +50,13 @@ export const formatMoney = (amount: string | number, grouping = true, shortForma
   return shortFormat ? formatNumberWithUnit(numberAmount) : grouping ? moneyFormatter.format(numberAmount) : moneyFormatterWithoutGrouping.format(numberAmount)
 }
 
-export const formatSignificantDigits = (value: string | number, sigDigits: number = 4): string => {
-  const num = typeof value === 'string' ? parseFloat(value) : value;
-  if (isNaN(num)) return '0';
-  
-  const formatted = num.toPrecision(sigDigits);
-  return parseFloat(formatted).toString(); // Remove trailing zeros
-};
+export const formatSignificantDigits = (value: string | number, sigDigits = 4): string => {
+  const num = typeof value === "string" ? Number.parseFloat(value) : value
+  if (Number.isNaN(num)) return "0"
+
+  const formatted = num.toPrecision(sigDigits)
+  return Number.parseFloat(formatted).toString() // Remove trailing zeros
+}
 
 export async function convertToBase64(file: File) {
   return new Promise<string | undefined>((resolve, reject) => {
@@ -136,7 +136,6 @@ export function prefixLogger(logger: Console, prefix: string): Console {
       const originalMethod = target[prop as keyof Console]
       if (typeof originalMethod === "function" && ["log", "info", "warn", "error", "debug"].includes(prop as string)) {
         return (...args: unknown[]) => {
-
           // biome-ignore lint/complexity/noBannedTypes: <explanation>
           return (originalMethod as Function).call(target, prefix, ...args) as undefined
         }
@@ -168,83 +167,91 @@ export function formatAdaptiveDecimal(value: number | string): string {
 
   if (absNum >= 0.01) {
     return num.toFixed(2)
-  }if (absNum === 0) {
+  }
+  if (absNum === 0) {
     return "0.00"
   }
-    const strNum = absNum.toString()
+  const strNum = absNum.toString()
 
-    if (strNum.includes("e")) {
-      const parts = strNum.split("e")
-      const mantissa = parts[0]
-      const exponent = Number.parseInt(parts[1] ?? "0")
+  if (strNum.includes("e")) {
+    const parts = strNum.split("e")
+    const mantissa = parts[0]
+    const exponent = Number.parseInt(parts[1] ?? "0")
 
-      if (exponent < 0) {
-        const absExponent = Math.abs(exponent)
-        const mantissaParts = mantissa?.split(".") ?? []
-        const intPart = mantissaParts[0] ?? ""
-        const decPart = mantissaParts[1] ?? ""
+    if (exponent < 0) {
+      const absExponent = Math.abs(exponent)
+      const mantissaParts = mantissa?.split(".") ?? []
+      const intPart = mantissaParts[0] ?? ""
+      const decPart = mantissaParts[1] ?? ""
 
-        let result = "0."
-        for (let i = 0; i < absExponent - intPart.length; i++) {
-          result += "0"
-        }
-
-        const significantDigits = (intPart + decPart).replace(/^0+/, "")
-
-        let hasMoreNonZero = false
-        for (let i = 1; i < significantDigits.length; i++) {
-          if (significantDigits[i] !== "0") {
-            hasMoreNonZero = true
-            break
-          }
-        }
-
-        if (hasMoreNonZero) {
-          result += significantDigits.substring(0, 2)
-        } else {
-          result += significantDigits[0]
-        }
-
-        return num < 0 ? `-${result}` : result
+      let result = "0."
+      for (let i = 0; i < absExponent - intPart.length; i++) {
+        result += "0"
       }
-    }
 
-    const decimalPart = strNum.includes(".") ? strNum.split(".")[1] : ""
+      const significantDigits = (intPart + decPart).replace(/^0+/, "")
 
-    if (!decimalPart) {
-      return num.toFixed(2)
-    }
-
-    let firstNonZeroPos = -1
-    for (let i = 0; i < decimalPart.length; i++) {
-      if (decimalPart[i] !== "0") {
-        firstNonZeroPos = i
-        break
+      let hasMoreNonZero = false
+      for (let i = 1; i < significantDigits.length; i++) {
+        if (significantDigits[i] !== "0") {
+          hasMoreNonZero = true
+          break
+        }
       }
-    }
 
-    if (firstNonZeroPos === -1) {
-      return "0.00"
-    }
-
-    let hasMoreNonZero = false
-    for (let i = firstNonZeroPos + 1; i < decimalPart.length; i++) {
-      if (decimalPart[i] !== "0") {
-        hasMoreNonZero = true
-        break
+      if (hasMoreNonZero) {
+        result += significantDigits.substring(0, 2)
+      } else {
+        result += significantDigits[0]
       }
+
+      return num < 0 ? `-${result}` : result
     }
+  }
 
-    let result = "0."
-    for (let i = 0; i < firstNonZeroPos; i++) {
-      result += "0"
+  const decimalPart = strNum.includes(".") ? strNum.split(".")[1] : ""
+
+  if (!decimalPart) {
+    return num.toFixed(2)
+  }
+
+  let firstNonZeroPos = -1
+  for (let i = 0; i < decimalPart.length; i++) {
+    if (decimalPart[i] !== "0") {
+      firstNonZeroPos = i
+      break
     }
+  }
 
-    result += decimalPart[firstNonZeroPos]
+  if (firstNonZeroPos === -1) {
+    return "0.00"
+  }
 
-    if (hasMoreNonZero) {
-      result += decimalPart[firstNonZeroPos + 1]
+  let hasMoreNonZero = false
+  for (let i = firstNonZeroPos + 1; i < decimalPart.length; i++) {
+    if (decimalPart[i] !== "0") {
+      hasMoreNonZero = true
+      break
     }
+  }
 
-    return num < 0 ? `-${result}` : result
+  let result = "0."
+  for (let i = 0; i < firstNonZeroPos; i++) {
+    result += "0"
+  }
+
+  result += decimalPart[firstNonZeroPos]
+
+  if (hasMoreNonZero) {
+    result += decimalPart[firstNonZeroPos + 1]
+  }
+
+  return num < 0 ? `-${result}` : result
+}
+
+export const compareStringToUpperCase = (str1?: string | null, str2?: string | null): boolean => {
+  const upperStr1 = str1?.toUpperCase() ?? ""
+  const upperStr2 = str2?.toUpperCase() ?? ""
+
+  return upperStr1 === upperStr2
 }

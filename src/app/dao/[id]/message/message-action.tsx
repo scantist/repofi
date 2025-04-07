@@ -1,18 +1,19 @@
 "use client"
 
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "~/components/ui/drawer"
-import { Button } from "~/components/ui/button"
-import useMediaQuery from "~/hooks/use-media-query"
-import { api } from "~/trpc/react"
-import { Label } from "~/components/ui/label"
-import { Textarea } from "~/components/ui/textarea"
-import React, { useState } from "react"
-import { toast } from "sonner"
-import { shortenAddress } from "~/lib/web3"
-import { formatDistanceToNow } from "date-fns"
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover"
-import { Trash2, Loader2 } from "lucide-react"
 import { PopoverClose } from "@radix-ui/react-popover"
+import { formatDistanceToNow } from "date-fns"
+import { Loader2, Trash2 } from "lucide-react"
+import type React from "react"
+import { useState } from "react"
+import { toast } from "sonner"
+import { Button } from "~/components/ui/button"
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "~/components/ui/drawer"
+import { Label } from "~/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover"
+import { Textarea } from "~/components/ui/textarea"
+import useMediaQuery from "~/hooks/use-media-query"
+import { shortenAddress } from "~/lib/web3"
+import { api } from "~/trpc/react"
 
 export const CreateMessage = ({
   children,
@@ -127,7 +128,7 @@ export const DeleteMessage = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Trash2 className="size-3" />
+        <Trash2 className="size-3 hover:text-red-500 transition-all" />
       </PopoverTrigger>
       <PopoverContent className="w-72">
         <div className="space-y-4">
