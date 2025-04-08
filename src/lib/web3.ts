@@ -1,14 +1,14 @@
-import { base, sepolia } from "@reown/appkit/networks"
+import { bsc, sepolia } from "@reown/appkit/networks"
 import Decimal from "decimal.js"
-import { http, createPublicClient } from "viem"
+import { createPublicClient, http } from "viem"
 import { env } from "~/env"
 
 const W_COIN_ADDRESSES: Record<number, `0x${string}`> = {
-  [base.id]: "0x4200000000000000000000000000000000000006", // Base Mainnet WETH
+  [bsc.id]: "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c", // BSC Mainnet WBNB
   [sepolia.id]: "0xfff9976782d46cc05630d1f6ebab18b2324d6b14" // Sepolia WETH
 } as const
-export const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === base.id
-export const defaultChain = isMainNet ? base : sepolia
+export const isMainNet = env.NEXT_PUBLIC_CHAIN_ID === bsc.id
+export const defaultChain = isMainNet ? bsc : sepolia
 export const defaultWCoinAddress = W_COIN_ADDRESSES[defaultChain.id]
 
 export const getPublicClient = () => {
