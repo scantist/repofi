@@ -1,11 +1,12 @@
 "use server"
 import { Storage } from "@google-cloud/storage"
-import { type HomeSearchParams } from "~/lib/schema"
-import { daoService } from "~/server/service/dao"
+import { env } from "~/env"
+import type { HomeSearchParams } from "~/lib/schema"
 import { auth } from "~/server/auth"
+import { daoService } from "~/server/service/dao"
 
 // Google Storage
-const GoogleStorageBucket = "repofi"
+const GoogleStorageBucket = env.GOOGLE_STORAGE_BUCKET ?? "repofi"
 const storage = new Storage()
 
 export const uploadFile = async ({
