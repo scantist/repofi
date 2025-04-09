@@ -1,3 +1,4 @@
+import { bsc } from "viem/chains"
 import DextoolsChart from "~/components/dextools/chart"
 import NoData from "~/components/no-data"
 import { defaultChain } from "~/lib/web3"
@@ -10,10 +11,10 @@ const GraduatedChart = ({ uniswapV3Pair }: { uniswapV3Pair?: string | null }) =>
       </div>
     )
   }
-
+  const chainId = defaultChain.id === bsc.id ? 'bnb' : defaultChain.name.toLowerCase()
   return (
     <div className="flex w-full flex-col rounded-xl overflow-clip justify-center items-center h-[370]">
-      <DextoolsChart pair={uniswapV3Pair} chainId={defaultChain.name.toLowerCase()} />
+      <DextoolsChart pair={uniswapV3Pair} chainId={chainId} />
     </div>
   )
 }
