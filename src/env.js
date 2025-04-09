@@ -39,7 +39,7 @@ export const env = createEnv({
       .optional(),
     TOOL_REPO_GITHUB_ACCESS_TOKENS: z.string(),
     GOOGLE_APPLICATION_CREDENTIALS: z.string(),
-    GOOGLE_STORAGE_BUCKET: z.string().optional().default("repofi"),
+    NEXT_GOOGLE_STORAGE_BUCKET: z.string().optional().default("repofi"),
     CONTRACT_POC_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid poc address"),
     CONTRACT_TOKENLOCKER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid tokenlocker address")
   },
@@ -71,7 +71,7 @@ export const env = createEnv({
     REDIS_DB: process.env.REDIS_DB,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD,
     GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-    GOOGLE_STORAGE_BUCKET: process.env.GOOGLE_STORAGE_BUCKET,
+    NEXT_GOOGLE_STORAGE_BUCKET: process.env.NEXT_GOOGLE_STORAGE_BUCKET,
     CHAIN_RPC_URL: process.env.CHAIN_RPC_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,

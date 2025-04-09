@@ -6,7 +6,7 @@ import { auth } from "~/server/auth"
 import { daoService } from "~/server/service/dao"
 
 // Google Storage
-const GoogleStorageBucket = env.GOOGLE_STORAGE_BUCKET ?? "repofi"
+const GoogleStorageBucket = env.NEXT_GOOGLE_STORAGE_BUCKET ?? "repofi"
 const storage = new Storage()
 
 export const uploadFile = async ({
