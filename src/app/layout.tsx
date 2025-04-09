@@ -56,7 +56,8 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const session = await auth()
   const wagmiState = cookieToInitialState(wagmiConfig, (await headers()).get("cookie"))
-  const version = env.NEXT_PUBLIC_GIT_SHA?.slice(0, 7) ?? "dev";
+  const version = "BETA"
+  const hash = env.NEXT_PUBLIC_GIT_SHA?.slice(0, 7) ?? "DEV"
 
   return (
     <html lang="en" className={`dark ${GeistSans.variable}`}>
@@ -96,6 +97,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
                       <Badge variant="outline" className="font-mono text-xs font-normal text-muted-foreground">
                         {version}
+                      </Badge>
+                      <Badge variant="outline" className="hidden">
+                        {hash}
                       </Badge>
                     </div>
                     <div className="flex items-center gap-4 sm:gap-8">

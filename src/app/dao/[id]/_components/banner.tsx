@@ -67,7 +67,7 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
   const handleClickStart = () => {
     setIsOpen(true)
   }
-
+  console.log("data?.createdBy", data?.createdBy, "session?.address", session?.address)
   return (
     <BannerWrapper className={"flex w-full flex-col"}>
       <div className={"my-10 flex w-full flex-col gap-8 md:flex-row"}>
