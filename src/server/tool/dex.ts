@@ -1,9 +1,10 @@
-import {defaultChain, defaultWCoinAddress, getPublicClient} from "~/lib/web3"
-import {z} from "zod"
-import Pool from "~/lib/abi/UniswapV3Pool.json";
-import {readContract} from "viem/actions";
-import {erc20Abi, ethAddress} from "viem";
 import Decimal from "decimal.js";
+import { erc20Abi, ethAddress } from "viem";
+import { readContract } from "viem/actions";
+import { bsc, sepolia } from "viem/chains";
+import { z } from "zod";
+import Pool from "~/lib/abi/UniswapV3Pool.json";
+import { defaultChain, defaultWCoinAddress, getPublicClient } from "~/lib/web3";
 
 
 const tokenPriceSchema = z.array(
@@ -113,7 +114,19 @@ export async function fetchTokenSpotPrice(
   }
 }
 
-export async function fetchTokenPriceUsd(tokenAddress: string, chain = defaultChain.name.toLowerCase()) {
+function parseChainId(chain = defaultChain) {
+  switch (chain) {
+    case bsc:
+      return "bsc";
+    case sepolia:
+      return "sepolia";
+    default:
+      return "bsc";
+  }
+}
+
+export async function fetchTokenPriceUsd(tokenAddress: string) {
+  const chainId = parseChainId(defaultChain)
   const controller = new AbortController()
   const timeoutId = setTimeout(() => {
     console.log(`[Tool|Dex|Token|Price] Timeout fetching price for ${tokenAddress}`)
@@ -125,10 +138,10 @@ export async function fetchTokenPriceUsd(tokenAddress: string, chain = defaultCh
       realTokenAddress = defaultWCoinAddress as string
     }
     const response = await fetch(
-      `https://api.dexscreener.com/tokens/v1/${chain}/${realTokenAddress}`,
+      `https://api.dexscreener.com/tokens/v1/${chainId}/${realTokenAddress}`,
       {
         signal: controller.signal,
-        next: {revalidate: 60}
+        next: { revalidate: 60 }
       },
     )
     clearTimeout(timeoutId)
@@ -146,16 +159,17 @@ export async function fetchTokenPriceUsd(tokenAddress: string, chain = defaultCh
 }
 
 
-export async function fetchPairPriceUsd(pairAddress: string, chain = defaultChain.name.toLowerCase()) {
+export async function fetchPairPriceUsd(pairAddress: string) {
+  const chainId = parseChainId(defaultChain)
   const controller = new AbortController()
   const timeoutId = setTimeout(() => {
     console.log(`[Tool|Dex|Pair|Price] Timeout fetching price for ${pairAddress}`)
     controller.abort()
   }, 10000)
   try {
-    const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/${chain}/${pairAddress}`, {
+    const response = await fetch(`https://api.dexscreener.com/latest/dex/pairs/${chainId}/${pairAddress}`, {
       signal: controller.signal,
-      next: {revalidate: 60}
+      next: { revalidate: 60 }
     })
     clearTimeout(timeoutId)
     const data = pairPriceSchema.parse(await response.json())

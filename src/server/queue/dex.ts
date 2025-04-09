@@ -24,11 +24,15 @@ const syncAssetPrice = async (logger: typeof console) => {
     })
     const updates = assets.map(async (asset) => {
       const usdPrice = await fetchTokenPriceUsd(asset.address)
+      if (!usdPrice || Number.isNaN(usdPrice) || usdPrice <= 0) {
+        logger.error(`Failed to fetch price for asset ${asset.address}`)
+        return undefined
+      }
       return db.assetToken.update({
         where: { address: asset.address },
         data: { priceUsd: usdPrice }
       })
-    })
+    }).filter((update) => update !== undefined)
     await Promise.all(updates)
     logger.info("Successfully synced prices for all allowed assets")
   } catch (error) {
@@ -140,11 +144,9 @@ const {
 const initQueue = async () => {
   await _initQueue()
   const queue = await getQueue()
-  // if (process.env.NODE_ENV === 'production') {
-  //   await queue.upsertJobScheduler("dex-sync-asset-price", {
-  //     every: 300 * 1000, // 5 minutes
-  //   });
-  // }
+  await queue.upsertJobScheduler("dex-sync-asset-price", {
+    every: 300 * 1000, // 5 minutes
+  });
   await queue.upsertJobScheduler("dex-sync-launching-dao-metrics", {
     every: 300 * 1000 // 5 minutes
   })
