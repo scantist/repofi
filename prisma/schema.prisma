@@ -65,7 +65,8 @@ enum DaoType {
 
 enum DaoStatus {
   INACTIVE
-  PRE_LAUNCH
+  PRE_LAUNCH //
+  LAUNCHING
   LAUNCHED
 }
 
@@ -117,7 +118,7 @@ model Dao {
   createdAt    DateTime    @default(now()) @map("created_at")
   updatedAt    DateTime    @default(now()) @updatedAt @map("updated_at")
   createdBy    String      @map("created_by") @db.VarChar(255)
-  tokenId      BigInt      @unique @map("token_id") @db.BigInt
+  tokenId      BigInt?     @unique @map("token_id") @db.BigInt
   links        Json        @default("[]")
   status       DaoStatus   @default(PRE_LAUNCH) @map("status")
   platform     DaoPlatform @default(GITHUB) @map("platform")
@@ -125,7 +126,7 @@ model Dao {
   priceUsd     Decimal     @default(0) @map("price_usd") @db.Decimal(50, 18)
 
   creator      User           @relation(fields: [createdBy], references: [address])
-  tokenInfo    DaoTokenInfo   @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
+  tokenInfo    DaoTokenInfo?  @relation(fields: [tokenId], references: [tokenId], onUpdate: Cascade, onDelete: Cascade)
   messages     ForumMessage[]
   stars        DaoStar[]
   contributors Contributor[]

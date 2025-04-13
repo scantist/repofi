@@ -14,6 +14,9 @@ export const daoRouter = createTRPCRouter({
   create: protectedProcedure.input(createDaoParamsSchema).mutation(async ({ ctx, input }) => {
     return await daoService.create(input, ctx.session!.address)
   }),
+  fundraise: protectedProcedure.input(z.object({ daoId: z.string(), tokenId: z.bigint().min(1n, { message: "Token ID is required." }) })).mutation(async ({ ctx, input }) => {
+    return await daoService.fundraise(input.daoId, input.tokenId, ctx.session!.address)
+  }),
   update: protectedProcedure.input(updateDaoParamsSchema).mutation(async ({ ctx, input }) => {
     return await daoService.update(input, ctx.session!.address)
   }),

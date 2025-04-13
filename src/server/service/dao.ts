@@ -1,4 +1,4 @@
-import { DaoStatus, type Prisma } from "@prisma/client"
+import { type Prisma, DaoStatus } from "@prisma/client"
 import { CommonError, ErrorCode } from "~/lib/error"
 import type { CreateDaoParams, DaoLinks, HomeSearchParams, Pageable, UpdateDaoParamsSchema } from "~/lib/schema"
 import { db } from "~/server/db"
@@ -102,13 +102,13 @@ class DaoService {
         },
         stars: userAddress
           ? {
-              where: {
-                userAddress
-              },
-              select: {
-                userAddress: true
-              }
+            where: {
+              userAddress
+            },
+            select: {
+              userAddress: true
             }
+          }
           : false
       },
       where: whereOptions,
@@ -130,9 +130,9 @@ class DaoService {
         license: repoInfo.license?.spdx_id,
         tokenInfo: {
           ...dao.tokenInfo,
-          marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
-          totalSupply: dao.tokenInfo.totalSupply?.toString() ?? "",
-          holderCount: dao.tokenInfo.holderCount.toString()
+          marketCap: dao.tokenInfo?.marketCap?.toString() ?? "",
+          totalSupply: dao.tokenInfo?.totalSupply?.toString() ?? "",
+          holderCount: dao.tokenInfo?.holderCount.toString()
         }
       })
     }
@@ -321,7 +321,7 @@ class DaoService {
 
     // 处理返回数据
     const portfolioList = data.map((dao) => {
-      const balance = dao.tokenInfo.isGraduated ? dao.tokenInfo.graduationHolders[0]?.balance : dao.tokenInfo.launchHolders[0]?.balance
+      const balance = dao.tokenInfo?.isGraduated ? dao.tokenInfo.graduationHolders[0]?.balance : dao.tokenInfo?.launchHolders[0]?.balance
 
       const balanceUsd = balance ? (Number(dao.priceUsd) * Number(balance)).toString() : "0"
 
@@ -337,13 +337,13 @@ class DaoService {
         balanceUsd,
         isStarred: dao.stars.length > 0,
         tokenInfo: {
-          tokenId: dao.tokenInfo.tokenId,
-          tokenAddress: dao.tokenInfo.tokenAddress,
-          isGraduated: dao.tokenInfo.isGraduated,
-          marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
-          price: dao.tokenInfo.price?.toString() ?? "",
+          tokenId: dao.tokenInfo?.tokenId,
+          tokenAddress: dao.tokenInfo?.tokenAddress,
+          isGraduated: dao.tokenInfo?.isGraduated,
+          marketCap: dao.tokenInfo?.marketCap?.toString() ?? "",
+          price: dao.tokenInfo?.price?.toString() ?? "",
           balance: balance?.toString() ?? "0",
-          holderCount: dao.tokenInfo.holderCount.toString()
+          holderCount: dao.tokenInfo?.holderCount.toString()
         }
       }
     })
@@ -389,18 +389,6 @@ class DaoService {
       links.push({ type: "website", value: params.website })
     }
     const repoMeta = parseRepoUrl(params.url)
-    const tokenInfo = await db.daoTokenInfo.upsert({
-      where: {
-        tokenId: params.tokenId
-      },
-      update: {},
-      create: {
-        tokenId: params.tokenId,
-        name: params.name,
-        ticker: params.ticker,
-        creator: userAddress
-      }
-    })
     const dao = await db.dao.create({
       data: {
         name: params.name,
@@ -410,7 +398,6 @@ class DaoService {
         type: params.type,
         avatar: params.avatar,
         createdBy: userAddress,
-        tokenId: tokenInfo.tokenId,
         links,
         status: DaoStatus.PRE_LAUNCH,
         platform: repoMeta.platform
@@ -419,6 +406,46 @@ class DaoService {
     await emitContributorInit(dao.id, dao.url)
     return dao
     //TODO 刷新缓存
+  }
+
+  async fundraise(daoId: string, tokenId: bigint, userAddress: string) {
+    return await db.$transaction(async (tx) => {
+      const dao = await tx.dao.findUnique({
+        where: {
+          id: daoId,
+          createdBy: userAddress
+        }
+      })
+
+      if (!dao) {
+        throw new CommonError(ErrorCode.BAD_PARAMS, "Cannot find dao")
+      }
+      if (dao.status !== DaoStatus.PRE_LAUNCH) {
+        throw new CommonError(ErrorCode.BAD_PARAMS, "Dao status is not pre-launch")
+      }
+      await tx.daoTokenInfo.upsert({
+        where: {
+          tokenId: tokenId
+        },
+        update: {},
+        create: {
+          tokenId: tokenId,
+          name: dao.name,
+          ticker: dao.ticker,
+          creator: dao.createdBy,
+        }
+      })
+
+      return await tx.dao.update({
+        where: {
+          id: daoId
+        },
+        data: {
+          tokenId: tokenId,
+          status: DaoStatus.LAUNCHING,
+        }
+      })
+    })
   }
 
   async repoInfo(url: string) {
@@ -610,14 +637,14 @@ class DaoService {
       license: repoInfo.license?.spdx_id,
       tokenInfo: {
         ...dao.tokenInfo,
-        marketCap: dao.tokenInfo.marketCap?.toString() ?? "",
-        totalSupply: dao.tokenInfo.totalSupply?.toString() ?? "",
-        holderCount: dao.tokenInfo.holderCount.toString(),
-        liquidity: dao.tokenInfo.liquidity?.toString() ?? "",
-        price: dao.tokenInfo.price?.toString() ?? "",
-        unlockRatio: dao.tokenInfo.unlockRatio?.toString() ?? "",
-        salesRatio: dao.tokenInfo.salesRatio?.toString() ?? "",
-        raisedAssetAmount: dao.tokenInfo.raisedAssetAmount?.toString() ?? ""
+        marketCap: dao.tokenInfo?.marketCap?.toString() ?? "",
+        totalSupply: dao.tokenInfo?.totalSupply?.toString() ?? "",
+        holderCount: dao.tokenInfo?.holderCount.toString(),
+        liquidity: dao.tokenInfo?.liquidity?.toString() ?? "",
+        price: dao.tokenInfo?.price?.toString() ?? "",
+        unlockRatio: dao.tokenInfo?.unlockRatio?.toString() ?? "",
+        salesRatio: dao.tokenInfo?.salesRatio?.toString() ?? "",
+        raisedAssetAmount: dao.tokenInfo?.raisedAssetAmount?.toString() ?? ""
       }
     }
   }

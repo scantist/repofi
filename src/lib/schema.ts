@@ -47,8 +47,7 @@ export const createDaoParamsSchema = z.object({
   x: z.string().url().optional().or(z.literal("")),
   telegram: z.string().url().optional().or(z.literal("")),
   discord: z.string().url().optional().or(z.literal("")),
-  website: z.string().url().optional().or(z.literal("")),
-  tokenId: z.bigint().min(1n, { message: "Token ID is required." })
+  website: z.string().url().optional().or(z.literal(""))
 })
 export const updateDaoParamsSchema = z.object({
   daoId:z.string({message:"DAO id is required."}),
