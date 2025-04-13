@@ -15,9 +15,9 @@ import LogoRepoIcon from "~/components/icons/logo-repo-icon"
 import Nav from "~/components/nav"
 import { QueryClientReactProvider } from "~/components/query-client/query-client-provider"
 import { Badge } from "~/components/ui/badge"
+import { env } from "~/env"
 import { auth } from "~/server/auth"
 import { TRPCReactProvider } from "~/trpc/react"
-import { env } from "~/env"
 
 // const sans = Space_Grotesk({
 //   subsets: ["latin"],
@@ -50,7 +50,7 @@ const socialMedias = [
 export const metadata: Metadata = {
   title: "Repo Launch Hub",
   description: "The Repo Protocol Launch Hub",
-  icons: [{ rel: "icon", url: "https://storage.googleapis.com/repofi/launchpad/image/logo.png" }]
+  icons: [{ rel: "icon", url: "https://storage.googleapis.com/repofi-prod/launchpad/image/logo.png" }]
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

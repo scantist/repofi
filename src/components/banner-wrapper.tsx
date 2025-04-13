@@ -13,7 +13,7 @@ const BannerWrapper: FC<Props> = ({ children, className, wrapperClassName }) => 
     <div
       className={cn(wrapperClassName)}
       style={{
-        background: "url('https://storage.googleapis.com/repofi/launchpad/image/bg.png')",
+        background: "url('https://storage.googleapis.com/repofi-prod/launchpad/image/bg.png')",
         backgroundSize: "cover",
         backgroundPosition: "center"
       }}

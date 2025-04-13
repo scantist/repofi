@@ -45,7 +45,7 @@ const LaunchpadPage = async ({
       <BannerWrapper className={"flex w-full flex-col pb-20"}>
         <div className={"items-left mt-10 flex w-full flex-col justify-between gap-5 font-bold md:text-left"}>
           <div className={"text-3xl md:text-5xl tracking-tight"}>
-            <ContainerTextFlip words={["Curate", "Fund", "Launch"]} /> Your DAO
+            <ContainerTextFlip words={["Create", "Fundraising", "Launch"]} /> Your DAO
           </div>
           <div className={"text-3xl md:text-5xl tracking-tight"}>with REPO Protocol</div>
           <div className={"text-md max-w-4xl font-thin text-white/70 space-y-2"}>
