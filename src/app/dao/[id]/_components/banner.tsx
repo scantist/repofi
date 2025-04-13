@@ -134,7 +134,7 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
           </div>
           {data?.status === "PRE_LAUNCH" && (
             <div className={"flex mt-4"}>
-              <TokenCheckDialog>
+              <TokenCheckDialog id={id}>
                 <div className="relative group cursor-pointer">
                   <div className="relative px-6 py-2 border-2 border-primary text-primary font-bold text-md rounded-lg transform transition-all duration-300 group-hover:translate-y-1 group-hover:translate-x-1 shadow-[6px_6px_10px_rgba(0,0,0,0.6),-6px_-6px_10px_rgba(255,255,255,0.1)] group-hover:shadow-[8px_8px_15px_rgba(0,0,0,0.8),-8px_-8px_15px_rgba(255,255,255,0.15)]">
                     <span>✨</span> FUNDRAISING

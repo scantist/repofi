@@ -59,6 +59,7 @@ const TeamCommunity = ({ data, dao }: TeamCommunityProps) => {
       }
     })
   }, [dao])
+  console.log("linksData", linksData)
   return (
     <div className={"flex flex-col my-10"}>
       <div className={"text-4xl font-bold tracking-tight"}>{data.title}</div>

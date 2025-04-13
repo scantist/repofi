@@ -2,21 +2,20 @@
 
 import type React from "react"
 import type { FC } from "react"
-import { useDaoContext } from "~/app/dao/[id]/context"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog"
 import type { AssetTokens } from "~/server/service/asset-token"
 import { api } from "~/trpc/react"
 type Props = {
   children: React.ReactNode
+  id: string
 }
 
-const TokenCheckDialog: FC<Props> = ({ children }) => {
+const TokenCheckDialog: FC<Props> = ({ children, id }) => {
   const { data: assetList = [] } = api.assetToken.getAssetTokens.useQuery()
-  const { detail } = useDaoContext()
 
   const handleSelectToken = (token: AssetTokens[number]) => {
-    console.log(detail, token)
+    console.log(id, token)
     // TODO: handle select token
   }
 

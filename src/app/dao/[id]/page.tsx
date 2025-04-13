@@ -1,4 +1,6 @@
+import type { DaoContentType } from "@prisma/client"
 import ArticleList from "~/app/dao/[id]/_components/article-list"
+import ArticlePlaceholder from "~/app/dao/[id]/_components/article-placeholder"
 import Banner from "~/app/dao/[id]/_components/banner"
 import Content from "~/app/dao/[id]/_components/content"
 import Roadmap from "~/app/dao/[id]/_components/roadmap"
@@ -11,6 +13,7 @@ import { TradingViewProvider } from "~/components/trade-view/provider"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
 import type { InformationContentParams, ListRowContentParams, RoadmapContentParams, TeamContentParams } from "~/types/data"
+import TeamPlaceholder from "./_components/team-placeholder"
 
 const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params
@@ -24,6 +27,10 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
     }
     return a.title.localeCompare(b.title)
   })
+  const isPreLaunch = daoDetail.status === "PRE_LAUNCH"
+  const contentNoType = (type: DaoContentType) => {
+    return isPreLaunch && sortedContents.findIndex((c) => c.type === type) === -1
+  }
   return (
     <DaoProvider initialDetail={daoDetail}>
       <TradingViewProvider>
@@ -31,7 +38,7 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           <div className={"mt-20 min-h-full"}>
             <Banner id={id} daoDetail={daoDetail} />
             <div className={"mx-4 max-w-7xl xl:mx-auto"}>
-              {daoDetail.status === "PRE_LAUNCH" ? <PreMain /> : <DaoContent />}
+              {isPreLaunch ? <PreMain /> : <DaoContent />}
               {sortedContents.map((content) => {
                 switch (content.type) {
                   case "LIST_ROW":
@@ -46,6 +53,8 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
                     return <></>
                 }
               })}
+              {contentNoType("LIST_ROW") && <ArticlePlaceholder id={id} />}
+              {contentNoType("TEAM_COMMUNITY") && <TeamPlaceholder id={id} />}
             </div>
           </div>
         </TourWrapper>
