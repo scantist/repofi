@@ -1,6 +1,11 @@
 @import "tailwindcss"; /*@tailwind base;*/
 /*---break---*/
 @plugin "tailwindcss-animate";
+
+@plugin 'tailwind-scrollbar' {
+  /* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
+  nocompatible: true;
+}
 /*---break---*/
 @custom-variant dark (&:is(.dark *));
 /*@tailwind components;*/

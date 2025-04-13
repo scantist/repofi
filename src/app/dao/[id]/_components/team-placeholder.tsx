@@ -12,8 +12,8 @@ const TeamPlaceholder = ({ id }: TeamPlaceholderProps) => {
       <div className={"text-4xl font-bold tracking-tight"}>Team & Community</div>
       <div className={"pt-10 relative justify-center text-center"}>
         <div className={"absolute top-48 flex justify-center items-center w-full text-lg md:text-2xl font-bold z-10"}>
-          <a href={`/dao/${id}/team`} className={"bg-primary px-4 py-2 rounded-lg transition-transform transform hover:scale-105 hover:bg-primary-dark hover:shadow-lg"}>
-            You can config article list title and content
+          <a href={`/dao/${id}/edit/team`} className={"bg-primary px-4 py-2 rounded-lg transition-transform transform hover:scale-105 hover:bg-primary-dark hover:shadow-lg"}>
+            Add your team member information
           </a>
         </div>
         <div className={"blur-md"}>

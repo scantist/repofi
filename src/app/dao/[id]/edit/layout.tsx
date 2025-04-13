@@ -4,6 +4,8 @@ import Banner from "~/app/dao/[id]/_components/banner"
 import DaoSide from "~/app/dao/[id]/_components/dao-side"
 import CardWrapper from "~/components/card-wrapper"
 import { Separator } from "~/components/ui/separator"
+import { compareStringToUpperCase } from "~/lib/utils"
+import { auth } from "~/server/auth"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
 
@@ -16,12 +18,14 @@ const EditLayout = async ({
 }) => {
   const { id } = await params
   const daoDetail: DaoDetailResult = await api.dao.detail({ daoId: id })
+  const session = await auth()
   if (daoDetail === null) {
     return <div>No Data</div>
   }
+  const isOwned = compareStringToUpperCase(daoDetail?.createdBy, session?.address)
   return (
     <div className={"mt-20 min-h-full"}>
-      <Banner id={id} daoDetail={daoDetail} />
+      <Banner id={id} daoDetail={daoDetail} isOwned={isOwned} />
       <CardWrapper className={"mx-4 flex max-w-7xl md:mx-auto my-10"} contentClassName={"w-full space-y-6 p-10 pb-16 md:block"}>
         <div className="flex justify-between items-center">
           <div className="space-y-0.5">

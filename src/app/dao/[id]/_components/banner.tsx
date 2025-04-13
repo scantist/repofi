@@ -4,7 +4,6 @@ import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import type { IconType } from "@icons-pack/react-simple-icons"
 import { useTour } from "@reactour/tour"
 import { Footprints, House, Settings, Star } from "lucide-react"
-import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -20,6 +19,7 @@ import { api } from "~/trpc/react"
 interface BannerProps {
   daoDetail?: DaoDetailResult
   id: string
+  isOwned?: boolean
 }
 
 const socialIcons: Record<string, IconType> = {
@@ -41,8 +41,7 @@ const IconComponent = ({ type, href }: { type: string; href: string }) => {
   ) : null
 }
 
-const Banner = ({ daoDetail, id }: BannerProps) => {
-  const { data: session } = useSession()
+const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
   const { data } = api.dao.detail.useQuery(
     { daoId: id },
     {
@@ -94,7 +93,7 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
             </div>
             <div className={"flex flex-row items-end gap-x-4 action"}>
               <Footprints className={"cursor-pointer text-primary-foreground hover:text-primary transition-all "} onClick={handleClickStart} aria-label={"Dao Tour"} />
-              {data?.createdBy?.toLowerCase() === session?.address?.toLowerCase() && (
+              {isOwned && (
                 <a href={`/dao/${id}/edit`}>
                   <Settings className={"text-primary-foreground hover:text-primary transition-all"} />
                 </a>
@@ -132,7 +131,7 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
           >
             {data?.description}
           </div>
-          {data?.status === "PRE_LAUNCH" && (
+          {isOwned && data?.status === "PRE_LAUNCH" && (
             <div className={"flex mt-4"}>
               <TokenCheckDialog id={id}>
                 <div className="relative group cursor-pointer">
