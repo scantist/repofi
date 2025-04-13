@@ -246,8 +246,7 @@ export function useDataPersistence({
         }
         console.log("daoForms---", daoForms)
         const data = await createMutate({
-          ...daoForms,
-          tokenId: tokenId
+          ...daoForms
         })
         return data.id
       } catch (error) {

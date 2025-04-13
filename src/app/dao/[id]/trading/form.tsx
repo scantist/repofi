@@ -62,7 +62,7 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
     isLoading: isAmountsOutLoading
   } = useAmountOutMin({
     action: mode,
-    tokenId: detail.tokenId,
+    tokenId: detail.tokenId!,
     amountIn,
     slippagePercent: slippage
   })
@@ -86,7 +86,7 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
     tradeReceipt,
     shouldBuyMax
   } = useTrade({
-    tokenId: detail.tokenId,
+    tokenId: detail.tokenId!,
     assetAddress: assetToken.address,
     amountIn,
     amountOutMin,
@@ -94,7 +94,7 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
   })
   const [showBuyMaxTip, setShowBuyMaxTip] = useState(false)
 
-  const { maxBuyAssetAmount, maxBuyAssetAmountWithTax, maxBuyTokenAmount, launchMarketCap, isLoading } = useTokenStats(detail.tokenId)
+  const { maxBuyAssetAmount, maxBuyAssetAmountWithTax, maxBuyTokenAmount, launchMarketCap, isLoading } = useTokenStats(detail.tokenId!)
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
@@ -121,10 +121,10 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
     setTradeTxHash(tradeReceipt.transactionHash)
   }
   useEffect(() => {
-    if (maxBuyAssetAmountWithTax&&amountOut=== undefined) {
+    if (maxBuyAssetAmountWithTax && amountOut === undefined) {
       updateAmountIn(maxBuyAssetAmountWithTax, assetTokenInfo?.decimals)
     }
-  }, [maxBuyAssetAmountWithTax,amountOut])
+  }, [maxBuyAssetAmountWithTax, amountOut])
   return (
     <div className={"relative w-full"}>
       <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading} approved={hasBeenApproved && !shouldBuyMax} />

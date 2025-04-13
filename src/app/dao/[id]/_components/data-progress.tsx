@@ -17,7 +17,7 @@ import { toHumanAmount } from "~/lib/web3"
 
 export const PreProgress = () => {
   const { detail, refresh } = useDaoContext()
-  const { data, isLoading, refetch: refetchTokenFullInfo } = useTokenFullInfo(detail!.tokenId)
+  const { data, isLoading, refetch: refetchTokenFullInfo } = useTokenFullInfo(detail!.tokenId!)
   const progress = useMemo(() => {
     if (!data) {
       return 0
