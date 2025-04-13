@@ -22,7 +22,7 @@ const LaunchingDao = ({
 }: LaunchingDaoProps) => {
   return (
     <div className={"mx-0 md:mx-auto flex min-h-full w-full max-w-7xl flex-col gap-4 px-4 pt-10 pb-10"}>
-      <DaoFilter title={"Pre-Launch DAO"} prefix={"launching_"} daoParam={daoParam} />
+      <DaoFilter title={"Launching DAO"} prefix={"launching_"} daoParam={daoParam} />
       <div className={"text-muted-foreground text-sm font-thin"}>Join early to fuel cutting-edge research, open collaboration, and reinvent scientific funding.</div>
       <DaoGrid initialData={initialData} initParam={daoParam} />
     </div>

@@ -285,56 +285,6 @@ const InformationForm = () => {
             />
             <Controller
               control={control}
-              name="assetAddress"
-              render={({ field }) => (
-                <div className="col-span-3 space-y-2">
-                  <Label htmlFor="assetAddress">Asset Token</Label>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                    }}
-                    value={field.value || ""}
-                    disabled={isPending}
-                  >
-                    <SelectTrigger
-                      className={cn(
-                        "h-12 bg-transparent text-lg",
-                        errors.assetAddress ? "border-destructive" : "border-input",
-                        "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
-                      )}
-                    >
-                      <SelectValue placeholder="Select asset token">{currentAsset?.symbol ?? "No asset"}</SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {isPending ? (
-                        <div className="flex items-center justify-center p-2">
-                          <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-gray-900" />
-                        </div>
-                      ) : assetList && assetList.length > 0 ? (
-                        assetList.map((token) => (
-                          <SelectItem key={`at-${token.name}-${token.symbol}`} value={token.address} className="h-12 text-lg">
-                            {token.symbol}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <div className="text-muted-foreground px-2 py-2 text-sm">No asset available</div>
-                      )}
-                    </SelectContent>
-                  </Select>
-                  {currentAsset?.symbol && (
-                    <p className={"text-muted-foreground text-sm font-thin"}>
-                      Launch Fee{" "}
-                      <span className={"font-bold"}>
-                        {formatUnits(BigInt(currentAsset?.launchFee.toString()), currentAsset?.decimals)} {currentAsset?.symbol}
-                      </span>
-                    </p>
-                  )}
-                  <p className="text-destructive mt-2 text-sm">{errors.assetAddress?.message}</p>
-                </div>
-              )}
-            />
-            <Controller
-              control={control}
               name="description"
               render={({ field }) => (
                 <div className="col-span-3 space-y-2">
@@ -438,9 +388,9 @@ const InformationForm = () => {
             />
           </div>
           <div className="col-span-4 flex items-center justify-center">
-            <Button className="h-16 w-full max-w-48 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isVerifying}>
+            <Button className="h-16 w-full max-w-60 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isVerifying}>
               {isVerifying || isPending ? <Loader2 className="animate-spin" /> : <Wallet className="" />}
-              Next
+              Create My DAO
             </Button>
           </div>
         </form>

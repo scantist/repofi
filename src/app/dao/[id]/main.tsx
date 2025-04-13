@@ -25,7 +25,7 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false })
 const DaoContent = () => {
   const { detail } = useDaoContext()
   const graduated = detail.tokenInfo.isGraduated
-  if ((detail?.tokenInfo?.assetTokenAddress?.length ?? 0) === 0) {
+  if ((detail?.tokenInfo?.assetTokenAddress?.length ?? 0) === 0 || !detail.tokenId) {
     return (
       <CardWrapper className={"my-10 "} contentClassName={""}>
         <div className={"px-3 sm:px-12 py-10 flex flex-col justify-center items-center"}>
@@ -110,7 +110,7 @@ const DaoContent = () => {
           ) : (
             <TradeView
               dao={{
-                tokenId: detail.tokenId,
+                tokenId: detail.tokenId!,
                 name: detail.name,
                 ticker: detail.ticker
               }}

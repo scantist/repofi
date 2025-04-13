@@ -19,7 +19,7 @@ const Step = () => {
     },
     "/create/finish": {
       level: 2,
-      title: "Submit and Approve Token Initialization",
+      title: "Create result",
       target: "FINISH"
     }
   } as const

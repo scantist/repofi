@@ -5,6 +5,7 @@ import Roadmap from "~/app/dao/[id]/_components/roadmap"
 import TeamCommunity from "~/app/dao/[id]/_components/team-community"
 import { DaoProvider } from "~/app/dao/[id]/context"
 import DaoContent from "~/app/dao/[id]/main"
+import PreMain from "~/app/dao/[id]/pre-main"
 import { TourWrapper } from "~/components/tour-wrapper"
 import { TradingViewProvider } from "~/components/trade-view/provider"
 import type { DaoDetailResult } from "~/server/service/dao"
@@ -30,7 +31,7 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           <div className={"mt-20 min-h-full"}>
             <Banner id={id} daoDetail={daoDetail} />
             <div className={"mx-4 max-w-7xl xl:mx-auto"}>
-              <DaoContent />
+              {daoDetail.status === "PRE_LAUNCH" ? <PreMain /> : <DaoContent />}
               {sortedContents.map((content) => {
                 switch (content.type) {
                   case "LIST_ROW":

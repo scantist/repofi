@@ -1,5 +1,5 @@
+import type { AssetToken } from "@prisma/client"
 import { db } from "~/server/db"
-import { type AssetToken } from "@prisma/client"
 
 class AssetTokenService {
   async getAssetTokens(): Promise<Array<Omit<AssetToken, "priceUsd"> & { priceUsd: string }>> {
@@ -18,3 +18,4 @@ class AssetTokenService {
 }
 
 export const assetTokenService = new AssetTokenService()
+export type AssetTokens = Awaited<ReturnType<typeof assetTokenService.getAssetTokens>>

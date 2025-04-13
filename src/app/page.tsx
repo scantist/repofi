@@ -25,6 +25,13 @@ const LaunchpadPage = async ({
   const params = await searchParams
 
   const initLaunchingParam: HomeSearchParams = {
+    status: ["LAUNCHING"],
+    search: params.launching_search ?? "",
+    orderBy: params.launching_orderBy ?? "latest",
+    owned: params.launching_owned === "true",
+    starred: params.launching_starred === "true"
+  }
+  const initPreLaunchingParam: HomeSearchParams = {
     status: ["PRE_LAUNCH"],
     search: params.launching_search ?? "",
     orderBy: params.launching_orderBy ?? "latest",
@@ -72,6 +79,7 @@ const LaunchpadPage = async ({
           </div>
         </div>
       </BannerWrapper>
+      <LaunchingDao daoParam={initPreLaunchingParam} />
       <LaunchingDao daoParam={initLaunchingParam} />
       <LiveDao />
     </div>

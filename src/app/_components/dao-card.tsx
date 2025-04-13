@@ -55,7 +55,7 @@ const DaoCard: FC<Props> = ({ data }) => {
     return null
   }
 
-  const { data: tokenFullInfo, isLoading, refetch: refetchTokenFullInfo } = useTokenFullInfo(data!.tokenId)
+  const { data: tokenFullInfo, isLoading, refetch: refetchTokenFullInfo } = useTokenFullInfo(data!.tokenId!)
   const progress = useMemo(() => {
     if (!tokenFullInfo) {
       return 0
@@ -113,7 +113,7 @@ const DaoCard: FC<Props> = ({ data }) => {
           </div>
           <div className={"pl-3"}>
             <div className={"text-muted-foreground text-sm"}># Holders</div>
-            <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.holderCount}</div>
+            <div className={"text-primary-foreground text-md mt-2 font-bold"}>{data.tokenInfo.holderCount ?? "-"}</div>
           </div>
           <div className={"border-l-1 border-l-gray-400 pl-5"}>
             <div className={"text-muted-foreground text-sm"}>Progress</div>

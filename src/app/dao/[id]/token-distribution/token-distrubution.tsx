@@ -20,7 +20,7 @@ const TokenDistribution: React.FC = () => {
     refetch: refetchTop10Holders
   } = api.holder.getHolders.useQuery(
     {
-      tokenId: detail.tokenId.toString(),
+      tokenId: detail.tokenId!.toString(),
       page: 0,
       size: 10
     },
@@ -44,11 +44,11 @@ const TokenDistribution: React.FC = () => {
           <>
             {holderResponse?.list?.map((item, index) => (
               <div key={`Token-Distribution-${item.userAddress}`} className={"flex flex-row items-center gap-2 font-thin"}>
-                <div className={"w-2 text-right"}>{index + 1}.</div>
+                <div className={"w-4 text-left"}>{index + 1}.</div>
                 <div className={"w-35 truncate font-bold"}>{shortenAddress(item.userAddress)}</div>
                 <div className={"flex flex-1 items-center gap-2"}>
                   {detail.tokenInfo.uniswapV3Pair === item.userAddress && (
-                    <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>Uniswap V3</div>
+                    <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-nowrap text-secondary font-bold"}>Uniswap V3</div>
                   )}
                   {lockerAddress?.toLowerCase() === item.userAddress.toLowerCase() && (
                     <div className={"border border-primary rounded-lg text-xs px-2 py-1 text-secondary font-bold"}>LOCKER</div>
@@ -61,7 +61,7 @@ const TokenDistribution: React.FC = () => {
         )}
       </div>
       {(holderResponse?.total ?? 0) > 10 && (
-        <TokenDrawer tokenId={detail.tokenId.toString()} uniswapV3Pair={detail.tokenInfo.uniswapV3Pair} lockerAddress={lockerAddress}>
+        <TokenDrawer tokenId={detail.tokenId!.toString()} uniswapV3Pair={detail.tokenInfo.uniswapV3Pair} lockerAddress={lockerAddress}>
           <Button variant={"outline"} className={"w-32 mx-auto"}>
             View All
           </Button>

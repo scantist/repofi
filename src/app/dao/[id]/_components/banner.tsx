@@ -8,7 +8,8 @@ import { useSession } from "next-auth/react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import React, { useMemo } from "react"
+import React, { useEffect, useMemo } from "react"
+import TokenCheckDialog from "~/app/dao/[id]/_components/token-check-dialog"
 import BannerWrapper from "~/components/banner-wrapper"
 import CardWrapper from "~/components/card-wrapper"
 import type { DaoLinks } from "~/lib/schema"
@@ -67,7 +68,9 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
   const handleClickStart = () => {
     setIsOpen(true)
   }
-  console.log("data?.createdBy", data?.createdBy, "session?.address", session?.address)
+  useEffect(() => {
+    void useUtils.assetToken.getAssetTokens.prefetch()
+  }, [])
   return (
     <BannerWrapper className={"flex w-full flex-col"}>
       <div className={"my-10 flex w-full flex-col gap-8 md:flex-row"}>
@@ -121,7 +124,7 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
             <div className={"border-l border-gray-400 pl-4"}>Fork: {data?.repoForks}</div>
           </div>
           <div
-            className={"mt-4 text-sm line-clamp-6 overflow-auto"}
+            className={"mt-4 text-sm line-clamp-5 overflow-auto"}
             style={{
               scrollbarWidth: "none", // Firefox
               msOverflowStyle: "none" // IE 10+
@@ -129,6 +132,22 @@ const Banner = ({ daoDetail, id }: BannerProps) => {
           >
             {data?.description}
           </div>
+          {data?.status === "PRE_LAUNCH" && (
+            <div className={"flex mt-4"}>
+              <TokenCheckDialog>
+                <div className="relative group cursor-pointer">
+                  <div className="relative px-6 py-2 border-2 border-primary text-primary font-bold text-md rounded-lg transform transition-all duration-300 group-hover:translate-y-1 group-hover:translate-x-1 shadow-[6px_6px_10px_rgba(0,0,0,0.6),-6px_-6px_10px_rgba(255,255,255,0.1)] group-hover:shadow-[8px_8px_15px_rgba(0,0,0,0.8),-8px_-8px_15px_rgba(255,255,255,0.15)]">
+                    <span>✨</span> FUNDRAISING
+                  </div>
+                  <div className="absolute inset-0 border-2 border-dashed border-primary rounded-md opacity-50 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-primary rounded-full animate-ping shadow-lg" />
+                  <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-primary rounded-full animate-ping shadow-lg" />
+                  <div className="absolute top-1/3 left-3 w-3 h-3 bg-secondary rounded-full animate-ping opacity-70" />
+                  <div className="absolute top-2/3 right-3 w-3 h-3 bg-secondary rounded-full animate-ping opacity-70" />
+                </div>
+              </TokenCheckDialog>
+            </div>
+          )}
         </div>
       </div>
     </BannerWrapper>

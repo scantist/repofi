@@ -24,7 +24,7 @@ const CreateLayout = async ({ children }: Readonly<{ children: React.ReactNode }
               <div className={"flex flex-col gap-y-5 px-11 py-10"}>
                 <div className={"flex flex-row gap-x-4"}>
                   <Sparkle />
-                  <div className={"text-2xl"}>Pre-Launch</div>
+                  <div className={"text-2xl"}>Launching</div>
                 </div>
                 <div className={"text-md font-thin text-gray-400"}>
                   Kickstart your DAO by gathering funds from the community. Sell your DAO&#39;s ERC20 tokens on a bonding curve via REPO Protocol encouraging early adopters to

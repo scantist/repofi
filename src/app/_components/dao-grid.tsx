@@ -16,7 +16,7 @@ type Props = {
 
 const DaoGrid: FC<Props> = ({
   initParam = {
-    status: ["PRE_LAUNCH"],
+    status: ["LAUNCHED"],
     orderBy: "latest",
     owned: false,
     starred: false

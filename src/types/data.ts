@@ -30,7 +30,7 @@ export interface DaoPage {
   createdAt: Date
   updatedAt: Date
   createdBy: string
-  tokenId: bigint
+  tokenId: bigint | null
   links: Prisma.JsonValue
   status: DaoStatus
   platform: DaoPlatform
@@ -43,11 +43,11 @@ export interface DaoPage {
   repoForks: number
   license: string
   tokenInfo: {
-    tokenAddress: string | null
-    marketCap: string
-    totalSupply: string
-    holderCount: string
-    assetTokenAddress: string | null
+    tokenAddress?: string | null
+    marketCap?: string
+    totalSupply?: string
+    holderCount?: string
+    assetTokenAddress?: string | null
   }
 }
 
