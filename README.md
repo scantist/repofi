@@ -1,5 +1,7 @@
 # Repofi
 
+[![dev](https://github.com/scantist/repofi/actions/workflows/dev.yaml/badge.svg)](https://github.com/scantist/repofi/actions/workflows/dev.yaml)
+
 Link to Software Genome Project (SGP).
 
 # Overview
