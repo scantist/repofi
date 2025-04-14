@@ -42,6 +42,10 @@ export function formatNumberWithUnit(num: number) {
   const { value, unit } = getNumberWithUnit(num)
   return `${formatMoney(value, false, false)}${unit}`
 }
+export function formatNumber(num: number) {
+  const { value, unit } = getNumberWithUnit(num)
+  return `${value}${unit}`
+}
 
 export const formatMoney = (amount: string | number, grouping = true, shortFormat = true): string => {
   const _amount = new Decimal(amount)
@@ -254,4 +258,16 @@ export const compareStringToUpperCase = (str1?: string | null, str2?: string | n
   const upperStr2 = str2?.toUpperCase() ?? ""
 
   return upperStr1 === upperStr2
+}
+
+export const extractOwnerRepo = (githubUrl?: string): string => {
+  if (!githubUrl) return "Unknown Repo"
+
+  try {
+    const url = new URL(githubUrl)
+    const pathSegments = url.pathname.split("/").filter(Boolean)
+    return pathSegments.length >= 2 ? `${pathSegments[0]}/${pathSegments[1]}` : "Unknown Repo"
+  } catch {
+    return "Unknown Repo"
+  }
 }

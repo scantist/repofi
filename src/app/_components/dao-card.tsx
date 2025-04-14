@@ -1,18 +1,18 @@
 "use client"
 
-import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
+import { SiDiscord, SiGithub, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import NumberFlow from "@number-flow/react"
 import { Label } from "@radix-ui/react-label"
 import { House, Star } from "lucide-react"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import type React from "react"
 import { useMemo } from "react"
 import type { FC } from "react"
+import { useAuth } from "~/components/auth/auth-context"
 import CardWrapper from "~/components/card-wrapper"
 import { useTokenFullInfo } from "~/hooks/use-launch-contract"
 import type { DaoLinks } from "~/lib/schema"
-import { cn, formatMoney } from "~/lib/utils"
+import { cn, extractOwnerRepo, formatMoney, formatNumber } from "~/lib/utils"
 import { api } from "~/trpc/react"
 import type { DaoPage } from "~/types/data"
 
@@ -23,6 +23,7 @@ type Props = {
 
 const DaoCard: FC<Props> = ({ data }) => {
   const router = useRouter()
+  const { isAuthenticated, openDialog } = useAuth()
   const IconComponent = ({ type, href }: { type: string; href: string }) => {
     let Icon = null
     if (type.toLowerCase() === "website") {
@@ -78,27 +79,32 @@ const DaoCard: FC<Props> = ({ data }) => {
           <Star
             className={cn("text-white/40 hover:scale-125 hover:fill-yellow-400 hover:text-yellow-400 z-20 transition", data.isStarred && "text-yellow-400 fill-yellow-400")}
             onClick={(event) => {
-              mutate({ daoId: data.id })
+              if (!isAuthenticated) {
+                void openDialog()
+              } else {
+                mutate({ daoId: data.id })
+              }
               event.stopPropagation()
             }}
           />
         </div>
-        <div className={"truncate text-sm text-white/58"}>
-          <p>{data.url}</p>
+        <div className={"truncate text-sm text-white/58 flex items-center"}>
+          <SiGithub className={"inline-block mr-2"} size={16} />
+          {extractOwnerRepo(data.url)}
         </div>
         <div className={"mt-2 flex flex-row justify-between items-center text-xs"}>
           <div className="flex flex-row gap-x-6">
             <div>
               <span className={"mr-1"}>Star:</span>
-              <span className={"text-white/80"}>{data.repoStar}</span>
+              <span className={"text-white/80"}>{formatNumber(data.repoStar)}</span>
             </div>
             <div>
               <span className={"mr-1"}>Watch:</span>
-              <span className={"text-white/80"}>{data.repoWatch}</span>
+              <span className={"text-white/80"}>{formatNumber(data.repoWatch)}</span>
             </div>
             <div>
               <span className={"mr-1"}>Fork:</span>
-              <span className={"text-white/80"}>{data.repoForks}</span>
+              <span className={"text-white/80"}>{formatNumber(data.repoForks)}</span>
             </div>
           </div>
           <div>

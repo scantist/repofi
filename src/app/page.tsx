@@ -1,6 +1,7 @@
 import Link from "next/link"
-import ShowDao from "~/app/_components/show-dao"
 import LiveDao from "~/app/_components/live-dao"
+import PreDao from "~/app/_components/pre-dao"
+import ShowDao from "~/app/_components/show-dao"
 import BannerWrapper from "~/components/banner-wrapper"
 import AiButton from "~/components/ui/ai-button"
 import { ContainerTextFlip } from "~/components/ui/container-text-flip"
@@ -31,22 +32,15 @@ const LaunchpadPage = async ({
     owned: params.launching_owned === "true",
     starred: params.launching_starred === "true"
   }
-  const initPreLaunchingParam: HomeSearchParams = {
+  const initPreLaunchParam: HomeSearchParams = {
     status: ["PRE_LAUNCH"],
-    search: params.launching_search ?? "",
-    orderBy: params.launching_orderBy ?? "latest",
-    owned: params.launching_owned === "true",
-    starred: params.launching_starred === "true"
-  }
-  const initLiveParam: HomeSearchParams = {
-    status: ["LAUNCHED"],
     search: params.live_search ?? "",
     orderBy: params.live_orderBy ?? "latest",
     owned: params.live_owned === "true",
     starred: params.live_starred === "true"
   }
   const dashboard = await api.dashboard.home()
-
+  const preDao = await api.dao.search(initPreLaunchParam)
   return (
     <div className={"mt-10 min-h-full"}>
       <BannerWrapper className={"flex w-full flex-col pb-20"}>
@@ -79,7 +73,7 @@ const LaunchpadPage = async ({
           </div>
         </div>
       </BannerWrapper>
-      <ShowDao daoParam={initPreLaunchingParam} title="Pre Launch DAO" description="Discover DAOs preparing to launch. Browse project information, track their development, and stay informed about upcoming opportunities." />
+      {preDao.total > 0 && <PreDao initialData={preDao} daoParam={initPreLaunchParam} />}
       <ShowDao daoParam={initLaunchingParam} title="Launching DAO" description="Join early to fuel cutting-edge research, open collaboration, and reinvent scientific funding." />
       <LiveDao />
     </div>
