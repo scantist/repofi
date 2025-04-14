@@ -123,10 +123,13 @@ const DaoContent = () => {
       </div>
       <div className={"col-span-1 flex flex-col gap-4"}>
         {graduated ? <PostTradingCard /> : <TradingCard />}
-        <ContributorCard />
         <CardWrapper>
           <TokenDistribution />
         </CardWrapper>
+        <CardWrapper>
+          <ContributorCard />
+        </CardWrapper>
+
       </div>
     </div>
   )

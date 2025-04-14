@@ -104,7 +104,7 @@ const MessageList = () => {
             </Button>
           </CreateMessage>
         </div>
-        <div className={"md:min-h-[620px]"}>{list}</div>
+        <div >{list}</div>
         <ListPagination pageable={condition.pageable} totalPages={messageData?.pages ?? 0} setPageable={(pageable) => setCondition({ pageable })} />
       </div>
     </>

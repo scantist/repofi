@@ -38,10 +38,12 @@ const PreMain = ({ isOwned }: PreMainProps) => {
           <Image src={"https://storage.googleapis.com/repofi-prod/launchpad/image/transaction_blur.png"} alt={"transaction"} fill={true} />
           <div className={"z-10 px-5 lg:px-10 text-center"}>{isOwned ? "Token transactions can be made here." : DEFAULT_TIP}</div>
         </CardWrapper>
-        <ContributorCard />
         <CardWrapper contentClassName={"trading min-h-[431px] relative flex justify-center items-center distribution"}>
           <Image src={"https://storage.googleapis.com/repofi-prod/launchpad/image/distribution_blur.png"} alt={"Distribution"} fill={true} />
           <div className={"z-10 px-5 lg:px-10 text-center"}>{isOwned ? "When someone else buys it, it shows how much each person owns." : DEFAULT_TIP}</div>
+        </CardWrapper>
+        <CardWrapper contentClassName={"trading min-h-[431px] relative flex justify-center items-center distribution"}>
+          <ContributorCard />
         </CardWrapper>
       </div>
     </div>

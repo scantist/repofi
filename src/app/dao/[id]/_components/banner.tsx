@@ -1,18 +1,24 @@
 "use client"
 
-import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import type { IconType } from "@icons-pack/react-simple-icons"
+import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
+import { $Enums } from "@prisma/client"
+import { Decimal, JsonValue } from "@prisma/client/runtime/library"
 import { useTour } from "@reactour/tour"
 import { Footprints, House, Settings, Star } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import React, { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState, useTransition } from "react"
 import TokenCheckDialog from "~/app/dao/[id]/_components/token-check-dialog"
 import BannerWrapper from "~/components/banner-wrapper"
 import CardWrapper from "~/components/card-wrapper"
+import { MultiStepLoader, visibleState } from "~/components/ui/multi-step-loader"
+import { useApprovedTransaction, useDataPersistence, useLaunchStepState, useLaunchTransaction } from "~/hooks/use-create"
+import { LaunchNativeSteps, LaunchNoNativeSteps } from "~/lib/const"
 import type { DaoLinks } from "~/lib/schema"
 import { cn } from "~/lib/utils"
+import { AssetTokens } from "~/server/service/asset-token"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
 
@@ -48,6 +54,8 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
       initialData: daoDetail
     }
   )
+  const { launchStepState, updateDescription, initStep, nextStep, errorStep, exitStep, finallyStep } = useLaunchStepState()
+  const [assetSteps, setAssetSteps] = useState<visibleState[]>([])
   const router = useRouter()
   const handleToDetail = () => {
     router.push(`/dao/${id}`)
@@ -57,6 +65,7 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
       <IconComponent key={socialType} type={socialType} href={(data?.links as DaoLinks)?.find((link) => link.type.toLowerCase() === socialType)?.value ?? ""} />
     ))
   }, [data])
+
   const { setIsOpen } = useTour()
   const useUtils = api.useUtils()
   const { mutate } = api.dao.toggleStar.useMutation({
@@ -67,11 +76,58 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
   const handleClickStart = () => {
     setIsOpen(true)
   }
-  useEffect(() => {
-    void useUtils.assetToken.getAssetTokens.prefetch()
-  }, [])
+  const [isVerifying, startVerify] = useTransition()
+  const onError = (error: Error) => {
+    updateDescription(error.message)
+    errorStep()
+    throw error
+  }
+  const { execute: approvedTransaction } = useApprovedTransaction({
+    onApproveMessage: updateDescription,
+    onApproveError: onError
+  })
+  const { execute: launchTransaction } = useLaunchTransaction({
+    onLaunchMessage: updateDescription,
+    onLaunchError: onError
+  })
+  const { execute: dataPersistence } = useDataPersistence({
+    onPersistenceMessage: updateDescription,
+    onPersistenceError: onError
+  })
+  const submit = (asset: AssetTokens[number]) => {
+    setAssetSteps(asset.isNative ? LaunchNativeSteps : LaunchNoNativeSteps)
+    initStep()
+    startVerify(async () => {
+      try {
+        if (!asset.isNative) {
+          await approvedTransaction(asset)
+          nextStep()
+        }
+        const tokenId = await launchTransaction(daoDetail!.name, daoDetail!.ticker, asset)
+        nextStep()
+        await dataPersistence(daoDetail!.id, tokenId)
+        finallyStep()
+      } catch (e) { }
+    })
+  }
+
+
   return (
     <BannerWrapper className={"flex w-full flex-col"}>
+      <MultiStepLoader
+        loadingStates={assetSteps}
+        errorState={launchStepState.error}
+        visible={launchStepState.showSteps}
+        currentState={launchStepState.now}
+        description={launchStepState.description}
+        progressState={launchStepState.progress}
+        onClose={exitStep}
+        onFinish={() => {
+          exitStep()
+          useUtils.dao.detail.invalidate()
+          router.refresh()
+        }}
+      />
       <div className={"my-10 flex w-full flex-col gap-8 md:flex-row"}>
         <CardWrapper className={"max-h-fit max-w-fit"}>
           <Image
@@ -133,7 +189,7 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
           </div>
           {isOwned && data?.status === "PRE_LAUNCH" && (
             <div className={"flex mt-4"}>
-              <TokenCheckDialog id={id}>
+              <TokenCheckDialog onSelectAsset={submit}>
                 <div className="relative group cursor-pointer">
                   <div className="relative px-6 py-2 border-2 border-primary text-primary font-bold text-md rounded-lg transform transition-all duration-300 group-hover:translate-y-1 group-hover:translate-x-1 shadow-[6px_6px_10px_rgba(0,0,0,0.6),-6px_-6px_10px_rgba(255,255,255,0.1)] group-hover:shadow-[8px_8px_15px_rgba(0,0,0,0.8),-8px_-8px_15px_rgba(255,255,255,0.15)]">
                     <span>✨</span> FUNDRAISING
@@ -154,3 +210,15 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
 }
 
 export default Banner
+function approvedTransaction(asset: Omit<{ symbol: string; name: string; priceUsd: Decimal; address: string; decimals: number; logoUrl: string; launchFee: Decimal; isAllowed: boolean; isNative: boolean; isValid: boolean }, "priceUsd"> & { priceUsd: string }) {
+  throw new Error("Function not implemented.")
+}
+
+function launchTransaction(asset: Omit<{ symbol: string; name: string; priceUsd: Decimal; address: string; decimals: number; logoUrl: string; launchFee: Decimal; isAllowed: boolean; isNative: boolean; isValid: boolean }, "priceUsd"> & { priceUsd: string }) {
+  throw new Error("Function not implemented.")
+}
+
+function dataPersistence(data: { marketCapUsd: string; priceUsd: string; isStarred: boolean; stars: number; repoStar: number; repoWatch: number; repoIssues: number; repoForks: number; license: string; tokenInfo: { marketCap: string; totalSupply: string; holderCount: string | undefined; liquidity: string; price: string; unlockRatio: string; salesRatio: string; raisedAssetAmount: string; name?: string | undefined; createdAt?: Date | undefined; ticker?: string | undefined; updatedAt?: Date | undefined; tokenId?: bigint | undefined; creator?: string | undefined; tokenAddress?: string | null | undefined; isGraduated?: boolean | undefined; reservedRatio?: Decimal | null | undefined; assetTokenAddress?: string | null | undefined; graduatedAt?: Date | null | undefined; uniswapV3Pair?: string | null | undefined }; name: string; createdAt: Date; id: string; url: string; ticker: string; type: $Enums.DaoType; description: string; avatar: string; updatedAt: Date; createdBy: string; tokenId: bigint | null; links: JsonValue; status: $Enums.DaoStatus; platform: $Enums.DaoPlatform; contents: { sort: number; id: string; type: $Enums.DaoContentType; title: string; data: JsonValue }[] } | undefined, tokenId: void) {
+  throw new Error("Function not implemented.")
+}
+

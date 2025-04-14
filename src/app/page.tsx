@@ -1,5 +1,5 @@
 import Link from "next/link"
-import LaunchingDao from "~/app/_components/launching-dao"
+import ShowDao from "~/app/_components/show-dao"
 import LiveDao from "~/app/_components/live-dao"
 import BannerWrapper from "~/components/banner-wrapper"
 import AiButton from "~/components/ui/ai-button"
@@ -79,8 +79,8 @@ const LaunchpadPage = async ({
           </div>
         </div>
       </BannerWrapper>
-      <LaunchingDao daoParam={initPreLaunchingParam} />
-      <LaunchingDao daoParam={initLaunchingParam} />
+      <ShowDao daoParam={initPreLaunchingParam} title="Pre Launch DAO" description="Discover DAOs preparing to launch. Browse project information, track their development, and stay informed about upcoming opportunities." />
+      <ShowDao daoParam={initLaunchingParam} title="Launching DAO" description="Join early to fuel cutting-edge research, open collaboration, and reinvent scientific funding." />
       <LiveDao />
     </div>
   )

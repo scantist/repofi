@@ -33,29 +33,27 @@ const ContributorCard = () => {
     }
   }, [error, errorDescription])
   return (
-    <CardWrapper contentClassName={"min-h-95 contributor"}>
-      <div className={"rounded-lg bg-black/60 p-4 flex flex-col h-full"} style={{ minHeight: "inherit" }}>
-        <div className={"text-xl font-medium flex flex-row justify-between items-center"}>
-          <div className={"font-bold"}>Contributor Rank</div>
-        </div>
-        <div className={"mt-3 flex flex-col gap-2 flex-1"}>
-          {isPending ? (
-            <LoadingSpinner size={64} className={"mt-10"} />
-          ) : contributorsResponse?.list?.length === 0 ? (
-            <NoData className={"mt-10"} size={65} textClassName={"text-xl"} text={"There's no contributors yet."} />
-          ) : (
-            contributorsResponse?.list?.map((item, index) => <ContributorItem key={`Contributor-${item.id}-${index}`} item={item} userAddress={session?.address} />)
-          )}
-        </div>
-        {(contributorsResponse?.total ?? 0) > 10 && (
-          <ContributorDrawer daoId={detail.id}>
-            <Button variant={"outline"} className={"w-32 mx-auto"}>
-              View All
-            </Button>
-          </ContributorDrawer>
+    <div className={"rounded-lg bg-black/60 p-4 flex flex-col h-full"} style={{ minHeight: "inherit" }}>
+      <div className={"text-xl font-medium flex flex-row justify-between items-center"}>
+        <div className={"font-bold"}>Contributor Rank</div>
+      </div>
+      <div className={"mt-3 flex flex-col gap-2 flex-1 min-h-95"}>
+        {isPending ? (
+          <LoadingSpinner size={64} className={"mt-10"} />
+        ) : contributorsResponse?.list?.length === 0 ? (
+          <NoData className={"mt-10"} size={65} textClassName={"text-xl"} text={"There's no contributors yet."} />
+        ) : (
+          contributorsResponse?.list?.map((item, index) => <ContributorItem key={`Contributor-${item.id}-${index}`} item={item} userAddress={session?.address} />)
         )}
       </div>
-    </CardWrapper>
+      {(contributorsResponse?.total ?? 0) > 10 && (
+        <ContributorDrawer daoId={detail.id}>
+          <Button variant={"outline"} className={"w-32 mx-auto"}>
+            View All
+          </Button>
+        </ContributorDrawer>
+      )}
+    </div>
   )
 }
 

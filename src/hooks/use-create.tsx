@@ -1,13 +1,11 @@
 import type { AssetToken } from "@prisma/client"
 import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core"
-import { useAtom } from "jotai/index"
 import { useCallback, useState } from "react"
 import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
 import { useAccount, useConfig } from "wagmi"
 import { env } from "~/env"
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
 import { defaultChain } from "~/lib/web3"
-import { type DaoForms, daoFormsAtom } from "~/store/create-dao-store"
 import { api } from "~/trpc/react"
 
 type AssetTokenWithStringPrice = Omit<AssetToken, "priceUsd"> & { priceUsd: string }
@@ -84,7 +82,7 @@ export function useApprovedTransaction({
   targetContractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 }: {
   onApproveMessage: (message: string) => void
-  onApproveError?: (error: unknown) => void
+  onApproveError?: (error: Error) => void
   targetContractAddress?: `0x${string}`
 }) {
   const { address } = useAccount()
@@ -92,7 +90,7 @@ export function useApprovedTransaction({
   const execute = useCallback(
     async <T,>(currentAsset?: AssetTokenWithStringPrice): Promise<T | undefined> => {
       if (!address || !currentAsset) {
-        onApproveError?.(new Error("Wallet not connected or asset not provided"))
+        onApproveError?.(new Error("Wallet not connected or asset not provided."))
         return
       }
       const tokenAddress = currentAsset.address as `0x${string}`
@@ -119,7 +117,7 @@ export function useApprovedTransaction({
       })
 
       if (!result) {
-        onApproveError?.(new Error("Fail to approve spending cap (simulation failed)"))
+        onApproveError?.(new Error("Fail to approve spending cap."))
         return
       }
 
@@ -132,7 +130,11 @@ export function useApprovedTransaction({
         // If the allowance approval is successful, we call the executor recursively to ensure the allowance is indeed enough. Since user can alter the allowance to any value during the approval process.
         return execute(currentAsset)
       } catch (error) {
-        onApproveError?.(new Error("Fail to approve spending cap", { cause: error }))
+        if (error instanceof Error && 'shortMessage' in error) {
+          onApproveError?.(new Error((error as any).shortMessage))
+        } else {
+          onApproveError?.(new Error("Failed to approve spending cap", { cause: error }))
+        }
         return
       }
     },
@@ -149,50 +151,43 @@ export function useLaunchTransaction({
   targetContractAddress = env.NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS
 }: {
   onLaunchMessage: (message: string) => void
-  onLaunchError?: (error: unknown) => void
+  onLaunchError?: (error: Error) => void
   targetContractAddress?: `0x${string}`
 }) {
   const { address } = useAccount()
   const config = useConfig()
-  const [daoForms] = useAtom(daoFormsAtom)
   const execute = useCallback(
-    async (currentAsset?: AssetTokenWithStringPrice): Promise<bigint | undefined> => {
+    async (name: string, ticker: string, currentAsset?: AssetTokenWithStringPrice): Promise<bigint | undefined> => {
       if (!address || !currentAsset) {
-        onLaunchError?.(new Error("Wallet not connected or asset not provided"))
+        onLaunchError?.(new Error("Wallet not connected or asset not provided."))
         return
       }
-
       let amount = 0n
       if (currentAsset.isNative) {
         amount = parseEther(formatUnits(BigInt(currentAsset.launchFee.toString()), currentAsset.decimals))
       }
-
       try {
         const { request } = await simulateContract(config, {
           abi: launchPadAbi,
           address: targetContractAddress,
           functionName: "launch",
-          args: [daoForms.name, daoForms.ticker, currentAsset.address as `0x${string}`],
+          args: [name, ticker, currentAsset.address as `0x${string}`],
           account: address,
           value: amount
         })
-        onLaunchMessage("mint your token...")
+        onLaunchMessage("Mint your token...")
         const hash = await writeContract(config, request)
-        console.log("hash", hash)
-        onLaunchMessage("waiting for transaction receipt...")
+        onLaunchMessage("Waiting for transaction receipt...")
         const receipt = await waitForTransactionReceipt(config, {
           hash
         })
-        console.log("hash", hash)
 
-        console.log("receipt", receipt)
-        console.log("receipt", receipt.logs)
 
         const logs = receipt.logs
         const item = logs.find((log) => getAddress(log.address) === targetContractAddress)
 
         if (!item) {
-          onLaunchError?.(new Error("Failed to find launch event"))
+          onLaunchError?.(new Error("Failed to find launch event."))
           return
         }
         const { args } = decodeEventLog({
@@ -212,16 +207,20 @@ export function useLaunchTransaction({
         }
         console.log("Decoded event args:", args)
         if (!eventAsset || !tokenId || !initialPrice || !userAddress) {
-          onLaunchError?.(new Error("Failed to parse launch event"))
+          onLaunchError?.(new Error("Failed to parse launch event."))
           return
         }
         return tokenId
       } catch (error) {
-        onLaunchError?.(new Error("Launch transaction failed", { cause: error }))
+        if (error instanceof Error && 'shortMessage' in error) {
+          onLaunchError?.(new Error((error as any).shortMessage))
+        } else {
+          onLaunchError?.(new Error("Launch transaction failed.", { cause: error }))
+        }
         return
       }
     },
-    [address, daoForms, config, targetContractAddress, onLaunchMessage, onLaunchError]
+    [address, config, targetContractAddress, onLaunchMessage, onLaunchError]
   )
   return {
     execute
@@ -233,15 +232,15 @@ export function useDataPersistence({
   onPersistenceError
 }: {
   onPersistenceMessage: (message: string) => void
-  onPersistenceError?: (error: unknown) => void
+  onPersistenceError?: (error: Error) => void
 }) {
   const { mutateAsync: createMutate } = api.dao.fundraise.useMutation()
   const execute = useCallback(
     async (daoId: string, tokenId?: bigint): Promise<string | undefined> => {
       try {
-        onPersistenceMessage("Persisting dao...")
+        onPersistenceMessage("Persisting DAO...")
         if (tokenId === undefined) {
-          onPersistenceError?.(new Error("TokenId is undefined"))
+          onPersistenceError?.(new Error("TokenId is undefined."))
           return
         }
         const data = await createMutate({
@@ -250,7 +249,11 @@ export function useDataPersistence({
         })
         return data.id
       } catch (error) {
-        onPersistenceError?.(new Error("Failed to persist DAO data", { cause: error }))
+        if (error instanceof Error && 'shortMessage' in error) {
+          onPersistenceError?.(new Error((error as any).shortMessage))
+        } else {
+          onPersistenceError?.(new Error("Failed to persist DAO data.", { cause: error }))
+        }
       }
     },
     [createMutate, onPersistenceMessage, onPersistenceError]

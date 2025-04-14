@@ -4,9 +4,9 @@ import { DaoType } from "@prisma/client"
 import { useAtom } from "jotai"
 import { ImagePlus, Loader2, TrashIcon, Wallet } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useTransition } from "react"
+import { useEffect, useTransition } from "react"
 import { Controller, useForm } from "react-hook-form"
-import { formatUnits } from "viem"
+import { toast } from "sonner"
 import { z } from "zod"
 import { uploadFile } from "~/app/actions"
 import CardWrapper from "~/components/card-wrapper"
@@ -15,18 +15,16 @@ import { Button } from "~/components/ui/button"
 import { Form } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
-import { MultiStepLoader } from "~/components/ui/multi-step-loader"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Textarea } from "~/components/ui/textarea"
-import { useApprovedTransaction, useDataPersistence, useLaunchStepState, useLaunchTransaction } from "~/hooks/use-create"
-import { LaunchNativeSteps, LaunchNoNativeSteps, UPLOAD_PATH_POST } from "~/lib/const"
+import { UPLOAD_PATH_POST } from "~/lib/const"
 import { cn } from "~/lib/utils"
 import { type DaoForms, daoFormsAtom, daoFormsSchema } from "~/store/create-dao-store"
 import { api } from "~/trpc/react"
 
 const InformationForm = () => {
   const { mutateAsync } = api.dao.checkNameAndTickerExists.useMutation()
-  const [daoForms, setDaoForms] = useAtom(daoFormsAtom)
+  const [daoForms] = useAtom(daoFormsAtom)
 
   const form = useForm<DaoForms>({
     resolver: zodResolver(
@@ -56,88 +54,54 @@ const InformationForm = () => {
     reValidateMode: "onBlur",
     defaultValues: { ...daoForms }
   })
-
   const router = useRouter()
+  const { mutateAsync: createMutate, isPending } = api.dao.create.useMutation({
+    onMutate: () => {
+      toast.loading("Creating DAO...")
+    },
+    onSuccess: (dao) => {
+      toast.success("Successfully created DAO!")
+      router.push(`/create/finish?id=${dao.id}`)
+    },
+    onError: (error) => {
+      console.error(error)
+      toast.error(`Failed to create DAO: ${error.message}`)
+    },
+    onSettled: () => {
+    }
+  })
+
+  useEffect(() => {
+    if (!daoForms.url) {
+      router.push('/create/bind')
+    }
+  }, [daoForms.url, router])
   const {
     handleSubmit,
     control,
     formState: { errors },
     watch
   } = form
-  const { data: assetList = [], isPending } = api.assetToken.getAssetTokens.useQuery()
-  const assetAddress = watch("assetAddress")
-  const assetSteps = useMemo(() => {
-    if (!assetAddress || assetList.length === 0) {
-      return []
+  const submit = async (data: DaoForms) => {
+    if (isPending) return;
+    try {
+      await createMutate({
+        name: data.name,
+        ticker: data.ticker,
+        description: data.description,
+        type: data.type,
+        avatar: data.avatar,
+        x: data.x,
+        telegram: data.telegram,
+        website: data.website,
+        url: data.url
+      })
+    } catch (e) {
+      console.error(e)
     }
-    const selectedAsset = assetList.find((asset) => asset.address === assetAddress)
-    if (!selectedAsset) {
-      return []
-    }
-    return selectedAsset.isNative ? LaunchNativeSteps : LaunchNoNativeSteps
-  }, [assetAddress, assetList])
-  const currentAsset = useMemo(() => {
-    if (!assetAddress || assetList.length === 0) {
-      return
-    }
-    return assetList.find((asset) => asset.address === assetAddress)
-  }, [assetAddress, assetList])
-  const { launchStepState, updateDescription, initStep, nextStep, errorStep, exitStep, finallyStep } = useLaunchStepState()
-  const [isVerifying, startVerify] = useTransition()
-  const onError = (error: unknown) => {
-    errorStep()
-    throw error
-  }
-
-  const { execute: approvedTransaction } = useApprovedTransaction({
-    onApproveMessage: updateDescription,
-    onApproveError: onError
-  })
-  const { execute: launchTransaction } = useLaunchTransaction({
-    onLaunchMessage: updateDescription,
-    onLaunchError: onError
-  })
-  const { execute: dataPersistence } = useDataPersistence({
-    onPersistenceMessage: updateDescription,
-    onPersistenceError: onError
-  })
-  const submit = (data: DaoForms) => {
-    console.log("submit", data)
-    setDaoForms({
-      ...daoForms,
-      ...data
-    })
-    initStep()
-    startVerify(async () => {
-      try {
-        if (!currentAsset?.isNative) {
-          await approvedTransaction(currentAsset)
-          nextStep()
-        }
-        const tokenId = await launchTransaction(currentAsset)
-        nextStep()
-        const id = await dataPersistence(data, tokenId)
-        finallyStep()
-        router.push(`/create/finish?id=${id}`)
-      } catch (e) {}
-    })
   }
   return (
     <CardWrapper className={"col-span-1 w-auto md:col-span-2"} contentClassName={"bg-card "}>
-      <MultiStepLoader
-        loadingStates={assetSteps}
-        errorState={launchStepState.error}
-        visible={launchStepState.showSteps}
-        currentState={launchStepState.now}
-        description={launchStepState.description}
-        progressState={launchStepState.progress}
-        onClose={exitStep}
-        onFinish={() => {
-          exitStep()
-          router.push("/create/finish")
-        }}
-      />
-
       <Form {...form}>
         <form
           className={"grid w-full grid-cols-4 gap-10 overflow-hidden p-9"}
@@ -214,7 +178,7 @@ const InformationForm = () => {
                       errors.name ? "border-destructive" : "border-input",
                       "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
-                    disabled={isVerifying}
+                    disabled={isPending}
                     onChange={(v) => {
                       field.onChange(v.target.value)
                     }}
@@ -239,7 +203,7 @@ const InformationForm = () => {
                         errors.ticker ? "border-destructive" : "border-input",
                         "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                       )}
-                      disabled={isVerifying}
+                      disabled={isPending}
                       onChange={(v) => {
                         field.onChange(v.target.value)
                       }}
@@ -297,7 +261,7 @@ const InformationForm = () => {
                       errors.description ? "border-destructive" : "border-input",
                       "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
-                    disabled={isVerifying}
+                    disabled={isPending}
                     onChange={(v) => {
                       field.onChange(v.target.value)
                     }}
@@ -322,7 +286,7 @@ const InformationForm = () => {
                       errors.x ? "border-destructive" : "border-input",
                       "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
-                    disabled={isVerifying}
+                    disabled={isPending}
                     onChange={(v) => {
                       field.onChange(v.target.value)
                     }}
@@ -349,7 +313,7 @@ const InformationForm = () => {
                       errors.telegram ? "border-destructive" : "border-input",
                       "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
-                    disabled={isVerifying}
+                    disabled={isPending}
                     onChange={(v) => {
                       field.onChange(v.target.value)
                     }}
@@ -376,7 +340,7 @@ const InformationForm = () => {
                       errors.website ? "border-destructive" : "border-input",
                       "border-primary focus:border-secondary focus:ring-secondary focus-visible:ring-secondary"
                     )}
-                    disabled={isVerifying}
+                    disabled={isPending}
                     onChange={(v) => {
                       field.onChange(v.target.value)
                     }}
@@ -388,9 +352,17 @@ const InformationForm = () => {
             />
           </div>
           <div className="col-span-4 flex items-center justify-center">
-            <Button className="h-16 w-full max-w-60 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isVerifying}>
-              {isVerifying || isPending ? <Loader2 className="animate-spin" /> : <Wallet className="" />}
-              Create My DAO
+            <Button
+              className="h-16 w-full max-w-60 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
+              type="submit"
+              disabled={isPending}
+            >
+              {isPending ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Wallet className="" />
+              )}
+              {isPending ? "Creating..." : "Create My DAO"}
             </Button>
           </div>
         </form>

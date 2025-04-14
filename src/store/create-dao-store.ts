@@ -38,7 +38,6 @@ export const daoInformationFormsSchema = z.object({
   x: z.string().url().optional().or(z.literal("")),
   telegram: z.string().url().optional().or(z.literal("")),
   website: z.string().url().optional().or(z.literal("")),
-  assetAddress: z.string({message: "Asset must select."})
 })
 
 export const daoFormsSchema = daoRepositoryFormsSchema.merge(daoInformationFormsSchema)
@@ -54,8 +53,7 @@ export const daoFormsAtom = atom<DaoForms>({
   description: "",
   x: "",
   telegram: "",
-  website: "",
-  assetAddress: ""
+  website: ""
 })
 
 
