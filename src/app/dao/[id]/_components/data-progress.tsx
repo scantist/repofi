@@ -36,7 +36,7 @@ export const PreProgress = () => {
       },
       {
         value: 100 - progress,
-        color: "bg-primary/40"
+        color: "bg-primary/20"
       }
     ]
   }, [])
