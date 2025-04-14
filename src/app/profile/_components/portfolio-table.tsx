@@ -36,14 +36,14 @@ const PortfolioTable = ({ onlyStarred, onlyLaunched }: PortfolioTableProps) => {
       pageSize: 10,
       pageIndex: 0
     },
-    status: onlyLaunched ? [DaoStatus.LAUNCHED] : [DaoStatus.LAUNCHED, DaoStatus.PRE_LAUNCH, DaoStatus.INACTIVE],
+    status: onlyLaunched ? [DaoStatus.LAUNCHED] : [DaoStatus.LAUNCHED,DaoStatus.LAUNCHING],
     starred: onlyStarred
   })
   const { data: response, isPending } = api.dao.portfolio.useQuery({
     ...condition,
     page: condition.pagination.pageIndex,
     size: condition.pagination.pageSize,
-    status: onlyLaunched ? [DaoStatus.LAUNCHED] : [DaoStatus.LAUNCHED, DaoStatus.PRE_LAUNCH, DaoStatus.INACTIVE],
+    status: onlyLaunched ? [DaoStatus.LAUNCHED] : [DaoStatus.LAUNCHED,DaoStatus.LAUNCHING],
     starred: onlyStarred
   })
   const router = useRouter()
