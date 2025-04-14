@@ -235,18 +235,18 @@ export function useDataPersistence({
   onPersistenceMessage: (message: string) => void
   onPersistenceError?: (error: unknown) => void
 }) {
-  const { mutateAsync: createMutate } = api.dao.create.useMutation()
+  const { mutateAsync: createMutate } = api.dao.fundraise.useMutation()
   const execute = useCallback(
-    async (daoForms: DaoForms, tokenId?: bigint): Promise<string | undefined> => {
+    async (daoId: string, tokenId?: bigint): Promise<string | undefined> => {
       try {
         onPersistenceMessage("Persisting dao...")
         if (tokenId === undefined) {
           onPersistenceError?.(new Error("TokenId is undefined"))
           return
         }
-        console.log("daoForms---", daoForms)
         const data = await createMutate({
-          ...daoForms
+          daoId: daoId,
+          tokenId: tokenId
         })
         return data.id
       } catch (error) {
