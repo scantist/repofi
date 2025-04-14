@@ -104,7 +104,7 @@ const DaoContent = () => {
         <CardWrapper>
           <div className={"flex flex-row gap-4 px-4 md:px-12 py-3 progress"}>{graduated ? <PostProgress /> : <PreProgress />}</div>
         </CardWrapper>
-        <CardWrapper className={"flex-1"} contentClassName={"min-h-[370px] h-full max-h-none trade-view"}>
+        <CardWrapper contentClassName={"min-h-[370px] h-full max-h-none trade-view"}>
           {graduated ? (
             <GraduatedChart uniswapV3Pair={detail.tokenInfo.uniswapV3Pair} />
           ) : (
@@ -117,7 +117,7 @@ const DaoContent = () => {
             />
           )}
         </CardWrapper>
-        <CardWrapper>
+        <CardWrapper className={"flex-1"} contentClassName={"h-full"}>
           <MessageList />
         </CardWrapper>
       </div>
@@ -129,7 +129,6 @@ const DaoContent = () => {
         <CardWrapper>
           <ContributorCard />
         </CardWrapper>
-
       </div>
     </div>
   )

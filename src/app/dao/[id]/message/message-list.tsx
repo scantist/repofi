@@ -104,7 +104,7 @@ const MessageList = () => {
             </Button>
           </CreateMessage>
         </div>
-        <div >{list}</div>
+        <div className={"flex-1"}>{list}</div>
         <ListPagination pageable={condition.pageable} totalPages={messageData?.pages ?? 0} setPageable={(pageable) => setCondition({ pageable })} />
       </div>
     </>

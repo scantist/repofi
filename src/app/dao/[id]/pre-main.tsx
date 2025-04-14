@@ -25,11 +25,11 @@ const PreMain = ({ isOwned }: PreMainProps) => {
             {isOwned ? "This progress bar will reflect your fundraising progress, launch results or claim ratio." : DEFAULT_TIP}
           </div>
         </CardWrapper>
-        <CardWrapper className={"flex-1"} contentClassName={"min-h-[370px] h-full max-h-none trade-view relative flex justify-center items-center trade-view"}>
+        <CardWrapper contentClassName={"min-h-[370px] h-full max-h-none trade-view relative flex justify-center items-center trade-view"}>
           <Image src={"https://storage.googleapis.com/repofi-prod/launchpad/image/trend_blur.png"} alt={"Trend"} fill={true} />
           <div className={"z-10 px-5 lg:px-10 text-center"}>{isOwned ? "The block will show your token trends at different status." : DEFAULT_TIP}</div>
         </CardWrapper>
-        <CardWrapper>
+        <CardWrapper className={"flex-1"} contentClassName={"h-full"}>
           <MessageList />
         </CardWrapper>
       </div>
