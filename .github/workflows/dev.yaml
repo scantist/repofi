@@ -21,6 +21,7 @@ jobs:
       NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS: '0xEd1f6473345F45b75F8179591dd5bA1888cf2FB3'
       NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS: '0x0227628f3F023bb0B980b67D528571c95c6DaC1c'
       NEXT_PUBLIC_GIT_SHA: ${{ github.sha }}
+      NEXT_PUBLIC_POSTHOG_API_KEY: phc_AW4nsYpGOqMSBhCsMme4b03KA8H76b0zpDuu53lIG4u
     steps:
       - name: "Get branch name and save to env"
         env:
