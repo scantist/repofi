@@ -74,7 +74,7 @@ const LaunchpadPage = async ({
         </div>
       </BannerWrapper>
       {preDao.total > 0 && <PreDao initialData={preDao} daoParam={initPreLaunchParam} />}
-      <ShowDao daoParam={initLaunchingParam} title="Launching DAO" description="Join early to fuel cutting-edge research, open collaboration, and reinvent scientific funding." />
+      <ShowDao daoParam={initLaunchingParam} title="Launching DAOs" description="Join early to fuel cutting-edge research, open collaboration, and reinvent scientific funding." />
       <LiveDao />
     </div>
   )

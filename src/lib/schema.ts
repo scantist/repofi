@@ -31,6 +31,15 @@ export const daoContentParamsSchema = z.object({
   enable: z.boolean().default(true)
 })
 
+export const daoArticleParamsSchema = z.object({
+  title: z.string({ message: "Title is required." }).refine((value) => value.trim() !== "", {
+    message: "Title can not be empty."
+  }),
+  content: z.string({ message: "Content is required." }).refine((value) => value.trim() !== "", {
+    message: "Content can not be empty."
+  }),
+})
+
 export const createDaoParamsSchema = z.object({
   avatar: z.string({ message: "Avatar is required." }).refine((value) => value.trim() !== "", {
     message: "Avatar can not be empty."
@@ -50,7 +59,7 @@ export const createDaoParamsSchema = z.object({
   website: z.string().url().optional().or(z.literal(""))
 })
 export const updateDaoParamsSchema = z.object({
-  daoId:z.string({message:"DAO id is required."}),
+  daoId: z.string({ message: "DAO id is required." }),
   avatar: z.string({ message: "Avatar is required." }).refine((value) => value.trim() !== "", {
     message: "Avatar can not be empty."
   }),
@@ -123,8 +132,9 @@ export const dexPriceSchema = z.object({
     })
   )
 })
-export type UpdateDaoParamsSchema=z.infer<typeof updateDaoParamsSchema>
+export type UpdateDaoParamsSchema = z.infer<typeof updateDaoParamsSchema>
 export type DaoContentParams = z.infer<typeof daoContentParamsSchema>
+export type DaoArticleParams = z.infer<typeof daoArticleParamsSchema>
 export type DexPrice = z.infer<typeof dexPriceSchema>
 export type RepoInfo = z.infer<typeof repoInfoSchema>
 export type RepoMeta = z.infer<typeof repoMetaSchema>

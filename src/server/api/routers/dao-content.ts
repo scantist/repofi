@@ -11,9 +11,9 @@ export const daoContentRouter = createTRPCRouter({
         daoId: z.string()
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { data, daoId } = input
-      return await daoContentService.create(daoId, data)
+      return await daoContentService.create(daoId, data, ctx.session!.address)
     }),
   update: protectedProcedure
     .input(
@@ -22,8 +22,8 @@ export const daoContentRouter = createTRPCRouter({
         daoContentId: z.string()
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { data, daoContentId } = input
-      await daoContentService.update(daoContentId, data)
+      await daoContentService.update(daoContentId, data, ctx.session!.address)
     })
 })

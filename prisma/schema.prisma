@@ -131,6 +131,7 @@ model Dao {
   stars        DaoStar[]
   contributors Contributor[]
   contents     DaoContent[]
+  articles     DaoArticle[]
 
   @@map("t_dao")
 }
@@ -148,6 +149,18 @@ model DaoContent {
   updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
 
   @@map("t_dao_content")
+}
+
+model DaoArticle {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @map("id")
+  daoId     String   @map("dao_id")
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  dao       Dao      @relation(fields: [daoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("t_dao_article")
 }
 
 model DaoLaunchHolder {
