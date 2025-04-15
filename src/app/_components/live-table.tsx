@@ -42,7 +42,6 @@ const LiveTable = ({ initialData, initialParams }: LiveTableProps) => {
     },
     { initialData }
   )
-  console.log(condition, response)
   const router = useRouter()
   const columns = [
     columnHelper.accessor("avatar", {

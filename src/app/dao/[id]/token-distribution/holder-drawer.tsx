@@ -1,3 +1,4 @@
+"use client"
 import type React from "react"
 import { useMemo, useState } from "react"
 import LoadingSpinner from "~/app/_components/loading-spinner"

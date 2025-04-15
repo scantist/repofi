@@ -57,7 +57,10 @@ export const env = createEnv({
     NEXT_PUBLIC_CONTRACT_QUOTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid quoter address"),
     NEXT_PUBLIC_CONTRACT_V3_FACTORY_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid factory address"),
     NEXT_PUBLIC_CONTRACT_SWAP_ROUTER_ADDRESS: z.string().refine((v) => isAddress(v), "Invalid swap router address"),
-    NEXT_PUBLIC_GIT_SHA: z.string().optional()
+    NEXT_PUBLIC_GIT_SHA: z.string().optional(),
+    NEXT_PUBLIC_POSTHOG_API_KEY: z.string().optional(),
+    NEXT_PUBLIC_SITE_URL: z.string(),
+
   },
 
   /**
@@ -87,7 +90,9 @@ export const env = createEnv({
     TOOL_REPO_GITHUB_ACCESS_TOKENS: process.env.TOOL_REPO_GITHUB_ACCESS_TOKENS,
     CONTRACT_POC_ADDRESS: process.env.CONTRACT_POC_ADDRESS,
     CONTRACT_TOKENLOCKER_ADDRESS: process.env.CONTRACT_TOKENLOCKER_ADDRESS,
-    NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA
+    NEXT_PUBLIC_GIT_SHA: process.env.NEXT_PUBLIC_GIT_SHA,
+    NEXT_PUBLIC_POSTHOG_API_KEY: process.env.NEXT_PUBLIC_POSTHOG_API_KEY,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

@@ -3,6 +3,7 @@
 import { useAppKit, useAppKitAccount } from "@reown/appkit/react"
 import { useSession } from "next-auth/react"
 import type { OpenOptions } from "node_modules/@reown/appkit/dist/types/src/client/appkit-base-client"
+import posthog from "posthog-js"
 import { createContext, useContext } from "react"
 import type { ReactNode } from "react"
 // import posthog from "posthog-js"
@@ -29,9 +30,9 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = sessionStatus === "authenticated" && isConnected && !!address
 
   // 用户行为记录 https://posthog.com/docs/libraries/js
-  // if (isAuthenticated) {
-  //   posthog.identify(address)
-  // }
+  if (isAuthenticated) {
+    posthog.identify(address)
+  }
 
   return (
     <AuthContext.Provider
