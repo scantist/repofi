@@ -133,7 +133,7 @@ const PreDao = ({ daoParam, initialData }: Props) => {
   }
   return (
     <div className={"mx-0 md:mx-auto flex min-h-full w-full max-w-7xl flex-col gap-4 px-4 pt-10 pb-10"}>
-      <div className={"text-4xl font-bold"}>UpComing DAOs</div>
+      <div className={"text-4xl font-bold"}>Upcoming DAOs</div>
       <div className={"text-muted-foreground text-sm font-thin"}>
         These are DAO that will be fundraising soon, and you can pay attention to DAO that you are interested in earlier.
       </div>

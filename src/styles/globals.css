@@ -70,6 +70,13 @@
   --chart-5: hsl(340 75% 55%);
 }
 
+.dark .vditor {
+  --panel-background-color: var(--card);
+  --panel-shadow: 0 1px 2px rgba(255, 255, 255, 0.2);
+  --toolbar-background-color: var(--card);
+  --textarea-background-color: var(--card);
+}
+
 /*---break---*/
 
 @theme inline {

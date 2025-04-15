@@ -1,7 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, Plus } from "lucide-react"
+import { Loader2, Plus, SquareDashedMousePointer } from "lucide-react"
+import { useRouter } from "next/navigation"
 import React, { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -11,6 +12,7 @@ import CardWrapper from "~/components/card-wrapper"
 import { Button } from "~/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
+import { cn } from "~/lib/utils"
 import { api } from "~/trpc/react"
 import { type ListRowContentParams, ListRowContentParamsSchema, type ListRowData } from "~/types/data"
 
@@ -94,6 +96,7 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
     const updatedValues: ListRowData[] = currentValues.filter((_, i) => i !== index)
     setValue("data", updatedValues, { shouldValidate: true })
   }
+  const router = useRouter()
 
   return (
     <Form {...form}>
@@ -144,7 +147,21 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
           control={control}
           name="data"
           render={({ field }) => (
-            <div className={"grid grid-cols-1 gap-8 sm:grid-cols-4 md:grid-cols-3"}>
+            <div className={"grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3"}>
+              {field.value.length > 0 && (
+                <div className={"flex flex-row gap-6 w-full"}>
+                  <Button
+                    type={"button"}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      router.push(`/dao/${id}/article/new`)
+                    }}
+                  >
+                    New article
+                  </Button>
+                  <Button>Link external article</Button>
+                </div>
+              )}
               {field.value.map((item: ListRowData, index: number) => (
                 <ActionDialog data={item} index={index} key={`LIST_ROW_${item.title}_${item.link}`} handleAddOrUpdate={handleItemSubmit}>
                   <div className={"w-full h-full min-h-76"}>
@@ -152,17 +169,26 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
                   </div>
                 </ActionDialog>
               ))}
-              <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
-                <div className={"w-full h-full"}>
-                  <CardWrapper
-                    className={"col-span-1 sm:col-span-2 md:col-span-1 "}
-                    contentClassName={"flex-col text-muted-foreground min-h-76 h-full cursor-pointer  flex justify-center items-center"}
-                  >
-                    <Plus className={"mx-auto"} />
-                    <div className={"mt-2"}>Add a new article</div>
-                  </CardWrapper>
+              {field.value.length === 0 && (
+                <div className={"col-span-1 sm:col-span-2 md:col-span-3 border border-primary border-dashed rounded-md flex flex-col justify-center items-center h-64 gap-2"}>
+                  <SquareDashedMousePointer size={98} className=" text-primary mb-2" />
+                  <div className={cn("text-xl font-bold text-gray-500")}>No Article</div>
+                  <div className={"flex sm:flex-row gap-6"}>
+                    <Button
+                      type={"button"}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        router.push(`/dao/${id}/article/new`)
+                      }}
+                    >
+                      New article
+                    </Button>
+                    <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
+                      <Button>Link external article</Button>
+                    </ActionDialog>
+                  </div>
                 </div>
-              </ActionDialog>
+              )}
             </div>
           )}
         />
