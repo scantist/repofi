@@ -35,6 +35,12 @@ export const daoArticleParamsSchema = z.object({
   title: z.string({ message: "Title is required." }).refine((value) => value.trim() !== "", {
     message: "Title can not be empty."
   }),
+  description: z.string({ message: "Description is required." }).refine((value) => value.trim() !== "", {
+    message: "Description can not be empty."
+  }),
+  image: z.string({ message: "Image is required." }).refine((value) => value.trim() !== "", {
+    message: "Image can not be empty."
+  }),
   content: z.string({ message: "Content is required." }).refine((value) => value.trim() !== "", {
     message: "Content can not be empty."
   }),

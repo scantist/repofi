@@ -13,7 +13,7 @@ jobs:
     env:
       APP_NAME: repofi
       SKIP_ENV_VALIDATION: 1
-      NEXT_PUBLIC_SITE_URL: https://alpha-launch.repofi.io/
+      NEXT_PUBLIC_SITE_URL: https://alpha-launch.repofi.io
       NEXT_PUBLIC_CHAIN_ID: 11155111
       NEXT_PUBLIC_REOWN_PROJECT_ID: d198cf7bba856bb5f9a7ec73cb03235e
       NEXT_PUBLIC_CONTRACT_LAUNCHPAD_ADDRESS: '0x2A7A16616602Ef92b38CaA39103D004080B64429'
