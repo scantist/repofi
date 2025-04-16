@@ -57,13 +57,13 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
               {sortedContents.map((content) => {
                 switch (content.type) {
                   case "LIST_ROW":
-                    return <ArticleList key={content.id} data={content as ListRowContentParams} />
+                    return <ArticleList key={content.id} id={id} isOwned={isOwned} data={content as ListRowContentParams} />
                   case "TEAM_COMMUNITY":
-                    return <TeamCommunity key={content.id} data={content as TeamContentParams} dao={daoDetail} />
+                    return <TeamCommunity key={content.id} id={id} isOwned={isOwned} data={content as TeamContentParams} dao={daoDetail} />
                   case "ROADMAP":
-                    return <Roadmap key={content.id} data={content as RoadmapContentParams} />
+                    return <Roadmap key={content.id} id={id} isOwned={isOwned} data={content as RoadmapContentParams} />
                   case "INFORMATION":
-                    return <Content key={content.id} data={content as InformationContentParams} />
+                    return <Content key={content.id} id={id} isOwned={isOwned} data={content as InformationContentParams} />
                   default:
                     return <></>
                 }

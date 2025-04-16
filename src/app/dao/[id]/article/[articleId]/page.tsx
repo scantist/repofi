@@ -14,8 +14,8 @@ const ArticleDetailPage = async ({ params }: { params: Promise<{ id: string; art
     <div className={"flex flex-col gap-4"}>
       <div className={"text-lg md:text-6xl"}>{articleDetail.title}</div>
       <Separator />
-      <div className={"font-normal"}>{articleDetail.description}</div>
       <div className={"text-gray-400"}>Created {formatDistanceToNow(articleDetail.createdAt)}</div>
+      <div className={"font-normal"}>{articleDetail.description}</div>
       <div
         className="w-1/2 max-h-52 rounded-xl bg-gray-700 bg-cover bg-center bg-no-repeat shadow lg:w-4/5"
         style={{

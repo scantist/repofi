@@ -1,14 +1,24 @@
-import type { InformationContentParams, RoadmapContentParams } from "~/types/data"
+import { Settings } from "lucide-react"
+import type { InformationContentParams } from "~/types/data"
 
 interface ContentProps {
   data: InformationContentParams
+  isOwned: boolean
+  id: string
 }
 
-const Content = ({ data }: ContentProps) => {
+const Content = ({ data, isOwned, id }: ContentProps) => {
   return (
     <div className={"my-10 pb-20 flex flex-col lg:flex-row gap-6"}>
       <div className={"flex flex-col flex-1 overflow-hidden lg:max-h-[calc(100vh-200px)] lg:h-full"}>
-        <div className={"text-4xl font-bold tracking-tight"}>{data.title}</div>
+        <div className={"text-4xl font-bold tracking-tight flex flex-row items-center gap-4"}>
+          {data.title}
+          {isOwned && (
+            <a href={`/dao/${id}/edit/information`}>
+              <Settings className={"hover:animate-spin"} />
+            </a>
+          )}
+        </div>
 
         <div className={"md:hidden mt-6 mb-6 max-w-full rounded-lg"}>
           <img alt={"K"} className={"w-full"} src={data.data.image} />

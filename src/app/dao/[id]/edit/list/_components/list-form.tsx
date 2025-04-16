@@ -160,7 +160,6 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
                   >
                     New article
                   </Button>
-                  g{" "}
                   <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
                     <Button variant={"outline"}>Link external article</Button>
                   </ActionDialog>

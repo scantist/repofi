@@ -1,6 +1,6 @@
 "use client"
 import { SiDiscord, SiIngress, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
-import { House } from "lucide-react"
+import { House, Settings } from "lucide-react"
 import { useMemo } from "react"
 import TeamItem from "~/app/dao/[id]/_components/team-item"
 import CardWrapper from "~/components/card-wrapper"
@@ -11,9 +11,11 @@ import type { TeamContentParams, TeamData } from "~/types/data"
 interface TeamCommunityProps {
   data: TeamContentParams
   dao: DaoDetailResult
+  isOwned: boolean
+  id: string
 }
 
-const TeamCommunity = ({ data, dao }: TeamCommunityProps) => {
+const TeamCommunity = ({ data, dao, isOwned, id }: TeamCommunityProps) => {
   const list = data.data as TeamData[]
   if (list.length === 0) {
     return <></>
@@ -59,10 +61,16 @@ const TeamCommunity = ({ data, dao }: TeamCommunityProps) => {
       }
     })
   }, [dao])
-  console.log("linksData", linksData)
   return (
     <div className={"flex flex-col my-10"}>
-      <div className={"text-4xl font-bold tracking-tight"}>{data.title}</div>
+      <div className={"text-4xl font-bold tracking-tight flex flex-row items-center gap-4"}>
+        {data.title}
+        {isOwned && (
+          <a href={`/dao/${id}/edit/team`}>
+            <Settings className={"hover:animate-spin"} />
+          </a>
+        )}
+      </div>
       <div className={"grid grid-cols-1 md:grid-cols-2 gap-8 mt-8"}>
         {list.map((item, index) => (
           <TeamItem data={item} key={`${item.name}-${item.title}-${item.sort}`} />
