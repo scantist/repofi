@@ -16,7 +16,7 @@ import { compareStringToUpperCase } from "~/lib/utils"
 import { auth } from "~/server/auth"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/server"
-import type { InformationContentParams, ListRowContentParams, RoadmapContentParams, TeamContentParams } from "~/types/data"
+import type { InformationContentParams, ListRowContentParams, ListRowData, RoadmapContentParams, TeamContentParams } from "~/types/data"
 import TeamPlaceholder from "./_components/team-placeholder"
 
 const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -34,7 +34,15 @@ const DaoPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   })
   const isPreLaunch = daoDetail.status === "PRE_LAUNCH"
   const contentNoType = (type: DaoContentType) => {
-    return isOwned && isPreLaunch && sortedContents.findIndex((c) => c.type === type) === -1
+    if (!isOwned || !isPreLaunch) {
+      return false
+    }
+    const exist = sortedContents.find((c) => c.type === type)
+    if (!exist) {
+      return true
+    }
+    const data = exist.data as unknown[]
+    return data.length === 0
   }
   const isOwned = compareStringToUpperCase(daoDetail?.createdBy, session?.address)
 

@@ -149,9 +149,10 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
           render={({ field }) => (
             <div className={"grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3"}>
               {field.value.length > 0 && (
-                <div className={"flex flex-row gap-6 w-full"}>
+                <div className={"flex flex-row gap-6 w-full col-span-1 sm:col-span-2 md:col-span-3"}>
                   <Button
                     type={"button"}
+                    variant={"outline"}
                     onClick={(e) => {
                       e.preventDefault()
                       router.push(`/dao/${id}/article/new`)
@@ -159,7 +160,10 @@ const ListForm = ({ id, isNew, data }: BaseFormProps) => {
                   >
                     New article
                   </Button>
-                  <Button>Link external article</Button>
+                  g{" "}
+                  <ActionDialog data={undefined} handleAddOrUpdate={handleItemSubmit}>
+                    <Button variant={"outline"}>Link external article</Button>
+                  </ActionDialog>
                 </div>
               )}
               {field.value.map((item: ListRowData, index: number) => (

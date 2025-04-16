@@ -17,11 +17,12 @@ const ArticleList = ({ data }: ArticleListProps) => {
   if (list.length === 0) {
     return <></>
   }
+  console.log("list ----", JSON.stringify(list))
   return (
     <div className={"my-20"}>
       <div className={"text-4xl font-bold tracking-tight"}>{data.title}</div>
       <div className={"grid grid-cols-1 gap-4 pt-10 md:grid-cols-3"}>
-        {list.map((item) => (
+        {list?.map((item) => (
           <ListRow key={`article-item-${item.title}-${item.link}`} data={item} />
         ))}
       </div>

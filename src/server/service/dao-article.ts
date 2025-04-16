@@ -1,9 +1,9 @@
 import { DaoContentType } from "@prisma/client"
-import { env } from "process"
+import { env } from "~/env"
 import { CommonError, ErrorCode } from "~/lib/error"
 import type { DaoArticleParams, Pageable } from "~/lib/schema"
 import { db } from "~/server/db"
-import { daoService } from "~/server/service/dao"
+import type { ListRowData } from "~/types/data"
 
 class DaoArticleService {
   async create(daoId: string, params: DaoArticleParams, userAddress: string) {
@@ -26,21 +26,21 @@ class DaoArticleService {
           content: params.content
         }
       })
-      const articleUrl = `${env.NEXT_PUBLIC_SITE_URL}/dao/${daoId}/article/${daoArticle.id}`
-      let existingContent = dao.contents.find(content => content.type === DaoContentType.LIST_ROW)
-
+      const articleUrl = `/dao/${daoId}/article/${daoArticle.id}`
+      const existingContent = dao.contents.find((content) => content.type === DaoContentType.LIST_ROW)
       if (existingContent) {
         // Update existing content by adding new item to array
-        const currentData = JSON.parse(existingContent.data as string) || []
+        const currentData = existingContent.data as ListRowData[]
         currentData.push({
           image: params.image,
           title: params.title,
           description: params.description,
-          link: articleUrl
+          link: articleUrl,
+          sort: 0
         })
         await tx.daoContent.update({
           where: { id: existingContent.id },
-          data: { data: JSON.stringify(currentData) }
+          data: { data: currentData }
         })
       } else {
         // Create new content with initial array
@@ -48,12 +48,15 @@ class DaoArticleService {
           data: {
             daoId,
             title: params.title,
-            data: JSON.stringify([{
-              image: params.image,
-              title: params.title,
-              description: params.description,
-              link: articleUrl,
-            }]),
+            data: [
+              {
+                image: params.image,
+                title: params.title,
+                description: params.description,
+                link: articleUrl,
+                sort: 0
+              }
+            ],
             type: DaoContentType.LIST_ROW,
             sort: 0,
             enable: true
@@ -80,7 +83,7 @@ class DaoArticleService {
       }
 
       // Find content that contains this article's link
-      const articleUrl = `${env.NEXT_PUBLIC_SITE_URL}/dao/${daoArticle.daoId}/article/${daoArticleId}`
+      const articleUrl = `/dao/${daoArticle.daoId}/article/${daoArticleId}`
       const daoContent = await tx.daoContent.findFirst({
         where: {
           daoId: daoArticle.daoId,
@@ -90,20 +93,22 @@ class DaoArticleService {
 
       if (daoContent) {
         // Update the content data array
-        const contentData = JSON.parse(daoContent.data as string) || []
-        const articleIndex = contentData.findIndex((item: any) => item.link === articleUrl)
-        
+        const contentData: ListRowData[] = (daoContent.data as ListRowData[]) ?? []
+        const articleIndex = contentData.findIndex((item: ListRowData) => item.link === articleUrl)
+
         if (articleIndex !== -1) {
           contentData[articleIndex] = {
             ...contentData[articleIndex],
             image: params.image,
             title: params.title,
-            description: params.description
+            description: params.description,
+            sort: 0,
+            link: articleUrl
           }
 
           await tx.daoContent.update({
             where: { id: daoContent.id },
-            data: { data: JSON.stringify(contentData) }
+            data: { data: contentData }
           })
         }
       }
