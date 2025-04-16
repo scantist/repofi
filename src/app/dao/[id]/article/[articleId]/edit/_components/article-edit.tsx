@@ -18,8 +18,8 @@ import { api } from "~/trpc/react"
 
 const ArticleEdit = ({ id, articleId, detail }: { id: string; articleId: string; detail: DaoArticleDetail }) => {
   const [title, setTitle] = useState(detail.title)
-  const [description, setDescription] = useState("")
-  const [image, setImage] = useState<string | undefined>()
+  const [description, setDescription] = useState(detail.description)
+  const [image, setImage] = useState<string | undefined>(detail.image)
   const [vd, setVd] = useState<Vditor>()
   useEffect(() => {
     const vditor = new Vditor("vditor", {
@@ -54,7 +54,7 @@ const ArticleEdit = ({ id, articleId, detail }: { id: string; articleId: string;
   const router = useRouter()
   const { mutate, isPending } = api.daoArticle.update.useMutation({
     onSuccess: async (data) => {
-      router.replace(`/dao/${detail.id}/article/${data.id}`)
+      router.push(`/dao/${id}/article/${data.id}`)
     },
     onError: (error) => {
       console.error(error)

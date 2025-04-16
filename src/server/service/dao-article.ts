@@ -167,9 +167,24 @@ class DaoArticleService {
     })
 
     if (!daoArticle) {
+      throw new CommonError(ErrorCode.BAD_PARAMS, `Can't found ${daoArticleId} dao article`)
+    }
+    const daoId = daoArticle.daoId
+    const daoContent = await db.daoContent.findFirst({
+      where: { daoId: daoId, type: DaoContentType.LIST_ROW }
+    })
+    if (!daoContent) {
       throw new CommonError(ErrorCode.BAD_PARAMS, `Can't found ${daoArticleId} dao content`)
     }
-    return daoArticle
+    const data = daoContent.data as ListRowData[]
+    const item = data.find((item) => item.link.includes(daoId) && item.link.includes(daoArticleId))
+    if (!item) {
+      throw new CommonError(ErrorCode.BAD_PARAMS, `Can't found ${daoArticleId} dao related content`)
+    }
+    return {
+      ...daoArticle,
+      ...item
+    }
   }
 
   async delete(daoArticleId: string, userAddress: string) {

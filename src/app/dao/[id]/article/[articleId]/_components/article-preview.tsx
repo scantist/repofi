@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import Vditor from "vditor"
-import "vditor/dist/index.css"
 import { FilePenLine } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useRef } from "react"
+import Vditor from "vditor"
 import { Button } from "~/components/ui/button"
+import "vditor/dist/index.css"
 
 const ArticlePreview = ({ daoId, id, content }: { daoId: string; id: string; content: string }) => {
   const previewRef = useRef<HTMLDivElement>(null)
@@ -13,20 +13,17 @@ const ArticlePreview = ({ daoId, id, content }: { daoId: string; id: string; con
   useEffect(() => {
     if (!previewRef.current) return
 
-    // 直接使用 Vditor.preview 方法渲染预览内容，而不是创建编辑器实例
     void Vditor.preview(previewRef.current, content, {
       mode: "dark",
       theme: {
         current: "Dark"
       },
       hljs: {
-        style: "base16-snazzy"
+        style: "base16-snazzy",
+        enable: true
       },
       anchor: 1,
-      lang: "en_US",
-      after: () => {
-        // 预览渲染完成后的回调
-      }
+      lang: "en_US"
     })
   }, [content])
   const router = useRouter()
