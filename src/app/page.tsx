@@ -60,11 +60,11 @@ const LaunchpadPage = async ({
           <div className={"bg-secondary mt-6 flex max-w-3xl flex-col justify-between rounded-lg px-4 py-7 md:flex-row md:px-8"}>
             <div className={"mb-4 flex flex-col gap-2 md:mb-0"}>
               <div className={"text-2xl font-extrabold md:text-3xl"}>{dashboard.total} DAO</div>
-              <div className={"text-sm font-thin text-white/70"}>Launched & Pre-Launch</div>
+              <div className={"text-sm font-thin text-white/70"}>Launched & Launching</div>
             </div>
             <div className={"mb-4 flex flex-col gap-2 border-t-1 border-white pt-4 md:mb-0 md:border-t-0 md:border-l-1 md:pt-0 md:pl-4"}>
-              <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.PRE_LAUNCH ?? "0"))}`}</div>
-              <div className={"text-sm font-thin text-white/70"}>Pre-Launch MarketCap</div>
+              <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.LAUNCHING ?? "0"))}`}</div>
+              <div className={"text-sm font-thin text-white/70"}>Launching MarketCap</div>
             </div>
             <div className={"flex flex-col gap-2 border-t-1 border-white pt-4 md:border-t-0 md:border-l-1 md:pt-0 md:pl-4"}>
               <div className={"text-2xl font-extrabold md:text-3xl"}>${`${formatMoney(String(dashboard.marketCap.LAUNCHED ?? "0"))}`}</div>
