@@ -19,6 +19,7 @@ import { cn, formatMoney } from "~/lib/utils"
 import { fromHumanAmount, toHumanAmount } from "~/lib/web3"
 import AmountInSlider from "../_components/amount-in-slider"
 import { ErrorOverlay, LoadingOverlay, SuccessOverlay } from "./trading-components"
+import { ContributorHistoryOrderByRelationAggregateInputSchema } from "~/lib/zod"
 
 const leftTokenDecimals = 18
 const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
@@ -41,8 +42,6 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
   }
   const tokenOut = isBuy ? repoToken : assetToken
   const tokenIn = isBuy ? assetToken : repoToken
-  console.log("tokenOut", tokenOut)
-  console.log("tokenIn", tokenIn)
   const [amountInRaw, setAmountInRaw] = useState<string>("0.00")
   const [amountIn, setAmountIn] = useState<bigint>(0n)
   const [slippage, setSlippage] = useState<number>(5)
@@ -121,10 +120,26 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
     setTradeTxHash(tradeReceipt.transactionHash)
   }
   useEffect(() => {
-    if (maxBuyAssetAmountWithTax && amountOut === undefined) {
-      updateAmountIn(maxBuyAssetAmountWithTax, assetTokenInfo?.decimals)
+    if (!isBalanceOk) {
+      updateAmountIn(BigInt(balance?.value ?? 0), mode === "buy" ? assetTokenInfo?.decimals : leftTokenDecimals)
     }
-  }, [maxBuyAssetAmountWithTax, amountOut])
+    if (amountOut === undefined) {
+      if (mode === "buy") {
+        if (maxBuyAssetAmountWithTax) {
+          const maxAmount = balance?.value && maxBuyAssetAmountWithTax > balance.value
+            ? balance.value
+            : maxBuyAssetAmountWithTax
+          updateAmountIn(maxAmount, assetTokenInfo?.decimals)
+
+        } else {
+          updateAmountIn(BigInt(balance?.value ?? 0), assetTokenInfo?.decimals)
+        }
+      } else {
+        updateAmountIn(BigInt(balance?.value ?? 0), leftTokenDecimals)
+      }
+    }
+
+  }, [maxBuyAssetAmountWithTax, amountOut, mode, isBalanceOk, balance?.value])
   return (
     <div className={"relative w-full"}>
       <LoadingOverlay sendingToken={tokenIn} receivingToken={tokenOut} approving={isApproving} trading={isTrading} approved={hasBeenApproved && !shouldBuyMax} />
@@ -238,7 +253,7 @@ const TradingForm = ({ mode }: { mode: "buy" | "sell" }) => {
           />
         )}
         <span className={"text-white"}>${tokenOut.ticker.toUpperCase()}</span>
-        {!isAmountsOutLoading && !isTradePending && !isApprovePending && amountOut === undefined && maxBuyTokenAmount !== undefined && (
+        {!isAmountsOutLoading && !isTradePending && !isApprovePending && amountOut === undefined && maxBuyTokenAmount !== undefined && mode === "buy" && (
           <>
             <br />
             <span className="text-primary">And launch the token</span>

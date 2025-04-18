@@ -171,8 +171,9 @@ export function useTrade({
     tokenId: tokenId,
     enabled: !!userAddress && !!tokenId
   })
-  const balanceOk = (!!inBalance && inBalance.value >= amountIn) || (!!outBalance && outBalance.value >= amountIn)
-
+  const balanceOk = action === "buy" 
+  ? (!!inBalance && inBalance.value >= amountIn)
+  : (!!outBalance && outBalance.value >= amountIn)
   const {
     error: approveError,
     checkAllowance,
