@@ -427,7 +427,12 @@ class DaoService {
         where: {
           tokenId: tokenId
         },
-        update: {},
+        update: {
+          tokenId: tokenId,
+          name: dao.name,
+          ticker: dao.ticker,
+          creator: dao.createdBy,
+        },
         create: {
           tokenId: tokenId,
           name: dao.name,
