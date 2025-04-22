@@ -81,10 +81,15 @@ const TeamCommunity = ({ data, dao, isOwned, id }: TeamCommunityProps) => {
           <CardWrapper key={`${item.title}-${item.link}-links`}>
             <div className={"flex flex-col p-6 gap-4 bg-secondary"}>
               <div className={"text-xl font-bold mx-auto"}>{item.title}</div>
-              <div className={"text-xs px-4 py-2 border border-white rounded-xl flex flex-row gap-1 items-center max-w-max mx-auto"}>
+              <a
+                href={item.link ?? ""}
+                target={"_blank"}
+                rel="noreferrer"
+                className={"text-xs px-4 py-2 border border-white rounded-xl flex flex-row gap-1 items-center max-w-max mx-auto"}
+              >
                 {item.icon}
                 {item.tip}
-              </div>
+              </a>
             </div>
           </CardWrapper>
         ))}
