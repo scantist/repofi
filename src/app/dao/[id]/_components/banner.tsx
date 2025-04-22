@@ -2,23 +2,22 @@
 
 import type { IconType } from "@icons-pack/react-simple-icons"
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
-import { $Enums } from "@prisma/client"
-import { Decimal, JsonValue } from "@prisma/client/runtime/library"
 import { useTour } from "@reactour/tour"
 import { Footprints, House, Settings, Star } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useState, useTransition } from "react"
+import { useMemo, useState, useTransition } from "react"
 import TokenCheckDialog from "~/app/dao/[id]/_components/token-check-dialog"
+import { useAuth } from "~/components/auth/auth-context"
 import BannerWrapper from "~/components/banner-wrapper"
 import CardWrapper from "~/components/card-wrapper"
-import { MultiStepLoader, visibleState } from "~/components/ui/multi-step-loader"
+import { MultiStepLoader, type visibleState } from "~/components/ui/multi-step-loader"
 import { useApprovedTransaction, useDataPersistence, useLaunchStepState, useLaunchTransaction } from "~/hooks/use-create"
 import { LaunchNativeSteps, LaunchNoNativeSteps } from "~/lib/const"
 import type { DaoLinks } from "~/lib/schema"
 import { cn } from "~/lib/utils"
-import { AssetTokens } from "~/server/service/asset-token"
+import type { AssetTokens } from "~/server/service/asset-token"
 import type { DaoDetailResult } from "~/server/service/dao"
 import { api } from "~/trpc/react"
 
@@ -54,6 +53,7 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
       initialData: daoDetail
     }
   )
+  const { isAuthenticated } = useAuth()
   const { launchStepState, updateDescription, initStep, nextStep, errorStep, exitStep, finallyStep } = useLaunchStepState()
   const [assetSteps, setAssetSteps] = useState<visibleState[]>([])
   const router = useRouter()
@@ -107,10 +107,9 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
         nextStep()
         await dataPersistence(daoDetail!.id, tokenId)
         finallyStep()
-      } catch (e) { }
+      } catch (e) {}
     })
   }
-
 
   return (
     <BannerWrapper className={"flex w-full flex-col"}>
@@ -187,7 +186,7 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
           >
             {data?.description}
           </div>
-          {isOwned && data?.status === "PRE_LAUNCH" && (
+          {isAuthenticated && isOwned && data?.status === "PRE_LAUNCH" && (
             <div className={"flex mt-4"}>
               <TokenCheckDialog onSelectAsset={submit}>
                 <div className="relative group cursor-pointer">
@@ -210,15 +209,3 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
 }
 
 export default Banner
-function approvedTransaction(asset: Omit<{ symbol: string; name: string; priceUsd: Decimal; address: string; decimals: number; logoUrl: string; launchFee: Decimal; isAllowed: boolean; isNative: boolean; isValid: boolean }, "priceUsd"> & { priceUsd: string }) {
-  throw new Error("Function not implemented.")
-}
-
-function launchTransaction(asset: Omit<{ symbol: string; name: string; priceUsd: Decimal; address: string; decimals: number; logoUrl: string; launchFee: Decimal; isAllowed: boolean; isNative: boolean; isValid: boolean }, "priceUsd"> & { priceUsd: string }) {
-  throw new Error("Function not implemented.")
-}
-
-function dataPersistence(data: { marketCapUsd: string; priceUsd: string; isStarred: boolean; stars: number; repoStar: number; repoWatch: number; repoIssues: number; repoForks: number; license: string; tokenInfo: { marketCap: string; totalSupply: string; holderCount: string | undefined; liquidity: string; price: string; unlockRatio: string; salesRatio: string; raisedAssetAmount: string; name?: string | undefined; createdAt?: Date | undefined; ticker?: string | undefined; updatedAt?: Date | undefined; tokenId?: bigint | undefined; creator?: string | undefined; tokenAddress?: string | null | undefined; isGraduated?: boolean | undefined; reservedRatio?: Decimal | null | undefined; assetTokenAddress?: string | null | undefined; graduatedAt?: Date | null | undefined; uniswapV3Pair?: string | null | undefined }; name: string; createdAt: Date; id: string; url: string; ticker: string; type: $Enums.DaoType; description: string; avatar: string; updatedAt: Date; createdBy: string; tokenId: bigint | null; links: JsonValue; status: $Enums.DaoStatus; platform: $Enums.DaoPlatform; contents: { sort: number; id: string; type: $Enums.DaoContentType; title: string; data: JsonValue }[] } | undefined, tokenId: void) {
-  throw new Error("Function not implemented.")
-}
-
