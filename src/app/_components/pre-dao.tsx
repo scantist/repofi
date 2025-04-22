@@ -36,7 +36,7 @@ const DaoItem = ({ dao }: { dao: DaoSearchResult["list"][number] }) => {
         <div
           className={cn(
             "cursor-pointer overflow-hidden relative card h-96 rounded-md shadow-xl backgroundImage flex flex-col justify-between p-4",
-            "object-cover bg-center",
+            "object-cover object-center bg-center bg-no-repeat bg-cover",
             "relative overflow-hidden"
           )}
           style={{ backgroundImage: `url(${dao.avatar})` }}
@@ -90,16 +90,14 @@ const DaoItem = ({ dao }: { dao: DaoSearchResult["list"][number] }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  window.open(dao.url, '_blank', 'noopener,noreferrer')
+                  window.open(dao.url, "_blank", "noopener,noreferrer")
                 }}
                 className={"opacity-0 group-hover:opacity-100 transition-opacity duration-500 hover:opacity-50 hover:duration-100 cursor-pointer"}
               >
                 <SiGithub size={24} />
               </button>
             </div>
-            <p className="font-normal text-sm text-gray-50 relative z-10 my-4 line-clamp-3 group-hover:line-clamp-[15] transition-[line-clamp] duration-500">
-              {dao.description}
-            </p>
+            <p className="font-normal text-sm text-gray-50 relative z-10 my-4 line-clamp-3 group-hover:line-clamp-[15] transition-[line-clamp] duration-500">{dao.description}</p>
           </div>
         </div>
       </div>
