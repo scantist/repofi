@@ -57,7 +57,7 @@ const InformationForm = () => {
   const router = useRouter()
   const { mutateAsync: createMutate, isPending } = api.dao.create.useMutation({
     onMutate: () => {
-      toast.loading("Creating DAO...")
+      return toast.loading("Creating DAO...")
     },
     onSuccess: (dao) => {
       toast.success("Successfully created DAO!")
@@ -67,13 +67,14 @@ const InformationForm = () => {
       console.error(error)
       toast.error(`Failed to create DAO: ${error.message}`)
     },
-    onSettled: () => {
+    onSettled: (_, __, ___, toastId) => {
+      toast.dismiss(toastId)
     }
   })
 
   useEffect(() => {
     if (!daoForms.url) {
-      router.push('/create/bind')
+      router.push("/create/bind")
     }
   }, [daoForms.url, router])
   const {
@@ -83,7 +84,7 @@ const InformationForm = () => {
     watch
   } = form
   const submit = async (data: DaoForms) => {
-    if (isPending) return;
+    if (isPending) return
     try {
       await createMutate({
         name: data.name,
@@ -352,16 +353,8 @@ const InformationForm = () => {
             />
           </div>
           <div className="col-span-4 flex items-center justify-center">
-            <Button
-              className="h-16 w-full max-w-60 rounded-lg py-8 text-lg font-bold [&_svg]:size-6"
-              type="submit"
-              disabled={isPending}
-            >
-              {isPending ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <Wallet className="" />
-              )}
+            <Button className="h-16 w-full max-w-60 rounded-lg py-8 text-lg font-bold [&_svg]:size-6" type="submit" disabled={isPending}>
+              {isPending ? <Loader2 className="animate-spin" /> : <Wallet className="" />}
               {isPending ? "Creating..." : "Create My DAO"}
             </Button>
           </div>
