@@ -1,4 +1,6 @@
-import { getAddress } from "viem"
+import { ethAddress, getAddress } from "viem"
+import { useAccount, useBalance } from "wagmi"
+import { defaultChain } from "~/lib/web3"
 import { api } from "~/trpc/react"
 
 export function useAssetTokenList() {
@@ -21,5 +23,28 @@ export function useAssetTokenInfo(address: string) {
     isError: isError || notFound,
     error: notFound ? new Error("Asset token not found") : error,
     ...rest
+  }
+}
+
+export function useAssetTokenBalance(assetAddress: `0x${string}`) {
+  const { address: userAddress } = useAccount()
+  const isNativeAsset = assetAddress === ethAddress
+  const {
+    data: balance,
+    isLoading: isBalanceLoading,
+    refetch: refetchBalance
+  } = useBalance({
+    address: userAddress,
+    chainId: defaultChain.id,
+    ...(isNativeAsset ? {} : { token: assetAddress }),
+    query: {
+      enabled: !!userAddress
+    }
+  })
+
+  return {
+    balance,
+    isBalanceLoading,
+    refetchBalance
   }
 }

@@ -3,6 +3,7 @@
 import type { IconType } from "@icons-pack/react-simple-icons"
 import { SiDiscord, SiTelegram, SiX } from "@icons-pack/react-simple-icons"
 import { useTour } from "@reactour/tour"
+import Decimal from "decimal.js"
 import { Footprints, House, Settings, Star } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -94,21 +95,22 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
     onPersistenceMessage: updateDescription,
     onPersistenceError: onError
   })
-  const submit = (initialBuyAmount: number, asset: AssetTokens[number]) => {
-    // TODO init data
+  const submit = (initialBuyAmount: Decimal, asset: AssetTokens[number]) => {
     setAssetSteps(asset.isNative ? LaunchNativeSteps : LaunchNoNativeSteps)
     initStep()
     startVerify(async () => {
       try {
         if (!asset.isNative) {
-          await approvedTransaction(asset)
+          await approvedTransaction(asset, initialBuyAmount)
           nextStep()
         }
-        const tokenId = await launchTransaction(daoDetail!.name, daoDetail!.ticker, asset)
+        const tokenId = await launchTransaction(data!.name, data!.ticker, asset, initialBuyAmount)
         nextStep()
-        await dataPersistence(daoDetail!.id, tokenId)
+        await dataPersistence(data!.id, tokenId)
         finallyStep()
-      } catch (e) {}
+      } catch (e) { 
+        console.error(e)
+      }
     })
   }
 
@@ -136,7 +138,7 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
             width={335}
             className={"cursor-pointer aspect-square h-60 w-full rounded-t-lg object-cover"}
             alt={"banner"}
-            src={daoDetail?.avatar ?? ""}
+            src={data?.avatar ?? ""}
           />
         </CardWrapper>
         <div className={"flex flex-1 flex-col"}>
@@ -189,7 +191,7 @@ const Banner = ({ daoDetail, id, isOwned }: BannerProps) => {
           </div>
           {isAuthenticated && isOwned && data?.status === "PRE_LAUNCH" && (
             <div className={"flex mt-4"}>
-              <TokenCheckDialog onSubmit={submit}>
+              <TokenCheckDialog onSubmit={submit} symbol={data?.ticker} >
                 <div className="relative group cursor-pointer">
                   <div className="relative px-6 py-2 border-2 border-primary text-primary font-bold text-md rounded-lg transform transition-all duration-300 group-hover:translate-y-1 group-hover:translate-x-1 shadow-[6px_6px_10px_rgba(0,0,0,0.6),-6px_-6px_10px_rgba(255,255,255,0.1)] group-hover:shadow-[8px_8px_15px_rgba(0,0,0,0.8),-8px_-8px_15px_rgba(255,255,255,0.15)]">
                     <span>✨</span> FUNDRAISING

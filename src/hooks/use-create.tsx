@@ -4,6 +4,7 @@ import { useCallback, useState } from "react"
 import { decodeEventLog, erc20Abi, formatUnits, getAddress, parseEther } from "viem"
 import { useAccount, useConfig } from "wagmi"
 import { env } from "~/env"
+import Decimal from 'decimal.js';
 import launchPadAbi from "~/lib/abi/LaunchPad.json"
 import { defaultChain } from "~/lib/web3"
 import { api } from "~/trpc/react"
@@ -88,13 +89,14 @@ export function useApprovedTransaction({
   const { address } = useAccount()
   const config = useConfig()
   const execute = useCallback(
-    async <T,>(currentAsset?: AssetTokenWithStringPrice): Promise<T | undefined> => {
+    async <T,>(currentAsset?: AssetTokenWithStringPrice, initialBuyAmount?: Decimal): Promise<T | undefined> => {
       if (!address || !currentAsset) {
         onApproveError?.(new Error("Wallet not connected or asset not provided."))
         return
       }
+      const launchFee = new Decimal(currentAsset.launchFee.toString())
       const tokenAddress = currentAsset.address as `0x${string}`
-      const amount = BigInt(currentAsset.launchFee.toString())
+      const amount = BigInt(launchFee.plus(initialBuyAmount ?? new Decimal(0)).toString())
       const allowance = await readContract(config, {
         abi: erc20Abi,
         address: tokenAddress,
@@ -128,7 +130,7 @@ export function useApprovedTransaction({
         await waitForTransactionReceipt(config, { hash })
 
         // If the allowance approval is successful, we call the executor recursively to ensure the allowance is indeed enough. Since user can alter the allowance to any value during the approval process.
-        return execute(currentAsset)
+        return execute(currentAsset, initialBuyAmount)
       } catch (error) {
         if (error instanceof Error && 'shortMessage' in error) {
           onApproveError?.(new Error((error as any).shortMessage))
@@ -157,21 +159,47 @@ export function useLaunchTransaction({
   const { address } = useAccount()
   const config = useConfig()
   const execute = useCallback(
-    async (name: string, ticker: string, currentAsset?: AssetTokenWithStringPrice): Promise<bigint | undefined> => {
+    async (name: string, ticker: string, currentAsset?: AssetTokenWithStringPrice, initialBuyAmount?: Decimal): Promise<bigint | undefined> => {
       if (!address || !currentAsset) {
         onLaunchError?.(new Error("Wallet not connected or asset not provided."))
         return
       }
+
       let amount = 0n
       if (currentAsset.isNative) {
-        amount = parseEther(formatUnits(BigInt(currentAsset.launchFee.toString()), currentAsset.decimals))
+        try {
+          // 确保 launchFee 是 Decimal 类型
+          const launchFee = currentAsset.launchFee instanceof Decimal
+            ? currentAsset.launchFee
+            : new Decimal(currentAsset.launchFee.toString());
+
+          // 确保 initialBuyAmount 有值
+          const buyAmount = initialBuyAmount ?? new Decimal(0);
+
+          // 计算总金额
+          const totalAmount = launchFee.plus(buyAmount);
+
+          // 格式化为区块链格式
+          amount = parseEther(
+            formatUnits(
+              BigInt(totalAmount.toString()),
+              currentAsset.decimals
+            )
+          );
+        } catch (err: unknown) {
+          console.error("Error processing Decimal values:", err);
+          const errorMessage = err instanceof Error ? err.message : String(err);
+          onLaunchError?.(new Error(`Error calculating transaction amount: ${errorMessage}`));
+          return;
+        }
       }
+
       try {
         const { request } = await simulateContract(config, {
           abi: launchPadAbi,
           address: targetContractAddress,
-          functionName: "launch",
-          args: [name, ticker, currentAsset.address as `0x${string}`],
+          functionName: "launchAndBuy",
+          args: [name, ticker, currentAsset.address as `0x${string}`, initialBuyAmount],
           account: address,
           value: amount
         })
